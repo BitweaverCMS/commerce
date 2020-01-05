@@ -89,13 +89,6 @@ class supersaver extends CommercePluginShippingBase {
 				'configuration_group_id' => '6',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'_HANDLING' => array(
-				'configuration_title' => 'Handling Fee',
-				'configuration_value' => '0',
-				'configuration_description' => 'Handling fee for this shipping method.',
-				'sort_order' => $i++,
-				'configuration_group_id' => '6',
-			),
 			$this->getModuleKeyTrunk().'_DESC' => array(
 				'configuration_title' => 'SuperSaver Shipping Description',
 				'configuration_value' => 'SuperSaver',

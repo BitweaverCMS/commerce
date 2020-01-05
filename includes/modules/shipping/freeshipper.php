@@ -30,16 +30,13 @@ class freeshipper extends CommercePluginShippingBase {
 	}
 
 	protected function config() {
+		$i = 3;
 		return array_merge( parent::config(), array( 
 			$this->getModuleKeyTrunk().'_COST' => array(
 				'configuration_title' => 'Shipping Cost',
 				'configuration_description' => 'The shipping cost for all orders using this shipping method.',
 				'configuration_value' => '0',
-			),
-			$this->getModuleKeyTrunk().'_HANDLING' => array(
-				'configuration_title' => 'Handling Fee',
-				'configuration_description' => 'The handling cost for all orders using this shipping method.',
-				'configuration_value' => '0',
+				'sort_order' => $i++,
 			),
 		) );
 	}

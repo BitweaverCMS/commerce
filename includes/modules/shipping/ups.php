@@ -319,12 +319,6 @@ class ups extends CommercePluginShippingBase {
 				'configuration_description' => 'Quote for Residential (RES) or Commercial Delivery (COM)',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'_HANDLING' => array(
-				'configuration_title' => 'Handling Fee',
-				'configuration_value' => '0',
-				'configuration_description' => 'Handling fee for this shipping method.',
-				'sort_order' => $i++,
-			),
 			$this->getModuleKeyTrunk().'_HANDLING_METHOD' => array(
 				'configuration_title' => 'Handling Per Order or Per Box',
 				'configuration_value' => 'Box',

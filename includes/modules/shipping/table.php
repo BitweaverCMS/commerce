@@ -51,23 +51,21 @@ class table extends CommercePluginShippingBase {
 	}
 
 	protected function config() {
+		$i = 3;
 		return array_merge( parent::config(), array( 
 			$this->getModuleKeyTrunk().'_COST' => array(
 				'configuration_title' => 'Shipping Table',
 				'configuration_value' => '25:8.50,50:5.50,10000:0.00',
 				'configuration_description' => 'The shipping cost is based on the total cost or weight of items. Example: 25:8.50,50:5.50,etc.. Up to 25 charge 8.50, from there to 50 charge 5.50, etc',
+				'sort_order' => $i++,
 				'set_function' => 'zen_cfg_textarea(',
 			),
 			$this->getModuleKeyTrunk().'_MODE' => array(
 				'configuration_title' => 'Table Method',
 				'configuration_value' => 'weight',
 				'configuration_description' => 'The shipping cost is based on the order total or the total weight of the items ordered.',
+				'sort_order' => $i++,
 				'set_function' => "zen_cfg_select_option(array('weight', 'price'), ",
-			),
-			$this->getModuleKeyTrunk().'_HANDLING' => array(
-				'configuration_title' => 'Handling Fee',
-				'configuration_description' => 'The handling cost for all orders using this shipping method.',
-				'configuration_value' => '0',
 			),
 		) );
 	}
