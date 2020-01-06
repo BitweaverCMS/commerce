@@ -87,8 +87,10 @@ class CommerceShipping extends BitSingleton {
 						if( $quotes = $shipModule->quote( $shipHash ) ) {
 							if( !empty( $quotes['methods'] ) ) {
 								foreach( array_keys( $quotes['methods'] ) as $j ) {
-									$quotes['methods'][$j]['cost_add_tax'] = zen_add_tax($quotes['methods'][$j]['cost'], (isset($quotes['tax']) ? $quotes['tax'] : 0));
-									$quotes['methods'][$j]['format_add_tax'] = $currencies->format( $quotes['methods'][$j]['cost_add_tax'] );
+									if( !empty( $quotes['methods'][$j]['cost'] ) ) {	
+										$quotes['methods'][$j]['cost_add_tax'] = zen_add_tax($quotes['methods'][$j]['cost'], (isset($quotes['tax']) ? $quotes['tax'] : 0));
+										$quotes['methods'][$j]['format_add_tax'] = $currencies->format( $quotes['methods'][$j]['cost_add_tax'] );
+									}
 								}
 							}
 							$quotes_array[] = $quotes;
