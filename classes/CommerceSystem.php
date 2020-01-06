@@ -101,8 +101,8 @@ class CommerceSystem extends BitSingleton {
 		$moduleType = strtolower( $pModuleType );
 		$modulesDir = DIR_FS_MODULES.$moduleType.'/';
 		global $gBitUser;
-		$dir = opendir( $modulesDir );
-		while( $file = readdir( $dir ) ) {
+		$moduleFiles = scandir( $modulesDir );
+		foreach( $moduleFiles as $file ) {
 			// no hidden files need be parsed
 			if( $file[0] != '.' ) {
 				if( is_dir( $modulesDir.$file ) ) {
