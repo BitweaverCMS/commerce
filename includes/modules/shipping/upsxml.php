@@ -90,10 +90,8 @@ class upsxml extends CommercePluginShippingBase {
 			// insurance addition
 			$this->pkgvalue = 0;
 			if (MODULE_SHIPPING_UPSXML_INSURE == 'True') {
-				if (isset($order->info['subtotal'])) {
-					$this->pkgvalue = ceil($order->info['subtotal']);
-				} elseif (isset($_SESSION['cart']->total)) {
-					$this->pkgvalue = ceil($_SESSION['cart']->total);
+				if (isset($pShipHash['shipping_value'])) {
+					$this->pkgvalue = ceil($pShipHash['shipping_value']);
 				}
 			}
 			// end insurance addition
@@ -109,12 +107,12 @@ class upsxml extends CommercePluginShippingBase {
 					"SELECT zone_id 
 					   FROM " . TABLE_ZONES_TO_GEO_ZONES . " 
 					  WHERE geo_zone_id = " . (int)MODULE_SHIPPING_UPSXML_RATES_ZONE . "
-						AND zone_country_id = " . (int)$order->delivery['country']['id'] . "
+						AND zone_country_id = " . (int)$pShipHash['destination']['countries_id'] . "
 					  ORDER BY zone_id"
 				);
 				$check_flag = false;
 				while (!$check->EOF) {
-					if ($check->fields['zone_id'] < 1 || $check->fields['zone_id'] == $order->delivery['zone_id']) {
+					if ($check->fields['zone_id'] < 1 || $check->fields['zone_id'] == $pShipHash['destination']['zone_id']) {
 						$check_flag = true;
 						break;
 					}
@@ -154,23 +152,22 @@ class upsxml extends CommercePluginShippingBase {
 	// class methods
 	function quote( $pShipHash ) {
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
-			$state = zen_get_zone_code($order->delivery['country']['id'], $order->delivery['zone_id'], '');
+			$state = zen_get_zone_code($pShipHash['destination']['countries_id'], $pShipHash['destination']['zone_id'], '');
 			$this->_upsOrigin(MODULE_SHIPPING_UPSXML_RATES_CITY, MODULE_SHIPPING_UPSXML_RATES_STATEPROV, MODULE_SHIPPING_UPSXML_RATES_COUNTRY, MODULE_SHIPPING_UPSXML_RATES_POSTALCODE);
 			
 			// -----
 			// When rates are requested from the shipping-estimator, the city isn't set and the postcode might not be.  Provide
 			// defaults for the request.
 			//
-			$dest_city = (!empty($order->delivery['city'])) ? $order->delivery['city'] : '';
-			$dest_postcode = (!empty($order->delivery['postcode'])) ? $order->delivery['postcode'] : '';
-			$this->_upsDest($dest_city, $state, $order->delivery['country']['iso_code_2'], $dest_postcode);
+			$dest_city = (!empty($pShipHash['destination']['city'])) ? $pShipHash['destination']['city'] : '';
+			$dest_postcode = (!empty($pShipHash['destination']['postcode'])) ? $pShipHash['destination']['postcode'] : '';
+			$this->_upsDest($dest_city, $state, $pShipHash['destination']['countries_iso_code_2'], $dest_postcode);
 
-			if (DIMENSIONS_SUPPORTED) {
-				$productsArray = $_SESSION['cart']->get_products();
-				// sort $productsArray according to ready-to-ship (first) and not-ready-to-ship (last)
-				usort($productsArray, ready_to_shipCmp);
+			if (DIMENSIONS_SUPPORTED && !empty( $pShipHash['packages'] ) ) {
+				// sort according to ready-to-ship (first) and not-ready-to-ship (last)
+				usort($pShipHash['packages'], ready_to_shipCmp);
 				// Use packing algorithm to return the number of boxes we'll ship
-				$boxesToShip = $this->packProducts($productsArray);
+				$boxesToShip = $this->packProducts( $pShipHash['packages'] );
 				// Quote for the number of boxes
 				for ($i = 0; $i < count($boxesToShip); $i++) {
 					$this->_addItem($boxesToShip[$i]['length'], $boxesToShip[$i]['width'], $boxesToShip[$i]['height'], $boxesToShip[$i]['current_weight']);
@@ -179,8 +176,8 @@ class upsxml extends CommercePluginShippingBase {
 			} else {
 				// The old method. Let zen-cart tell us how many boxes, plus the weight of each (or total? - might be sw/num boxes)
 				$this->items_qty = 0; //reset quantities
-				for ($i = 0; $i < $shipping_num_boxes; $i++) {
-					$this->_addItem(0, 0, 0, $shipping_weight);
+				for ($i = 0; $i < $pShipHash['shipping_num_boxes']; $i++) {
+					$this->_addItem(0, 0, 0, $pShipHash['shipping_weight_total']);
 				}
 			}
 			if ($this->displayTransitTime) {
@@ -189,22 +186,22 @@ class upsxml extends CommercePluginShippingBase {
 				$this->servicesTimeintransit = $this->_upsGetTimeServices();
 				$this->debugLog(
 					"Time in Transit: {$this->timeintransit}" . PHP_EOL .
-					"Shipping weight: $shipping_weight" . PHP_EOL .
-					"Shipping Num Boxes: $shipping_num_boxes" . PHP_EOL .
+					"Shipping weight: " . $pShipHash['shipping_weight_total'] . PHP_EOL .
+					"Shipping Num Boxes: " . $pShipHash['shipping_num_boxes'] . PHP_EOL .
 					"this: " . var_export($this, true),
 					true
 				);
 				// EOF Time In Transit
 			}
 
-			$upsQuote = $this->_upsGetQuote();
+			$upsQuote = $this->_upsGetQuote( $pShipHash );
 			if (is_array($upsQuote) && count($upsQuote) > 0) {
 				$weight_info = '';
 				if ($this->displayWeight) {
 					if (DIMENSIONS_SUPPORTED) {
 						$weight_info = ' (' . $this->boxCount . ($this->boxCount > 1 ? ' pkg(s), ' : ' pkg, ') . $totalWeight . ' ' . strtolower($this->unit_weight) . ' total)';
 					} else {
-						$weight_info = ' (' . $shipping_num_boxes . ($this->boxCount > 1 ? ' pkg(s) x ' : ' pkg x ') . number_format($shipping_weight, 2) . ' ' . strtolower($this->unit_weight) . ' total)';
+						$weight_info = ' (' . $pShipHash['shipping_num_boxes'] . ($this->boxCount > 1 ? ' pkg(s) x ' : ' pkg x ') . number_format($pShipHash['shipping_weight_total'], 2) . ' ' . strtolower($this->unit_weight) . ' total)';
 					}
 				}
 				$quotes = array(
@@ -644,8 +641,8 @@ class upsxml extends CommercePluginShippingBase {
 
 	//********************
 	protected function _upsGetTimeServices( $pShipHash ) {
-		if (defined('SHIPPING_DAYS_DELAY')) {
-			 $shipdate = date("Ymd", time()+(86400*SHIPPING_DAYS_DELAY));
+		if (defined('MODULE_SHIPPING_UPSXML_SHIPPING_DAYS_DELAY')) {
+			 $shipdate = date("Ymd", time()+(86400*MODULE_SHIPPING_UPSXML_SHIPPING_DAYS_DELAY));
 		} else {
 			$shipdate = $this->today;
 		}
@@ -880,114 +877,148 @@ class upsxml extends CommercePluginShippingBase {
 	protected function config() {
 		$i = 3;
 		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_RATES_STATUS' => array(
+				'configuration_title' => 'Enable UPS Shipping',
+				'configuration_value' => 'True',
+				'configuration_description' => 'Do you want to offer UPS shipping?',
+				'set_function' => "zen_cfg_select_option(array('True', 'False'), ",
+			),
 			$this->getModuleKeyTrunk().'_RATES_ACCESS_KEY' => array(
 				'configuration_title' => 'UPS Rates Access Key',
-				'configuration_description' => 'Enter the <a href=\"https://www.ups.com/upsdeveloperkit/requestaccesskey\">XML rates access key</a> assigned to you by UPS',
-				'sort_order' => $i++,
+				'configuration_description' => 'Enter the XML rates access key assigned to you by UPS; see https://www.ups.com/upsdeveloperkit/requestaccesskey ',
 			),
 			$this->getModuleKeyTrunk().'_RATES_USERNAME' => array(
 				'configuration_title' => 'UPS Rates Username',
 				'configuration_description' => 'Enter your UPS Services account username.',
-				'sort_order' => $i++,
 			),
 			$this->getModuleKeyTrunk().'_RATES_PASSWORD' => array(
 				'configuration_title' => 'UPS Rates Password',
 				'configuration_description' => 'Enter your UPS Services account password.',
-				'sort_order' => $i++,
 			),
 			$this->getModuleKeyTrunk().'_SHIPPER_NUMBER' => array(
-				'configuration_title' => 'UPS Rates Shipper Number',
-				'configuration_description' => 'Enter your UPS Services <em>Shipper Number</em>, if you want to receive negotiated rates for your account.',
-				'sort_order' => $i++,
+				'configuration_title' => 'UPS Rates &quot;Shipper Number&quot;',
+				'configuration_description' => 'Enter your UPS Services <em>Shipper Number</em> to receive your  negotiated rates.',
 			),
 			$this->getModuleKeyTrunk().'_OPTIONS' => array(
 				'configuration_title' => 'UPS XML Display Options',
 				'configuration_value' => '--none--',
 				'configuration_description' => 'Select from the following the UPS options.',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_multioption(array('Display weight', 'Display transit time'), "
+				'set_function' => "zen_cfg_select_multioption(array('Display weight', 'Display transit time'), ",
 			),
 			$this->getModuleKeyTrunk().'_DEBUG' => array(
 				'configuration_title' => 'Enable debug?',
 				'configuration_value' => 'false',
 				'configuration_description' => 'Enable the debugging and the file /logs/upsxml.log will be updated each time a quote is requested.',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('true', 'false'),",
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
 			),
 			$this->getModuleKeyTrunk().'_RATES_PICKUP_METHOD' => array(
 				'configuration_title' => 'Pickup Method',
 				'configuration_value' => 'Daily Pickup',
 				'configuration_description' => 'How do you give packages to UPS?',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('Daily Pickup', 'Customer Counter', 'One Time Pickup', 'On Call Air Pickup', 'Letter Center', 'Air Service Center'),",
+				'set_function' => "zen_cfg_select_option(array('Daily Pickup', 'Customer Counter', 'One Time Pickup', 'On Call Air Pickup', 'Letter Center', 'Air Service Center'), ",
 			),
 			$this->getModuleKeyTrunk().'_RATES_PACKAGE_TYPE' => array(
 				'configuration_title' => 'Packaging Type',
 				'configuration_value' => 'Customer Package',
 				'configuration_description' => 'What kind of packaging do you use?',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('Customer Package', 'UPS Letter', 'UPS Tube', 'UPS Pak', 'UPS Express Box', 'UPS 25kg Box', 'UPS 10kg box'),",
+				'set_function' => "zen_cfg_select_option(array('Customer Package', 'UPS Letter', 'UPS Tube', 'UPS Pak', 'UPS Express Box', 'UPS 25kg Box', 'UPS 10kg box'), ",
 			),
 			$this->getModuleKeyTrunk().'_RATES_CUSTOMER_CLASSIFICATION_CODE' => array(
 				'configuration_title' => 'Customer Classification Code',
 				'configuration_value' => '01',
 				'configuration_description' => '00 - Account Rates, 01 - If you are billing to a UPS account and have a daily UPS pickup, 04 - If you are shipping from a retail outlet, 53 - Standard Rates',
-				'sort_order' => $i++,
 			),
 			$this->getModuleKeyTrunk().'_RATES_ORIGIN' => array(
 				'configuration_title' => 'Shipping Origin',
 				'configuration_value' => 'US Origin',
 				'configuration_description' => 'What origin point should be used (this setting affects only what UPS product names are shown to the user)',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('US Origin', 'Canada Origin', 'European Union Origin', 'Puerto Rico Origin', 'Mexico Origin', 'All other origins'),",
+				'set_function' => "zen_cfg_select_option(array('US Origin', 'Canada Origin', 'European Union Origin', 'Puerto Rico Origin', 'Mexico Origin', 'All other origins'), ",
+			),
+			$this->getModuleKeyTrunk().'_RATES_CITY' => array(
+				'configuration_title' => 'Origin City',
+				'configuration_description' => 'Enter the name of the origin city.',
+			),
+			$this->getModuleKeyTrunk().'_RATES_STATEPROV' => array(
+				'configuration_title' => 'Origin State/Province',
+				'configuration_description' => 'Enter the two-letter code for your origin state/province.',
+			),
+			$this->getModuleKeyTrunk().'_RATES_COUNTRY' => array(
+				'configuration_title' => 'Origin Country',
+				'configuration_description' => 'Enter the two-letter code for your origin country.',
+			),
+			$this->getModuleKeyTrunk().'_RATES_POSTALCODE' => array(
+				'configuration_title' => 'Origin Zip/Postal Code',
+				'configuration_description' => 'Enter your origin zip/postalcode.',
 			),
 			$this->getModuleKeyTrunk().'_RATES_MODE' => array(
 				'configuration_title' => 'Test or Production Mode',
 				'configuration_value' => 'Test',
 				'configuration_description' => 'Use this module in Test or Production mode?',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('Test', 'Production'),",
+				'set_function' => "zen_cfg_select_option(array('Test', 'Production'), ",
 			),
 			$this->getModuleKeyTrunk().'_RATES_UNIT_WEIGHT' => array(
 				'configuration_title' => 'Unit Weight',
 				'configuration_value' => 'LBS',
 				'configuration_description' => 'By what unit are your packages weighed?',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('LBS', 'KGS'),",
+				'set_function' => "zen_cfg_select_option(array('LBS', 'KGS'), ",
 			),
 			$this->getModuleKeyTrunk().'_RATES_UNIT_LENGTH' => array(
 				'configuration_title' => 'Unit Length',
 				'configuration_value' => 'IN',
 				'configuration_description' => 'By what unit are your packages sized?',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('IN', 'CM'),",
+				'set_function' => "zen_cfg_select_option(array('IN', 'CM'), ",
 			),
 			$this->getModuleKeyTrunk().'_RATES_QUOTE_TYPE' => array(
 				'configuration_title' => 'Quote Type',
 				'configuration_value' => 'Commercial',
 				'configuration_description' => 'Quote for Residential or Commercial Delivery',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('Commercial', 'Residential'),",
+				'set_function' => "zen_cfg_select_option(array('Commercial', 'Residential'), ",
 			),
 			$this->getModuleKeyTrunk().'_RATES_HANDLING' => array(
 				'configuration_title' => 'Handling Fee',
 				'configuration_value' => '0',
 				'configuration_description' => 'Handling fee for this shipping method.',
-				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_CURRENCY_CODE' => array(
+				'configuration_title' => 'UPS Currency Code',
+				'configuration_value' => '" . DEFAULT_CURRENCY . "',
+				'configuration_description' => 'Enter the 3 letter currency code for your country of origin. United States (USD)',
 			),
 			$this->getModuleKeyTrunk().'_INSURE' => array(
 				'configuration_title' => 'Enable Insurance',
 				'configuration_value' => 'True',
 				'configuration_description' => 'Do you want to insure packages shipped by UPS?',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('True', 'False'),",
+				'set_function' => "zen_cfg_select_option(array('True', 'False'), ",
+			),
+			$this->getModuleKeyTrunk().'_RATES_TAX_CLASS' => array(
+				'configuration_title' => 'Tax Class',
+				'configuration_value' => '0',
+				'configuration_description' => 'Use the following tax class on the shipping fee.',
+				'use_function' => "zen_get_tax_class_title",
+				'set_function' => "zen_cfg_pull_down_tax_classes(,",
+			),
+			$this->getModuleKeyTrunk().'_RATES_ZONE' => array(
+				'configuration_title' => 'Shipping Zone',
+				'configuration_value' => '0',
+				'configuration_description' => 'If a zone is selected, only enable this shipping method for that zone.',
+				'use_function' => "zen_get_zone_class_title",
+				'set_function' => "zen_cfg_pull_down_zone_classes(,",
+			),
+			$this->getModuleKeyTrunk().'_RATES_SORT_ORDER' => array(
+				'configuration_title' => 'Sort order of display.',
+				'configuration_value' => '0',
+				'configuration_description' => 'Sort order of display. Lowest is displayed first.',
 			),
 			$this->getModuleKeyTrunk().'_TYPES' => array(
 				'configuration_title' => 'Shipping Methods',
 				'configuration_value' => 'Next Day Air, 2nd Day Air, Ground, Worldwide Express, Standard, 3 Day Select',
 				'configuration_description' => 'Select the UPS services to be offered.',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_multioption(array('Next Day Air', '2nd Day Air', 'Ground', 'Worldwide Express', 'Worldwide Expedited', 'Standard', '3 Day Select', 'Next Day Air Saver', 'Next Day Air Early', 'Worldwide Express Plus', '2nd Day Air A.M.', 'Express NA1', 'Express Saver'),"
+				'set_function' => "zen_cfg_select_multioption(array('Next Day Air', '2nd Day Air', 'Ground', 'Worldwide Express', 'Worldwide Expedited', 'Standard', '3 Day Select', 'Next Day Air Saver', 'Next Day Air Early', 'Worldwide Express Plus', '2nd Day Air A.M.', 'Express NA1', 'Express Saver'),",
+			),
+			$this->getModuleKeyTrunk().'_SHIPPING_DAYS_DELAY' => array(
+				'configuration_title' => 'Shipping Delay',
+				'configuration_value' => '1',
+				'configuration_description' => 'How many days from when an order is placed to when you ship it (Decimals are allowed). Arrival date estimations are based on this value.',
 			),
 		) );
 	}
