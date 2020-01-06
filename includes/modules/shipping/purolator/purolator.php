@@ -42,8 +42,9 @@ class purolator extends CommercePluginShippingBase {
 
 
 	protected function isEligibleShipper( $pShipHash ) {
-		if( $ret = parent::isEligibleShipper( $pShipHash ) ) {
-			$ret = $pShipHash['shipping_weight_box'] < MODULE_SHIPPING_PUROLATOR_MAXWEIGHT;
+		$ret = array();
+		if( $pShipHash['origin']['countries_iso_code_2'] == 'CA' && $pShipHash['shipping_weight_box'] < MODULE_SHIPPING_PUROLATOR_MAXWEIGHT ) {
+			$ret = parent::isEligibleShipper( $pShipHash );
 		}
 		return $ret;
 	}
@@ -59,15 +60,7 @@ class purolator extends CommercePluginShippingBase {
 	 * @return array of quotation results
 	 */
 	function quote( $pShipHash ) {
-		$ret = array();
-
-		if( $this->isEligibleShipper( $pShipHash ) ) {
-
-			$ret = array( 
-				'id' => $this->code, 
-				'module' => $this->title, 
-				'icon' => $this->icon,
-			);
+		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 
 			if (strlen($pShipHash['destination']['state']) > 2 && $pShipHash['destination']['zone_id'] > 0) {
 				$state_name = zen_get_zone_code($pShipHash['destination']['country_id'], $pShipHash['destination']['zone_id'], '');
@@ -95,9 +88,9 @@ class purolator extends CommercePluginShippingBase {
 				"ReceiverAddress" => array(
 					// "City" => $pShipHash['destination']['city, // removed to stop failures on array returns.
 					"City" => '', // sadly, Puro can return an array for one Postal
-					"Province" => $pShipHash['destination']['province'],
-					"Country" => $pShipHash['destination']['country'],
-					"PostalCode" => $pShipHash['destination']['zip']),
+					"Province" => $pShipHash['destination']['state'],
+					"Country" => $pShipHash['destination']['countries_name'],
+					"PostalCode" => $pShipHash['destination']['postcode']),
 				"PackageType" => $this->packaging,
 				"TotalWeight" => array(
 					"Value" => $pShipHash['shipping_weight_total'], "WeightUnit" => "lb")
@@ -131,8 +124,10 @@ class purolator extends CommercePluginShippingBase {
 				}
 			 */
 			// end error checking module
-			if( !$this->client->fault && $purolatorQuote = $this->_parserResult($this->response) ) {
-				$ret['weight'] = $shippingWeight. ' Lb / '. round( $shippingWeight / 2.2 ) .' Kg';
+			if( $this->client->fault ) {
+				$qutoes = array();
+			} elseif( $purolatorQuote = $this->_parserResult($this->response) ) {
+				$quotes['weight'] = $shippingWeight. ' Lb / '. round( $shippingWeight / 2.2 ) .' Kg';
 					$methods = array();
 				for ($i = 0; $i < sizeof($purolatorQuote); $i++) {
 					list($type, $cost) = each($purolatorQuote[$i]);
@@ -142,17 +137,15 @@ class purolator extends CommercePluginShippingBase {
 					}
 				}
 				if ($this->tax_class > 0) {
-					$ret['tax'] = zen_get_tax_rate($this->tax_class, $pShipHash['destination']['id'], $pShipHash['destination']['zone_id']);
+					$quotes['tax'] = zen_get_tax_rate($this->tax_class, $pShipHash['destination']['id'], $pShipHash['destination']['zone_id']);
 				}
-				$ret['methods'] = $methods;
+				$quotes['methods'] = $methods;
 			} else {
 				$errmsg = tra( 'An unknown error occured with the Purolator shipping calculations.' );
+				$quotes['error'] = $errmsg;
 			}
-
-			$errmsg .= ' '.tra( 'If you prefer to use Purolator as your shipping method, please <a href="mailto:'.STORE_OWNER_EMAIL_ADDRESS.'">send us an email</a>.' );
-			$ret['error'] = $errmsg;
 		}
-		return $ret;
+		return $quotes;
 	} // end function quote
 
 	/*
