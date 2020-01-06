@@ -375,24 +375,4 @@ class canadapost extends CommercePluginShippingBase {
 			),
 		) );
 	}
-
-	/**
-	 * Build array of keys used for installing/managing this module
-	 *
-	 * @return array
-	 */
-	function keys() {
-		return array_merge( parent::keys(), array(
-					'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_STATUS',
-					'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_MAX',
-					'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_CAN',
-					'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_USA',
-					'MODULE_SHIPPING_CANADAPOST_LETTERMAIL_INTL',
-					'MODULE_SHIPPING_CANADAPOST_LANGUAGE',
-					'MODULE_SHIPPING_CANADAPOST_CPCID',
-					'MODULE_SHIPPING_CANADAPOST_TIME',
-					'MODULE_SHIPPING_CANADAPOST_CP_HANDLING',
-					'MODULE_SHIPPING_CANADAPOST_SHIPPING_HANDLING',
-		) );
-	}
 }
