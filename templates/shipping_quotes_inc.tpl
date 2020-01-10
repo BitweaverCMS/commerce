@@ -50,8 +50,8 @@
 								</td>
 							</tr>
 						{/section}
-						</table>
 					{/if}
+					</table>
 				</div>
 			</div>
 		</li>
