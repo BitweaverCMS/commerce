@@ -180,16 +180,14 @@ class zones extends CommercePluginShippingBase {
 						// don't charge per box when done by Price
 						$shipping_cost = ($shipping) + constant('MODULE_SHIPPING_ZONES_HANDLING_' . $dest_zone);
 					}
+					$quotes['methods'][] =	array(
+												'id' => $this->code,
+												'title' => $shipping_method,
+												'cost' => $shipping_cost
+											);
 				}
 			}
 
-			$quotes['methods'][] =	array(
-										array(
-											'id' => $this->code,
-											'title' => $shipping_method,
-											'cost' => $shipping_cost
-										)
-									);
 		}
 
 		return $quotes;

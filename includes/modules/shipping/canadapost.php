@@ -30,7 +30,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
 
 class canadapost extends CommercePluginShippingBase {
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->title			= tra( 'Canada Post' );
 		$this->description		= tra( 'Canada Post Parcel Service <p><strong>CPC Profile Information</strong> can be obtained at https://sellonline.canadapost.ca<br /><a href=https://sellonline.canadapost.ca/servlet/LogonServlet?Language=0 target="_blank">Modify my profile</a></p>' );
@@ -69,7 +69,8 @@ class canadapost extends CommercePluginShippingBase {
 				switch ($pShipHash['destination']['countries_iso_code_2']) {
 					case 'CA':
 						$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_CAN'));
-						$lettermail_service = sprintf("Lettermail: estimated %d-%d business days", round($this->turnaround_time / 24 + 2), round($this->turnaround_time / 24 + 4)); //factor in turnaround time
+						//factor in turnaround time
+						$lettermail_service = sprintf("Lettermail: estimated %d-%d business days", round($this->turnaround_time / 24 + 2), round($this->turnaround_time / 24 + 4)); 
 						break;
 					case 'US':
 						$table_cost = preg_split("/[:,]/", constant('MODULE_SHIPPING_CANADAPOST_LETTERMAIL_USA'));
@@ -129,7 +130,7 @@ class canadapost extends CommercePluginShippingBase {
 		return $quotes;
 	}
 
-	function _canadapostOrigin($postal, $country) {
+	private function _canadapostOrigin($postal, $country) {
 		$this->_canadapostOriginPostalCode = str_replace(' ', '', $postal);
 		$this->_canadapostOriginCountryCode = $country;
 	}
@@ -138,7 +139,7 @@ class canadapost extends CommercePluginShippingBase {
 	 * using HTTP/POST send message to canada post server
 	 * (will timeout after 3 seconds, so that customers aren't left wondering what's going on in case the CP server is slow or down unexpectedly)
 	 */
-	function _sendToHost($data) {
+	private function _sendToHost($data) {
 		$response = FALSE;
 
 		$url  = 'https://' . (MODULE_SHIPPING_CANADAPOST_CPCID == 'CPC_DEMO_XML' ? 'qa-' : '') . 'sellonline.canadapost.ca/sellonline/Rating';
@@ -159,13 +160,14 @@ class canadapost extends CommercePluginShippingBase {
 		if ($errno > 0) {
 			$response = '<?xml version="1.0" ?><eparcel><error><statusMessage>' . tra( 'Cannot reach Canada Post Server. You may reload this page in your browser to try again.' ). ($errno != 0 ? '<br /><strong>' . $errno . ' ' . $error . '</strong>' : '') . '</statusMessage></error></eparcel>';
 		}
+eb( $data, $response );
 		return $response;
 	}
 
 	/**
 	 * assemble and submit quote request
 	 */
-	function _canadapostGetQuote( $pShipHash ) {
+	private function _canadapostGetQuote( $pShipHash ) {
 
 		global $gBitCustomer;
 		$quoteLang = (in_array( $gBitCustomer->getLanguage(), array('en' , 'fr'))) ? $gBitCustomer->getLanguage() : MODULE_SHIPPING_CANADAPOST_LANGUAGE;
@@ -247,7 +249,7 @@ class canadapost extends CommercePluginShippingBase {
 	/**
 	 * Parser XML message returned by canada post server.
 	 */
-	function _parserResult($resultXML) {
+	private function _parserResult($resultXML) {
 		$statusMessage = substr($resultXML, strpos($resultXML, "<statusMessage>") + strlen("<statusMessage>"), strpos($resultXML, "</statusMessage>") - strlen("<statusMessage>") - strpos($resultXML, "<statusMessage>"));
 		//print "message = $statusMessage";
 		$cphandling = substr($resultXML, strpos($resultXML, "<handling>") + strlen("<handling>"), strpos($resultXML, "</handling>") - strlen("<handling>") - strpos($resultXML, "<handling>"));
@@ -291,7 +293,7 @@ class canadapost extends CommercePluginShippingBase {
 	/**
 	 * translate regular ascii chars to xml
 	 */
-	function _xmlentities($string, $quote_style = ENT_QUOTES)
+	private function _xmlentities($string, $quote_style = ENT_QUOTES)
 	{
 		static $trans;
 		if (! isset($trans))
@@ -306,7 +308,7 @@ class canadapost extends CommercePluginShippingBase {
 		return preg_replace("/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,5};)/", "&#38;", strtr($string, $trans));
 	}
 
-	function parsetag($tag, $string)
+	private function parsetag($tag, $string)
 	{
 		$start = strpos($string, "<" . $tag . ">");
 		if (! $start) return FALSE;
