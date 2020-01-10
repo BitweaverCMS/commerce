@@ -36,6 +36,10 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		return $this->getConfig( $this->getModuleKeyTrunk().'_ZONE' );
 	}
 
+	protected function getShipperHandling() {
+		return $this->getConfig( $this->getModuleKeyTrunk().'_HANDLING' );
+	}
+
 	protected function getShippingTax() {
 		$ret = 0;
 		
@@ -79,11 +83,13 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		}
 */
 		$quoteBase = array();
+		$shipperOrigin = $this->getModuleConfigValue( '_ORIGIN_COUNTRY_CODE' );
+		if( $shipperOrigin && $pShipHash['origin']['countries_iso_code_2'] != $shipperOrigin ) {
 
-		if( $this->isEnabled() && !empty( $pShipHash['shipping_weight_total'] ) ) {
+		} elseif( $this->isEnabled() && !empty( $pShipHash['shipping_weight_total'] ) ) {
 			$pass = TRUE;
 			// Check to see if shipping module is zone silo'ed
-			if( ($shipperZone = $this->getShipperZone()) && !$freeShipping && $ret = !empty( $pShipHash['destination'] ) && !empty( $pShipHash['origin'] ) ) {
+			if( ($shipperZone = $this->getShipperZone()) && !$freeShipping && !empty( $pShipHash['destination'] ) && !empty( $pShipHash['origin'] ) ) {
 				if( is_null( $this->mShipZones ) ) {
 					// cache mShipZones in memory
 					$this->mShipZones = $this->mDb->getCol( "SELECT `zone_id` FROM " . TABLE_ZONES_TO_GEO_ZONES . " WHERE `geo_zone_id` = ? ORDER BY `zone_id`", array( $shipperZone ), FALSE, BIT_QUERY_CACHE_TIME );
@@ -143,6 +149,12 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 				'configuration_description' => 'The handling cost for all orders using this shipping method.',
 				'sort_order' => $i++,
 				'configuration_value' => '0',
+			),
+			$this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE' => array(
+				'configuration_title' => 'Shipper Origin Country Code',
+				'configuration_description' => 'The ISO-2 Country Code for shipper if is it limited to a single country, like USPS, CanadaPost, etc.',
+				'sort_order' => $i++,
+				'configuration_value' => '',
 			),
 			$this->getModuleKeyTrunk().'_ZONE' => array(
 				'configuration_title' => 'Shipping Zone',

@@ -13,6 +13,9 @@
 								{if $quotes[ix].note}
 									<p class="help-block">{$quotes[ix].note}</p>
 								{/if}
+								{if $quotes[ix].origin}
+									Ships from {$quotes[ix].origin.countries_name}
+								{/if}
 								{formfeedback error=$quotes[ix].error}
 							</th>
 							<th class="col-xs-3">

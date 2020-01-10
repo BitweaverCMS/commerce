@@ -43,7 +43,7 @@ class purolator extends CommercePluginShippingBase {
 
 	protected function isEligibleShipper( $pShipHash ) {
 		$ret = array();
-		if( $pShipHash['origin']['countries_iso_code_2'] == 'CA' && $pShipHash['shipping_weight_box'] < MODULE_SHIPPING_PUROLATOR_MAXWEIGHT ) {
+		if( $pShipHash['shipping_weight_box'] < MODULE_SHIPPING_PUROLATOR_MAXWEIGHT ) {
 			$ret = parent::isEligibleShipper( $pShipHash );
 		}
 		return $ret;
@@ -204,7 +204,7 @@ class purolator extends CommercePluginShippingBase {
 
 	protected function config() {
 		$i = 3;
-		return array_merge( parent::config(), array( 
+		$ret = array_merge( parent::config(), array( 
 			$this->getModuleKeyTrunk().'_SERVERURI' => array(
 				'configuration_title' => 'Enter Purolator datatypes URI',
 				'configuration_value' => 'http://purolator.com/pws/datatypes/v1',
@@ -257,5 +257,8 @@ class purolator extends CommercePluginShippingBase {
 				'sort_order' => $i++,
 			),
 		) );
+		// set some default values
+		$ret[$this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE']['configuration_value'] = 'CA';
+		return $ret;
 	}
 } //end class purolator

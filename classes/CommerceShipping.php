@@ -43,7 +43,7 @@ class CommerceShipping extends BitSingleton {
 	}
 	
 	function quote( $pOrderBase, $method = '', $module = '' ) {
-		global $currencies;
+		global $currencies, $gCommerceSystem;
 
 		$quotes_array = array();
 
@@ -56,6 +56,7 @@ class CommerceShipping extends BitSingleton {
 			$shipHash['box_length'] = NULL;
 			$shipHash['box_height'] = NULL;
 			$shipHash['box_girth'] = NULL;
+			$shipHash['weight_unit'] = $gCommerceSystem->getConfig( 'STORE_WEIGHT_UNIT' );
 
 //				"('Shipping Delay', 'SHIPPING_DAYS_DELAY', '1', 'How many days from when an order is placed to when you ship it (Decimals are allowed). Arrival date estimations are based on this value.', 6, 7, NULL, NULL, now())",
 //			'SHIPPING_DAYS_DELAY',
@@ -92,6 +93,7 @@ class CommerceShipping extends BitSingleton {
 										$quotes['methods'][$j]['format_add_tax'] = $currencies->format( $quotes['methods'][$j]['cost_add_tax'] );
 									}
 								}
+								$quotes['origin'] = $shipHash['origin'];
 							}
 							$quotes_array[] = $quotes;
 						}

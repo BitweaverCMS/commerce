@@ -100,7 +100,7 @@ class usps extends CommercePluginShippingBase {
 			// weight must be less than 35lbs and greater than 6 ounces or it is not machinable
 			$destCountryCode = $this->verifyCountryCode( $pShipHash['destination']['countries_iso_code_2'] );
 			switch(true) {
-// force machinable for $0.49 remove the false && from the first case
+				// force machinable for $0.49 remove the false && from the first case
 				case (false && ($destCountryCode == 'US' && ($this->pounds == 0 and $this->ounces <= 1))):
 					// override admin choice too light
 					$this->machinable = 'True';
