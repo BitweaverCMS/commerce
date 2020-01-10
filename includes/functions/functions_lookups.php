@@ -83,17 +83,22 @@ function zen_get_countries( $pCountryMixed = '' ) {
     if (zen_not_null($pCountryMixed)) {
     	if( is_numeric( $pCountryMixed ) ) {
     		$whereSql = ' WHERE `countries_id` = ? ';
-		} elseif( $length == 3 ) {
-    		$pCountryMixed = strtoupper( $pCountryMixed );
-    		$whereSql = ' WHERE UPPER( `countries_iso_code_3` ) = ? ';
-		} elseif( $length == 2 ) {
-    		$pCountryMixed = strtoupper( $pCountryMixed );
-    		$whereSql = ' WHERE UPPER( `countries_iso_code_2` ) = ? ';
-    	} else {
-    		$pCountryMixed = strtoupper( $pCountryMixed );
-    		$whereSql = ' WHERE UPPER( `countries_name` ) = ? ';
-    	}
-		$bindVars = array( $pCountryMixed );
+		} elseif( is_string( $pCountryMixed ) ) {
+			$length = strlen( $pCountryMixed );
+			if( $length == 3 ) {
+				$pCountryMixed = strtoupper( $pCountryMixed );
+				$whereSql = ' WHERE UPPER( `countries_iso_code_3` ) = ? ';
+			} elseif( $length == 2 ) {
+				$pCountryMixed = strtoupper( $pCountryMixed );
+				$whereSql = ' WHERE UPPER( `countries_iso_code_2` ) = ? ';
+			} else {
+				$pCountryMixed = strtoupper( $pCountryMixed );
+				$whereSql = ' WHERE UPPER( `countries_name` ) = ? ';
+			}
+		}
+		if( !empty( $whereSql ) ) {
+			$bindVars = array( $pCountryMixed );
+		}
 	}
 
 	$countries = "SELECT * FROM " . TABLE_COUNTRIES . " $whereSql ORDER BY `countries_name`";

@@ -56,16 +56,15 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			foreach( $products as $basketId=>$basketProduct ) {
 				$this->contents[$basketProduct['products_key']] = $basketProduct;
 
-				$query = "SELECT cba.`products_options_id`||'='||cba.`products_options_values_id` AS `hash_key`, cba.`products_options_id`, cba.`products_options_values_id`, cba.`products_options_value_text`
+				$query = "SELECT cba.`products_options_id`||'='||cba.`products_options_values_id` AS `hash_key`, cba.`products_options_id`, cba.`products_options_values_id`, cba.`products_options_value_text`, cpa.`products_options_values_name`
 						  FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " cba
 							INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON ( cba.products_options_values_id=cpa.products_options_values_id )
 							LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " cpo ON( cba.products_options_id=cpo.products_options_id )
 						  WHERE cba.`customers_basket_id` = ?
 						  ORDER BY cpo.`products_options_sort_order`, cpa.`products_options_sort_order`";
-				if( $attributes = $this->mDb->getAssoc( $query, array( $basketId ) ) ) {
-					foreach( $attributes as $productsOptionsKey=>$attribute ) {
-						$this->contents[$basketProduct['products_key']]['attributes'][$productsOptionsKey] = $attribute['products_options_values_id'];
-						$this->contents[$basketProduct['products_key']]['attributes_values'][$productsOptionsKey] = $attribute['products_options_value_text'];
+				if( $this->contents[$basketProduct['products_key']]['attributes'] =  $this->mDb->getAssoc( $query, array( $basketId ) ) ) {
+					foreach( $this->contents[$basketProduct['products_key']]['attributes'] as $productsOptionsKey=>$attribute ) {
+						$this->contents[$basketProduct['products_key']]['attributes_values'][$productsOptionsKey] = $attribute['products_options_values_id'];
 					}
 				}
 			}
@@ -404,7 +403,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$prid = $product->mProductsId;
 
 			$productHash = $product->mInfo;
-			$productHash['attributes'] = $this->getParameter( $this->contents[$pProductsKey], 'attributes' );
+			$productHash['attributes'] = $this->contents[$pProductsKey]['attributes'];
 			$productHash['attributes_values'] = $this->getParameter( $this->contents[$pProductsKey], 'attributes_values' );
 			// this is the stock quantity coming out of mInfo
 			unset( $productHash['products_quantity'] );

@@ -23,6 +23,7 @@ abstract class CommerceOrderBase extends BitBase {
 	protected $mOtProcessModules = array();
 
 	abstract public function getDelivery();
+	abstract public function getProductHash( $pProductsKey );
 	abstract public function calculate( $pForceRecalculate=FALSE );
 
 	// can take a productsKey or a straight productsId
@@ -110,10 +111,6 @@ abstract class CommerceOrderBase extends BitBase {
 		return $this->free_shipping_weight;
 	}
 
-	public function getProductHash( $pProductsKey ) {
-		return BitBase::getParameter( $this->contents, $pProductsKey );
-	}
-
 	public function getShippingDestination( $pCountryIso2 = '', $pPostalCode = '' ) {
 		$ret = array();
 
@@ -139,7 +136,7 @@ abstract class CommerceOrderBase extends BitBase {
 				}
 			}
 			if( !empty( $fulfiller->mErrors ) ) {
-				$feedback[$fulfillmentKey][$ordersProductKey]['error'][] = $fulfiller->mErrors;
+				$feedback[$fulfillmentKey]['error'][] = $fulfiller->mErrors;
 			}
 		}
 
@@ -151,7 +148,8 @@ abstract class CommerceOrderBase extends BitBase {
 			}
 		}
 
-		return $ret;
+		uasort( $fulfillmentPriority, 'commerce_order_sort_fulfillers' );
+		return current( $fulfillmentPriority );
 	}
 
 	/**
@@ -365,4 +363,11 @@ abstract class CommerceOrderBase extends BitBase {
 		return round( $totalDue, $round );
 	}
 
+}
+
+function commerce_order_sort_fulfillers( $a, $b ) {
+	    if ($a['priority'] == $b) {
+        return 0;
+    }
+    return ($a < $b) ? -1 : 1;
 }

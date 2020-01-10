@@ -29,11 +29,13 @@
 			<div class="col-xs-8 col-sm-6"><a href="{$product->getDisplayUrl()}"><span class="cartproductname">{$product->getTitle()}</span></a>
 				{if $basket.attributes}
 					<ul class="list-unstyled">
-					{foreach from=$basket.attributes key=optionKey item=valueId}
-						{assign var=option value=$product->getOptionValue('',$valueId)}
+					{foreach from=$basket.attributes key=optionKey item=$attrHash}
 						<li>
-							{$option.products_options_values_name}
-							{if $basket.attributes_values.$optionKey}<div class="alert alert-info">{$basket.attributes_values.$optionKey}</div>{/if}
+							{if $attrHash.products_options_value_text}
+								<div class="alert alert-info"><strong>{$attrHash.products_options_values_name}:</strong> {$attrHash.products_options_value_text}</div>
+							{else}
+								{$attrHash.products_options_values_name}
+							{/if}
 						</li>
 					{/foreach}
 					</ul>

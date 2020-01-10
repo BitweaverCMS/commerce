@@ -60,24 +60,57 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		return $gCommerceSystem->getConfig( 'MODULE_'.$this->mModuleKey.'_'.strtoupper( $this->code ).'_DEFAULT_PRIORITY', 0.0 );
 	}
 
+	protected function canDeliver( $pDeliveryHash ) {
+		$ret = FALSE;
+		if( $origin = $this->getShippingOrigin() ) {
+			$ret = $origin['countries_iso_code_2'] ==  $pDeliveryHash['countries_iso_code_2'];
+		}
+		return $ret;
+	}
+
 	public function getFulfillment( $pOrderBase ) {
 		$ret = array();
-		if( $completion = $this->getOrderCompletion( $pOrderBase ) ) {
-			$delivery = $pOrderBase->getDelivery();
+		$delivery = $pOrderBase->getDelivery();
+		$origin = $this->getShippingOrigin();
+
+		if( $this->canDeliver( $delivery ) && $completion = $this->getOrderCompletion( $pOrderBase ) ) {
 			if( $origin['countries_iso_code_2'] == $delivery['countries_iso_code_2'] ) {
 				$ret = $origin;
 				$ret['order_completion'] = $completion;
 				$ret['priority'] = $this->getPriority( $pOrderBase );
 			}
 		}
-vvd( $this->code, $ret );
+
+		return $ret;
+	}
+
+	function isIntraCountry( $pOrderBase ) {
+		global $gCommerceSystem;
+		//default is same as the store
+		$origin = $this->getShippingOrigin();
+		$delivery = $pOrderBase->getDelivery();
+		$ret = ($origin['countries_iso_code_2'] == $delivery['countries_iso_code_2']);
+		if( !$ret ) {
+			if( $orderCountry['countries_iso_code_3'] == 'PRI' || $orderCountry['countries_iso_code_3'] == 'VIR' || $orderCountry['countries_iso_code_3'] == 'UMI' ) {
+				$storeCountry = zen_get_countries( $storeCountryId );
+				if( $storeCountry['countries_iso_code_3'] == 'USA' ) {
+					$ret = TRUE;
+				}
+			}
+			 
+		}
 		return $ret;
 	}
 
 	protected function getShippingOrigin() {
 		global $gCommerceSystem;
 
-		if( $storeCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY' ) ) {
+		if( !($fulfillmentCountryId = $gCommerceSystem->getConfig( $this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE' ) ) ) {
+			if( $ret = zen_get_countries( $storeCountryId ) ) {
+				if( $ret['postcode'] = $gCommerceSystem->getConfig( '_ORIGIN_POSTAL_CODE' ) ) {
+				}
+			}
+		} if( $storeCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY' ) ) {
 			if( $ret = zen_get_countries( $storeCountryId ) ) {
 				if( $ret['postcode'] = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_ZIP' ) ) {
 				}

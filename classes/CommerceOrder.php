@@ -52,6 +52,10 @@ class order extends CommerceOrderBase {
 		return $this->delivery;
 	}
 
+	public function getProductHash( $pProductsKey ) {
+		return BitBase::getParameter( $this->contents, $pProductsKey );
+	}
+
 	// Called at various times. This function calulates the total value of the order that the
 	// credit will be appled aginst. This varies depending on whether the credit class applies
 	// to shipping & tax
@@ -348,21 +352,22 @@ class order extends CommerceOrderBase {
 									 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
 									 WHERE `orders_id` = ? AND `orders_products_id` = ?
 									 ORDER BY `orders_products_id`";
-				$attributes = $this->mDb->query( $attributes_query, array( $this->mOrdersId, $orders_products->fields['orders_products_id'] ) );
+				$attributes = $this->mDb->getArray( $attributes_query, array( $this->mOrdersId, $orders_products->fields['orders_products_id'] ) );
 				if ($attributes->RecordCount()) {
 					while (!$attributes->EOF) {
-						$this->contents[$productsKey]['attributes'][] = array( 'options_id' => $attributes->fields['products_options_id'],
-																				'options_values_id' => $attributes->fields['products_options_values_id'],
-																				'option' => $attributes->fields['products_options'],
-																				'value' => $attributes->fields['products_options_values'],
-																				'prefix' => $attributes->fields['price_prefix'],
+						$this->contents[$productsKey]['attributes'][] = array( 'products_options_id' => $attributes->fields['products_options_id'],
+																				'products_options_values_id' => $attributes->fields['products_options_values_id'],
+																				'products_options' => $attributes->fields['products_options'],
+																				'products_options_values' => $attributes->fields['products_options_values'],
+																				'price_prefix' => $attributes->fields['price_prefix'],
 																				'final_price' => $this->getOrderAttributePrice( $attributes->fields, $this->contents[$productsKey] ),
-																				'price' => $attributes->fields['options_values_price'],
+																				'price' => $attributes->fields['products_options_values_price'],
 																				'orders_products_attributes_id' => $attributes->fields['orders_products_attributes_id'] );
 
 						$attributes->MoveNext();
 					}
 				}
+eb( "Fix 'attributes' keys", $attributes );
 
 				$this->info['tax_groups']["{$this->contents[$productsKey]['tax']}"] = '1';
 
@@ -427,7 +432,7 @@ class order extends CommerceOrderBase {
 					$productAttributes = array();
 					if( !empty( $this->contents[$productsKey]['attributes'] ) ) {
 						foreach( $this->contents[$productsKey]['attributes'] as $attribute ) {
-							$productAttributes[$attribute['options_id']] = $attribute['options_values_id'];
+							$productAttributes[$attribute['products_options_id']] = $attribute['products_options_values_id'];
 						}
 					}
 
@@ -724,13 +729,13 @@ class order extends CommerceOrderBase {
 						$attrValue .= ' <div class="alert alert-info">'. $this->contents[$cartItemKey]['attributes_values'][$optionKey] . '</div>';
 					}
 
-					$this->contents[$cartItemKey]['attributes'][$subindex] = array('option' => $optionValues['products_options_name'],
-																			 'value' => $attrValue,
-																			 'options_id' => $optionId,
-																			 'options_values_id' => $value,
-																			 'value_id' => $value,
-																			 'prefix' => $optionValues['price_prefix'],
-																			 'price' => $optionValues['options_values_price']);
+					$this->contents[$cartItemKey]['attributes'][$subindex] = array(  'products_options_name' => $optionValues['products_options_name'],
+																					 'value' => $attrValue,
+																					 'products_options_id' => $optionId,
+																					 'products_options_values_id' => $value,
+																					 'value_id' => $value,
+																					 'price_prefix' => $optionValues['price_prefix'],
+																					 'options_values_price' => $optionValues['options_values_price']);
 
 					$subindex++;
 				}
@@ -1012,7 +1017,7 @@ class order extends CommerceOrderBase {
 			if( !empty($this->contents[$cartItemKey]['attributes']) ) {
 				$attributes_exist = '1';
 				foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j ) {
-					$optionValues = zen_get_option_value( (int)$this->contents[$cartItemKey]['attributes'][$j]['options_id'], (int)$this->contents[$cartItemKey]['attributes'][$j]['value_id'] );
+					$optionValues = zen_get_option_value( (int)$this->contents[$cartItemKey]['attributes'][$j]['products_options_id'], (int)$this->contents[$cartItemKey]['attributes'][$j]['value_id'] );
 					if( !empty( $optionValues['purchase_group_id'] ) ) {
 						$gBitUser->addUserToGroup( $gBitUser->mUserId, $optionValues['purchase_group_id'] );
 					}
@@ -1029,7 +1034,6 @@ class order extends CommerceOrderBase {
 												'price_prefix' => $optionValues['price_prefix'],
 												'product_attribute_is_free' => $optionValues['product_attribute_is_free'],
 												'products_attributes_wt' => $optionValues['products_attributes_wt'],
-												'products_attributes_wt_pfix' => $optionValues['products_attributes_wt_pfix'],
 												'attributes_discounted' => (int)$optionValues['attributes_discounted'],
 												'attributes_price_base_inc' => (int)$optionValues['attributes_price_base_inc'],
 												'attributes_price_onetime' => $optionValues['attributes_price_onetime'],
