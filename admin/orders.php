@@ -110,7 +110,6 @@ if( !empty( $order ) ) {
 				price_prefix,
 				product_attribute_is_free,
 				products_attributes_wt,
-				products_attributes_wt_pfix,
 				attributes_discounted,
 				attributes_price_base_inc,
 				attributes_price_onetime,

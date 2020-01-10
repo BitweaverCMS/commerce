@@ -67,7 +67,7 @@
 
 /*
                           pa.options_values_price, pa.price_prefix,
-                          pa.products_options_sort_order, pa.product_attribute_is_free, pa.products_attributes_wt, pa.products_attributes_wt_pfix,
+                          pa.products_options_sort_order, pa.product_attribute_is_free, pa.products_attributes_wt,
                           pa.attributes_default, pa.attributes_discounted, pa.attributes_image
 */
 
@@ -164,7 +164,7 @@
 
 // collect weight information if it exists
           if ((SHOW_PRODUCT_FREE_SHIPPING_INFO_WEIGHT_ATTRIBUTES=='1' and $products_options->fields['products_attributes_wt'] != '0')) {
-            $products_options_display_weight = ' (' . $products_options->fields['products_attributes_wt_pfix'] . round($products_options->fields['products_attributes_wt'],2) . TEXT_PRODUCT_WEIGHT_UNIT . ')';
+            $products_options_display_weight = ' (' . round($products_options->fields['products_attributes_wt'],2) . TEXT_PRODUCT_WEIGHT_UNIT . ')';
             $products_options_array[sizeof($products_options_array)-1]['text'] .= $products_options_display_weight;
           } else {
             // reset

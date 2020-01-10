@@ -125,15 +125,7 @@
 	{legend legend="Attribute Weights"}
 		<div class="form-group">
 			{formlabel label="Weight"}
-			<div class="input-group">
-				<span class="input-group-addon pt-0" style="width:75px">
-					<select class="form-control input-xs" name="products_attributes_wt_pfix">
-						<option value="+"> + </option>
-						<option value="-" {if $editValue.products_attributes_wt_pfix == '-'}selected{/if}> - </option>
-					</select>
-				</span>
-<input type="text" class="form-control" name="products_attributes_wt" value="{$editValue.products_attributes_wt}"/>
-			</div>
+			<div class="form-input"><input type="text" class="form-control" name="products_attributes_wt" value="{$editValue.products_attributes_wt}"/></div>
 		</div>
 	{/legend}
 
