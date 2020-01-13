@@ -369,5 +369,5 @@ function commerce_order_sort_fulfillers( $a, $b ) {
 	    if ($a['priority'] == $b) {
         return 0;
     }
-    return ($a < $b) ? -1 : 1;
+    return ($a < $b) ? 1 : -1;
 }
