@@ -182,9 +182,10 @@ eb( $products );
 					foreach ($response->RateReplyDetails as $rateReply) {
 						if( array_key_exists( $rateReply->ServiceType, $this->types ) && ( empty( $pShipHash['method'] ) || (str_replace('_', '', $rateReply->ServiceType) == $pShipHash['method']) ) ) {
 							$cost = NULL;
+
 							if(MODULE_SHIPPING_FEDEXWEBSERVICES_RATES=='LIST') {
 								foreach($rateReply->RatedShipmentDetails as $ShipmentRateDetail) {
-									if($ShipmentRateDetail->ShipmentRateDetail->RateType=='PAYOR_LIST_PACKAGE') {
+									if( strpos( $ShipmentRateDetail->ShipmentRateDetail->RateType, 'PAYOR_LIST_' ) === 0 ) {
 										$cost = $ShipmentRateDetail->ShipmentRateDetail->TotalNetCharge->Amount;
 										$cost = (float)round(preg_replace('/[^0-9.]/', '',	$cost), 2);
 									}

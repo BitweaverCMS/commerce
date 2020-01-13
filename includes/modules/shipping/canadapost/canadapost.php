@@ -79,19 +79,24 @@ class canadapost extends CommercePluginShippingBase {
 			$xml = simplexml_load_string('<root>' . preg_replace('/<\?xml.*\?>/','',$canadapostQuote) . '</root>');
 
 			$quotes['error'] = '';
-
 			if ($xml->{'price-quotes'} ) {
 				$priceQuotes = $xml->{'price-quotes'}->children('http://www.canadapost.ca/ws/ship/rate-v4');
 				if( $priceQuotes->{'price-quote'} ) {
 					foreach ( $priceQuotes as $priceQuote ) {  
-						$methods[] = array('id' => $priceQuote->{'service-code'}, 'title' => $priceQuote->{'service-name'} , 'cost' => (float)$priceQuote->{'price-details'}->{'due'} + (float)$this->getShipperHandling());
+						$methods[] = array(
+										'id' => $priceQuote->{'service-code'}, 
+										'title' => $priceQuote->{'service-name'} , 
+										'cost' => (float)$priceQuote->{'price-details'}->{'due'} + (float)$this->getShipperHandling(),
+										'delivery_date' => $priceQuote->{'service-standard'}->{'expected-delivery-date'},
+									);
 					}
 				}
 			} else {
 				$quotes['error'] .= 'Failed loading XML' . $curl_response . "<ul>";
 				foreach(libxml_get_errors() as $error) {
-					$quotes['error'] .= "\t" . $error->message;
+					$quotes['error'] .= '<li>' . $error->message . '</li>';
 				}
+				$quotes['error'] .= '</ul>';
 			}
 			if ($xml->{'messages'} ) {					
 				$messages = $xml->{'messages'}->children('http://www.canadapost.ca/ws/messages');		
