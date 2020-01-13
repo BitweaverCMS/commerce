@@ -35,16 +35,12 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		return $this->getModuleConfigValue( '_FINAL_ORDER_STATUS_ID' );
 	}
 
-	protected function canFulfillOrder( $pOrderBase ) {
-		$ret = FALSE;
-		$delivery = $pOrderBase->getDelivery();
-		if( $delivery['countries_iso_code_2'] ) {
-		}
-		return $ret;
+	protected function getOrignCountryCode() {
+		return $this->getModuleConfigValue( '_ORIGIN_COUNTRY_CODE' );
 	}
 
-	protected function getFulfillmentCountryCode() {
-		
+	protected function getDefaultPriority() {
+		return $this->getModuleConfigValue( '_DEFAULT_PRIORITY', 0.0 );
 	}
 
 	// Intended to be overridden
@@ -55,30 +51,38 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 
 	// Intended to be overridden
 	// Generic priority is the lowest of 0. Higher the more preferred, no upper limit
-	function getPriority( $pOrderBase ) {
-		global $gCommerceSystem;
-		return $gCommerceSystem->getConfig( 'MODULE_'.$this->mModuleKey.'_'.strtoupper( $this->code ).'_DEFAULT_PRIORITY', 0.0 );
+	function getPriority( $pOrderBase, $pCompletionHash ) {
+		$ret = $this->getDefaultPriority();
+		if( $this->isIntraCountry( $pOrderBase ) ) {
+			$ret++;
+		}
+		$ret += count( $pCompletionHash );
+		return $ret;
 	}
 
+	/**
+	Determine if this fulfiller can deliver to the order delivery address
+	*/
 	protected function canDeliver( $pDeliveryHash ) {
-		$ret = FALSE;
-		if( $origin = $this->getShippingOrigin() ) {
-			$ret = $origin['countries_iso_code_2'] ==  $pDeliveryHash['countries_iso_code_2'];
+		$allowedDestCodes = $this->getModuleConfigValue( '_DESTINATION_COUNTRY_CODES' );
+		$ret = ($allowedDestCodes == 'ALL');
+		if( !$ret ) {
+			// if we can't go to ALL countries, see if our delivery code matches or origin
+			$ret = (stripos( $allowedDestCodes, $pDeliveryHash['countries_iso_code_2'] ) !== FALSE);
 		}
-		return $ret;
+		return (bool)$ret;
 	}
 
 	public function getFulfillment( $pOrderBase ) {
 		$ret = array();
 		$delivery = $pOrderBase->getDelivery();
-		$origin = $this->getShippingOrigin();
 
 		if( $this->canDeliver( $delivery ) && $completion = $this->getOrderCompletion( $pOrderBase ) ) {
-			if( $origin['countries_iso_code_2'] == $delivery['countries_iso_code_2'] ) {
-				$ret = $origin;
-				$ret['order_completion'] = $completion;
-				$ret['priority'] = $this->getPriority( $pOrderBase );
-			}
+			$ret = $this->getShippingOrigin();
+			$ret['code'] = $this->code;
+			$ret['products'] = $completion;
+			$ret['completion'] = count( $completion ) / count( $pOrderBase->contents );
+			$ret['priority'] = $this->getPriority( $pOrderBase, $ret['completion'] );
 		}
 
 		return $ret;
@@ -87,17 +91,15 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 	function isIntraCountry( $pOrderBase ) {
 		global $gCommerceSystem;
 		//default is same as the store
-		$origin = $this->getShippingOrigin();
+		$originCode = $this->getOrignCountryCode();
 		$delivery = $pOrderBase->getDelivery();
-		$ret = ($origin['countries_iso_code_2'] == $delivery['countries_iso_code_2']);
-		if( !$ret ) {
-			if( $orderCountry['countries_iso_code_3'] == 'PRI' || $orderCountry['countries_iso_code_3'] == 'VIR' || $orderCountry['countries_iso_code_3'] == 'UMI' ) {
+		if( !($ret = ($originCode == $delivery['countries_iso_code_2']) ) ) {
+			if( $delivery['countries_iso_code_3'] == 'PRI' || $delivery['countries_iso_code_3'] == 'VIR' || $delivery['countries_iso_code_3'] == 'UMI' ) {
 				$storeCountry = zen_get_countries( $storeCountryId );
 				if( $storeCountry['countries_iso_code_3'] == 'USA' ) {
 					$ret = TRUE;
 				}
 			}
-			 
 		}
 		return $ret;
 	}
