@@ -117,7 +117,7 @@ ul.products li .thumb { padding-right:20px; }
 .row.ot_total	{ padding-bottom:20px; border-top:1px solid #dddddd; }
 
 #shippingquotes img.shipper-logo {max-height:90px;}
-#shippingquotes th {vertical-align:bottom;border:none;font-weight:normal;}
+#shippingquotes .row.quote { border-top:1px solid #dedede; padding-top: 5px;}
 
 /*Checkout CSS Bar*/
 .shopping-cart .cart-item {border-bottom:0px solid transparent; }

@@ -84,7 +84,10 @@ class fedexwebservices extends CommercePluginShippingBase {
 			$request['Version'] = array('ServiceId' => 'crs', 'Major' => '10', 'Intermediate' => '0', 'Minor' => '0');
 			$request['ReturnTransitAndCommit'] = true;
 			$request['RequestedShipment']['DropoffType'] = $this->_setDropOff(); // valid values REGULAR_PICKUP, REQUEST_COURIER, ...
-			$request['RequestedShipment']['ShipTimestamp'] = date('c');
+			$shipDate = new DateTime( $this->getShippingDate( $pShipHash ) );
+			$shipDate->add( new DateInterval( 'PT'.(int)($this->getShippingCutoffTime( $pShipHash )/100).'H') );
+			$mp = $this->getShippingDate( $pShipHash );
+			$request['RequestedShipment']['ShipTimestamp'] = $shipDate->format('c');
 			//if (zen_not_null($method) && in_array($method, $this->types)) {
 				//$request['RequestedShipment']['ServiceType'] = $method; // valid values STANDARD_OVERNIGHT, PRIORITY_OVERNIGHT, FEDEX_GROUND, ...
 			//}
@@ -182,7 +185,6 @@ eb( $products );
 					foreach ($response->RateReplyDetails as $rateReply) {
 						if( array_key_exists( $rateReply->ServiceType, $this->types ) && ( empty( $pShipHash['method'] ) || (str_replace('_', '', $rateReply->ServiceType) == $pShipHash['method']) ) ) {
 							$cost = NULL;
-
 							if(MODULE_SHIPPING_FEDEXWEBSERVICES_RATES=='LIST') {
 								foreach($rateReply->RatedShipmentDetails as $ShipmentRateDetail) {
 									if( strpos( $ShipmentRateDetail->ShipmentRateDetail->RateType, 'PAYOR_LIST_' ) === 0 ) {
@@ -213,11 +215,42 @@ eb( $products );
 								case 'INTERNATIONAL_ECONOMY':
 									$deliveryDays = '2-7 Business Days'; break;
 							}
+					
+							if( !empty( $rateReply->DeliveryTimestamp ) ) {
+								$deliveryDate = $rateReply->DeliveryTimestamp;
+							} elseif( !empty( $rateReply->TransitTime ) ) {
+								$transitDays = 0;
+								switch( $rateReply->TransitTime ) {
+									case 'ONE_DAY':
+										$transitDays = 1;
+										break;
+									case 'TWO_DAYS':
+										$transitDays = 2;
+										break;
+									case 'THREE_DAYS':
+										$transitDays = 3;
+										break;
+									case 'FOUR_DAYS':
+										$transitDays = 4;
+										break;
+									case 'FIVE_DAYS':
+										$transitDays = 5;
+										break;
+									default:
+										$transitDays = 0;
+								}
+								if( $transitDays ) {
+									$shipDate = new DateTime( $this->getShippingDate( $pShipHash ) );
+									$shipDate->add( new DateInterval( 'P'.$transitDays.'D') );
+									$deliveryDate = $shipDate->format( 'Y-m-d' );
+								}
+							}
 							$methods[] = array(	'id' => str_replace('_', '', $rateReply->ServiceType),
 												'title' => ucwords(strtolower(str_replace('_', ' ', $rateReply->ServiceType))),
 												'cost' => $cost + (strpos($this->types[$rateReply->ServiceType]['handling_fee'], '%') ? ($cost * (float)$this->types[$rateReply->ServiceType]['handling_fee'] / 100) : (float)$this->types[$rateReply->ServiceType]['handling_fee']),
 												'code' => $this->types[$rateReply->ServiceType]['code'],
 												'transit_time' => $deliveryDays,
+												'delivery_date' => $deliveryDate,
 											  );
 						}
 					}

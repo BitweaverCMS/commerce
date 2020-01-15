@@ -61,7 +61,6 @@ class CommerceShipping extends BitSingleton {
 //				"('Shipping Delay', 'SHIPPING_DAYS_DELAY', '1', 'How many days from when an order is placed to when you ship it (Decimals are allowed). Arrival date estimations are based on this value.', 6, 7, NULL, NULL, now())",
 //			'SHIPPING_DAYS_DELAY',
 			if( ($shipHash['destination'] = $pOrderBase->getShippingDestination()) && ($shipHash['origin'] = $pOrderBase->getShippingOrigin()) ) {
-
 				$shipHash['shipping_value'] = $pOrderBase->getShipmentValue();
 
 				// Stuff from ancient ZenCart, probably still works

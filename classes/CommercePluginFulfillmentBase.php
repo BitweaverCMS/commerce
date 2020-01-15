@@ -43,6 +43,10 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		return $this->getModuleConfigValue( '_DEFAULT_PRIORITY', 0.0 );
 	}
 
+	protected function getFulfillmentDays( $pOrder ) {
+		return $this->getModuleConfigValue( '_FULFILLMENT_DAYS', 5 );
+	}
+
 	// Intended to be overridden
 	// returns fraction 0..1 of the order that can be fulfilled through this plugin. Default 0.0 says none of the order can be fulfilled, 1.0 says entire order can be fulfilled
 	protected function getOrderCompletion( $pOrderBase ) {
@@ -83,9 +87,42 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 			$ret['products'] = $completion;
 			$ret['completion'] = count( $completion ) / count( $pOrderBase->contents );
 			$ret['priority'] = $this->getPriority( $pOrderBase, $ret['completion'] );
+			$ret['ship_date'] = $this->getEstimatedShipDate( $pOrderBase );
 		}
 
 		return $ret;
+	}
+
+	function getEstimatedShipDate( $pOrderBase ) {
+		$shipString = '';
+		$holidays = BitDate::getHolidays();
+
+		if( $manfTime = $this->getFulfillmentDays( $pOrderBase ) ) {
+			$delay = $manfTime;
+			$dow = date( 'w' );
+			$hour = date( 'H' );
+			if( $hour > 22 && $dow > 0 && $dow <= 5 ) { $delay++; }
+
+			$count = 1;
+			while( $count <= $delay ) {
+				$countTime = strtotime( '+'.$count.'days' );
+				$dateStr = date( 'Y-m-d', $countTime );
+				$countDow = date( 'w', $countTime );
+				if( isset( $holidays[$dateStr] ) || $countDow == 0 || $countDow == 6 ) {
+					$delay++;
+				}
+				$count++;
+			}
+			$shipTime = strtotime( '+'.$delay.'days' );
+			$shipDate = date( 'Y-m-d', $shipTime );
+			if( isset( $holidays[$shipDate] ) ) {
+				$delay++;
+				$shipTime = strtotime( '+'.($delay).'days' );
+			}
+			$shipString = date( 'Y-m-d', $shipTime );
+			//$shipString = date( 'l', $shipTime ).', '.date( 'F j, Y', $shipTime );
+		}
+		return $shipString;
 	}
 
 	function isIntraCountry( $pOrderBase ) {
@@ -132,45 +169,41 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 	* rows for com_configuration table as associative array of column => value
 	*/
 	protected function config() {
+		$i = 1;
 		return array_merge( parent::config(), array( 
 			$this->getModuleKeyTrunk().'_MODE' => array(
 				'configuration_title' => $this->title.' Activation Mode',
 				'configuration_value' => 'Test',
 				'configuration_description' => 'Select mode for ".$this->title." fulfillment.',
-				'sort_order' => '1',
+				'sort_order' => $i++,
 				'set_function' => "zen_cfg_select_option(array('Production', 'Test'), ",
 			),
 			$this->getModuleKeyTrunk().'_DEFAULT_PRIORITY' => array(
 				'configuration_title' => 'Default Priority',
 				'configuration_description' => 'Priority bump to encourage this fulfiller over others. Default is 0.',
-				'sort_order' => '2',
+				'sort_order' => $i++,
 			),
 			$this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE' => array(
 				'configuration_title' => 'Origin Country Code',
 				'configuration_description' => 'The ISO-2 country code where this fulfiller is located.',
-				'sort_order' => '3',
+				'sort_order' => $i++,
 			),
 			$this->getModuleKeyTrunk().'_ORIGIN_POSTAL_CODE' => array(
 				'configuration_title' => 'Origin Postal Code',
 				'configuration_description' => 'The postal (zip) code where this fulfiller is located.',
-				'sort_order' => '4',
+				'sort_order' => $i++,
 			),
 			$this->getModuleKeyTrunk().'_DESTINATION_COUNTRY_CODES' => array(
 				'configuration_title' => 'Destination Country Codes',
 				'configuration_description' => 'A semi-colon separated list of ISO-2 country codes where this fulfiller can send orders. e.g. "US;CA;MX". A value of "ALL" indicates unlimited global fulfillment.',
-				'sort_order' => '4',
+				'sort_order' => $i++,
 			),
-/*
-			array(
-				'configuration_title' => 'Country',
-				$this->getModuleKeyTrunk().'_DEFAULT_COUNTRY_ID' => array(
-				'configuration_value' => '223',
-				'configuration_description' => 'The country ID where fulfiller is located.',
-				'sort_order' => '4',
-				'use_function' => 'zen_get_country_name',
-				'set_function' => 'zen_cfg_pull_down_country_list(',
+			$this->getModuleKeyTrunk().'_FULFILLMENT_DAYS' => array(
+				'configuration_title' => 'Fulfillment Days',
+				'configuration_value' => '5',
+				'configuration_description' => 'Days before shipping to produce the order.',
+				'sort_order' => $i++,
 			),
-*/
 		) );
 	}
 }

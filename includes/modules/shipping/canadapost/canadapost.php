@@ -69,6 +69,7 @@ class canadapost extends CommercePluginShippingBase {
 	 * @return array of quotation results
 	 */
 	public function quote( $pShipHash ) {
+		global $currencies;
 		$quotes = array();
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 			$methods = array();
@@ -83,10 +84,15 @@ class canadapost extends CommercePluginShippingBase {
 				$priceQuotes = $xml->{'price-quotes'}->children('http://www.canadapost.ca/ws/ship/rate-v4');
 				if( $priceQuotes->{'price-quote'} ) {
 					foreach ( $priceQuotes as $priceQuote ) {  
+						$transitTime = '';
+						if( $transitDays = $priceQuote->{'service-standard'}->{'expected-transit-time'} ) {
+							$transitTime = $transitDays.' '.($transitDays > 1 ? tra( 'Days' ) : tra( 'Day' ));
+						}
 						$methods[] = array(
 										'id' => $priceQuote->{'service-code'}, 
 										'title' => $priceQuote->{'service-name'} , 
-										'cost' => (float)$priceQuote->{'price-details'}->{'due'} + (float)$this->getShipperHandling(),
+										'cost' => $currencies->convert( (float)$priceQuote->{'price-details'}->{'due'}, DEFAULT_CURRENCY, 'CAD' ) + (float)$this->getShipperHandling(),
+										'transit_time' => $transitTime,
 										'delivery_date' => $priceQuote->{'service-standard'}->{'expected-delivery-date'},
 									);
 					}
@@ -173,6 +179,7 @@ class canadapost extends CommercePluginShippingBase {
 			$xmlRequest = '<?xml version="1.0" encoding="UTF-8"?>
 <mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
   <customer-number>'.$customerNum.'</customer-number>
+  <expected-mailing-date>'.$this->getShippingDate( $pShipHash ).'</expected-mailing-date>
   <parcel-characteristics>
     <weight>'.$weightConverted.'</weight>
   </parcel-characteristics>
@@ -197,14 +204,12 @@ class canadapost extends CommercePluginShippingBase {
 		//print "message = $statusMessage";
 		$cphandling = substr($resultXML, strpos($resultXML, "<handling>") + strlen("<handling>"), strpos($resultXML, "</handling>") - strlen("<handling>") - strpos($resultXML, "<handling>"));
 		$this->handling_cp = $cphandling;
-		if ($statusMessage == 'OK')
-		{
+		if( $statusMessage == 'OK' ) {
 			$packing_xml = $this->parsetag("packing", $resultXML); //pull out the packaging info
 			$strProduct = substr($resultXML, strpos($resultXML, "<product id=") + strlen("<product id=>"), strpos($resultXML, "</product>") - strlen("<product id=>") - strpos($resultXML, "<product id="));
 			$index = 0;
 			$aryProducts = false;
-			while (strpos($resultXML, "</product>"))
-			{
+			while (strpos($resultXML, "</product>")) {
 				$cpnumberofboxes = substr_count($resultXML, "<expediterWeight");
 				$this->boxCount = $cpnumberofboxes;
 				$name = substr($resultXML, strpos($resultXML, "<name>") + strlen("<name>"), strpos($resultXML, "</name>") - strlen("<name>") - strpos($resultXML, "<name>"));
@@ -218,24 +223,18 @@ class canadapost extends CommercePluginShippingBase {
 				$index ++;
 				$resultXML = substr($resultXML, strpos($resultXML, "</product>") + strlen("</product>"));
 			}
-			/* Lettermail is available if the only user-defined 'box' that Canada Post returns is one that begins with "lettermail" */
-			if ($this->boxCount == 1 && strtolower(substr($this->parsetag("name", $packing_xml), 0, 10)) == 'lettermail') $this->lettermail_available = true;
 			return $aryProducts;
-		} else
-		{
-			if (strpos($resultXML, "<error>"))
-			{
+		} else {
+			if (strpos($resultXML, "<error>")) {
 				return $statusMessage;
-			} else
-			{
+			} else {
 				return false;
 			}
 		}
 	}
 
 
-	private function parsetag($tag, $string)
-	{
+	private function parsetag($tag, $string) {
 		$start = strpos($string, "<" . $tag . ">");
 		if (! $start) return FALSE;
 		$start = $start + strlen("<" . $tag . ">");

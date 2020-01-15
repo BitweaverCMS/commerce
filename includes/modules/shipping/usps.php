@@ -74,8 +74,6 @@ class usps extends CommercePluginShippingBase {
 			$this->types_to_skip_over_certain_value['First-Class Package International ServiceTM'] = 400; // skip value > $400 First-Class Package International Service
 
 			$this->getTransitTime = (in_array('Display transit time', explode(', ', MODULE_SHIPPING_USPS_OPTIONS))) ? TRUE : FALSE;
-
-			$this->shipping_cutoff_time = '1400'; // 1400 = 14:00 = 2pm ---- must be HHMM without punctuation
 		}
 	}
 
@@ -515,7 +513,6 @@ class usps extends CommercePluginShippingBase {
 			if ($ZipDestination == '') return -1;
 			$request =  '<RateV4Request USERID="' . MODULE_SHIPPING_USPS_USERID . '">' . '<Revision>2</Revision>';
 			$package_count = 0;
-			$ship_date = $this->zen_usps_shipdate();
 
 			foreach($this->typeCheckboxesSelected as $requested_type) {
 				if (is_numeric($requested_type) || preg_match('#(GXG|International)#i' , $requested_type)) {
@@ -616,7 +613,7 @@ class usps extends CommercePluginShippingBase {
 							 '<Value>' . number_format($insurable_value, 2, '.', '') . '</Value>' .
 							 $specialservices . $shipAttributes  .
 							 '<Machinable>' . ($this->machinable == 'True' ? 'TRUE' : 'FALSE') . '</Machinable>' .
-							 ($this->getTransitTime && $this->transitTimeCalculationMode == 'NEW' ? '<ShipDate>' . $ship_date . '</ShipDate>' : '') .
+							 ($this->getTransitTime && $this->transitTimeCalculationMode == 'NEW' ? '<ShipDate>' . $this->getShippingDate( $pShipHash ) . '</ShipDate>' : '') .
 							 '</Package>';
 
 				$package_id .= 'Package ID returned: ' . $package_count . ' $requested_type: ' . $requested_type . ' $service: ' . $service . ' $Container: ' . $Container . "\n";
@@ -1091,26 +1088,6 @@ class usps extends CommercePluginShippingBase {
 		}
 
 		return $ret;
-	}
-
-	// used for shipDate
-	function zen_usps_shipdate() {
-		// safety calculation for cutoff time
-		if ($this->shipping_cutoff_time < 1200 || $this->shipping_cutoff_time > 2300) $this->shipping_cutoff_time = 1400;
-		// calculate today vs tomorrow based on time
-		if (version_compare(PHP_VERSION, 5.2, '>=')) {
-			if (date('Gi') < preg_replace('/[^\d]/', '', $this->shipping_cutoff_time)) { // expects it in the form of HHMM
-				$datetime = new DateTime('today');
-			} else {
-				$datetime = new DateTime('tomorrow');
-				//$datetime = new DateTime((date('l') == 'Friday') ? 'Monday next week' : 'tomorrow');
-			}
-			$usps_date = $datetime->format('Y-m-d');
-		} else {
-			// old PHP versions use just today's date:
-			$usps_date = date('Y-m-d');
-		}
-		return $usps_date;
 	}
 
 	function clean_usps_marks($string) {

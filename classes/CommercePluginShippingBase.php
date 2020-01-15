@@ -50,8 +50,50 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		return $ret;
 	}
 
+	protected function getShippingCutoffTime( $pOrderBase ) {
+		return (int)$this->getModuleConfigValue( '_SHIPPING_CUTOFF_TIME', 1600 );
+	}
+
+	// used for shipDate
+	protected function getShippingDate( $pShipHash ) {
+		$delay = 0;
+
+		if( !($shipDate = BitBase::getParameter( $pShipHash['origin'], 'ship_date' ) ) ) {
+			// no ship_date in the order
+			$delay += (int)$this->getConfig( 'STORE_FULFILLMENT_DAYS', '5' );
+
+			$dow = date( 'w' );
+			if( $dow > 5 ) {
+				$delay++; // assume no shipping on Sat.
+			}
+			if( $dow > 6 ) {
+				$delay++; // assume no shipping on Sun.
+			}
+
+			// calculate today vs tomorrow based on time
+			if( (int)date('Gi') > $cutoffTime ) { // expects it in the form of HHMM
+				$delay++;
+			}
+		}
+		$newDate = new DateTime( $shipDate );
+
+		// safety calculation for cutoff time
+		$cutoffTime = $this->getShippingCutoffTime( $pShipHash );
+		$hourMin = (int)date( 'Hm' );
+		if( $hourMin > $cutoffTime ) { 
+			$delay++;
+		}
+
+		if( $delay ) {
+			$newDate->add( new DateInterval( 'P'.$delay.'D') );
+			$shipDate = $newDate->format( 'Y-m-d' );
+		}
+		
+		return $shipDate;
+	}
+
 	public function maxShippingWeight() {
-		return (float)$this->getConfig( 'SHIPPING_MAX_WEIGHT' );
+		return (float)$this->getCommerceConfig( 'SHIPPING_MAX_WEIGHT' );
 	}
 
 	protected function isInternationOrder( $pShipHash ) {
@@ -175,6 +217,11 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 				'configuration_description' => 'On what basis is Shipping Tax calculated. Options are<br />Shipping - Based on customers Shipping Address<br />Billing Based on customers Billing address<br />Store - Based on Store address if Billing/Shipping Zone equals Store zone',
 				'sort_order' => $i++,
 				'set_function' => "zen_cfg_select_option(array('Shipping', 'Billing', 'Store'), ",
+			),
+			$this->getModuleKeyTrunk().'_SHIPPING_CUTOFF_TIME' => array(
+				'configuration_title' => 'Shipping Cut-off Time',
+				'configuration_description' => 'Time of day when shipments must be sent to make current day shipping. Enter a 4 digit number 24HR number like "1430" = 14:30 = 2:30pm ---- must be HHMM without punctuation. Default is 1600, ie 4pm local store time.',
+				'sort_order' => $i++,
 			),
 		) );
 	}

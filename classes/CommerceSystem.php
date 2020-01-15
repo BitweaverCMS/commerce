@@ -9,6 +9,7 @@
  *
  */
 
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceBase.php' );
 require_once( KERNEL_PKG_PATH.'BitSingleton.php' );
 
 class CommerceSystem extends BitSingleton {

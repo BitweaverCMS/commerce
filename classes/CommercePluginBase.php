@@ -9,7 +9,9 @@
  *
  */
 
-abstract class CommercePluginBase extends BitBase {
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceBase.php' );
+
+abstract class CommercePluginBase extends CommerceBase {
 
 	public $code;
 	public $title;
@@ -81,13 +83,11 @@ abstract class CommercePluginBase extends BitBase {
 	}
 
 	protected function getModuleConfigValue( $pConfigKeyBranch, $pDefaultValue=NULL ) {
-		global $gCommerceSystem;
-		return $gCommerceSystem->getConfig( $this->getModuleKeyTrunk().$pConfigKeyBranch, $pDefaultValue );
+		return $this->getCommerceConfig( $this->getModuleKeyTrunk().$pConfigKeyBranch, $pDefaultValue );
 	}
 
 	protected function storeModuleConfigValue( $pConfigKeyBranch, $pConfigValue ) {
-		global $gCommerceSystem;
-		$gCommerceSystem->storeConfig( $this->getModuleKeyTrunk().$pConfigKeyBranch, $pConfigValue );
+		$this->storeConfig( $this->getModuleKeyTrunk().$pConfigKeyBranch, $pConfigValue );
 	}
 
 	public function getDefaultConfig() {
@@ -103,9 +103,8 @@ abstract class CommercePluginBase extends BitBase {
 	}
 
 	public function isEnabled() {
-		global $gCommerceSystem;
 		if( !isset( $this->isEnabled ) ) {
-			$this->isEnabled = $gCommerceSystem->isConfigActive( $this->getStatusKey() );
+			$this->isEnabled = $this->isConfigActive( $this->getStatusKey() );
 		}
 		return $this->isEnabled;
 	}
@@ -115,17 +114,15 @@ abstract class CommercePluginBase extends BitBase {
 	}
 
 	public function getSortOrder() {
-		global $gCommerceSystem;
 		if( !isset( $this->sort_order ) ) {
-			$this->sort_order = $gCommerceSystem->isConfigActive( $this->getSortOrderKey() );
+			$this->sort_order = $this->isConfigActive( $this->getSortOrderKey() );
 		}
 		return $this->sort_order;
 	}
 
 	public function isInstalled() {
-		global $gCommerceSystem;
 		if( !isset( $this->isInstalled ) ) {
-			$this->isInstalled= $gCommerceSystem->isConfigLoaded( $this->getStatusKey() );
+			$this->isInstalled= $this->isConfigLoaded( $this->getStatusKey() );
 		}
 		$this->check = $this->isInstalled; // legacy variable
 		return $this->isInstalled;
@@ -146,28 +143,12 @@ abstract class CommercePluginBase extends BitBase {
 				}
 			}
 			if( $unusedConfigKeys = array_flip( array_diff( $activeKeys, $defaultKeys ) ) ) {
-				global $gCommerceSystem;
 				foreach( $unusedConfigKeys as $configKey=>$configValue ) {
-					$gCommerceSystem->storeConfig( $configKey, NULL );
+					$this->storeConfig( $configKey, NULL );
 				}
 			}
 			$this->mDb->CompleteTrans();
 		}
-	}
-
-	public function getConfig( $pConfigName, $pDefault=NULL ) {
-		global $gCommerceSystem;
-		return $gCommerceSystem->getConfig( $pConfigName, $pDefault );
-	}
-
-	public function isConfigActive( $pConfigName ) {
-		global $gCommerceSystem;
-		return $gCommerceSystem->isConfigActive( $pConfigName );
-	}
-
-	public function storeConfig ( $pConfigKey, $pConfigValue ) {
-		global $gCommerceSystem;
-		return $gCommerceSystem->storeConfig( $pConfigKey, $pConfigValue );
 	}
 
 	/**

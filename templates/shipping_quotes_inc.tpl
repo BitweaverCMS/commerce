@@ -6,26 +6,31 @@
 		<li class="col-md-4">
 			<div class="row">
 				<div class="col-xs-12">
-					<table class="table text-left">
-						<tr class="row">
-							<th class="col-xs-9">
+						<div class="row">
+							<div class="col-xs-8">
 								{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].module class="img-responsive shipper-logo"}
 								{if $quotes[ix].note}
 									<p class="help-block">{$quotes[ix].note}</p>
 								{/if}
-								{if $quotes[ix].origin}
-									Ships from {$quotes[ix].origin.countries_name}
-								{/if}
 								{formfeedback error=$quotes[ix].error}
-							</th>
-							<th class="col-xs-3">
-								{if $quotes[ix].weight}<p class="date pull-right">{$quotes[ix].weight}</p>{/if}
-							</th>
-						</tr>
+							</div>
+							<div class="col-xs-4 text-right date">
+								{if $quotes[ix].weight}
+								<div class="date">{$quotes[ix].weight}</div>
+								{/if}
+							</div>
+						</div>
+						{if $quotes[ix].origin}
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="help-block">Ships {if $quotes[ix].origin.ship_date}{$quotes[ix].origin.ship_date}{/if} from {$quotes[ix].origin.countries_name}</div>
+							</div>
+						</div>
+						{/if}
 					{if $quotes[ix].methods}
 						{section name=jx loop=$quotes[ix].methods}
-							<tr class="row">
-								<td class="col-xs-9">
+							<div class="row quote">
+								<div class="col-xs-9">
 									{* set the radio button to be checked if it is the method chosen *}
 									{if ("`$quotes[ix].id`_`$quotes[ix].methods[jx].id`" == $sessionShippingId.id)}
 										{assign var=checked value=1}
@@ -37,8 +42,15 @@
 										<div class="radio mt-0">
 											<label>
 												<input type="radio" name="shipping" value="{$quotes[ix].id}_{$quotes[ix].methods[jx].id}" {if $checked}checked="checked"{/if}/> {$quotes[ix].methods[jx].name} {$quotes[ix].methods[jx].title} 
-												{if $quotes[ix].methods[jx].transit_time}{formhelp note=$quotes[ix].methods[jx].transit_time}{/if}
-												{if $quotes[ix].methods[jx].delivery_date}{formhelp note=$quotes[ix].methods[jx].delivery_date}{/if}
+												<div class="help-block">
+												{if $quotes[ix].methods[jx].delivery_date}
+													{assign var=shipDate value=$quotes[ix].methods[jx].delivery_date}
+													<div>{$quotes[ix].methods[jx].delivery_date}</div>
+												{/if}
+												{if $quotes[ix].methods[jx].transit_time}
+													({$quotes[ix].methods[jx].transit_time})
+												{/if}
+												</div>
 											</label>
 										</div>
 									{else}
@@ -47,14 +59,13 @@
 										{if $quotes[ix].methods[jx].note}
 											{formhelp note=$quotes[ix].methods[jx].note}
 										{/if}
-								</td>
-								<td class="col-xs-3">
+								</div>
+								<div class="col-xs-3">
 									<div class="price floatright">{$quotes[ix].methods[jx].format_add_tax}</div>
-								</td>
-							</tr>
+								</div>
+							</div>
 						{/section}
 					{/if}
-					</table>
 				</div>
 			</div>
 		</li>

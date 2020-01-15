@@ -330,12 +330,25 @@ class CommerceCustomer extends BitBase {
 			if( empty( $this->mInfo ) ) {
 				$this->load();
 			}
-			if( !empty( $this->mInfo['customers_default_address_id'] ) && $this->addressExists( $this->mInfo['customers_default_address_id'] ) ) {
-				$ret = $this->mInfo['customers_default_address_id'];
-			} elseif( !empty( $this->mInfo['customers_default_address_id'] ) ) {
-				// somehow we lost our default address - let's be sure to clean this up
-				$this->setDefaultAddress( NULL );
-				unset( $this->mInfo['customers_default_address_id'] );
+			if( !empty( $this->mInfo['customers_default_address_id'] ) ) {
+				if( $this->addressExists( $this->mInfo['customers_default_address_id'] ) ) {
+					$ret = $this->mInfo['customers_default_address_id'];
+				} else {
+					// somehow we lost our default address - let's be sure to clean this up
+					$this->setDefaultAddress( NULL );
+					unset( $this->mInfo['customers_default_address_id'] );
+				}
+			}
+
+			if( empty( $ret ) ) {
+				// No default address, let's choose the most recently created
+				if( $addresses = $this->getAddresses() ) {
+					$newestAddress = current( $addresses );
+					$ret = $newestAddress['address_book_id'];
+					if( empty( $this->mInfo['customers_default_address_id'] ) ) {
+						$this->setDefaultAddress( $ret );
+					}
+				}
 			}
 		}
 		return( $ret );
@@ -402,7 +415,8 @@ class CommerceCustomer extends BitBase {
 						FROM " . TABLE_ADDRESS_BOOK . " ab 
 							INNER JOIN " . TABLE_COUNTRIES . " co ON( ab.`entry_country_id`=co.`countries_id` )
 							INNER JOIN " . TABLE_CUSTOMERS . " cu ON( ab.`customers_id`=cu.`customers_id` )
-						WHERE ab.`customers_id` = ?";
+						WHERE ab.`customers_id` = ?
+						ORDER BY `address_book_id` DESC";
 
 			if( $rs = $gBitDb->query( $query, array( $pCustomerId ) ) ) {
 				$ret = $rs->GetRows();
