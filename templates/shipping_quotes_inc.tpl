@@ -24,7 +24,6 @@
 					<div class="col-xs-12">
 						{assign var=shipDate value=$quotes[ix].origin.ship_date|strtotime}
 						<div class="help-block">{tr}Ships from{/tr} {$quotes[ix].origin.countries_name} {if $quotes[ix].origin.ship_date}{tr}on{/tr} {$shipDate|bit_long_date}{/if}</div>
-{$quotes[ix].origin|vd}
 					</div>
 				</div>
 				{/if}
@@ -56,20 +55,19 @@
 								<div class="price floatright">{$quotes[ix].methods[jx].format_add_tax}</div>
 							</div>
 						</div>
-									<div class="radio mt-0">
-										<label>
-
-							<div class="help-block">
-							{if $quotes[ix].methods[jx].delivery_date}
-								{assign var=deliveryDate value=$quotes[ix].methods[jx].delivery_date|strtotime}
-								<div><strong>{tr}Estimated Arrival{/tr}</strong><br>{$deliveryDate|bit_long_date}</div>
-							{/if}
-							{if $quotes[ix].methods[jx].transit_time}
-								({$quotes[ix].methods[jx].transit_time})
-							{/if}
-							</div>
-										</label>
-									</div>
+						<div class="radio mt-0">
+							<label>
+								<div class="help-block">
+								{if $quotes[ix].methods[jx].delivery_date}
+									{assign var=deliveryDate value=$quotes[ix].methods[jx].delivery_date|strtotime}
+									<div><strong>{tr}Estimated Arrival{/tr}</strong><br>{$deliveryDate|bit_long_date}</div>
+								{/if}
+								{if $quotes[ix].methods[jx].transit_time}
+									({$quotes[ix].methods[jx].transit_time})
+								{/if}
+								</div>
+							</label>
+						</div>
 					{/section}
 				{/if}
 			</div>

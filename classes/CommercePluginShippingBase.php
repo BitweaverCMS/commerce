@@ -69,11 +69,6 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 			if( $dow > 6 ) {
 				$delay++; // assume no shipping on Sun.
 			}
-
-			// calculate today vs tomorrow based on time
-			if( (int)date('Gi') > $cutoffTime ) { // expects it in the form of HHMM
-				$delay++;
-			}
 		}
 		$newDate = new DateTime( $shipDate );
 

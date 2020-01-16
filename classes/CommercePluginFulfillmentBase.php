@@ -144,12 +144,12 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 	protected function getShippingOrigin() {
 		global $gCommerceSystem;
 
-		if( !($fulfillmentCountryId = $gCommerceSystem->getConfig( $this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE' ) ) ) {
-			if( $ret = zen_get_countries( $storeCountryId ) ) {
-				if( $ret['postcode'] = $gCommerceSystem->getConfig( '_ORIGIN_POSTAL_CODE' ) ) {
+		if( $fulfillmentCountryId = $gCommerceSystem->getConfig( $this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE' ) ) {
+			if( $ret = zen_get_countries( $fulfillmentCountryId ) ) {
+				if( $ret['postcode'] = $this->getModuleConfigValue( '_ORIGIN_POSTAL_CODE' ) ) {
 				}
 			}
-		} if( $storeCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY' ) ) {
+		} elseif( $storeCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY' ) ) {
 			if( $ret = zen_get_countries( $storeCountryId ) ) {
 				if( $ret['postcode'] = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_ZIP' ) ) {
 				}

@@ -146,7 +146,8 @@ abstract class CommerceOrderBase extends BitBase {
 			if( $ret = zen_get_countries( $storeCountryId ) ) {
 				$ret['postcode'] = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_ZIP' );
 			}
-		}
+			$fulfillmentPriority[] = $ret;
+		} 
 
 		uasort( $fulfillmentPriority, 'commerce_order_sort_fulfillers' );
 		return current( $fulfillmentPriority );
