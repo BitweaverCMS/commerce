@@ -352,22 +352,19 @@ class order extends CommerceOrderBase {
 									 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
 									 WHERE `orders_id` = ? AND `orders_products_id` = ?
 									 ORDER BY `orders_products_id`";
-				$attributes = $this->mDb->getArray( $attributes_query, array( $this->mOrdersId, $orders_products->fields['orders_products_id'] ) );
-				if ($attributes->RecordCount()) {
-					while (!$attributes->EOF) {
-						$this->contents[$productsKey]['attributes'][] = array( 'products_options_id' => $attributes->fields['products_options_id'],
-																				'products_options_values_id' => $attributes->fields['products_options_values_id'],
-																				'products_options' => $attributes->fields['products_options'],
-																				'products_options_values' => $attributes->fields['products_options_values'],
-																				'price_prefix' => $attributes->fields['price_prefix'],
-																				'final_price' => $this->getOrderAttributePrice( $attributes->fields, $this->contents[$productsKey] ),
-																				'price' => $attributes->fields['products_options_values_price'],
-																				'orders_products_attributes_id' => $attributes->fields['orders_products_attributes_id'] );
+				if( $attributes = $this->mDb->getArray( $attributes_query, array( $this->mOrdersId, $orders_products->fields['orders_products_id'] ) ) ) {
+					foreach( $attributes as $attribute ) {
+						$this->contents[$productsKey]['attributes'][] = array( 'products_options_id' => $attribute['products_options_id'],
+																				'products_options_values_id' => $attribute['products_options_values_id'],
+																				'products_options' => $attribute['products_options'],
+																				'products_options_values' => $attribute['products_options_values'],
+																				'price_prefix' => $attribute['price_prefix'],
+																				'final_price' => $this->getOrderAttributePrice( $attribute, $this->contents[$productsKey] ),
+																				'price' => $attribute['options_values_price'],
+																				'orders_products_attributes_id' => $attribute['orders_products_attributes_id'] );
 
-						$attributes->MoveNext();
 					}
 				}
-eb( "Fix 'attributes' keys", $attributes );
 
 				$this->info['tax_groups']["{$this->contents[$productsKey]['tax']}"] = '1';
 
