@@ -43,13 +43,13 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		return $this->getModuleConfigValue( '_DEFAULT_PRIORITY', 0.0 );
 	}
 
-	protected function getFulfillmentDays( $pOrder ) {
+	protected function getFulfillmentDays( &$pOrder ) {
 		return $this->getModuleConfigValue( '_FULFILLMENT_DAYS', 5 );
 	}
 
 	// Intended to be overridden
 	// returns fraction 0..1 of the order that can be fulfilled through this plugin. Default 0.0 says none of the order can be fulfilled, 1.0 says entire order can be fulfilled
-	protected function getOrderCompletion( $pOrderBase ) {
+	protected function getOrderCompletion( &$pOrderBase ) {
 		return 0.0;
 	}
 

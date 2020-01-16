@@ -449,27 +449,7 @@ class usps extends CommercePluginShippingBase {
 					}
 				}  // end for $i to $PackageSize
 
-				// sort results
-				if (MODULE_SHIPPING_USPS_QUOTE_SORT != 'Unsorted') {
-					if (sizeof($methods) > 1)
-					{
-						if (substr(MODULE_SHIPPING_USPS_QUOTE_SORT, 0, 5) == 'Price') {
-							foreach($methods as $c=>$key)
-							{
-								$sort_cost[] = $key['cost'];
-								$sort_id[] = $key['id'];
-							}
-							array_multisort($sort_cost, (MODULE_SHIPPING_USPS_QUOTE_SORT == 'Price-LowToHigh' ? SORT_ASC : SORT_DESC), $sort_id, SORT_ASC, $methods);
-						} else {
-							foreach($methods as $c=>$key)
-							{
-								$sort_key[] = $key['title'];
-								$sort_id[] = $key['id'];
-							}
-							array_multisort($sort_key, (MODULE_SHIPPING_USPS_QUOTE_SORT == 'Alphabetical' ? SORT_ASC : SORT_DESC), $sort_id, SORT_ASC, $methods);
-						}
-					}
-				}
+				$this->sortQuoteMethods( $methods );
 
 				$quotes['methods'] = $methods;
 			}

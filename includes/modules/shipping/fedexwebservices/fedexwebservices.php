@@ -96,7 +96,7 @@ class fedexwebservices extends CommercePluginShippingBase {
 			$request['WebAuthenticationDetail'] = array('UserCredential' => array('Key' => MODULE_SHIPPING_FEDEXWEBSERVICES_KEY, 'Password' => MODULE_SHIPPING_FEDEXWEBSERVICES_PWD));										 
 			$request['ClientDetail'] = array('AccountNumber' => MODULE_SHIPPING_FEDEXWEBSERVICES_ACT_NUM, 'MeterNumber' => MODULE_SHIPPING_FEDEXWEBSERVICES_METER_NUM );
 
-			$addressKeys = array( 'City'=>'city', 'StateOrProvinceCode'=>'state', 'PostalCode'=>'postcode', 'CountryCode'=>'countries_iso_code_2' );
+			$addressKeys = array( 'City'=>'city', 'PostalCode'=>'postcode', 'CountryCode'=>'countries_iso_code_2' );
 
 			foreach( array( 'Shipper'=>'origin', 'Recipient'=>'destination' ) as $xmlKey=>$dataKey ) {
 				$request['RequestedShipment'][$xmlKey] = array( 'Address' => array(
@@ -196,48 +196,42 @@ eb( $products );
 								$cost = $rateReply->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge->Amount;
 								$cost = (float)round(preg_replace('/[^0-9.]/', '',	$cost), 2);
 							}
+					
+							$transitDays = 0;
+							$transitTime = '';
+							if( !empty( $rateReply->DeliveryTimestamp ) ) {
+								$deliveryDate = (new DateTime( $rateReply->DeliveryTimestamp ))->format( 'Y-m-d' );
 
-							$deliveryDays = '';
 							switch( $rateReply->ServiceType ) {
 								case 'FIRST_OVERNIGHT':
 								case 'STANDARD_OVERNIGHT':
 								case 'PRIORITY_OVERNIGHT':
-									$deliveryDays = '1 Business Day'; break;
+									$transitDays = '1'; break;
 								case 'FEDEX_2_DAY':
-									$deliveryDays = '2 Business Days'; break;
+									$transitDays = '2'; break;
 								case 'FEDEX_EXPRESS_SAVER':
-									$deliveryDays = '3 Business Days'; break;
+									$transitDays = '3'; break;
 								case 'FEDEX_GROUND':
 								case 'GROUND_HOME_DELIVERY':
-									$deliveryDays = '4-7 Business Days'; break;
+									$transitDays = '4-7'; break;
 								case 'INTERNATIONAL_PRIORITY':
-									$deliveryDays = '1-3 Business Days'; break;
+									$transitDays = '2'; break;
 								case 'INTERNATIONAL_ECONOMY':
-									$deliveryDays = '2-7 Business Days'; break;
+									$transitDays = '5'; break;
 							}
-					
-							if( !empty( $rateReply->DeliveryTimestamp ) ) {
-								$deliveryDate = $rateReply->DeliveryTimestamp;
 							} elseif( !empty( $rateReply->TransitTime ) ) {
 								$transitDays = 0;
 								switch( $rateReply->TransitTime ) {
 									case 'ONE_DAY':
-										$transitDays = 1;
-										break;
+										$transitDays = 1; break;
 									case 'TWO_DAYS':
-										$transitDays = 2;
-										break;
+										$transitDays = 2; break;
 									case 'THREE_DAYS':
-										$transitDays = 3;
-										break;
+										$transitDays = 3; break;
 									case 'FOUR_DAYS':
-										$transitDays = 4;
-										break;
+										$transitDays = 4; break;
 									case 'FIVE_DAYS':
-										$transitDays = 5;
-										break;
-									default:
-										$transitDays = 0;
+										$transitDays = 5; break;
 								}
 								if( $transitDays ) {
 									$shipDate = new DateTime( $this->getShippingDate( $pShipHash ) );
@@ -245,16 +239,23 @@ eb( $products );
 									$deliveryDate = $shipDate->format( 'Y-m-d' );
 								}
 							}
+							if( $transitDays ) {
+								$transitTime = $transitDays.' '.($transitDays == '1' ? tra( 'Day' ) : tra( 'Days' ));
+							}
 							$methods[] = array(	'id' => str_replace('_', '', $rateReply->ServiceType),
 												'title' => ucwords(strtolower(str_replace('_', ' ', $rateReply->ServiceType))),
 												'cost' => $cost + (strpos($this->types[$rateReply->ServiceType]['handling_fee'], '%') ? ($cost * (float)$this->types[$rateReply->ServiceType]['handling_fee'] / 100) : (float)$this->types[$rateReply->ServiceType]['handling_fee']),
 												'code' => $this->types[$rateReply->ServiceType]['code'],
-												'transit_time' => $deliveryDays,
+												'transit_days' => $transitDays,
+												'transit_time' => $transitTime,
 												'delivery_date' => $deliveryDate,
 											  );
 						}
 					}
+
+					$this->sortQuoteMethods( $methods );
 					$quotes['methods'] = $methods;
+
 					if ($this->tax_class > 0) {
 						$quotes['tax'] = zen_get_tax_rate($this->tax_class, $pShipHash['destination']['countries_id'], $pShipHash['destination']['zone_id']);
 					} 

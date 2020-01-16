@@ -88,10 +88,13 @@ class canadapost extends CommercePluginShippingBase {
 						if( $transitDays = $priceQuote->{'service-standard'}->{'expected-transit-time'} ) {
 							$transitTime = $transitDays.' '.($transitDays > 1 ? tra( 'Days' ) : tra( 'Day' ));
 						}
+						$costCad = (float)$priceQuote->{'price-details'}->{'due'};
+						$costStore = $currencies->convert( (float)$priceQuote->{'price-details'}->{'due'}, DEFAULT_CURRENCY, 'CAD' ) + (float)$this->getShipperHandling();
 						$methods[] = array(
 										'id' => $priceQuote->{'service-code'}, 
 										'title' => $priceQuote->{'service-name'} , 
-										'cost' => $currencies->convert( (float)$priceQuote->{'price-details'}->{'due'}, DEFAULT_CURRENCY, 'CAD' ) + (float)$this->getShipperHandling(),
+										'cost' => $costStore,
+										'transit_days' => $transitDays,
 										'transit_time' => $transitTime,
 										'delivery_date' => $priceQuote->{'service-standard'}->{'expected-delivery-date'},
 									);
@@ -115,6 +118,7 @@ class canadapost extends CommercePluginShippingBase {
 				if ($this->tax_class > 0) {
 					$quotes['tax'] = zen_get_tax_rate($this->tax_class, $pShipHash['destination']['countries_id'], $pShipHash['destination']['zone_id']);
 				}
+				$this->sortQuoteMethods( $methods );
 				$quotes['methods'] = $methods;
 			} else {
 				if ($canadapostQuote != false) {

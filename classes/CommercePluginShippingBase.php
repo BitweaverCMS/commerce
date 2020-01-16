@@ -180,6 +180,63 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		return $quoteBase;
 	}
 
+	protected function sortQuoteMethods( &$pMethods ) {
+		
+		if( count( $pMethods ) > 1 && ($quoteSort = $this->getModuleConfigValue( '_QUOTE_SORT', 'Price-LowToHigh' )) && ($quoteSort != 'Unsorted') ) {
+			// sort results
+
+
+			$checkKeys = array_keys( $pMethods );
+
+			// remove methods that have the same price
+			do {
+				$checkKey = array_shift( $checkKeys );
+				$methodKeys = array_keys( $pMethods );
+				foreach( $methodKeys as $key ) {
+					if( $key != $checkKey && !empty( $pMethods[$checkKey] ) ) {
+						if( $pMethods[$key]['cost'] == $pMethods[$checkKey]['cost'] ) {
+							if( $pMethods[$key]['transit_time'] > $pMethods[$checkKey]['transit_time'] ) {
+								unset( $pMethods[$key] );
+							} else {
+								unset( $pMethods[$checkKey] );
+							}
+						}
+					}
+				}
+				
+			} while( !empty( $checkKeys ) );
+
+			list($sortType, $sortDir) = explode( '-', $quoteSort );
+			switch( $sortType ) {
+				case 'Price':
+					$sortKey = 'cost';
+					break;
+				case 'Transit':
+					$sortKey = 'transit_time';
+					break;
+				case 'Alphabetical':
+				default:
+					$sortKey = 'title';
+					break;
+			}
+			switch( $sortDir ) {
+				case 'SlowToFast':
+				case 'LowToHigh':
+					$sortMode = SORT_ASC;
+					break;
+				default:
+					$sortMode = SORT_ASC;
+					break;
+			}
+
+			foreach($pMethods as $c=>$key) {
+				$sortValues[] = $key[$sortKey];
+				$sortIds[] = $key['id'];
+			}
+			array_multisort($sortValues, $sortMode, $sortIds, SORT_ASC, $pMethods);
+		}
+	}
+
 	/**
 	* rows for com_configuration table as associative array of column => value
 	*/
@@ -222,6 +279,13 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 				'configuration_title' => 'Shipping Cut-off Time',
 				'configuration_description' => 'Time of day when shipments must be sent to make current day shipping. Enter a 4 digit number 24HR number like "1430" = 14:30 = 2:30pm ---- must be HHMM without punctuation. Default is 1600, ie 4pm local store time.',
 				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_QUOTE_SORT' => array(
+				'configuration_title' => 'Quote Sort Order',
+				'configuration_value' => 'Price-LowToHigh',
+				'configuration_description' => 'Sorts the returned quotes using the service name Alphanumerically or by Price. Unsorted will give the order provided by the shipper.',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('Unsorted','Alphabetical', 'Price-LowToHigh', 'Price-HighToLow', 'Transit-FastToSlow', 'Transit-SlowToFast'),",
 			),
 		) );
 	}
