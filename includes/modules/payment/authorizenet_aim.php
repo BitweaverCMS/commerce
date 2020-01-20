@@ -59,7 +59,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' )
 
       if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE > 0) ) {
         $check_flag = false;
-        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['countries_id'] . "' order by `zone_id`");
+        $check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE . "' and `zone_country_id` = '" . $order->billing['countries_id'] . "' order by `zone_id`");
         while (!$check->EOF) {
           if ($check->fields['zone_id'] < 1) {
             $check_flag = true;
@@ -277,7 +277,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' )
 	  x_city => $order->billing['city'],
 	  x_state => $order->billing['state'],
 	  x_zip => $order->billing['postcode'],
-	  x_country => $order->billing['country']['title'],
+	  x_country => $order->billing['title'],
 	  x_phone => $order->customer['telephone'],
 	  x_email => $order->customer['email_address'],
 	  x_ship_to_first_name => $order->delivery['firstname'],
@@ -286,7 +286,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' )
 	  x_ship_to_city => $order->delivery['city'],
 	  x_ship_to_state => $order->delivery['state'],
 	  x_ship_to_zip => $order->delivery['postcode'],
-	  x_ship_to_country => $order->delivery['country']['title'],
+	  x_ship_to_country => $order->delivery['title'],
 	  x_description => $description,
 	  // Merchant defined variables go here
 	  Date => $order_time,

@@ -50,7 +50,7 @@ class cc extends CommercePluginPaymentCardBase {
 
 		if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_CC_ZONE > 0) ) {
 			$check_flag = false;
-			$check = $this->mDb->query("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_CC_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['countries_id'] . "' order by `zone_id`");
+			$check = $this->mDb->query("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_CC_ZONE . "' and `zone_country_id` = '" . $order->billing['countries_id'] . "' order by `zone_id`");
 			while (!$check->EOF) {
 				if ($check->fields['zone_id'] < 1) {
 					$check_flag = true;

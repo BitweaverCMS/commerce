@@ -58,18 +58,18 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 					}
 
 					if ($shipping_tax_basis == 'Billing') {
-						$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->billing['country']['countries_id'], $this->mOrder->billing['zone_id']);
-						$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->billing['country']['countries_id'], $this->mOrder->billing['zone_id']);
+						$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->billing['countries_id'], $this->mOrder->billing['zone_id']);
+						$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->billing['countries_id'], $this->mOrder->billing['zone_id']);
 					} elseif ($shipping_tax_basis == 'Shipping') {
-						$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->delivery['country']['countries_id'], $this->mOrder->delivery['zone_id']);
-						$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->delivery['country']['countries_id'], $this->mOrder->delivery['zone_id']);
+						$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->delivery['countries_id'], $this->mOrder->delivery['zone_id']);
+						$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->delivery['countries_id'], $this->mOrder->delivery['zone_id']);
 					} else {
 						if (STORE_ZONE == $this->mOrder->billing['zone_id']) {
-							$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->billing['country']['countries_id'], $this->mOrder->billing['zone_id']);
-							$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->billing['country']['countries_id'], $this->mOrder->billing['zone_id']);
+							$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->billing['countries_id'], $this->mOrder->billing['zone_id']);
+							$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->billing['countries_id'], $this->mOrder->billing['zone_id']);
 						} elseif (STORE_ZONE == $this->mOrder->delivery['zone_id']) {
-							$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->delivery['country']['countries_id'], $this->mOrder->delivery['zone_id']);
-							$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->delivery['country']['countries_id'], $this->mOrder->delivery['zone_id']);
+							$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->delivery['countries_id'], $this->mOrder->delivery['zone_id']);
+							$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->delivery['countries_id'], $this->mOrder->delivery['zone_id']);
 						} else {
 							$shipping_tax = 0;
 						}

@@ -232,7 +232,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				'BILLTOCITY' => $pOrder->billing['city'], //	(Optional) Bill-to city.  Limitations: 20-character string.
 				'BILLTOSTATE' => $pOrder->billing['state'], //	(Optional) Bill-to state.  Limitations: 2-character string.
 				'BILLTOZIP' => $pOrder->billing['postcode'], //	(Optional) Cardholder's 5- to 9-digit zip (postal) code.  Limitations: 9 characters maximum. Do not use spaces, dashes, or non-numeric characters
-				'BILLTOCOUNTRY' => $pOrder->billing['country']['countries_iso_code_2'], //	(Optional) Bill-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code.
+				'BILLTOCOUNTRY' => $pOrder->billing['countries_iso_code_2'], //	(Optional) Bill-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code.
 				'BILLTOPHONENUM' => $pOrder->billing['telephone'], // (Optional) Account holder's telephone number.  Character length and limitations: 10 characters
 
 				'SHIPTOFIRSTNAME' => $pOrder->delivery['firstname'], //	(Optional) Ship-to first name.  Limitations: 30-character string.
@@ -241,7 +241,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				'SHIPTOCITY' => $pOrder->delivery['city'], //	(Optional) Ship-to city.  Limitations: 20-character string.
 				'SHIPTOSTATE' => $pOrder->delivery['state'], //	(Optional) Ship-to state.  Limitations: 2-character string.
 				'SHIPTOZIP' => $pOrder->delivery['postcode'], //	(Optional) Ship-to postal code.  Limitations: 9-character string.
-				'SHIPTOCOUNTRY' => $pOrder->delivery['country']['countries_iso_code_2'], //	(Optional) Ship-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code
+				'SHIPTOCOUNTRY' => $pOrder->delivery['countries_iso_code_2'], //	(Optional) Ship-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code
 
 			);
 

@@ -272,7 +272,7 @@ class order extends CommerceOrderBase {
 									'city' => $order->fields['customers_city'],
 									'postcode' => $order->fields['customers_postcode'],
 									'state' => $order->fields['customers_state'],
-									'country' => $order->fields['customers_country'],
+									'countries_name' => $order->fields['customers_country'],
 									'format_id' => $order->fields['customers_address_format_id'],
 									'telephone' => $order->fields['customers_telephone'],
 									'email_address' => $order->fields['email']); // 'email' comes from users_users, which is always most current
@@ -281,40 +281,45 @@ class order extends CommerceOrderBase {
 				$this->customer['referer_url'] = $order->fields['referer_url'];
 			}
 
-			$this->delivery = array('name' => $order->fields['delivery_name'],
-									'company' => $order->fields['delivery_company'],
-									'street_address' => $order->fields['delivery_street_address'],
-									'suburb' => $order->fields['delivery_suburb'],
-									'city' => $order->fields['delivery_city'],
-									'postcode' => $order->fields['delivery_postcode'],
-									'state' => $order->fields['delivery_state'],
-									'country' => zen_get_countries( $order->fields['delivery_country'] ),
-									'zone_id' => zen_get_zone_id( $order->fields['delivery_country'], $order->fields['delivery_state'] ),
-									'telephone' => $order->fields['delivery_telephone'],
-									'format_id' => $order->fields['delivery_address_format_id']);
+			$this->delivery = array_merge(
+								array ( 'name' => $order->fields['delivery_name'],
+										'company' => $order->fields['delivery_company'],
+										'street_address' => $order->fields['delivery_street_address'],
+										'suburb' => $order->fields['delivery_suburb'],
+										'city' => $order->fields['delivery_city'],
+										'postcode' => $order->fields['delivery_postcode'],
+										'state' => $order->fields['delivery_state'],
+										'zone_id' => zen_get_zone_id( $order->fields['delivery_country'], $order->fields['delivery_state'] ),
+										'telephone' => $order->fields['delivery_telephone'],
+										'format_id' => $order->fields['delivery_address_format_id'] ),
+								zen_get_countries( $order->fields['delivery_country'] )
+							  );
 
 			if (empty($this->delivery['name']) && empty($this->delivery['street_address'])) {
 				$this->delivery = false;
 			}
 
-			$this->billing = array('name' => $order->fields['billing_name'],
-														 'company' => $order->fields['billing_company'],
-														 'street_address' => $order->fields['billing_street_address'],
-														 'suburb' => $order->fields['billing_suburb'],
-														 'city' => $order->fields['billing_city'],
-														 'postcode' => $order->fields['billing_postcode'],
-														 'country' => zen_get_countries( $order->fields['billing_country'] ),
-														 'state' => $order->fields['billing_state'],
-														 'telephone' => $order->fields['billing_telephone'],
-														 'format_id' => $order->fields['billing_address_format_id']);
+			$this->billing = array_merge( 
+								array ( 'name' => $order->fields['billing_name'],
+										'company' => $order->fields['billing_company'],
+										'street_address' => $order->fields['billing_street_address'],
+										'suburb' => $order->fields['billing_suburb'],
+										'city' => $order->fields['billing_city'],
+										'postcode' => $order->fields['billing_postcode'],
+										'state' => $order->fields['billing_state'],
+										'telephone' => $order->fields['billing_telephone'],
+										'format_id' => $order->fields['billing_address_format_id'] ),
+								zen_get_countries( $order->fields['billing_country'] )
+							);
 
-			$orders_products_query = "SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
-																FROM " . TABLE_ORDERS_PRODUCTS . " op
-									LEFT OUTER JOIN	" . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
-									LEFT OUTER JOIN	" . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
-									LEFT OUTER JOIN	`" . BIT_DB_PREFIX . "liberty_content` lc ON ( lc.`content_id`=p.`content_id` )
-																WHERE `orders_id` = ?
-								ORDER BY op.`orders_products_id`";
+
+			$orders_products_query = 	"SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
+										FROM " . TABLE_ORDERS_PRODUCTS . " op
+											LEFT OUTER JOIN	" . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
+											LEFT OUTER JOIN	" . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
+											LEFT OUTER JOIN	`" . BIT_DB_PREFIX . "liberty_content` lc ON ( lc.`content_id`=p.`content_id` )
+										WHERE `orders_id` = ?
+										ORDER BY op.`orders_products_id`";
 			$orders_products = $this->mDb->query( $orders_products_query, array( $this->mOrdersId ) );
 
 			while (!$orders_products->EOF) {
@@ -650,12 +655,10 @@ class order extends CommerceOrderBase {
 									'postcode' => $defaultAddress['entry_postcode'],
 									'state' => ((zen_not_null($defaultAddress['entry_state'])) ? $defaultAddress['entry_state'] : $defaultAddress['zone_name']),
 									'zone_id' => $defaultAddress['entry_zone_id'],
-									'country' => array(
-										'countries_name' => $defaultAddress['countries_name'],
-										'countries_id' => $defaultAddress['countries_id'],
-										'countries_iso_code_2' => $defaultAddress['countries_iso_code_2'],
-										'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
-									),
+									'countries_name' => $defaultAddress['countries_name'],
+									'countries_id' => $defaultAddress['countries_id'],
+									'countries_iso_code_2' => $defaultAddress['countries_iso_code_2'],
+									'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
 									'format_id' => $defaultAddress['address_format_id'],
 									'telephone' => $defaultAddress['entry_telephone'],
 									'email_address' => $defaultAddress['customers_email_address']);
@@ -676,11 +679,10 @@ class order extends CommerceOrderBase {
 									'postcode' => $shippingAddress['entry_postcode'],
 									'state' => ((zen_not_null($shippingAddress['entry_state'])) ? $shippingAddress['entry_state'] : $shippingAddress['zone_name']),
 									'zone_id' => $shippingAddress['entry_zone_id'],
-									'country' => array(
-										'countries_id' => $shippingAddress['countries_id'],
-										'countries_name' => $shippingAddress['countries_name'],
-										'countries_iso_code_2' => $shippingAddress['countries_iso_code_2'],
-										'countries_iso_code_3' => $shippingAddress['countries_iso_code_3']),
+									'countries_id' => $shippingAddress['countries_id'],
+									'countries_name' => $shippingAddress['countries_name'],
+									'countries_iso_code_2' => $shippingAddress['countries_iso_code_2'],
+									'countries_iso_code_3' => $shippingAddress['countries_iso_code_3'],
 									'country_id' => $shippingAddress['entry_country_id'],
 									'telephone' => $shippingAddress['entry_telephone'],
 									'format_id' => $shippingAddress['address_format_id']);
@@ -696,11 +698,10 @@ class order extends CommerceOrderBase {
 									'postcode' => $billingAddress['entry_postcode'],
 									'state' => ((zen_not_null($billingAddress['entry_state'])) ? $billingAddress['entry_state'] : $billingAddress['zone_name']),
 									'zone_id' => $billingAddress['entry_zone_id'],
-									'country' => array(
-										'countries_id' => $billingAddress['countries_id'],
-										'countries_name' => $billingAddress['countries_name'],
-										'countries_iso_code_2' => $billingAddress['countries_iso_code_2'],
-										'countries_iso_code_3' => $billingAddress['countries_iso_code_3']),
+									'countries_id' => $billingAddress['countries_id'],
+									'countries_name' => $billingAddress['countries_name'],
+									'countries_iso_code_2' => $billingAddress['countries_iso_code_2'],
+									'countries_iso_code_3' => $billingAddress['countries_iso_code_3'],
 									'country_id' => $billingAddress['entry_country_id'],
 									'telephone' => $billingAddress['entry_telephone'],
 									'format_id' => $billingAddress['address_format_id']);
@@ -722,13 +723,10 @@ class order extends CommerceOrderBase {
 					$this->contents[$cartItemKey]['attributes'][$subindex] = zen_get_option_value( $optionId, (int)$valueHash['products_options_values_id'] );
 					// Determine if attribute is a text attribute and change products array if it is.
 					$attrValue = $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name']; 
-					if( !empty( $this->contents[$cartItemKey]['attributes_values'][$optionKey] ) ) {
+					if( !empty( $this->contents[$cartItemKey]['attributes_values'][$optionKey]['products_options_value_text'] ) ) {
 						$attrValue .= ' <div class="alert alert-info">'. $this->contents[$cartItemKey]['attributes_values'][$optionKey] . '</div>';
 					}
 					$this->contents[$cartItemKey]['attributes'][$subindex]['value'] = $attrValue;
-					if( !empty( $this->contents[$cartItemKey]['attributes_values'][$optionKey] ) ) {
-						$this->contents[$cartItemKey]['attributes'][$subindex]['value'] .=' <div class="alert alert-info">'. $this->contents[$cartItemKey]['attributes_values'][$optionKey] . '</div>';
-					}
 					$subindex++;
 				}
 			}
@@ -857,7 +855,7 @@ class order extends CommerceOrderBase {
 							'customers_city' => $this->customer['city'],
 							'customers_postcode' => $this->customer['postcode'],
 							'customers_state' => $this->customer['state'],
-							'customers_country' => $this->customer['country']['countries_name'],
+							'customers_country' => $this->customer['countries_name'],
 							'customers_telephone' => $this->customer['telephone'],
 							'customers_address_format_id' => $this->customer['format_id'],
 */
@@ -870,7 +868,7 @@ class order extends CommerceOrderBase {
 							'delivery_city' => $this->delivery['city'],
 							'delivery_postcode' => $this->delivery['postcode'],
 							'delivery_state' => $this->delivery['state'],
-							'delivery_country' => $this->delivery['country']['countries_name'],
+							'delivery_country' => $this->delivery['countries_name'],
 							'delivery_telephone' => $this->delivery['telephone'],
 							'delivery_address_format_id' => $this->delivery['format_id'],
 							'billing_name' => $this->billing['firstname'] . ' ' . $this->billing['lastname'],
@@ -880,7 +878,7 @@ class order extends CommerceOrderBase {
 							'billing_city' => $this->billing['city'],
 							'billing_postcode' => $this->billing['postcode'],
 							'billing_state' => $this->billing['state'],
-							'billing_country' => $this->billing['country']['countries_name'],
+							'billing_country' => $this->billing['countries_name'],
 							'billing_telephone' => $this->billing['telephone'],
 							'billing_address_format_id' => $this->billing['format_id'],
 							'payment_method' => ((empty( $this->info['payment_module_code'] ) && empty( $this->info['payment_method'] )) ? PAYMENT_METHOD_GV : $this->info['payment_method']),
@@ -1009,7 +1007,7 @@ class order extends CommerceOrderBase {
 			if( !empty($this->contents[$cartItemKey]['attributes']) ) {
 				$attributes_exist = '1';
 				foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j ) {
-eb( $j ); // j should be attribute hash?
+eb( $j, $this->contents[$cartItemKey] ); // j should be attribute hash?
 					$optionValues = zen_get_option_value( (int)$this->contents[$cartItemKey]['attributes'][$j]['products_options_id'], (int)$this->contents[$cartItemKey]['attributes'][$j]['value_id'] );
 					if( !empty( $optionValues['purchase_group_id'] ) ) {
 						$gBitUser->addUserToGroup( $gBitUser->mUserId, $optionValues['purchase_group_id'] );

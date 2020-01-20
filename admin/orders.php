@@ -55,10 +55,10 @@ if( $gBitThemes->isAjaxRequest() ) {
 	} elseif( !empty( $_REQUEST['address_type'] ) ) {
 		$addressType = $_REQUEST['address_type'];
 		$entry = $order->$addressType;
-		if( isset( $entry['country']['countries_id'] ) ) {
-			$countryId =	$entry['country']['countries_id'];
-		} elseif( is_string( $entry['country'] ) ) {
-			$countryId = zen_get_country_id( $entry['country'] );
+		if( isset( $entry['countries_id'] ) ) {
+			$countryId =	$entry['countries_id'];
+		} elseif( is_string( $entry ) ) {
+			$countryId = zen_get_country_id( $entry );
 		} else {
 			$countryId = NULL;
 		}

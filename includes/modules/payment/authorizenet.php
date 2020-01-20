@@ -123,7 +123,7 @@ class authorizenet extends CommercePluginPaymentCardBase {
 
 		if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_AUTHORIZENET_ZONE > 0) ) {
 			$check_flag = false;
-			$check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_AUTHORIZENET_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['countries_id'] . "' order by `zone_id`");
+			$check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_AUTHORIZENET_ZONE . "' and `zone_country_id` = '" . $order->billing['countries_id'] . "' order by `zone_id`");
 			while (!$check->EOF) {
 				if ($check->fields['zone_id'] < 1) {
 					$check_flag = true;
@@ -229,7 +229,7 @@ class authorizenet extends CommercePluginPaymentCardBase {
 														 zen_draw_hidden_field('x_city', $order->billing['city']) .
 														 zen_draw_hidden_field('x_state', $order->billing['state']) .
 														 zen_draw_hidden_field('x_zip', $order->billing['postcode']) .
-														 zen_draw_hidden_field('x_country', $order->billing['country']['title']) .
+														 zen_draw_hidden_field('x_country', $order->billing['title']) .
 														 zen_draw_hidden_field('x_phone', $order->customer['telephone']) .
 														 zen_draw_hidden_field('x_email', $order->customer['email_address']) .
 														 zen_draw_hidden_field('x_ship_to_first_name', $order->delivery['firstname']) .
@@ -238,7 +238,7 @@ class authorizenet extends CommercePluginPaymentCardBase {
 														 zen_draw_hidden_field('x_ship_to_city', $order->delivery['city']) .
 														 zen_draw_hidden_field('x_ship_to_state', $order->delivery['state']) .
 														 zen_draw_hidden_field('x_ship_to_zip', $order->delivery['postcode']) .
-														 zen_draw_hidden_field('x_ship_to_country', $order->delivery['country']['title']) .
+														 zen_draw_hidden_field('x_ship_to_country', $order->delivery['title']) .
 														 zen_draw_hidden_field('x_Customer_IP', $_SERVER['REMOTE_ADDR']) .
 														 $this->InsertFP(MODULE_PAYMENT_AUTHORIZENET_LOGIN, MODULE_PAYMENT_AUTHORIZENET_TXNKEY, number_format($order->info['total'], 2), $sequence);
 		if (MODULE_PAYMENT_AUTHORIZENET_TESTMODE == 'Test') $process_button_string .= zen_draw_hidden_field('x_Test_Request', 'TRUE');

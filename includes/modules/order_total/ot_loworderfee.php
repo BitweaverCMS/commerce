@@ -67,8 +67,8 @@ class ot_loworderfee extends CommercePluginOrderTotalBase {
 				}
 
 				if ($charge_it == 'true') {
-					$tax = zen_get_tax_rate(MODULE_ORDER_TOTAL_LOWORDERFEE_TAX_CLASS, $this->mOrder->delivery['country']['countries_id'], $this->mOrder->delivery['zone_id']);
-					$tax_description = zen_get_tax_description(MODULE_ORDER_TOTAL_LOWORDERFEE_TAX_CLASS, $this->mOrder->delivery['country']['countries_id'], $this->mOrder->delivery['zone_id']);
+					$tax = zen_get_tax_rate(MODULE_ORDER_TOTAL_LOWORDERFEE_TAX_CLASS, $this->mOrder->delivery['countries_id'], $this->mOrder->delivery['zone_id']);
+					$tax_description = zen_get_tax_description(MODULE_ORDER_TOTAL_LOWORDERFEE_TAX_CLASS, $this->mOrder->delivery['countries_id'], $this->mOrder->delivery['zone_id']);
 
 // calculate from flat fee or percentage
 					if (substr(MODULE_ORDER_TOTAL_LOWORDERFEE_FEE, -1) == '%') {

@@ -61,12 +61,10 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 	// user not logged in, country is selected
 	$countryInfo = zen_get_countries($_SESSION['cart_country_id']);
 	$order->delivery = array(	
-								'country' => array(
-									'countries_id' => $countryInfo['countries_id'], 
-									'title' => $countryInfo['countries_name'], 
-									'countries_iso_code_2' => $countryInfo['countries_iso_code_2'], 
-									'countries_iso_code_3' =>	$countryInfo['countries_iso_code_3']
-								),
+								'countries_id' => $countryInfo['countries_id'], 
+								'title' => $countryInfo['countries_name'], 
+								'countries_iso_code_2' => $countryInfo['countries_iso_code_2'], 
+								'countries_iso_code_3' =>	$countryInfo['countries_iso_code_3']
 							 	'country_id' => $countryInfo['countries_id'],
 								//add state zone_id
 								'format_id' => $countryInfo['address_format_id']
@@ -87,7 +85,7 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 	}
 
 	// used as a check below for existence of states
-	$stateMenu = zen_get_country_zone_list( 'zone_id', $order->delivery['country']['countries_id'], !empty( $_SESSION['cart_zone_id'] ) ? $_SESSION['cart_zone_id'] : NULL );
+	$stateMenu = zen_get_country_zone_list( 'zone_id', $order->delivery['countries_id'], !empty( $_SESSION['cart_zone_id'] ) ? $_SESSION['cart_zone_id'] : NULL );
 	$gBitSmarty->assign_by_ref( 'stateMenu', $stateMenu );
 } elseif( !empty( $addresses ) && (empty( $_REQUEST['address_id'] ) || $_REQUEST['address_id'] != 'custom') ) {
 	if( !empty( $_REQUEST['address_id'] ) ) {
@@ -103,7 +101,7 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 
 }
 
-$gBitSmarty->assign_by_ref( 'countryMenu', zen_get_country_list( 'country_id', $order->delivery['country']['countries_id'], 'onChange="updateShippingQuote(this.form);"' ) );
+$gBitSmarty->assign_by_ref( 'countryMenu', zen_get_country_list( 'country_id', $order->delivery['countries_id'], 'onChange="updateShippingQuote(this.form);"' ) );
 
 // set the cost to be able to calculate free shipping
 $order->info = array('total' => $gBitCustomer->mCart->show_total(), // TAX ????
@@ -144,7 +142,7 @@ if($gBitCustomer->mCart->get_content_type() == 'virtual') {
 } elseif($freeShipping) {
 	$order->info['shipping_method'] = MODULE_ORDER_TOTAL_SHIPPING_TITLE;
 	$order->info['shipping_cost'] = 0;
-} elseif( !empty( $order->delivery['country']['countries_id'] ) ) {
+} elseif( !empty( $order->delivery['countries_id'] ) ) {
 	require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
 	// weight and count needed for shipping !
 	if( $gBitProduct->isValid() && !empty( $_REQUEST['cart_quantity'] ) ) {

@@ -60,7 +60,7 @@ class paypal extends CommercePluginPaymentBase {
 
 		if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_PAYPAL_ZONE > 0) ) {
 			$check_flag = false;
-			$check_query = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_PAYPAL_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['countries_id'] . "' order by `zone_id`");
+			$check_query = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_PAYPAL_ZONE . "' and `zone_country_id` = '" . $order->billing['countries_id'] . "' order by `zone_id`");
 			while (!$check_query->EOF) {
 				if ($check_query->fields['zone_id'] < 1) {
 					$check_flag = true;
@@ -121,7 +121,7 @@ class paypal extends CommercePluginPaymentBase {
 															zen_draw_hidden_field('item_number', '1') .
 //																zen_draw_hidden_field('invoice', '') .
 //																zen_draw_hidden_field('num_cart_items', '') .
-															zen_draw_hidden_field('lc', $order->customer['country']['countries_iso_code_2']) .
+															zen_draw_hidden_field('lc', $order->customer['countries_iso_code_2']) .
 //																zen_draw_hidden_field('amount', number_format(($order->info['total'] - $order->info['shipping_cost']) * $currencies->get_value($my_currency), $currencies->get_decimal_places($my_currency))) .
 //																zen_draw_hidden_field('shipping', number_format($order->info['shipping_cost'] * $currencies->get_value($my_currency), $currencies->get_decimal_places($my_currency))) .
 															zen_draw_hidden_field('amount', number_format(($order->info['total']) * $currencies->get_value($my_currency), $currencies->get_decimal_places($my_currency))) .
@@ -136,7 +136,7 @@ class paypal extends CommercePluginPaymentBase {
 															zen_draw_hidden_field('city', $order->customer['city']) .
 															zen_draw_hidden_field('state',strtoupper(substr($order->customer['state'],0,2))) .
 															zen_draw_hidden_field('zip', $order->customer['postcode']) .
-															zen_draw_hidden_field('country', $order->customer['country']['countries_iso_code_2']) .
+															zen_draw_hidden_field('country', $order->customer['countries_iso_code_2']) .
 															zen_draw_hidden_field('email', $order->customer['email_address']) .
 															zen_draw_hidden_field('night_phone_a',substr($telephone,0,3)) .
 															zen_draw_hidden_field('night_phone_b',substr($telephone,3,3)) .

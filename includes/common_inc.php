@@ -442,11 +442,8 @@ function zen_get_languages() {
 // TABLES: address_format
   function zen_address_format($address_format_id, $address, $html, $boln, $eoln) {
     global $gBitDb;
-    $address_format_query = "select `address_format` as `format`
-                             from " . TABLE_ADDRESS_FORMAT . "
-                             where `address_format_id` = '" . (int)$address_format_id . "'";
-
-    $address_format = $gBitDb->query($address_format_query);
+    $address_format_query = "SELECT `address_format` AS `format` FROM " . TABLE_ADDRESS_FORMAT . " WHERE `address_format_id` = ?";
+    $address_format = $gBitDb->query($address_format_query, array( (int)$address_format_id ) );
     $company = zen_output_string_protected($address['company']);
     if ( !empty( $address['firstname'] ) ) {
       $firstname = zen_output_string_protected($address['firstname']);
@@ -469,12 +466,8 @@ function zen_get_languages() {
       if ( !empty( $address['zone_id'] ) ) {
         $state = zen_get_zone_code($address['country_id'], $address['zone_id'], $state);
       }
-    } elseif( !empty( $address['country'] ) ) {
-      if (is_array($address['country'])) {
-        $country = zen_output_string_protected($address['country']['countries_name']);
-      } else {
-      $country = zen_output_string_protected($address['country']);
-      }
+    } elseif( !empty( $address['countries_name'])) {
+      $country = zen_output_string_protected($address['countries_name']);
     } else {
       $country = '';
     }
@@ -504,13 +497,6 @@ function zen_get_languages() {
     $statecomma = '';
     $streets = $street;
     if ($suburb != '') $streets = $street . $cr . $suburb;
-    if ( empty( $country ) ) {
-      if (is_array($address['country'])) {
-        $country = zen_output_string_protected($address['country']['countries_name']);
-      } else {
-      $country = zen_output_string_protected($address['country']);
-      }
-    }
     if ($state != '') $statecomma = $state . ', ';
 
     $fmt = $address_format->fields['format'];

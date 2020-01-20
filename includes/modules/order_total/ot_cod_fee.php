@@ -55,7 +55,7 @@ class ot_cod_fee extends CommercePluginOrderTotalBase {
 	if (substr_count($_SESSION['shipping']['id'], 'servicepakke') !=0) $cod_zones = split("[:,]", MODULE_ORDER_TOTAL_COD_FEE_SERVICEPAKKE);
 
 					for ($i = 0; $i < count($cod_zones); $i++) {
-						if ($cod_zones[$i] == $this->mOrder->delivery['country']['countries_iso_code_2']) {
+						if ($cod_zones[$i] == $this->mOrder->delivery['countries_iso_code_2']) {
 								$cod_cost = $cod_zones[$i + 1];
 								$cod_country = true;
 								break;
