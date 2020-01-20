@@ -717,23 +717,18 @@ class order extends CommerceOrderBase {
 				$attributes	= $this->contents[$cartItemKey]['attributes'];
 				$this->contents[$cartItemKey]['attributes'] = array();
 				$subindex = 0;
-				foreach( $attributes as $optionKey=>$value ) {
+				foreach( $attributes as $optionKey=>$valueHash ) {
 					list( $optionId, $keyValueId ) = explode( '=', $optionKey );
-					$optionValues = zen_get_option_value( $optionId, (int)$value );
+					$this->contents[$cartItemKey]['attributes'][$subindex] = zen_get_option_value( $optionId, (int)$valueHash['products_options_values_id'] );
 					// Determine if attribute is a text attribute and change products array if it is.
-					$attrValue = $optionValues['products_options_values_name']; 
+					$attrValue = $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name']; 
 					if( !empty( $this->contents[$cartItemKey]['attributes_values'][$optionKey] ) ) {
 						$attrValue .= ' <div class="alert alert-info">'. $this->contents[$cartItemKey]['attributes_values'][$optionKey] . '</div>';
 					}
-
-					$this->contents[$cartItemKey]['attributes'][$subindex] = array(  'products_options_name' => $optionValues['products_options_name'],
-																					 'value' => $attrValue,
-																					 'products_options_id' => $optionId,
-																					 'products_options_values_id' => $value,
-																					 'value_id' => $value,
-																					 'price_prefix' => $optionValues['price_prefix'],
-																					 'options_values_price' => $optionValues['options_values_price']);
-
+					$this->contents[$cartItemKey]['attributes'][$subindex]['value'] = $attrValue;
+					if( !empty( $this->contents[$cartItemKey]['attributes_values'][$optionKey] ) ) {
+						$this->contents[$cartItemKey]['attributes'][$subindex]['value'] .=' <div class="alert alert-info">'. $this->contents[$cartItemKey]['attributes_values'][$optionKey] . '</div>';
+					}
 					$subindex++;
 				}
 			}
@@ -1014,6 +1009,7 @@ class order extends CommerceOrderBase {
 			if( !empty($this->contents[$cartItemKey]['attributes']) ) {
 				$attributes_exist = '1';
 				foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j ) {
+eb( $j ); // j should be attribute hash?
 					$optionValues = zen_get_option_value( (int)$this->contents[$cartItemKey]['attributes'][$j]['products_options_id'], (int)$this->contents[$cartItemKey]['attributes'][$j]['value_id'] );
 					if( !empty( $optionValues['purchase_group_id'] ) ) {
 						$gBitUser->addUserToGroup( $gBitUser->mUserId, $optionValues['purchase_group_id'] );
