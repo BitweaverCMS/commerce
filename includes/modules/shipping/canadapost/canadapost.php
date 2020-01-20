@@ -59,7 +59,7 @@ class canadapost extends CommercePluginShippingBase {
 	public function __construct() {
 		parent::__construct();
 		$this->title			= tra( 'Canada Post' );
-		$this->description		= tra( 'Canada Post Parcel Service <p><strong>CPC Profile Information</strong> can be obtained at https://sellonline.canadapost.ca<br /><a href=https://sellonline.canadapost.ca/servlet/LogonServlet?Language=0 target="_blank">Modify my profile</a></p>' );
+		$this->description		= tra( 'Canada Post Parcel Service <p>You will need a Account Number, Username and Password from the <a href="https://www.canadapost.ca/cpotools/apps/drc/home?execution=e1s1">Developer Program</a></p>' );
 	}
 
 	/**

@@ -1266,20 +1266,13 @@ USPS Extra Service Name ServiceID - Our Extra Service Name
 
 	protected function config() {
 		$i = 3;
-		return array_merge( parent::config(), array( 
+		$ret = array_merge( parent::config(), array( 
 			$this->getModuleKeyTrunk().'_VERSION' => array(
 				'configuration_title' => 'USPS Version Date',
 				'configuration_value' => '2017-09-16',
 				'configuration_description' => 'You have installed:',
 				'sort_order' => $i++,
 				'set_function' => "zen_cfg_select_option(array('2017-09-16'),",
-			),
-			$this->getModuleKeyTrunk().'_TITLE_SIZE' => array(
-				'configuration_title' => 'Full Name or Short Name',
-				'configuration_value' => 'Long',
-				'configuration_description' => 'Do you want to use a Long or Short name for USPS shipping?',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('Long', 'Short'),",
 			),
 			$this->getModuleKeyTrunk().'_USERID' => array(
 				'configuration_title' => 'Enter the USPS Web Tools User ID',
@@ -1427,20 +1420,21 @@ USPS Extra Service Name ServiceID - Our Extra Service Name
 				'set_function' => "zen_cfg_select_option(array('Retail', 'Online'),",
 			),
 		) );
+		// set some default values
+		$ret[$this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE']['configuration_value'] = 'CA';
+		return $ret;
 	}
 }
 
 // admin display functions inspired by osCbyJetta
-function zen_cfg_usps_services($select_array, $key_value, $key = '')
-{
+function zen_cfg_usps_services($select_array, $key_value, $key = '') {
 	$key_values = explode( ", ", $key_value);
 	$name = (($key) ? 'configuration[' . $key . '][]' : 'configuration_value');
 	$string = '<b><div style="width:20px;float:left;text-align:center;">&nbsp;</div><div style="width:60px;float:left;text-align:center;">Min</div><div style="width:60px;float:left;text-align:center;">Max</div><div style="float:left;"></div><div style="width:60px;float:right;text-align:center;">Handling</div></b><div style="clear:both;"></div>';
 	$string_spacing = '<div><br /><br /><b>&nbsp;International Rates:</b><br /></div>' . $string;
 	$string_spacing_international = 0;
 	$string = '<div><br /><b>&nbsp;Domestic Rates:</b><br /></div>' . $string;
-	for ($i=0; $i<sizeof($select_array); $i++)
-	{
+	for ($i=0; $i<sizeof($select_array); $i++) {
 		if (preg_match("/international/i", $select_array[$i])) {
 			$string_spacing_international ++;
 		}

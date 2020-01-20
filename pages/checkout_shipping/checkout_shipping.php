@@ -119,29 +119,26 @@ global $gCommerceShipping;
 			if ( (isset($_POST['shipping'])) && (strpos($_POST['shipping'], '_')) ) {
 				$_SESSION['shipping'] = $_POST['shipping'];
 
-				list($module, $method) = explode('_', $_SESSION['shipping']);
-				if ( is_object($$module) || ($_SESSION['shipping'] == 'free_free') ) {
-					if ($_SESSION['shipping'] == 'free_free') {
-						$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
-						$quote[0]['methods'][0]['cost'] = '0';
-					} else {
-						$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
-					}
-					if (isset($quote['error'])) {
-						$_SESSION['shipping'] = '';
-					} else {
-						if ( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
-							$_SESSION['shipping'] = array(
-								'id' => $_SESSION['shipping'],
-								'title' => (($free_shipping == true) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
-								'cost' => $quote[0]['methods'][0]['cost'],
-								'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
-								);
-							zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
-						}
-					}
+				if ($_SESSION['shipping'] == 'free_free') {
+					$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
+					$quote[0]['methods'][0]['cost'] = '0';
+				} elseif( !empty( $_SESSION['shipping'] ) ) {
+					list($module, $method) = explode('_', $_SESSION['shipping']);
+					$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
+				}
+
+				if( isset( $quote['error'] ) ) {
+					$_SESSION['shipping'] = '';
 				} else {
-					$_SESSION['shipping'] = false;
+					if( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
+						$_SESSION['shipping'] = array(
+							'id' => $_SESSION['shipping'],
+							'title' => (($free_shipping == true) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
+							'cost' => $quote[0]['methods'][0]['cost'],
+							'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
+							);
+						zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+					}
 				}
 			} elseif( empty( $free_shipping ) ) {
 				$gBitSmarty->assign( 'errors', "Please select a shipping method" );
