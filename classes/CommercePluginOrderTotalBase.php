@@ -20,6 +20,10 @@ abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
 		$this->mProcessingOutput = array();
 	}
 
+	protected function getModuleType() {
+		return 'order_total';
+	}
+
     function process() {
 		$this->mProcessingOutput = array();
 	}
