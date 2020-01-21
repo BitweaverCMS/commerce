@@ -15,6 +15,7 @@ abstract class CommercePluginBase extends CommerceBase {
 
 	public $code;
 	public $title;
+	protected $adminTitle = '';
 	public $description;
 	public $enabled; 
 	public $icon; 
@@ -36,6 +37,14 @@ abstract class CommercePluginBase extends CommerceBase {
 		$this->mModuleKey = $this->getModuleKey();
 		$this->enabled = $this->isEnabled(); // legacy support for old plugins
 		$this->check = $this->isInstalled(); // legacy support for old plugins
+	}
+
+	public function getAdminTitle() {
+		return (!empty( $this->adminTitle ) ? $this->adminTitle : $this->code );
+	}
+
+	public function getCustomerTitle() {
+		return $title;
 	}
 
 	protected function getModuleKey() {
@@ -65,9 +74,11 @@ abstract class CommercePluginBase extends CommerceBase {
 	public function install() {
 		if( !$this->isInstalled() ) {
 			$this->mDb->StartTrans();
+			$this->remove(); // clean out any existing module keys
 			foreach( $this->config() as $configKey => $configHash ) {
 				$this->storeModuleConfigHash( $configKey, $configHash );
 			}
+			// Backward compatibility with older modules
 			$this->mDb->CompleteTrans();
 		}
 	}
@@ -99,7 +110,7 @@ abstract class CommercePluginBase extends CommerceBase {
 	}
 
 	public function remove() {
-		$this->mDb->Execute("DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` IN ('" . implode("', '", $this->keys()) . "')");
+		$this->mDb->Execute("DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` LIKE '".$this->getModuleKeyTrunk()."%'");
 	}
 
 	public function isEnabled() {
@@ -155,18 +166,19 @@ abstract class CommercePluginBase extends CommerceBase {
 	* rows for com_configuration table as associative array of column => value
 	*/
 	protected function config() {
+		$i = 1;
 		return array( 
 			$this->getStatusKey() => array(
 				'configuration_title' => 'Enable '.$this->title,
 				'configuration_value' => 'True',
-				'sort_order' => '1',
-				'configuration_description' => 'Do you want '.$this->title.' '.$this->getModuleType().' active?',
+				'sort_order' => $i++,
+				'configuration_description' => 'Do you want '.$this->getAdminTitle().' '.$this->getModuleType().' active?',
 				'set_function' => "zen_cfg_select_option(array('True', 'False'), ",
 			),
 			$this->getSortOrderKey() => array(
 				'configuration_title' => 'Sort Order',
 				'configuration_description' => 'Sort order of display.',
-				'sort_order' => '1',
+				'sort_order' => $i++,
 			),
 		);
 	}

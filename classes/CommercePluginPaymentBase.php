@@ -79,5 +79,28 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		return false;
 	}
 
+	/**
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		$i = 10;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_ORDER_STATUS_ID' => array(
+				'configuration_title' => 'Initial Order Status',
+				'configuration_description' => 'Orders made with this payment module will be set to the status.',
+				'sort_order' => $i++,
+				'configuration_value' => '20',
+				'set_function' => 'zen_cfg_pull_down_order_statuses(',
+				'use_function' => 'zen_get_order_status_name',
+			),
+			$this->getModuleKeyTrunk().'_ZONE' => array(
+				'configuration_title' => 'Payment Zone',
+				'configuration_description' => 'If a zone is selected, only enable this payment method for that zone.',
+				'sort_order' => $i++,
+				'set_function' => 'zen_cfg_pull_down_zone_classes(',
+				'use_function' => 'zen_get_zone_class_title',
+			),
+		) );
+	}
 
 }

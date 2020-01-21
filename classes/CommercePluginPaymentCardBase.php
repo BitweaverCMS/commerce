@@ -22,6 +22,45 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 
 	public function __construct() {
 		parent::__construct();
+		$this->title = 'Credit Card';
+
+		if( $this->isEnabled() ) {
+			if( $statusId = $this->getModuleConfigValue( '_ORDER_STATUS_ID' ) ) {
+				$this->order_status = $statusId;
+			}
+
+			if( $paymentZoneId = $this->getModuleConfigValue( '_ZONE' ) ) {
+				$this->enabled = ($paymentZoneId == $order->billing['zone_id']);
+/*
+			function update_status() {
+				global $order, $gBitDb;
+
+				if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE > 0) ) {
+					$check_flag = false;
+					$check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE . "' and `zone_country_id` = '" . $order->billing['countries_id'] . "' order by `zone_id`");
+					while (!$check->EOF) {
+						if ($check->fields['zone_id'] < 1) {
+							$check_flag = true;
+							break;
+						} elseif ($check->fields['zone_id'] == $order->billing['zone_id']) {
+							$check_flag = true;
+							break;
+						}
+						$check->MoveNext();
+					}
+
+					if ($check_flag == false) {
+						$this->enabled = false;
+					}
+				}
+			}
+*/
+			}
+		}
+	}
+
+	public function getCustomerTitle() {
+		return 'Credit Card';
 	}
 
 	protected function getSessionVars() {
@@ -151,5 +190,12 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		return $this->pnref;
 	}
 
-}
+	function selection() {
+		return "";
+	}
 
+	function javascript_validation() {
+		return "";
+	}
+
+}

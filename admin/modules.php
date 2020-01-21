@@ -68,7 +68,7 @@ if( !empty( $moduleType ) ) {
 
 		echo '<tr class="'. $rowClass . '" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $moduleType . '&module=' . $class, 'NONSSL') . '\'">' . "\n";
 ?>
-							<td class="dataTableContent"><?php echo $module->title; ?></td>
+							<td class="dataTableContent"><?php echo $module->getAdminTitle(); ?></td>
 							<td class="dataTableContent"><?php echo $module->code; ?></td>
 							<td class="dataTableContent" align="right"><?php if( !empty( $module->sort_order ) && is_numeric($module->sort_order)) echo $module->sort_order; ?></td>
 <?php
@@ -124,7 +124,7 @@ if( is_object( $activeModule ) ) {
 		}
 	}
 
-	$heading[] = array('text' => $activeModule->title);
+	$heading[] = array( 'text' => $activeModule->getAdminTitle() );
 	$contents = array();
 	$moduleKeys = $activeModule->keys();
 
@@ -180,7 +180,7 @@ if( is_object( $activeModule ) ) {
 				$contents[] = array('text' => '<strong>Key: ' . $activeModule->code . '</strong><br />');
 			}
 			$contents[] = array('text' => $keys);
-			$contents[] = array('align' => 'center', 'text' =>  '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $moduleType . (!empty( $_GET['module'] ) ? '&module=' . $_GET['module'] : ''), 'NONSSL') . '">' . tra( 'Cancel' ) . '</a>');
+			$contents[] = array('align' => 'center', 'text' =>  '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $moduleType . (!empty( $_GET['module'] ) ? '&module=' . $_GET['module'] : ''), 'NONSSL') . '">' . tra( 'Cancel' ) . '</a>');
 			break;
 		default:
 			if( $activeModule->isInstalled() ) {

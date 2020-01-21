@@ -236,7 +236,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 	* rows for com_configuration table as associative array of column => value
 	*/
 	protected function config() {
-		$i = 3;
+		$i = 10;
 		return array_merge( parent::config(), array( 
 			$this->getModuleKeyTrunk().'_HANDLING' => array(
 				'configuration_title' => 'Handling Fee',
