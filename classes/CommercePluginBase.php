@@ -40,7 +40,7 @@ abstract class CommercePluginBase extends CommerceBase {
 	}
 
 	public function getAdminTitle() {
-		return (!empty( $this->adminTitle ) ? $this->adminTitle : $this->code );
+		return (!empty( $this->adminTitle ) ? $this->adminTitle : (!empty( $this->title) ? $this->title: $this->code));
 	}
 
 	public function getCustomerTitle() {

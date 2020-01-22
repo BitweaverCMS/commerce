@@ -1006,46 +1006,44 @@ class order extends CommerceOrderBase {
 			$this->products_ordered_attributes = '';
 			if( !empty($this->contents[$cartItemKey]['attributes']) ) {
 				$attributes_exist = '1';
-				foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j ) {
-eb( $j, $this->contents[$cartItemKey] ); // j should be attribute hash?
-					$optionValues = zen_get_option_value( (int)$this->contents[$cartItemKey]['attributes'][$j]['products_options_id'], (int)$this->contents[$cartItemKey]['attributes'][$j]['value_id'] );
-					if( !empty( $optionValues['purchase_group_id'] ) ) {
-						$gBitUser->addUserToGroup( $gBitUser->mUserId, $optionValues['purchase_group_id'] );
+				foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j=>$attrHash ) {
+					if( !empty( $attrHash['purchase_group_id'] ) ) {
+						$gBitUser->addUserToGroup( $gBitUser->mUserId, $attrHash['purchase_group_id'] );
 					}
 
-					if( !empty( $optionValues['products_options_id'] ) ) {
+					if( !empty( $attrHash['products_options_id'] ) ) {
 						//clr 030714 update insert query.	changing to use values form $order->contents for products_options_values.
 						$sql_data_array = array('orders_id' => $pOrdersId,
 												'orders_products_id' => $this->contents[$cartItemKey]['orders_products_id'],
-												'products_options' => $optionValues['products_options_name'],
+												'products_options' => $attrHash['products_options_name'],
 												'products_options_values' => $this->contents[$cartItemKey]['attributes'][$j]['value'],
-												'options_values_price' => $optionValues['options_values_price'],
-												'options_values_cogs' => $optionValues['options_values_cogs'],
-												'options_values_wholesale' => $optionValues['options_values_wholesale'],
-												'price_prefix' => $optionValues['price_prefix'],
-												'product_attribute_is_free' => $optionValues['product_attribute_is_free'],
-												'products_attributes_wt' => $optionValues['products_attributes_wt'],
-												'attributes_discounted' => (int)$optionValues['attributes_discounted'],
-												'attributes_price_base_inc' => (int)$optionValues['attributes_price_base_inc'],
-												'attributes_price_onetime' => $optionValues['attributes_price_onetime'],
-												'attributes_price_factor' => $optionValues['attributes_price_factor'],
-												'attributes_pf_offset' => $optionValues['attributes_pf_offset'],
-												'attributes_pf_onetime' => $optionValues['attributes_pf_onetime'],
-												'attributes_pf_onetime_offset' => $optionValues['attributes_pf_onetime_offset'],
-												'attributes_qty_prices' => $optionValues['attributes_qty_prices'],
-												'attributes_qty_prices_onetime' => $optionValues['attributes_qty_prices_onetime'],
-												'attributes_price_words' => $optionValues['attributes_price_words'],
-												'attributes_price_words_free' => $optionValues['attributes_price_words_free'],
-												'attributes_price_letters' => $optionValues['attributes_price_letters'],
-												'attributes_price_letters_free' => $optionValues['attributes_price_letters_free'],
-												'products_options_id' => $optionValues['products_options_id'],
-												'products_options_values_id' => $optionValues['products_options_values_id'],
+												'options_values_price' => $attrHash['options_values_price'],
+												'options_values_cogs' => $attrHash['options_values_cogs'],
+												'options_values_wholesale' => $attrHash['options_values_wholesale'],
+												'price_prefix' => $attrHash['price_prefix'],
+												'product_attribute_is_free' => $attrHash['product_attribute_is_free'],
+												'products_attributes_wt' => $attrHash['products_attributes_wt'],
+												'attributes_discounted' => (int)$attrHash['attributes_discounted'],
+												'attributes_price_base_inc' => (int)$attrHash['attributes_price_base_inc'],
+												'attributes_price_onetime' => $attrHash['attributes_price_onetime'],
+												'attributes_price_factor' => $attrHash['attributes_price_factor'],
+												'attributes_pf_offset' => $attrHash['attributes_pf_offset'],
+												'attributes_pf_onetime' => $attrHash['attributes_pf_onetime'],
+												'attributes_pf_onetime_offset' => $attrHash['attributes_pf_onetime_offset'],
+												'attributes_qty_prices' => $attrHash['attributes_qty_prices'],
+												'attributes_qty_prices_onetime' => $attrHash['attributes_qty_prices_onetime'],
+												'attributes_price_words' => $attrHash['attributes_price_words'],
+												'attributes_price_words_free' => $attrHash['attributes_price_words_free'],
+												'attributes_price_letters' => $attrHash['attributes_price_letters'],
+												'attributes_price_letters_free' => $attrHash['attributes_price_letters_free'],
+												'products_options_id' => $attrHash['products_options_id'],
+												'products_options_values_id' => $attrHash['products_options_values_id'],
 												);
 
 						$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
 					}
 
-					$this->products_ordered_attributes .= "\n\t" . $optionValues['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['value']);
+					$this->products_ordered_attributes .= "\n\t" . $attrHash['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['value']);
 				}
 			}
 			//------insert customer choosen option eof ----

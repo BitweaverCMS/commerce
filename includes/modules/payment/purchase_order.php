@@ -1,12 +1,9 @@
 <?php
-//
 // +------------------------------------------------------------------------+
 // |zen-cart Open Source E-commerce											|
 // +------------------------------------------------------------------------+
 // | Copyright (c) 2003 The zen-cart developers								|
-// |																		|
 // | http://www.zen-cart.com/index.php										|
-// |																		|
 // | Portions Copyright (c) 2003 osCommerce									|
 // +------------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,			|
@@ -17,7 +14,6 @@
 // | to obtain it through the world-wide-web, please send a note to			|
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
-//
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
@@ -91,7 +87,7 @@ class purchase_order extends CommercePluginPaymentBase {
 			$pOrder->info['cc_cvv'] = NULL;
 		}
 
-		$this->logTransaction( $responseHash, $pOrder );
+		$this->logTransaction( $logHash, $pOrder );
 		return $ret;
 	}
 

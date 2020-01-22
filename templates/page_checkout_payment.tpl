@@ -59,7 +59,7 @@
 	<div class="row">
 		<div class="col-md-6">
 		{if count($paymentSelection) > 1}
-			{tr}Please select a payment method for this order.{/tr}
+			<p>{tr}Please select a payment method for this order.{/tr}</p>
 		{/if}
 		{if $smarty.const.SHOW_ACCEPTED_CREDIT_CARDS != '0'}
 			<p>{tr}We accept:{/tr} {$smarty.const.SHOW_ACCEPTED_CREDIT_CARDS|zen_get_cc_enabled}</p>
