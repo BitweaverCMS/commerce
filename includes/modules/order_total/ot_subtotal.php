@@ -36,13 +36,14 @@ class ot_subtotal extends CommercePluginOrderTotalBase {
 											'value' => $this->mOrder->subtotal);
 	}
 
-	function keys() {
-		return array('MODULE_ORDER_TOTAL_SUBTOTAL_STATUS', 'MODULE_ORDER_TOTAL_SUBTOTAL_SORT_ORDER');
-	}
-
-	function install() {
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_SUBTOTAL_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_SUBTOTAL_SORT_ORDER', '100', 'Sort order of display.', '6', '2', now())");
+	/*
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		$ret = parent::config();
+		// set some default values
+		$ret[$this->getModuleKeyTrunk().'_SORT_ORDER']['configuration_value'] = '100';
+		return $ret;
 	}
 
 }

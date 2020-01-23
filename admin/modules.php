@@ -70,7 +70,7 @@ if( !empty( $moduleType ) ) {
 ?>
 							<td class="dataTableContent"><?php echo $module->getAdminTitle(); ?></td>
 							<td class="dataTableContent"><?php echo $module->code; ?></td>
-							<td class="dataTableContent" align="right"><?php if( !empty( $module->sort_order ) && is_numeric($module->sort_order)) echo $module->sort_order; ?></td>
+							<td class="dataTableContent" align="right"><?php echo $module->getSortOrder(); ?></td>
 <?php
 if ($moduleType == 'payment' and !empty($module->order_status)) {
 		$orders_status_name = $gBitDb->query("select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? and `language_id` = ? ", array( $module->order_status, $_SESSION['languages_id'] ) );

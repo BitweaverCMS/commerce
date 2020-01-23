@@ -12,7 +12,7 @@
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
 
-class CommerceVoucher extends BitBase {
+class CommerceVoucher extends CommerceBase {
 	public $pCategoryId;
 
 	function __construct( $pCouponId=NULL ) {
@@ -302,7 +302,7 @@ class CommerceVoucher extends BitBase {
 	// admin or automated means. Eventually these two functions should be
 	// merged/simplified
 	function adminSendCoupon( $pParamHash ) {
-		global $gBitUser, $gBitCustomer, $gCommerceSystem, $gBitSystem, $currencies;
+		global $gBitUser, $gBitCustomer, $gBitSystem, $currencies;
 
 		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/gv_mail.php' );
 		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/email_extras.php' );
@@ -337,7 +337,7 @@ class CommerceVoucher extends BitBase {
 			$html_msg['GV_REDEEM'] = TEXT_TO_REDEEM . TEXT_WHICH_IS . ' <strong>' . $id1 . '</strong> ' . TEXT_IN_CASE . '<p>' . TEXT_OR_VISIT .  '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG.'">' . STORE_NAME . '</a>' . TEXT_ENTER_CODE . '</p>';
 
 			
-			if ( 0 && $gCommerceSystem->isConfigActive( 'SEARCH_ENGINE_FRIENDLY_URLS' ) ) { // TODO Fix
+			if ( 0 && $this->isCommerceConfigActive( 'SEARCH_ENGINE_FRIENDLY_URLS' ) ) { // TODO Fix
 				$html_msg['GV_CODE_URL']  = HTTP_SERVER . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1;
 				$html_msg['GV_CODE_LINK'] = '<a href="'.HTTP_SERVER . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1.'">' .TEXT_CLICK_TO_REDEEM . '</a>';
 			} else {
@@ -375,7 +375,7 @@ class CommerceVoucher extends BitBase {
 	}
 
 	function customerSendCoupon( $pFromUser, $pRecipient, $pAmount ) {
-		global $gBitDb, $gBitSmarty, $gCommerceSystem, $currencies;
+		global $gBitDb, $gBitSmarty, $currencies;
 		$ret = NULL;
 
 		$gBitDb->StartTrans();
@@ -400,7 +400,7 @@ class CommerceVoucher extends BitBase {
 			$gBitDb->query( $gv_query, array( $gvId, $pFromUser->mUserId, $pRecipient['email'] ) );
 			$ret = $code;
 
-			$gv_email_subject = tra( 'A gift from' ).' '.$pFromUser->getDisplayName().' '.tra( 'to' ).' '.$gCommerceSystem->getConfig( 'STORE_NAME' );
+			$gv_email_subject = tra( 'A gift from' ).' '.$pFromUser->getDisplayName().' '.tra( 'to' ).' '.$this->getCommerceConfig( 'STORE_NAME' );
 
 			$gBitSmarty->assign( 'gvCode', $code );
 			$gBitSmarty->assign( 'gvSender', $pFromUser->getDisplayName() );
@@ -427,9 +427,9 @@ class CommerceVoucher extends BitBase {
 					$account = $gBitDb->Execute($account_query);
 				}
 				$extra_info=email_collect_extra_info($pRecipient['to_name'],$pRecipient['email'], $pFromUser->getDisplayName() , $pFromUser->getField( 'email' ) );
-				$html_msg['EXTRA_INFO'] = $gCommerceSystem->getConfig('TEXT_GV_NAME').' Code: '.$code.'<br/>'.$extra_info['HTML'];
+				$html_msg['EXTRA_INFO'] = $this->getCommerceConfig('TEXT_GV_NAME').' Code: '.$code.'<br/>'.$extra_info['HTML'];
 				zen_mail('', SEND_EXTRA_GV_CUSTOMER_EMAILS_TO, tra( '[GV CUSTOMER SENT]' ). ' ' . $gv_email_subject,
-					$gCommerceSystem->getConfig('TEXT_GV_NAME').' Code: '.$code."\n".$gv_email . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $html_msg,'gv_send_extra');
+					$this->getCommerceConfig('TEXT_GV_NAME').' Code: '.$code."\n".$gv_email . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $html_msg,'gv_send_extra');
 			}
 
 

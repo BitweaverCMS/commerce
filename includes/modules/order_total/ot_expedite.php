@@ -35,10 +35,6 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	protected function getStatusKey() {
-		return 'MODULE_ORDER_TOTAL_EXPEDITE_STATUS';
-	}
-
 	protected function hasExpedite() {
 		return $this->mExpediteFlag == TRUE;
 	}
@@ -106,39 +102,26 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	function check() {
-		global $gBitDb;
-		if (!isset($this->_check)) {
-			$check_query = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_ORDER_TOTAL_EXPEDITE_STATUS'");
-			$this->_check = $check_query->RecordCount();
-		}
-
-		return $this->_check;
-	}
-//lagt tilk servicepakke her!!!!
-	function keys() {
-		return array('MODULE_ORDER_TOTAL_EXPEDITE_STATUS', 'MODULE_ORDER_TOTAL_EXPEDITE_SORT_ORDER', 'MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE', 'MODULE_ORDER_TOTAL_EXPEDITE_INFO_URL');
+	public function keys() {
+		return array_merge(
+					array_keys( $this->config() ),
+					array('MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE', 'MODULE_ORDER_TOTAL_EXPEDITE_INFO_URL')
+				);
 	}
 
 	function install() {
-		global $gBitDb;
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Display Expedite', 'MODULE_ORDER_TOTAL_EXPEDITE_STATUS', 'true', 'Do you want this module to display?', '6', '1','zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_EXPEDITE_SORT_ORDER', '950', 'Sort order of display.', '6', '2', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Expedite Order Fee', 'MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE', '25%', 'Expedite Fee. Examples: 15%, or 10.00 (native currency will be used)', '6', '3', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Expedite Information URL', 'MODULE_ORDER_TOTAL_EXPEDITE_INFO_URL', NULL, 'URL with information on Expedite Service', '6', '3', now())");
+		parent::install();
+		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Expedite Order Fee', 'MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE', '25%', 'Expedite Fee. Examples: 15%, or 10.00 (native currency will be used)', '6', '3', now())");
+		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Expedite Information URL', 'MODULE_ORDER_TOTAL_EXPEDITE_INFO_URL', NULL, 'URL with information on Expedite Service', '6', '3', now())");
 	}
 
-
-	function remove() {
-		global $gBitDb;
-		$keys = '';
-		$keys_array = $this->keys();
-		$keys_size = sizeof($keys_array);
-		for ($i=0; $i<$keys_size; $i++) {
-			$keys .= "'" . $keys_array[$i] . "',";
-		}
-		$keys = substr($keys, 0, -1);
-
-		$gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where `configuration_key` in (" . $keys . ")");
+	/*
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		$ret = parent::config();
+		// set some default values
+		$ret[$this->getModuleKeyTrunk().'_SORT_ORDER']['configuration_value'] = '950';
+		return $ret;
 	}
 }

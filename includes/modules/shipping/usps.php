@@ -182,7 +182,7 @@ class usps extends CommercePluginShippingBase {
 						}
 					}
 
-					if( $this->isConfigActive( 'MODULE_SHIPPING_USPS_REGULATIONS' ) ) {
+					if( $this->isCommerceConfigActive( 'MODULE_SHIPPING_USPS_REGULATIONS' ) ) {
 						$iInfo = '<div id="iInfo">' . "\n" .
 										 '  <div id="showInfo" class="ui-state-error" style="cursor:pointer; text-align:center;" onclick="$(\'#showInfo\').hide();$(\'#hideInfo, #Info\').show();">' . MODULE_SHIPPING_USPS_TEXT_INTL_SHOW . '</div>' . "\n" .
 										 '  <div id="hideInfo" class="ui-state-error" style="cursor:pointer; text-align:center; display:none;" onclick="$(\'#hideInfo, #Info\').hide();$(\'#showInfo\').show();">' . MODULE_SHIPPING_USPS_TEXT_INTL_HIDE .'</div>' . "\n" .
@@ -719,7 +719,7 @@ class usps extends CommercePluginShippingBase {
 		curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 //    curl_setopt($ch, CURLOPT_SSLVERSION, 3);
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Zen Cart');
-		if( $this->isConfigActive( 'CURL_PROXY_REQUIRED' ) ) {
+		if( $this->isCommerceConfigActive( 'CURL_PROXY_REQUIRED' ) ) {
 			$this->proxy_tunnel_flag = (defined('CURL_PROXY_TUNNEL_FLAG') && strtoupper(CURL_PROXY_TUNNEL_FLAG) == 'FALSE') ? false : true;
 			curl_setopt ($ch, CURLOPT_HTTPPROXYTUNNEL, $this->proxy_tunnel_flag);
 			curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);

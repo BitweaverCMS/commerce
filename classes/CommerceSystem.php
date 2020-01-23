@@ -115,7 +115,7 @@ class CommerceSystem extends BitSingleton {
 				}
 
 				if( !class_exists( $moduleClass ) && file_exists( $moduleSourceFile ) ) {
-					$langFile = zen_get_file_directory( DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/'.$moduleType.'/', $moduleClass.'.php', 'false' );
+					$langFile = BITCOMMERCE_PKG_PATH.zen_get_file_directory( DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/'.$moduleType.'/', $moduleClass.'.php', 'false' );
 					if( file_exists( $langFile ) ) {
 						include_once( $langFile );
 					}

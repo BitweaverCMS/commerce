@@ -14,16 +14,8 @@ class ot_total extends CommercePluginOrderTotalBase {
 	
 	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
-		$this->code = 'ot_total';
-
 		$this->title = MODULE_ORDER_TOTAL_TOTAL_TITLE;
 		$this->description = MODULE_ORDER_TOTAL_TOTAL_DESCRIPTION;
-		$this->sort_order = MODULE_ORDER_TOTAL_TOTAL_SORT_ORDER;
-
-	}
-
-	protected function getStatusKey() {
-		return 'MODULE_ORDER_TOTAL_TOTAL_STATUS';
 	}
 
 	function process() {
@@ -37,13 +29,13 @@ class ot_total extends CommercePluginOrderTotalBase {
 											'value' => (float)$total );
 	}
 
-	function keys() {
-		return array('MODULE_ORDER_TOTAL_TOTAL_STATUS', 'MODULE_ORDER_TOTAL_TOTAL_SORT_ORDER');
-	}
-
-	function install() {
-		global $gBitDb;
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_TOTAL_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_TOTAL_SORT_ORDER', '999', 'Sort order of display.', '6', '2', now())");
+	/**
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		$ret = parent::config();
+		// set some default values
+		$ret[$this->getModuleKeyTrunk().'_SORT_ORDER']['configuration_value'] = '999';
+		return $ret;
 	}
 }

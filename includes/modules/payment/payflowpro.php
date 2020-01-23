@@ -125,12 +125,11 @@ class payflowpro extends CommercePluginPaymentCardBase {
 	}
 
 	function getProcessorCurrency() {
-		global $gCommerceSystem;
-		return $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
+		return $this->getCommerceConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
 	}
 
 	function processPayment( &$pPaymentParameters, &$pOrder ) {
-		global $gCommerceSystem, $messageStack, $response, $gBitDb, $gBitUser, $currencies;
+		global $messageStack, $response, $gBitDb, $gBitUser, $currencies;
 
 		$postFields = array();
 		$responseHash = array();
@@ -278,7 +277,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			$processors = static::getProcessors();
 
-			switch( $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR' ) ) {
+			switch( $this->getCommerceConfig( 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR' ) ) {
 				case 'Cielo Payments':
 					// TODO Additional Credit Card Parameters
 					break;
@@ -301,7 +300,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 					// TODO Additional Credit Card Parameters
 					break;
 				case 'PayPal':
-					if( $gCommerceSystem->isConfigActive( 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY' ) ) {
+					if( $this->isCommerceConfigActive( 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY' ) ) {
 						switch( $paymentCurrency ) {
 							// PayPal supports charging natively in these 5 currencies
 							case 'AUD': // Australian dollar 

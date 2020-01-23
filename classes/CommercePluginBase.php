@@ -115,7 +115,7 @@ abstract class CommercePluginBase extends CommerceBase {
 
 	public function isEnabled() {
 		if( !isset( $this->isEnabled ) ) {
-			$this->isEnabled = $this->isConfigActive( $this->getStatusKey() );
+			$this->isEnabled = $this->isCommerceConfigActive( $this->getStatusKey() );
 		}
 		return $this->isEnabled;
 	}
@@ -125,15 +125,17 @@ abstract class CommercePluginBase extends CommerceBase {
 	}
 
 	public function getSortOrder() {
-		if( !isset( $this->sort_order ) ) {
-			$this->sort_order = $this->isConfigActive( $this->getSortOrderKey() );
+		if( empty( $this->sort_order ) ) {
+			if( $this->isInstalled() ) {
+				$this->sort_order = $this->getCommerceConfig( $this->getSortOrderKey() );
+			}
 		}
 		return $this->sort_order;
 	}
 
 	public function isInstalled() {
 		if( !isset( $this->isInstalled ) ) {
-			$this->isInstalled= $this->isConfigLoaded( $this->getStatusKey() );
+			$this->isInstalled= $this->isCommerceConfigLoaded( $this->getStatusKey() );
 		}
 		$this->check = $this->isInstalled; // legacy variable
 		return $this->isInstalled;

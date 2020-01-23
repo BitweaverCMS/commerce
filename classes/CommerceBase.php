@@ -16,17 +16,17 @@ abstract class CommerceBase extends BitBase {
 		return $gCommerceSystem->getConfig( $pConfigKey, $pDefaultValue );
 	}
 
-	protected function isConfigActive( $pConfigName ) {
+	protected function isCommerceConfigActive( $pConfigName ) {
 		global $gCommerceSystem;
 		return $gCommerceSystem->isConfigActive( $pConfigName );
 	}
 
-	protected function isConfigLoaded( $pConfigName ) {
+	protected function isCommerceConfigLoaded( $pConfigName ) {
 		global $gCommerceSystem;
 		return $gCommerceSystem->isConfigLoaded( $pConfigName );
 	}
 
-	protected function storeConfig ( $pConfigKey, $pConfigValue ) {
+	protected function storeCommerceConfig ( $pConfigKey, $pConfigValue ) {
 		global $gCommerceSystem;
 		return $gCommerceSystem->storeConfig( $pConfigKey, $pConfigValue );
 	}
