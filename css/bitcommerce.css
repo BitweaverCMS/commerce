@@ -49,6 +49,8 @@ TD.footertop, TD.footerbottom { padding: 5px; }
 .cartBox .formlabel { padding:0; width:auto; text-align:left; display:block; float:none; clear:both }
 .cartBox .forminput { margin:0; padding:0; width:auto; display: block; float:none; }
 
+legend.radio { padding-left:30px; }
+
 TR.productListing-odd, TR.upcomingProducts-odd { background: #ffffff; }
 TR.productListing-even, TR.upcomingProducts-even, .productsNotifications { background: #eff4f8; }
 TD.productListing-data-description-odd { background: #ffffff; padding-left: 10px; padding-right: 10px; padding-bottom: 12px; border-bottom: 1px solid #9a9a9a; }
