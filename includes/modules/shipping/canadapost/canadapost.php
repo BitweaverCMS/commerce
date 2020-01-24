@@ -144,7 +144,7 @@ class canadapost extends CommercePluginShippingBase {
 		$password = $this->getModuleConfigValue( '_PASSWORD' );
 
 		// REST URL
-		$service_url = 'https://ct.soa-gw.canadapost.ca/rs/ship/price';
+		$service_url = 'https://soa-gw.canadapost.ca/rs/ship/price';
 
 		$curl = curl_init($service_url); // Create REST Request
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
