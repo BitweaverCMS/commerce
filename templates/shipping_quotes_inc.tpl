@@ -61,6 +61,7 @@
 								{if $quotes[ix].methods[jx].delivery_date}
 									{assign var=deliveryDate value=$quotes[ix].methods[jx].delivery_date|strtotime}
 									<div><strong>{tr}Estimated Arrival{/tr}</strong><br>{$deliveryDate|bit_long_date}</div>
+								{else}<div>{tr}Exact delivery day cannot be estimated. Do not use if you are on a tight deadline.{/tr}</div>
 								{/if}
 								{if $quotes[ix].methods[jx].transit_time}
 									({$quotes[ix].methods[jx].transit_time})
