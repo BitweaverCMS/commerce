@@ -1421,7 +1421,7 @@ USPS Extra Service Name ServiceID - Our Extra Service Name
 			),
 		) );
 		// set some default values
-		$ret[$this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE']['configuration_value'] = 'CA';
+		$ret[$this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE']['configuration_value'] = 'US';
 		return $ret;
 	}
 }
