@@ -98,7 +98,7 @@ abstract class CommercePluginBase extends CommerceBase {
 	}
 
 	protected function storeModuleConfigValue( $pConfigKeyBranch, $pConfigValue ) {
-		$this->storeConfig( $this->getModuleKeyTrunk().$pConfigKeyBranch, $pConfigValue );
+		$this->storeCommerceConfig( $this->getModuleKeyTrunk().$pConfigKeyBranch, $pConfigValue );
 	}
 
 	public function getDefaultConfig() {
@@ -157,7 +157,7 @@ abstract class CommercePluginBase extends CommerceBase {
 			}
 			if( $unusedConfigKeys = array_flip( array_diff( $activeKeys, $defaultKeys ) ) ) {
 				foreach( $unusedConfigKeys as $configKey=>$configValue ) {
-					$this->storeConfig( $configKey, NULL );
+					$this->storeCommerceConfig( $configKey, NULL );
 				}
 			}
 			$this->mDb->CompleteTrans();
