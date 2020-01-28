@@ -31,8 +31,9 @@
 					{section name=jx loop=$quotes[ix].methods}
 						<div class="row quote">
 							<div class="col-xs-9">
+								{assign var=quoteMethodId value="`$quotes[ix].id`_`$quotes[ix].methods[jx].id`"}
 								{* set the radio button to be checked if it is the method chosen *}
-								{if ("`$quotes[ix].id`_`$quotes[ix].methods[jx].id`" == $sessionShippingId.id)}
+								{if $quoteMethodId == $sessionShippingId}
 									{assign var=checked value=1}
 								{else}
 									{assign var=checked value=0}
@@ -41,11 +42,11 @@
 								{if empty($noradio) && ($smarty.section.ix.total > 1 || $smarty.section.jx.total > 1)}
 									<div class="radio mt-0">
 										<label>
-											<input type="radio" name="shipping" value="{$quotes[ix].id}_{$quotes[ix].methods[jx].id}" {if $checked}checked="checked"{/if}/> {$quotes[ix].methods[jx].name} {$quotes[ix].methods[jx].title} 
+											<input type="radio" name="shipping" value="{$quoteMethodId}" {if $checked}checked="checked"{/if}/> {$quotes[ix].methods[jx].name} {$quotes[ix].methods[jx].title} 
 										</label>
 									</div>
 								{else}
-									<input type="hidden" name="shipping" value="{"`$quotes[ix].id`_`$quotes[ix].methods[jx].id`"}" /> {$quotes[ix].methods[jx].title} 
+									<input type="hidden" name="shipping" value="{$quoteMethodId}" /> {$quotes[ix].methods[jx].title} 
 								{/if}
 									{if $quotes[ix].methods[jx].note}
 										{formhelp note=$quotes[ix].methods[jx].note}

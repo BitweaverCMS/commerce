@@ -86,7 +86,7 @@ class usps extends CommercePluginShippingBase {
 	function quote( $pShipHash ) {
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 			$iInfo = '';
-			$methods = array();
+
 			if ( !empty( $pShipHash['method'] ) && isset($this->types[$pShipHash['method']] ) ) {
 				$this->_setService( $pShipHash['method'] );
 			}
@@ -410,8 +410,14 @@ class usps extends CommercePluginShippingBase {
 					// build USPS output for valid methods based on selected and weight limits
 					if( ($pShipHash['shipping_weight_total'] <= $maxweight) && ($pShipHash['shipping_weight_total'] > $minweight) ) {
 						$found = false;
-						if( $pShipHash['method'] != $type && $pShipHash['method'] != $type_rebuilt) {
-							if( !empty( $pShipHash['method'] ) ) continue;
+
+						if( !empty( $pShipHash['method'] ) && ($pShipHash['method'] == $type && $pShipHash['method'] == $type_rebuilt) ) {
+							$found = TRUE;
+						} else {
+							if( !empty( $pShipHash['method'] ) ) {
+								continue;
+							}
+
 							foreach ($this->typeCheckboxesSelected as $key => $val) {
 								if (is_numeric($val) || $val == '') {
 									continue;

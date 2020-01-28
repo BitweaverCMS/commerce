@@ -45,7 +45,7 @@ class CommerceShipping extends BitSingleton {
 	function quote( $pOrderBase, $method = '', $module = '' ) {
 		global $currencies, $gCommerceSystem;
 
-		$quotes_array = array();
+		$ret = array();
 
 		if( !empty( $this->mShipModules ) ) {
 			$shipHash['method'] = $method;
@@ -72,7 +72,7 @@ class CommerceShipping extends BitSingleton {
 				$zc_large_percent = $za_large_array[0];
 				$zc_large_weight = $za_large_array[1];
 				foreach( $this->mShipModules as $shipModule ) {
-					if( $shipModule->isEnabled() ) {
+					if( $shipModule->isEnabled() && empty( $module ) || ($shipModule->code == $module) ) {
 						if ($shipHash['shipping_weight_total'] > $shipModule->maxShippingWeight() ) { // Split into many boxes
 							$shipHash['shipping_num_boxes'] = ceil( $shipHash['shipping_weight_total'] / $shipModule->maxShippingWeight() );
 							$shipHash['shipping_weight_box'] = $shipHash['shipping_weight_total'] / $shipHash['shipping_num_boxes'];
@@ -85,23 +85,28 @@ class CommerceShipping extends BitSingleton {
 							$shipHash['shipping_weight_total'] = ($shipHash['shipping_weight_total'] * ($zc_tare_percent/100)) + $zc_tare_weight;
 						}
 						if( $quotes = $shipModule->quote( $shipHash ) ) {
+//eb( $method, $shipModule->code, $quotes, $shipHash );
 							if( !empty( $quotes['methods'] ) ) {
 								foreach( array_keys( $quotes['methods'] ) as $j ) {
-									if( !empty( $quotes['methods'][$j]['cost'] ) ) {	
-										$quotes['methods'][$j]['cost_add_tax'] = zen_add_tax($quotes['methods'][$j]['cost'], (isset($quotes['tax']) ? $quotes['tax'] : 0));
-										$quotes['methods'][$j]['format_add_tax'] = $currencies->format( $quotes['methods'][$j]['cost_add_tax'] );
+									if( (empty( $method ) || $method == $quotes['methods'][$j]['id']) ) {
+										if( !empty( $quotes['methods'][$j]['cost'] ) ) {	
+											$quotes['methods'][$j]['cost_add_tax'] = zen_add_tax($quotes['methods'][$j]['cost'], (isset($quotes['tax']) ? $quotes['tax'] : 0));
+											$quotes['methods'][$j]['format_add_tax'] = $currencies->format( $quotes['methods'][$j]['cost_add_tax'] );
+										}
+									} else {
+										unset( $quotes['methods'][$j] );
 									}
 								}
 								$quotes['origin'] = $shipHash['origin'];
 							}
-							$quotes_array[] = $quotes;
+							$ret[] = $quotes;
 						}
 					}
 				}
 			}
 		}
 
-		return $quotes_array;
+		return $ret;
 	}
 
 }

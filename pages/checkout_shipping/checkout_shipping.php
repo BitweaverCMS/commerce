@@ -138,10 +138,12 @@ global $gCommerceShipping;
 							'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
 							);
 						zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+					} else {
+						$gBitSmarty->assign( 'errors', array( 'Shipping method could not be calculated.', $quote[0]['methods'][0]['title'] ) );
 					}
 				}
 			} elseif( empty( $free_shipping ) ) {
-				$gBitSmarty->assign( 'errors', "Please select a shipping method" );
+				$gBitSmarty->assign( 'errors', 'Please select a shipping method' );
 			}
 		} else {
 			// not virtual product, but no shipping cost.

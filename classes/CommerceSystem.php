@@ -121,9 +121,11 @@ class CommerceSystem extends BitSingleton {
 					}
 					include_once( $moduleSourceFile );
 				}
-				$ret[$moduleClass] = new $moduleClass();
-				if( $pActiveOnly && !$ret[$moduleClass]->isEnabled() ) {
-					unset( $ret[$moduleClass] );
+				if( class_exists( $moduleClass ) ) {
+					$ret[$moduleClass] = new $moduleClass();
+					if( $pActiveOnly && !$ret[$moduleClass]->isEnabled() ) {
+						unset( $ret[$moduleClass] );
+					}
 				}
 			}
 		}
