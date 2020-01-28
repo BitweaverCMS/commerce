@@ -31,7 +31,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		return $this->getModuleConfigValue( '_MODE' ) == 'Test';
 	}
 
-	protected function getFinalStatus() {
+	public function getFinalStatus() {
 		return $this->getModuleConfigValue( '_FINAL_ORDER_STATUS_ID' );
 	}
 
