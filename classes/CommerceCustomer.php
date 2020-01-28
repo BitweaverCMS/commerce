@@ -10,6 +10,7 @@
 // +--------------------------------------------------------------------+
 //
 
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceBase.php' );
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShoppingCart.php' );
 
 class CommerceCustomer extends CommerceBase {
