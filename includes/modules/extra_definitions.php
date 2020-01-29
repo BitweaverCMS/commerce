@@ -20,15 +20,14 @@
 // $Id$
 //
 
-// Set current template
-  $template_id= $template_dir;
+global $gCommerceSystem;
 
 // set directories to check for language files
   $languages_extra_definitions_directory = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/extra_definitions/';
-  $languages_extra_definitions_directory_template = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/extra_definitions/' . $template_id . '/';
+  $languages_extra_definitions_directory_template = DIR_FS_CATALOG . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/extra_definitions/' . $gCommerceSystem->mTemplateDir . '/';
 
   $ws_languages_extra_definitions_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/extra_definitions/';
-  $ws_languages_extra_definitions_directory_template = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/extra_definitions/' . $template_id . '/';
+  $ws_languages_extra_definitions_directory_template = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/extra_definitions/' . $gCommerceSystem->mTemplateDir . '/';
 
 // Check for new definitions in template directory
 
