@@ -77,7 +77,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		return (bool)$ret;
 	}
 
-	public function getFulfillment( $pOrderBase ) {
+	public function getFulfillment( &$pOrderBase ) {
 		$ret = array();
 		$delivery = $pOrderBase->getDelivery();
 

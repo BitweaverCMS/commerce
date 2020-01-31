@@ -38,6 +38,12 @@ class CommerceShipping extends BitSingleton {
 		$this->mShipModules = CommerceSystem::scanModules( 'shipping', TRUE );
 	}
 
+	function getShippingModule( $pModuleCode ) {
+		if( !empty( $this->mShipModules[$pModuleCode] ) ) {
+			return $this->mShipModules[$pModuleCode];
+		}
+	}
+
 	function isShippingAvailable() {
 		return count( $this->mShipModules );
 	}
