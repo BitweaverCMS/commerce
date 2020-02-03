@@ -93,7 +93,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		return $ret;
 	}
 
-	function getEstimatedShipDate( $pOrderBase ) {
+	function getEstimatedShipDate( $pOrderBase, $pFormatString='Y-m-d' ) {
 		$shipString = '';
 		$holidays = BitDate::getHolidays();
 
@@ -119,7 +119,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 				$delay++;
 				$shipTime = strtotime( '+'.($delay).'days' );
 			}
-			$shipString = date( 'Y-m-d', $shipTime );
+			$shipString = date( $pFormatString, $shipTime );
 			//$shipString = date( 'l', $shipTime ).', '.date( 'F j, Y', $shipTime );
 		}
 		return $shipString;
