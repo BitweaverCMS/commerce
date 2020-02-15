@@ -269,7 +269,7 @@ class canadapost extends CommercePluginShippingBase {
 				'configuration_description' => 'API KEY Username hex code issued by CanadaPost.',
 			),
 			$this->getModuleKeyTrunk().'_PASSWORD' => array(
-				'configuration_title' => 'CanadaPost Customer Number',
+				'configuration_title' => 'CanadaPost Password',
 				'configuration_description' => 'API KEY Password hex code issued by CanadaPost.',
 			),
 			$this->getModuleKeyTrunk().'_TYPES' => array(
