@@ -10,9 +10,10 @@
 // +--------------------------------------------------------------------+
 //
 
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceBase.php' );
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShoppingCart.php' );
 
-class CommerceCustomer extends BitBase {
+class CommerceCustomer extends CommerceBase {
 	public $mCustomerId;
 	public $mCart;
 
@@ -270,13 +271,6 @@ class CommerceCustomer extends BitBase {
 
 	// store an address
 	function storeAddress( &$pParamHash ) {
-		global $current_page_base, $language_page_directory, $template;
-
-		$directory_array = $template->get_template_part($language_page_directory, '/^'.$current_page_base . '/');
-		while(list ($key, $value) = each($directory_array)) {
-			require_once($language_page_directory . $value);
-		}
-
 		if( $this->verifyAddress( $pParamHash, $this->mErrors ) ) {
 			$process = true;
 			if( isset( $pParamHash['address_book_id'] ) && self::verifyId( $pParamHash['address_book_id'] ) ) {
@@ -337,12 +331,25 @@ class CommerceCustomer extends BitBase {
 			if( empty( $this->mInfo ) ) {
 				$this->load();
 			}
-			if( !empty( $this->mInfo['customers_default_address_id'] ) && $this->addressExists( $this->mInfo['customers_default_address_id'] ) ) {
-				$ret = $this->mInfo['customers_default_address_id'];
-			} elseif( !empty( $this->mInfo['customers_default_address_id'] ) ) {
-				// somehow we lost our default address - let's be sure to clean this up
-				$this->setDefaultAddress( NULL );
-				unset( $this->mInfo['customers_default_address_id'] );
+			if( !empty( $this->mInfo['customers_default_address_id'] ) ) {
+				if( $this->addressExists( $this->mInfo['customers_default_address_id'] ) ) {
+					$ret = $this->mInfo['customers_default_address_id'];
+				} else {
+					// somehow we lost our default address - let's be sure to clean this up
+					$this->setDefaultAddress( NULL );
+					unset( $this->mInfo['customers_default_address_id'] );
+				}
+			}
+
+			if( empty( $ret ) ) {
+				// No default address, let's choose the most recently created
+				if( $addresses = $this->getAddresses() ) {
+					$newestAddress = current( $addresses );
+					$ret = $newestAddress['address_book_id'];
+					if( empty( $this->mInfo['customers_default_address_id'] ) ) {
+						$this->setDefaultAddress( $ret );
+					}
+				}
 			}
 		}
 		return( $ret );
@@ -409,7 +416,8 @@ class CommerceCustomer extends BitBase {
 						FROM " . TABLE_ADDRESS_BOOK . " ab 
 							INNER JOIN " . TABLE_COUNTRIES . " co ON( ab.`entry_country_id`=co.`countries_id` )
 							INNER JOIN " . TABLE_CUSTOMERS . " cu ON( ab.`customers_id`=cu.`customers_id` )
-						WHERE ab.`customers_id` = ?";
+						WHERE ab.`customers_id` = ?
+						ORDER BY `address_book_id` DESC";
 
 			if( $rs = $gBitDb->query( $query, array( $pCustomerId ) ) ) {
 				$ret = $rs->GetRows();
@@ -419,7 +427,6 @@ class CommerceCustomer extends BitBase {
 	}
 
 	function getStateInputHtml( $pAddressHash, $pSecure='shipping' ) {
-		global $gCommerceSystem;
 
 		$stateInput = '';
 
@@ -429,7 +436,7 @@ class CommerceCustomer extends BitBase {
 			}
 		}
 
-		if( $gCommerceSystem->isConfigActive( 'ACCOUNT_STATE' ) ) {
+		if( $this->isCommerceConfigActive( 'ACCOUNT_STATE' ) ) {
 			if ( !empty( $selectedCountry ) ) {
 				if( !($stateInput = zen_get_country_zone_list('state', $selectedCountry, (!empty( $pAddressHash['entry_zone_id'] ) ? $pAddressHash['entry_zone_id'] : ''), 'autocomplete="region"' )) ) { 
 					$stateInput = zen_draw_input_field('state', zen_get_zone_name($selectedCountry, $pAddressHash['entry_zone_id'], $pAddressHash['entry_state']));

@@ -572,40 +572,40 @@ define('TEXT_INFO_SORT_BY_PRODUCTS_SORT_ORDER', 'Default Display');
 
 ///////////////////////////////////////////////////////////
 // include email extras
-  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_EMAIL_EXTRAS)) {
-    $template_dir_select = $template_dir . '/';
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $gCommerceSystem->mTemplateDir . '/' . FILENAME_EMAIL_EXTRAS)) {
+    $template_dir_select = $gCommerceSystem->mTemplateDir . '/';
   } else {
     $template_dir_select = '';
   }
   require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_EMAIL_EXTRAS);
 
 // include template specific header defines
-  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_HEADER)) {
-    $template_dir_select = $template_dir . '/';
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $gCommerceSystem->mTemplateDir . '/' . FILENAME_HEADER)) {
+    $template_dir_select = $gCommerceSystem->mTemplateDir . '/';
   } else {
     $template_dir_select = '';
   }
   require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_HEADER);
 
 // include template specific button name defines
-  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_BUTTON_NAMES)) {
-    $template_dir_select = $template_dir . '/';
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $gCommerceSystem->mTemplateDir . '/' . FILENAME_BUTTON_NAMES)) {
+    $template_dir_select = $gCommerceSystem->mTemplateDir . '/';
   } else {
     $template_dir_select = '';
   }
   require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_BUTTON_NAMES);
 
 // include template specific icon name defines
-  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_ICON_NAMES)) {
-    $template_dir_select = $template_dir . '/';
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $gCommerceSystem->mTemplateDir . '/' . FILENAME_ICON_NAMES)) {
+    $template_dir_select = $gCommerceSystem->mTemplateDir . '/';
   } else {
     $template_dir_select = '';
   }
   require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_ICON_NAMES);
 
 // include template specific other image name defines
-  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_OTHER_IMAGES_NAMES)) {
-    $template_dir_select = $template_dir . '/';
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $gCommerceSystem->mTemplateDir . '/' . FILENAME_OTHER_IMAGES_NAMES)) {
+    $template_dir_select = $gCommerceSystem->mTemplateDir . '/';
   } else {
     $template_dir_select = '';
   }
@@ -615,16 +615,16 @@ define('TEXT_INFO_SORT_BY_PRODUCTS_SORT_ORDER', 'Default Display');
   require_once(DIR_WS_LANGUAGES . 'en/' . FILENAME_CREDIT_CARDS);
 
 // include template specific whos_online sidebox defines
-  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/' . FILENAME_WHOS_ONLINE . '.php')) {
-    $template_dir_select = $template_dir . '/';
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $gCommerceSystem->mTemplateDir . '/' . FILENAME_WHOS_ONLINE . '.php')) {
+    $template_dir_select = $gCommerceSystem->mTemplateDir . '/';
   } else {
     $template_dir_select = '';
   }
   require_once(DIR_WS_LANGUAGES . 'en/' . $template_dir_select . FILENAME_WHOS_ONLINE . '.php');
 
 // include template specific meta tags defines
-  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $template_dir . '/meta_tags.php')) {
-    $template_dir_select = $template_dir . '/';
+  if (file_exists(DIR_WS_LANGUAGES . 'en/' . $gCommerceSystem->mTemplateDir . '/meta_tags.php')) {
+    $template_dir_select = $gCommerceSystem->mTemplateDir . '/';
   } else {
     $template_dir_select = '';
   }

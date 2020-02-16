@@ -23,51 +23,14 @@
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
 class cc extends CommercePluginPaymentCardBase {
-	var $code, $title, $description, $enabled;
 
-// class constructor
-	function __construct() {
-		global $order;
-
+	public function __construct() {
 		parent::__construct();
-
-		$this->code = 'cc';
-		$this->title = MODULE_PAYMENT_CC_TEXT_TITLE;
-		$this->description = MODULE_PAYMENT_CC_TEXT_DESCRIPTION;
-		$this->sort_order = defined( 'MODULE_PAYMENT_CC_SORT_ORDER' ) ? MODULE_PAYMENT_CC_SORT_ORDER : 0;
-		$this->enabled = (( defined( 'MODULE_PAYMENT_CC_STATUS' ) && MODULE_PAYMENT_CC_STATUS == 'True') ? true : false);
-
-		if ( defined( 'MODULE_PAYMENT_CC_ORDER_STATUS_ID' ) && (int)MODULE_PAYMENT_CC_ORDER_STATUS_ID > 0) {
-			$this->order_status = MODULE_PAYMENT_CC_ORDER_STATUS_ID;
-		}
-
-		if (is_object($order)) $this->update_status();
+		$this->adminTitle = tra( 'Generic Credit Card' );
+		$this->description = tra( 'This method collects credit card information, but does not process it' );
 	}
 
-	// class methods
-	function update_status() {
-		global $order, $gBitDb;
-
-		if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_CC_ZONE > 0) ) {
-			$check_flag = false;
-			$check = $this->mDb->query("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_CC_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['countries_id'] . "' order by `zone_id`");
-			while (!$check->EOF) {
-				if ($check->fields['zone_id'] < 1) {
-					$check_flag = true;
-					break;
-				} elseif ($check->fields['zone_id'] == $order->billing['zone_id']) {
-					$check_flag = true;
-					break;
-				}
-				$check->MoveNext();
-			}
-
-			if ($check_flag == false) {
-				$this->enabled = false;
-			}
-		}
-	}
-
+	// class constructor
 	function javascript_validation() {
 		$js = '	if (payment_value == "' . $this->code . '") {' . "\n" .
 			'		var cc_owner = document.checkout_payment.cc_owner.value;' . "\n" .
@@ -194,7 +157,7 @@ class cc extends CommercePluginPaymentCardBase {
 	function after_order_create($zf_order_id) {
 		global $gBitDb, $order;
 		if (MODULE_PAYMENT_CC_COLLECT_CVV == 'True')	{
-			$gBitDb->execute("update "	. TABLE_ORDERS . " set cc_cvv ='" . $order->info['cc_cvv'] . "' where `orders_id` = '" . $zf_order_id ."'");
+			$gBitDb->execute( "UPDATE "	. TABLE_ORDERS . " set cc_cvv ='" . $order->info['cc_cvv'] . "' where `orders_id` = '" . $zf_order_id ."'");
 		}
 	}
 	
@@ -207,34 +170,18 @@ class cc extends CommercePluginPaymentCardBase {
 		return $error;
 	}
 
-	function check() {
-		global $gBitDb;
-		if (!isset($this->_check)) {
-			$check_query = $this->mDb->query("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_PAYMENT_CC_STATUS'");
-			$this->_check = $check_query->RecordCount();
-		}
-		return $this->_check;
-	}
-
 	function install() {
-		global $gBitDb;
-		$this->StartTrans();
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable Credit Card Module', 'MODULE_PAYMENT_CC_STATUS', 'True', 'Do you want to accept credit card payments?', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Split Credit Card E-Mail Address', 'MODULE_PAYMENT_CC_EMAIL', '', 'If an e-mail address is entered, the middle digits of the credit card number will be sent to the e-mail address (the outside digits are stored in the database with the middle digits censored)', '6', '0', 'NOW')");
+		parent::install();
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Collect & store the CVV number', 'MODULE_PAYMENT_CC_COLLECT_CVV', 'True', 'Do you want to collect the CVV number. Note: If you do the CVV number will be stored in the database in an encoded format.', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Store the Credit Card Number', 'MODULE_PAYMENT_CC_STORE_NUMBER', 'True', 'Do you want to store the Credit Card Number. Note: The Credit Card Number will be stored unenecrypted, and as such may represent a security problem', '6', '0', 'zen_cfg_select_option(array(''True'', ''False''), ', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort order of display.', 'MODULE_PAYMENT_CC_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '0' , 'NOW')");
 		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Payment Zone', 'MODULE_PAYMENT_CC_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '2', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', 'NOW')");
-		$this->mDb->query("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_PAYMENT_CC_ORDER_STATUS_ID', '0', 'Set the status of orders made with this payment module to this value', '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', 'NOW')");
 		$this->CompleteTrans();
 	}
 
-	function remove() {
-		global $gBitDb;
-		$this->mDb->query("delete from " . TABLE_CONFIGURATION . " where `configuration_key` in ('" . implode("', '", $this->keys()) . "')");
-	}
-
-	function keys() {
-		return array('MODULE_PAYMENT_CC_STATUS', 'MODULE_PAYMENT_CC_COLLECT_CVV', 'MODULE_PAYMENT_CC_STORE_NUMBER', 'MODULE_PAYMENT_CC_ZONE', 'MODULE_PAYMENT_CC_ORDER_STATUS_ID', 'MODULE_PAYMENT_CC_SORT_ORDER');
+	public function keys() {
+		return array_merge( 
+					array_keys( $this->config() ), 
+					array('MODULE_PAYMENT_CC_COLLECT_CVV', 'MODULE_PAYMENT_CC_STORE_NUMBER', 'MODULE_PAYMENT_CC_ZONE') 
+				);
 	}
 }

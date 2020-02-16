@@ -19,6 +19,6 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
+global $gCommerceSystem;
 
-  require($template->get_template_dir($footer_template, DIR_WS_TEMPLATE, $current_page_base,'common'). '/'. $footer_template);
-?>
+require($gCommerceSystem->get_template_dir($footer_template, DIR_WS_TEMPLATE, $current_page_base,'common'). '/'. $footer_template);

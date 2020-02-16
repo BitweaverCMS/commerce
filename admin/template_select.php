@@ -49,7 +49,7 @@
         $action="";
         break;
       case 'save':
-        $gBitDb->Execute("update " . TABLE_TEMPLATE_SELECT . " set template_dir = '" . $_POST['ln'] . "' where template_id = '" . $_GET['tID'] . "'");
+        $gBitDb->Execute("update " . TABLE_TEMPLATE_SELECT . " set gCommerceSystem->mTemplateDir = '" . $_POST['ln'] . "' where template_id = '" . $_GET['tID'] . "'");
         break;
       case 'deleteconfirm':
         $check_query = $gBitDb->Execute("select template_language from " . TABLE_TEMPLATE_SELECT . " where template_id = '" . $_GET['tID'] . "'");

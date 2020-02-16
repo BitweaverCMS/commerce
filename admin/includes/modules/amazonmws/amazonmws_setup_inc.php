@@ -170,20 +170,21 @@ function amazon_process_order( $pAmazonOrderId ) {
 					}
 
 					if( $shippingAddress = $azOrder->getShippingAddress() ) {
-						$country = zen_get_countries( zen_get_country_id( $shippingAddress->getCountryCode() ), TRUE );
 						$zoneName = zen_get_zone_name_by_code( $country['countries_id'], $shippingAddress->getStateOrRegion() );
-						$order->delivery = array('firstname' => substr( $shippingAddress->getName(), 0, strpos( $shippingAddress->getName(), ' ' ) ),
-												'lastname' => substr( $shippingAddress->getName(), strpos( $shippingAddress->getName(), ' ' ) + 1 ),
-												'company' => NULL,
-												'street_address' => $shippingAddress->getAddressLine1(),
-												'suburb' => trim( $shippingAddress->getAddressLine2().' '.$shippingAddress->getAddressLine3() ),
-												'city' => $shippingAddress->getCity(),
-												'postcode' => $shippingAddress->getPostalCode(),
-												'state' => $zoneName,
-												'country' => $country,
-												'format_id' => $country['address_format_id'],
-												'telephone' => $shippingAddress->getPhone(),
-												'email_address' => NULL
+						$order->delivery = array_merge( 
+												array('firstname' => substr( $shippingAddress->getName(), 0, strpos( $shippingAddress->getName(), ' ' ) ),
+													'lastname' => substr( $shippingAddress->getName(), strpos( $shippingAddress->getName(), ' ' ) + 1 ),
+													'company' => NULL,
+													'street_address' => $shippingAddress->getAddressLine1(),
+													'suburb' => trim( $shippingAddress->getAddressLine2().' '.$shippingAddress->getAddressLine3() ),
+													'city' => $shippingAddress->getCity(),
+													'postcode' => $shippingAddress->getPostalCode(),
+													'state' => $zoneName,
+													'format_id' => $country['address_format_id'],
+													'telephone' => $shippingAddress->getPhone(),
+													'email_address' => NULL
+												),
+												zen_get_countries( $shippingAddress->getCountryCode() ),
 											);
 						$order->customer = $order->delivery;
 						$order->billing = $order->delivery;

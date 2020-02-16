@@ -1,25 +1,19 @@
 <?php
-// +----------------------------------------------------------------------+
-// | bitcommerce															|
-// | Copyright (c) 2007-2009 bitcommerce.org									 |
-// | http://www.bitcommerce.org											 |
-// | This source file is subject to version 2.0 of the GPL license		|
-// +----------------------------------------------------------------------+
 /**
- * @version	$Header$
+ * @package bitcommerce
+ * @author spiderr <spiderr@bitweaver.org>
+ * Copyright (c) 2020 bitweaver.org, All Rights Reserved
+ * This source file is subject to the 2.0 GNU GENERAL PUBLIC LICENSE. 
  *
- * Base class for handling common functionality between shipping cart and orders
+ * Base class for Order and ShoppingCart. Used for quoting shipping and fulfillment
  *
- * @package	bitcommerce
- * @author	 spider <spider@steelsun.com>
  */
 
-
-class CommerceOrderBase extends BitBase {
+abstract class CommerceOrderBase extends BitBase {
 
 	public $mProductObjects = array();
 	public $total;
-	public $weight;
+	protected $weight;
 	public $free_shipping_item;
 	public $free_shipping_weight;
 	public $free_shipping_price;
@@ -27,6 +21,10 @@ class CommerceOrderBase extends BitBase {
 
 	protected $mOtClasses = array();
 	protected $mOtProcessModules = array();
+
+	abstract public function getDelivery();
+	abstract public function getProductHash( $pProductsKey );
+	abstract public function calculate( $pForceRecalculate=FALSE );
 
 	// can take a productsKey or a straight productsId
 	function getProductObject( $pProductsMixed ) {
@@ -60,6 +58,40 @@ class CommerceOrderBase extends BitBase {
 		return $ret;
 	}
 
+	public function getShipmentValue() {
+		$this->calculate();
+		$ret = $this->subtotal - $this->free_shipping_prices();
+
+		//$ret = (float)($order->subtotal > 0 ? $order->subtotal + $order->getField( 'tax' ) : 0);
+		//$ret = (!empty( $_SESSION['cart']->total	) ? $_SESSION['cart']->total: 0);
+
+		return $ret;
+	}
+
+/*
+	public function getShipmentPackages() {
+		$ret = array();
+// Some code From FedEx, not really helpful
+					foreach ($products as $product) {
+						$dimensions_query = "SELECT products_length, products_width, products_height, products_ready_to_ship, products_dim_type FROM " . TABLE_PRODUCTS . " 
+																 WHERE products_id = " . (int)$product['id'] . " 
+																 AND products_length > 0 
+																 AND products_width > 0
+																 AND products_height > 0 
+																 LIMIT 1;";
+						$dimensions = $this->mDb->query($dimensions_query);
+						if ($dimensions->RecordCount() > 0 && $dimensions->fields['products_ready_to_ship'] == 1) {
+							for ($i = 1; $i <= $product['quantity']; $i++) {
+								$packages[] = array('weight' => $product['weight'], 'length' => $dimensions->fields['products_length'], 'width' => $dimensions->fields['products_width'], 'height' => $dimensions->fields['products_height'], 'units' => strtoupper($dimensions->fields['products_dim_type']));
+							}		
+						} else {
+							$pShipHash['shipping_weight_total'] += $product['weight'] * $product['quantity']; 
+						}
+					}
+		return $ret;
+	}
+*/
+
 	// shipping adjustment
 	function free_shipping_items() {
 		$this->calculate();
@@ -79,15 +111,52 @@ class CommerceOrderBase extends BitBase {
 		return $this->free_shipping_weight;
 	}
 
-	public function getProductHash( $pProductsKey ) {
-		return BitBase::getParameter( $this->contents, $pProductsKey );
+	public function getShippingDestination( $pCountryIso2 = '', $pPostalCode = '' ) {
+		$ret = array();
+
+		if( $pCountryIso2 && $pPostalCode ) {
+			$ret = zen_get_countries( $pCountryIso2 );
+		} else {
+			$ret = $this->getDelivery();
+		}
+
+		return $ret;
+	}
+
+	public function getShippingOrigin() {
+		global $gCommerceSystem; 
+
+		$fulfillmentModules = CommerceSystem::scanModules( 'fulfillment' );
+
+		$fulfillmentPriority = array();
+		foreach( $fulfillmentModules as $fulfillmentKey => $fulfiller  ) {
+			if( is_object( $fulfiller ) && $fulfiller->isEnabled() ) {
+				if( $origin = $fulfiller->getFulfillment( $this ) ) {
+					$fulfillmentPriority[$fulfillmentKey] = $origin;
+				}
+			}
+			if( !empty( $fulfiller->mErrors ) ) {
+				$feedback[$fulfillmentKey]['error'][] = $fulfiller->mErrors;
+			}
+		}
+
+		if( empty( $fulfillmentPriority ) ) {
+			$ret['countries_id'] = $storeCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY', $gCommerceSystem->getConfig( 'STORE_COUNTRY' ) );
+
+			if( $ret = zen_get_countries( $storeCountryId ) ) {
+				$ret['postcode'] = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_ZIP' );
+			}
+			$fulfillmentPriority[] = $ret;
+		} 
+
+		uasort( $fulfillmentPriority, 'commerce_order_sort_fulfillers' );
+		return current( $fulfillmentPriority );
 	}
 
 	/**
 	* Used for checkout tracking
 	**/
 	public function getTrackingHash() {
-		global $gCommerceSystem, $gBitSystem;
 		$ret = array();
 		foreach( array_keys( $this->contents ) as $productsKey ) {
 			if( $prod = &$this->getProductObject( $this->contents[$productsKey]['products_id'] ) ) {
@@ -99,7 +168,7 @@ class CommerceOrderBase extends BitBase {
 
 	private function scanOtModules( $pRefresh = FALSE ) {
 		if( empty( $this->mOtClasses ) || $pRefresh ) {
-			global $gBitCustomer, $gCommerceSystem;
+			global $gBitCustomer;
 
 			if( defined( 'MODULE_ORDER_TOTAL_INSTALLED' ) && MODULE_ORDER_TOTAL_INSTALLED ) {
 				$otActiveClasses = explode(';', str_replace( '.php', '', MODULE_ORDER_TOTAL_INSTALLED ) );
@@ -295,4 +364,11 @@ class CommerceOrderBase extends BitBase {
 		return round( $totalDue, $round );
 	}
 
+}
+
+function commerce_order_sort_fulfillers( $a, $b ) {
+	    if ($a['priority'] == $b) {
+        return 0;
+    }
+    return ($a < $b) ? 1 : -1;
 }

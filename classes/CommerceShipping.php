@@ -20,122 +20,102 @@
 // $Id$
 //
 
-class CommerceShipping {
-	public $modules;
+class CommerceShipping extends BitSingleton {
 
-// class constructor
-	function CommerceShipping($module = '') {
-		global $gBitCustomer;
+	private $mShipModules = array();
 
-		if (defined('MODULE_SHIPPING_INSTALLED') && zen_not_null(MODULE_SHIPPING_INSTALLED)) {
-			$this->modules = explode(';', MODULE_SHIPPING_INSTALLED);
-			$include_modules = array();
+	function __construct() {
+		parent::__construct();
+		$this->loadShippingModules();
+	}
 
-			if ( (zen_not_null($module)) && (in_array(substr($module['id'], 0, strpos($module['id'], '_')) . '.' . substr($_SERVER['SCRIPT_NAME'], (strrpos($_SERVER['SCRIPT_NAME'], '.')+1)), $this->modules)) ) {
-				$include_modules[] = array('class' => substr($module['id'], 0, strpos($module['id'], '_')), 'file' => substr($module['id'], 0, strpos($module['id'], '_')) . '.' . substr($_SERVER['SCRIPT_NAME'], (strrpos($_SERVER['SCRIPT_NAME'], '.')+1)));
-			} else {
-				reset($this->modules);
-				while (list(, $value) = each($this->modules)) {
-					$base = basename( $value );
-					$class = substr( $base, 0, strrpos($base, '.'));
-					$include_modules[] = array('class' => $class, 'file' => $value);
-				}
-			}
+	public function __wakeup() {
+		parent::__wakeup();
+		$this->loadShippingModules();
+	}
 
-			for ($i=0, $n=sizeof($include_modules); $i<$n; $i++) {
-//					include(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/shipping/' . $include_modules[$i]['file']);
-				$langFile = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/shipping/', $include_modules[$i]['file'], 'false');
-				if( file_exists( $langFile ) ) {
-					include_once( $langFile );
-				}
-				include_once( BITCOMMERCE_PKG_PATH . DIR_WS_MODULES . 'shipping/' . $include_modules[$i]['file'] );
-				$GLOBALS[$include_modules[$i]['class']] = new $include_modules[$i]['class']();
-			}
+	private function loadShippingModules() {
+		$this->mShipModules = CommerceSystem::scanModules( 'shipping', TRUE );
+	}
+
+	function getShippingModule( $pModuleCode ) {
+		if( !empty( $this->mShipModules[$pModuleCode] ) ) {
+			return $this->mShipModules[$pModuleCode];
 		}
 	}
 
-	function quote( $pShippingWeight, $method = '', $module = '') {
-		global $currencies;
+	function isShippingAvailable() {
+		return count( $this->mShipModules );
+	}
+	
+	function quote( $pOrderBase, $method = '', $module = '' ) {
+		global $currencies, $gCommerceSystem;
 
-		$quotes_array = array();
+		$ret = array();
 
-		if( !empty( $this->modules ) ) {
+		if( !empty( $this->mShipModules ) ) {
 			$shipHash['method'] = $method;
-			$shipHash['shipping_num_boxes'] = 1;
-			$shipHash['shipping_weight'] = $pShippingWeight;
+			$shipHash['shipping_weight_total'] = $pOrderBase->getWeight();
+			$shipHash['is_fragile'] = FALSE; // needs implementation
+			$shipHash['is_ground_only'] = FALSE; // needs implementation
+			$shipHash['box_width'] = NULL;
+			$shipHash['box_length'] = NULL;
+			$shipHash['box_height'] = NULL;
+			$shipHash['box_girth'] = NULL;
+			$shipHash['weight_unit'] = $gCommerceSystem->getConfig( 'STORE_WEIGHT_UNIT' );
 
-			$za_tare_array = preg_split("/[:,]/" , SHIPPING_BOX_WEIGHT);
-			$zc_tare_percent= $za_tare_array[0];
-			$zc_tare_weight= $za_tare_array[1];
+//				"('Shipping Delay', 'SHIPPING_DAYS_DELAY', '1', 'How many days from when an order is placed to when you ship it (Decimals are allowed). Arrival date estimations are based on this value.', 6, 7, NULL, NULL, now())",
+//			'SHIPPING_DAYS_DELAY',
+			if( ($shipHash['destination'] = $pOrderBase->getShippingDestination()) && ($shipHash['origin'] = $pOrderBase->getShippingOrigin()) ) {
+				$shipHash['shipping_value'] = $pOrderBase->getShipmentValue();
 
-			$za_large_array = preg_split("/[:,]/" , SHIPPING_BOX_PADDING);
-			$zc_large_percent= $za_large_array[0];
-			$zc_large_weight= $za_large_array[1];
+				// Stuff from ancient ZenCart, probably still works
+				$za_tare_array = preg_split("/[:,]/", SHIPPING_BOX_WEIGHT);
+				$zc_tare_percent= $za_tare_array[0];
+				$zc_tare_weight= $za_tare_array[1];
 
-			if( SHIPPING_MAX_WEIGHT <= $shipHash['shipping_weight'] ) {
-				// large box add padding
-				$shipHash['shipping_weight'] = $shipHash['shipping_weight'] + ($shipHash['shipping_weight']*($zc_large_percent/100)) + $zc_large_weight;
-			} else {
-				// add tare weight < large
-				$shipHash['shipping_weight'] = $shipHash['shipping_weight'] + ($shipHash['shipping_weight']*($zc_tare_percent/100)) + $zc_tare_weight;
-			}
-
-			if ($shipHash['shipping_weight'] > SHIPPING_MAX_WEIGHT) { // Split into many boxes
-				$shipHash['shipping_num_boxes'] = ceil($shipHash['shipping_weight']/SHIPPING_MAX_WEIGHT);
-				$shipHash['shipping_weight'] = $shipHash['shipping_weight']/$shipHash['shipping_num_boxes'];
-			}
-
-			$include_quotes = array();
-
-			reset($this->modules);
-			while (list(, $value) = each($this->modules)) {
-				$base = basename( $value );
-				$class = substr($base, 0, strrpos($base, '.'));
-				if (zen_not_null($module)) {
-					if ( ($module == $class) && ($GLOBALS[$class]->enabled) ) {
-						$include_quotes[] = $class;
-					}
-				} elseif ($GLOBALS[$class]->enabled) {
-					$include_quotes[] = $class;
-				}
-			}
-
-			$size = sizeof($include_quotes);
-			for ($i=0; $i<$size; $i++) {
-				if( $quotes = $GLOBALS[$include_quotes[$i]]->quote( $shipHash ) ) {
-					if( !empty( $quotes['methods'] ) ) {
-						foreach( array_keys( $quotes['methods'] ) as $j ) {
-							$quotes['methods'][$j]['cost_add_tax'] = zen_add_tax($quotes['methods'][$j]['cost'], (isset($quotes['tax']) ? $quotes['tax'] : 0));
-							$quotes['methods'][$j]['format_add_tax'] = $currencies->format( $quotes['methods'][$j]['cost_add_tax'] );
+				$za_large_array = preg_split("/[:,]/" , SHIPPING_BOX_PADDING);
+				$zc_large_percent = $za_large_array[0];
+				$zc_large_weight = $za_large_array[1];
+				foreach( $this->mShipModules as $shipModule ) {
+					if( $shipModule->isEnabled() && empty( $module ) || ($shipModule->code == $module) ) {
+						if ($shipHash['shipping_weight_total'] > $shipModule->maxShippingWeight() ) { // Split into many boxes
+							$shipHash['shipping_num_boxes'] = ceil( $shipHash['shipping_weight_total'] / $shipModule->maxShippingWeight() );
+							$shipHash['shipping_weight_box'] = $shipHash['shipping_weight_total'] / $shipHash['shipping_num_boxes'];
+							// large box add padding
+							$shipHash['shipping_weight_total'] = ($shipHash['shipping_weight_total'] * ($zc_large_percent/100)) + $zc_large_weight;
+						} else {
+							$shipHash['shipping_num_boxes'] = 1;
+							$shipHash['shipping_weight_box'] = $shipHash['shipping_weight_total'];
+							// add tare weight < large
+							$shipHash['shipping_weight_total'] = ($shipHash['shipping_weight_total'] * ($zc_tare_percent/100)) + $zc_tare_weight;
 						}
-					}
-					$quotes_array[] = $quotes;
-				}
-			}
-
-		}
-
-		return $quotes_array;
-	}
-
-	function cheapest( $pShippingWeight ) {
-		$cheapest = false;
-		if( $quotes = $this->quote( $pShippingWeight ) ) {
-			foreach( $quotes as $quote ) {
-				if( !empty( $quote['methods'] ) ) {
-					for( $i=0; $i< count( $quote['methods'] ); $i++ ) {
-						if( empty( $cheapest ) || ($quote['methods'][$i]['cost'] < $cheapest['cost']) ) {
-							$cheapest = array( 'id' => $quote['id'] . '_' . $quote['methods'][$i]['id'],
-												'title' => $quote['module'] . ' (' . $quote['methods'][$i]['title'] . ')',
-												'cost' => $quote['methods'][$i]['cost'],
-												'module' => $quote['id']
-											 );
+						if( $quotes = $shipModule->quote( $shipHash ) ) {
+//eb( $method, $shipModule->code, $quotes, $shipHash );
+							if( !empty( $quotes['methods'] ) ) {
+								foreach( array_keys( $quotes['methods'] ) as $j ) {
+									if( (empty( $method ) || $method == $quotes['methods'][$j]['id']) ) {
+										if( !empty( $quotes['methods'][$j]['cost'] ) ) {	
+											$quotes['methods'][$j]['cost_add_tax'] = zen_add_tax($quotes['methods'][$j]['cost'], (isset($quotes['tax']) ? $quotes['tax'] : 0));
+											$quotes['methods'][$j]['format_add_tax'] = $currencies->format( $quotes['methods'][$j]['cost_add_tax'] );
+										}
+									} else {
+										unset( $quotes['methods'][$j] );
+									}
+								}
+								$quotes['origin'] = $shipHash['origin'];
+							}
+							$ret[] = $quotes;
 						}
 					}
 				}
 			}
 		}
-		return $cheapest;
+
+		return $ret;
 	}
+
 }
-?>
+
+CommerceShipping::loadSingleton();
+

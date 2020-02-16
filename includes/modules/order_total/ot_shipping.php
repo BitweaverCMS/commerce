@@ -58,18 +58,18 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 					}
 
 					if ($shipping_tax_basis == 'Billing') {
-						$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->billing['country']['countries_id'], $this->mOrder->billing['zone_id']);
-						$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->billing['country']['countries_id'], $this->mOrder->billing['zone_id']);
+						$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->billing['countries_id'], $this->mOrder->billing['zone_id']);
+						$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->billing['countries_id'], $this->mOrder->billing['zone_id']);
 					} elseif ($shipping_tax_basis == 'Shipping') {
-						$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->delivery['country']['countries_id'], $this->mOrder->delivery['zone_id']);
-						$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->delivery['country']['countries_id'], $this->mOrder->delivery['zone_id']);
+						$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->delivery['countries_id'], $this->mOrder->delivery['zone_id']);
+						$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->delivery['countries_id'], $this->mOrder->delivery['zone_id']);
 					} else {
 						if (STORE_ZONE == $this->mOrder->billing['zone_id']) {
-							$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->billing['country']['countries_id'], $this->mOrder->billing['zone_id']);
-							$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->billing['country']['countries_id'], $this->mOrder->billing['zone_id']);
+							$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->billing['countries_id'], $this->mOrder->billing['zone_id']);
+							$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->billing['countries_id'], $this->mOrder->billing['zone_id']);
 						} elseif (STORE_ZONE == $this->mOrder->delivery['zone_id']) {
-							$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->delivery['country']['countries_id'], $this->mOrder->delivery['zone_id']);
-							$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->delivery['country']['countries_id'], $this->mOrder->delivery['zone_id']);
+							$shipping_tax = zen_get_tax_rate($GLOBALS[$module]->tax_class, $this->mOrder->delivery['countries_id'], $this->mOrder->delivery['zone_id']);
+							$shipping_tax_description = zen_get_tax_description($GLOBALS[$module]->tax_class, $this->mOrder->delivery['countries_id'], $this->mOrder->delivery['zone_id']);
 						} else {
 							$shipping_tax = 0;
 						}
@@ -94,16 +94,27 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	function keys() {
-		return array('MODULE_ORDER_TOTAL_SHIPPING_STATUS', 'MODULE_ORDER_TOTAL_SHIPPING_SORT_ORDER', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER', 'MODULE_ORDER_TOTAL_SHIPPING_DESTINATION');
+	public function keys() {
+		return array_merge(
+					array_keys( $this->config() ),
+					array('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER', 'MODULE_ORDER_TOTAL_SHIPPING_DESTINATION')
+				);
 	}
 
 	function install() {
-		global $gBitDb;
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('This module is installed', 'MODULE_ORDER_TOTAL_SHIPPING_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort Order', 'MODULE_ORDER_TOTAL_SHIPPING_SORT_ORDER', '200', 'Sort order of display.', '6', '2', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Allow Free Shipping', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING', 'false', 'Do you want to allow free shipping?', '6', '3', 'zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `date_added`) values ('Free Shipping For Orders Over', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER', '50', 'Provide free shipping for orders over the set amount.', '6', '4', 'currencies->format', now())");
-		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Provide Free Shipping For Orders Made', 'MODULE_ORDER_TOTAL_SHIPPING_DESTINATION', 'national', 'Provide free shipping for orders sent to the set destination.', '6', '5', 'zen_cfg_select_option(array(\'national\', \'international\', \'both\'), ', now())");
+		parent::install();
+		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Allow Free Shipping', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING', 'false', 'Do you want to allow free shipping?', '6', '3', 'zen_cfg_select_option(array(''true'', ''false''), ', now())");
+		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `date_added`) values ('Free Shipping For Orders Over', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER', '50', 'Provide free shipping for orders over the set amount.', '6', '4', 'currencies->format', now())");
+		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Provide Free Shipping For Orders Made', 'MODULE_ORDER_TOTAL_SHIPPING_DESTINATION', 'national', 'Provide free shipping for orders sent to the set destination.', '6', '5', 'zen_cfg_select_option(array(\'national\', \'international\', \'both\'), ', now())");
+	}
+
+	/*
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		$ret = parent::config();
+		// set some default values
+		$ret[$this->getModuleKeyTrunk().'_SORT_ORDER']['configuration_value'] = '200';
+		return $ret;
 	}
 }

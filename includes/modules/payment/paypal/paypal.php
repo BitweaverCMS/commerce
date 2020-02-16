@@ -29,52 +29,14 @@ DEFINE('MODULE_PAYMENT_PAYPAL_RM', '2');
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
 class paypal extends CommercePluginPaymentBase {
-	var $code, $title, $description, $enabled;
 
-// class constructor
-	function paypal($paypal_ipn_id = '') {
-		global $order;
-			$this->code = 'paypal';
-		if( !empty( $_GET['main_page'] ) ) {
-			$this->title = MODULE_PAYMENT_PAYPAL_TEXT_CATALOG_TITLE; // Payment Module title in Catalog
-		} else {
-			$this->title = MODULE_PAYMENT_PAYPAL_TEXT_ADMIN_TITLE; // Payment Module title in Admin
-		}
-		if( defined( 'MODULE_PAYMENT_PAYPAL_STATUS' ) ) {
-			$this->description = MODULE_PAYMENT_PAYPAL_TEXT_DESCRIPTION;
-			$this->sort_order = MODULE_PAYMENT_PAYPAL_SORT_ORDER;
-			$this->enabled = ((MODULE_PAYMENT_PAYPAL_STATUS == 'True') ? true : false);
-			if ((int)MODULE_PAYMENT_PAYPAL_ORDER_STATUS_ID > 0) {
-				$this->order_status = MODULE_PAYMENT_PAYPAL_ORDER_STATUS_ID;
-			}
-			if (is_object($order)) {
-				$this->update_status();
-			}
+	function __construct() {
+		parent::__construct();
+		$this->title = tra( 'PayPal' ); 
+		$this->adminTitle = tra( 'Paypal IPN' );
+		$this->description = tra( 'Paypal Instant Payment Notifications' );
+		if( $this->isEnabled() ) {
 			$this->form_action_url = 'https://' . MODULE_PAYMENT_PAYPAL_HANDLER;
-		}
-	}
-
-	// class methods
-	function update_status() {
-		global $order, $gBitDb;
-
-		if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_PAYPAL_ZONE > 0) ) {
-			$check_flag = false;
-			$check_query = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_PAYPAL_ZONE . "' and `zone_country_id` = '" . $order->billing['country']['countries_id'] . "' order by `zone_id`");
-			while (!$check_query->EOF) {
-				if ($check_query->fields['zone_id'] < 1) {
-					$check_flag = true;
-					break;
-				} elseif ($check_query->fields['zone_id'] == $order->billing['zone_id']) {
-					$check_flag = true;
-					break;
-				}
-								$check_query->MoveNext();
-			}
-
-			if ($check_flag == false) {
-				$this->enabled = false;
-			}
 		}
 	}
 
@@ -82,7 +44,7 @@ class paypal extends CommercePluginPaymentBase {
 		global $gBitDb, $order, $currencies, $currency;
 
 		// save the session stuff permanently in case paypal loses the session
-		$gBitDb->Execute("delete from " . TABLE_PAYPAL_SESSION . " where session_id = '" . session_id() . "'");
+		$gBitDb->query( "DELETE FROM " . TABLE_PAYPAL_SESSION . " WHERE session_id = ?", array( session_id() ) );
 
 		$sql = "insert into " . TABLE_PAYPAL_SESSION . " (session_id, saved_session, expiry) values (
 						'" . session_id() . "',
@@ -121,7 +83,7 @@ class paypal extends CommercePluginPaymentBase {
 															zen_draw_hidden_field('item_number', '1') .
 //																zen_draw_hidden_field('invoice', '') .
 //																zen_draw_hidden_field('num_cart_items', '') .
-															zen_draw_hidden_field('lc', $order->customer['country']['countries_iso_code_2']) .
+															zen_draw_hidden_field('lc', $order->customer['countries_iso_code_2']) .
 //																zen_draw_hidden_field('amount', number_format(($order->info['total'] - $order->info['shipping_cost']) * $currencies->get_value($my_currency), $currencies->get_decimal_places($my_currency))) .
 //																zen_draw_hidden_field('shipping', number_format($order->info['shipping_cost'] * $currencies->get_value($my_currency), $currencies->get_decimal_places($my_currency))) .
 															zen_draw_hidden_field('amount', number_format(($order->info['total']) * $currencies->get_value($my_currency), $currencies->get_decimal_places($my_currency))) .
@@ -136,7 +98,7 @@ class paypal extends CommercePluginPaymentBase {
 															zen_draw_hidden_field('city', $order->customer['city']) .
 															zen_draw_hidden_field('state',strtoupper(substr($order->customer['state'],0,2))) .
 															zen_draw_hidden_field('zip', $order->customer['postcode']) .
-															zen_draw_hidden_field('country', $order->customer['country']['countries_iso_code_2']) .
+															zen_draw_hidden_field('country', $order->customer['countries_iso_code_2']) .
 															zen_draw_hidden_field('email', $order->customer['email_address']) .
 															zen_draw_hidden_field('night_phone_a',substr($telephone,0,3)) .
 															zen_draw_hidden_field('night_phone_b',substr($telephone,3,3)) .
@@ -189,15 +151,6 @@ class paypal extends CommercePluginPaymentBase {
 		return false;
 	}
 
-	function check() {
-		global $gBitDb;
-		if (!isset($this->_check)) {
-			$check_query = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_PAYMENT_PAYPAL_STATUS'");
-			$this->_check = $check_query->RecordCount();
-		}
-		return $this->_check;
-	}
-
 	function install() {
 		global $gBitDb;
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable PayPal Module', 'MODULE_PAYMENT_PAYPAL_STATUS', 'True', 'Do you want to accept PayPal payments?', '6', '0', 'zen_cfg_select_option(array(\'True\', \'False\'), ', 'NOW')");
@@ -218,11 +171,6 @@ class paypal extends CommercePluginPaymentBase {
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Debug E-Mail Address', 'MODULE_PAYMENT_PAYPAL_DEBUG_EMAIL_ADDRESS','".STORE_OWNER_EMAIL_ADDRESS."', 'The e-mail address to use for paypal debugging', '6', '72', 'NOW')");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Mode for PayPal web services<br /><br />Default:<br /><code>www.paypal.com/cgi-bin/webscr</code><br />or<br /><code>www.paypal.com/us/cgi-bin/webscr</code>', 'MODULE_PAYMENT_PAYPAL_HANDLER', 'www.paypal.com/cgi-bin/webscr', 'Choose the URL for PayPal live processing', '6', '73', '', 'NOW')");
 		$gBitDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('<font color=red>NOTE: On www.paypal.com</font>,<br />set your PayPal IPN Return URL to:', 'MODULE_PAYMENT_PAYPAL_IPN_RETURN_URL','".zen_catalog_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL',false)."', '<font color=red><strong>DO NOT EDIT.</strong></font><br />This is the URL that PayPal needs to be configured to return to.', '6', '99', 'zen_cfg_select_option(array(\'".zen_catalog_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL',false)."\'), ','NOW')");
-}
-
-	function remove() {
-		global $gBitDb;
-		$gBitDb->Execute("delete from " . TABLE_CONFIGURATION . " where `configuration_key` LIKE	'MODULE_PAYMENT_PAYPAL%'");
 	}
 
 	function keys() {
@@ -251,4 +199,3 @@ class paypal extends CommercePluginPaymentBase {
 	}
 
 }
-?>

@@ -47,7 +47,7 @@
 		'orderid':'{$newOrder->mOrdersId}', 
 		'name':'{$newOrder->billing.name|replace:"'":"\'"}', 
 		'email':'{$gBitUser->getField('email')}', 
-		'country':'{$newOrder->delivery.country.countries_name}', 
+		'country':'{$newOrder->delivery.countries_name}', 
 		'state':'{$newOrder->delivery.state}' 
 	{literal} }; 
 	function saLoadScript(src) { 

@@ -20,6 +20,14 @@ abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
 		$this->mProcessingOutput = array();
 	}
 
+	protected function getConfigKey() {
+		return strtoupper( str_replace( 'ot_', '', $this->code ) );
+	}
+
+	protected function getModuleType() {
+		return 'order_total';
+	}
+
     function process() {
 		$this->mProcessingOutput = array();
 	}

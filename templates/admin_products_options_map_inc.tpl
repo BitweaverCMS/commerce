@@ -31,7 +31,7 @@
 							{/if}
 				
 							{if $optionValue.products_attributes_wt}
-								{$optionValue.products_attributes_wt_pfix}{$optionValue.products_attributes_wt} lbs., 
+								{$optionValue.products_attributes_wt} lbs., 
 							{/if}
 				
 							{if !$optionValue.attributes_discounted}

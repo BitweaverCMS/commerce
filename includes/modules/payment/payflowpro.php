@@ -14,26 +14,11 @@
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
 class payflowpro extends CommercePluginPaymentCardBase {
-	var $code, $title, $description, $enabled;
 
 	public function __construct() {
 		parent::__construct();
-
-		$this->code = 'payflowpro';
-		if( !empty( $_GET['main_page'] ) ) {
-			 $this->title = tra( 'Credit Card' ); // Payment module title in Catalog
-		} else {
-			 $this->title = tra( 'PayPal PayFlow Pro' ); // Payment module title in Admin
-		}
-		$this->description = tra( 'Credit Card Test Info:<br /><br />CC#: 4111111111111111 or<br />5105105105105100<br />Expiry: Any' );
-		$this->sort_order = defined( 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER' ) ? MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER : 0;
-
-		$this->enabled =((defined( 'MODULE_PAYMENT_PAYFLOWPRO_STATUS' ) && MODULE_PAYMENT_PAYFLOWPRO_STATUS == 'True') ? true : false);
-
-		if ( defined( 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID' ) && (int)MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID > 0) {
-			$this->order_status = MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID;
-		}
-
+		$this->adminTitle = tra( 'PayPal PayFlow Pro' ); // Payment module title in Admin
+		$this->description = tra( 'Process credit cards with the Payflow Pro payment Gateway.' );
 		$this->form_action_url = zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', false); // Page to go to upon submitting page info
 	}
 
@@ -140,12 +125,11 @@ class payflowpro extends CommercePluginPaymentCardBase {
 	}
 
 	function getProcessorCurrency() {
-		global $gCommerceSystem;
-		return $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
+		return $this->getCommerceConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
 	}
 
 	function processPayment( &$pPaymentParameters, &$pOrder ) {
-		global $gCommerceSystem, $messageStack, $response, $gBitDb, $gBitUser, $currencies;
+		global $messageStack, $response, $gBitDb, $gBitUser, $currencies;
 
 		$postFields = array();
 		$responseHash = array();
@@ -232,7 +216,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				'BILLTOCITY' => $pOrder->billing['city'], //	(Optional) Bill-to city.  Limitations: 20-character string.
 				'BILLTOSTATE' => $pOrder->billing['state'], //	(Optional) Bill-to state.  Limitations: 2-character string.
 				'BILLTOZIP' => $pOrder->billing['postcode'], //	(Optional) Cardholder's 5- to 9-digit zip (postal) code.  Limitations: 9 characters maximum. Do not use spaces, dashes, or non-numeric characters
-				'BILLTOCOUNTRY' => $pOrder->billing['country']['countries_iso_code_2'], //	(Optional) Bill-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code.
+				'BILLTOCOUNTRY' => $pOrder->billing['countries_iso_code_2'], //	(Optional) Bill-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code.
 				'BILLTOPHONENUM' => $pOrder->billing['telephone'], // (Optional) Account holder's telephone number.  Character length and limitations: 10 characters
 
 				'SHIPTOFIRSTNAME' => $pOrder->delivery['firstname'], //	(Optional) Ship-to first name.  Limitations: 30-character string.
@@ -241,7 +225,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				'SHIPTOCITY' => $pOrder->delivery['city'], //	(Optional) Ship-to city.  Limitations: 20-character string.
 				'SHIPTOSTATE' => $pOrder->delivery['state'], //	(Optional) Ship-to state.  Limitations: 2-character string.
 				'SHIPTOZIP' => $pOrder->delivery['postcode'], //	(Optional) Ship-to postal code.  Limitations: 9-character string.
-				'SHIPTOCOUNTRY' => $pOrder->delivery['country']['countries_iso_code_2'], //	(Optional) Ship-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code
+				'SHIPTOCOUNTRY' => $pOrder->delivery['countries_iso_code_2'], //	(Optional) Ship-to country. The Payflow API accepts 3-digit numeric country codes. Refer to the ISO 3166-1 numeric country codes.  Limitations: 3-character country code
 
 			);
 
@@ -293,7 +277,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			$processors = static::getProcessors();
 
-			switch( $gCommerceSystem->getConfig( 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR' ) ) {
+			switch( $this->getCommerceConfig( 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR' ) ) {
 				case 'Cielo Payments':
 					// TODO Additional Credit Card Parameters
 					break;
@@ -316,7 +300,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 					// TODO Additional Credit Card Parameters
 					break;
 				case 'PayPal':
-					if( $gCommerceSystem->isConfigActive( 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY' ) ) {
+					if( $this->isCommerceConfigActive( 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY' ) ) {
 						switch( $paymentCurrency ) {
 							// PayPal supports charging natively in these 5 currencies
 							case 'AUD': // Australian dollar 
@@ -578,39 +562,67 @@ class payflowpro extends CommercePluginPaymentCardBase {
 		return $error;
 	}
 
-	function check() {
-		global $gBitDb;
-		if (!isset($this->_check)) {
-			$check_query = $this->mDb->query("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'MODULE_PAYMENT_PAYFLOWPRO_STATUS'");
-			$this->_check = $check_query->RecordCount();
-		}
-		return $this->_check;
-	}
-
-	function install() {
-		global $gBitDb;
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Enable PayFlow Pro Module', 'MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'True', 'Do you want to accept PayFlow Pro payments?', '6', '1', 'zen_cfg_select_option(array(''True'', ''False''), ', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('PayFlow Pro Activation Mode', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'Test', 'What mode is your account in?<br><em>Test Accounts:</em><br>Visa:4111111111111111<br>MC: 5105105105105100<br><li><b>Live</b> = Activated/Live.</li><li><b>Test</b> = Test Mode</li>', '6', '4', 'zen_cfg_select_option(array(''Live'', ''Test''), ', 'NOW')");
-
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Login', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'login', 'Your case-sensitive login that you defined at registration.', '6', '2', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Password', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'password', 'Your case-sensitive password that you defined at registration.', '6', '3', 'NOW')");
-
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Payment Processor', 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR', 'PayPal', 'Payment processor configured in your Payflow Pro account.', '6', '10', 'zen_cfg_select_option(payflowpro::getProcessors(), ', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Multiple Currency Support', 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY', 'False', 'Support multiple currencies? PayPal Processor only; AUD, CAD, EUR, GBP, JPY, and USD only.', '6', '10', 'zen_cfg_select_option(array(''True'', ''False''), ', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Pro Currency', 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD', '3-Letter Currency Code in which your Payflow transactions are made. Most typically: USD', '6', '2', 'NOW')");
-
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Transaction Method', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'Sale', 'Transaction method used for processing orders', '6', '5', 'zen_cfg_select_option(array(''Authorization'', ''Sale''), ', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Vendor ID', 'MODULE_PAYMENT_PAYFLOWPRO_VENDOR', '', 'Your merchant login ID that you created when you registered for the account.', '6', '6', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('PayFlow Partner ID', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'PayPal', 'Your Payflow Partner is provided to you by the authorized Payflow Reseller who signed you up for the PayFlow service. This value is case-sensitive.<br />Typical values: <strong>PayPal</strong> or <strong>VeriSign</strong>', '6', '6', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Sort order of display.', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '7', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', '20', 'Set the status of orders made with this payment module to this value', '6', '9', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', 'NOW')");
-		$this->mDb->query("INSERT INTO " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Credit Card Privacy', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY', 'True', 'Replace the middle digits of the credit card with XXXX? You will not be able to retrieve the original card number.', '6', '10', 'zen_cfg_select_option(array(''True'', ''False''), ', 'NOW')");
-	}
-
-	function keys() {
-		return array('MODULE_PAYMENT_PAYFLOWPRO_STATUS', 'MODULE_PAYMENT_PAYFLOWPRO_MODE', 'MODULE_PAYMENT_PAYFLOWPRO_PARTNER', 'MODULE_PAYMENT_PAYFLOWPRO_VENDOR', 'MODULE_PAYMENT_PAYFLOWPRO_LOGIN', 'MODULE_PAYMENT_PAYFLOWPRO_PWD', 'MODULE_PAYMENT_PAYFLOWPRO_PROCESSOR', 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY', 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'MODULE_PAYMENT_PAYFLOWPRO_TYPE', 'MODULE_PAYMENT_PAYFLOWPRO_SORT_ORDER', 'MODULE_PAYMENT_PAYFLOWPRO_ORDER_STATUS_ID', 'MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY');
-
-
+	/**
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		$i = 20;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_MODE' => array(
+				'configuration_title' => 'PayFlow Pro Activation Mode',
+				'configuration_value' => 'Test',
+				'configuration_description' => 'What mode is your account in?<br><em>Test Accounts:</em><br>Visa:4111111111111111<br>MC: 5105105105105100<br><li><b>Live</b> = Activated/Live.</li><li><b>Test</b> = Test Mode</li>',
+				'set_function' => "zen_cfg_select_option(array('Live', 'Test'), ",
+			),
+			$this->getModuleKeyTrunk().'_LOGIN' => array(
+				'configuration_title' => 'PayFlow Pro Login',
+				'configuration_value' => 'login',
+				'configuration_description' => 'Your case-sensitive login that you defined at registration.',
+			),
+			$this->getModuleKeyTrunk().'_PWD' => array(
+				'configuration_title' => 'PayFlow Pro Password',
+				'configuration_value' => 'password',
+				'configuration_description' => 'Your case-sensitive password that you defined at registration.',
+			),
+			$this->getModuleKeyTrunk().'_PROCESSOR' => array(
+				'configuration_title' => 'Payment Processor',
+				'configuration_value' => 'PayPal',
+				'configuration_description' => 'Payment processor configured in your Payflow Pro account.',
+				'set_function' => "zen_cfg_select_option(payflowpro::getProcessors(), ",
+			),
+			$this->getModuleKeyTrunk().'_MULTI_CURRENCY' => array(
+				'configuration_title' => 'Multiple Currency Support',
+				'configuration_value' => 'False',
+				'configuration_description' => 'Support multiple currencies? PayPal Processor only; AUD, CAD, EUR, GBP, JPY, and USD only.',
+				'set_function' => "zen_cfg_select_option(array('True', 'False'), ",
+			),
+			$this->getModuleKeyTrunk().'_CURRENCY' => array(
+				'configuration_title' => 'PayFlow Pro Currency',
+				'configuration_value' => 'USD',
+				'configuration_description' => '3-Letter Currency Code in which your Payflow transactions are made. Most typically: USD',
+			),
+			$this->getModuleKeyTrunk().'_TYPE' => array(
+				'configuration_title' => 'Transaction Method',
+				'configuration_value' => 'Sale',
+				'configuration_description' => 'Transaction method used for processing orders',
+				'set_function' => "zen_cfg_select_option(array('Authorization', 'Sale'), ",
+			),
+			$this->getModuleKeyTrunk().'_VENDOR' => array(
+				'configuration_title' => 'PayFlow Vendor ID', 
+				'configuration_description' => 'Your merchant login ID that you created when you registered for the account.',
+			),
+			$this->getModuleKeyTrunk().'_PARTNER' => array(
+				'configuration_title' => 'PayFlow Partner ID',
+				'configuration_value' => 'PayPal',
+				'configuration_description' => 'Your Payflow Partner is provided to you by the authorized Payflow Reseller who signed you up for the PayFlow service. This value is case-sensitive.<br />Typical values: <strong>PayPal</strong> or <strong>VeriSign</strong>',
+			),
+			$this->getModuleKeyTrunk().'_CARD_PRIVACY' => array(
+				'configuration_title' => 'Credit Card Privacy',
+				'configuration_value' => 'True',
+				'configuration_description' => 'Replace the middle digits of the credit card with XXXX? You will not be able to retrieve the original card number.',
+				'set_function' => "zen_cfg_select_option(array('True', 'False'), ",
+			),
+		) );
 	}
 
 	static function getProcessors() {

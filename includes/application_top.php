@@ -36,7 +36,6 @@ if( empty( $_REQUEST['main_page'] ) ) {
 define( 'BITCOMMERCE_ADMIN', FALSE );
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-// We must include this file separately as admin/ has different ideas of templates and constants, etc.
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_user_inc.php' );
 
 
@@ -378,7 +377,6 @@ if( !empty( $_SESSION['update_expirations'] ) && $_SESSION['update_expirations']
 if (isset($_REQUEST['cPath'])) {
 	$cPath = $_REQUEST['cPath'];
 } elseif (isset($_REQUEST['products_id']) && !zen_check_url_get_terms()) {
-//	} elseif (isset($_REQUEST['products_id']) && !isset($_REQUEST['manufacturers_id']) && !isset($_REQUEST['music_genres_id'])) {
 	$cPath = zen_get_product_path($_REQUEST['products_id']);
 } else {
 	if (SHOW_CATEGORIES_ALWAYS == '1' && !zen_check_url_get_terms()) {

@@ -62,6 +62,6 @@ $gBitSmarty->assign( 'gvAmount', $gBitDb->getOne( $gv_query, array( $gBitUser->m
 // include template specific file name defines
 $define_checkout_success = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/html_includes/', FILENAME_DEFINE_CHECKOUT_SUCCESS, 'false');
 
-define( 'HEADING_TITLE', tra( 'Order Success!' )." #$newOrdersId" );
+$gCommerceSystem->setHeadingTitle( tra( 'Order Success!' )." #$newOrdersId" );
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_success.tpl' );
 

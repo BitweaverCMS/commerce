@@ -11,7 +11,7 @@ if( !empty( $_REQUEST['user_id'] ) && $_REQUEST['user_id'] != $gBitUser->mUserId
 
 
 define('NAVBAR_TITLE', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( FALSE ) );
-define('HEADING_TITLE', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( FALSE ) );
+$gCommerceSystem->setHeadingTitle( tra( 'Products by' ).' '.$gQueryUser->getDisplayName( FALSE ) );
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE);

@@ -120,7 +120,6 @@ class CommerceProductManager extends BitBase {
 				'options_values_price',
 				'products_options_sort_order',
 				'products_attributes_wt',
-				'products_attributes_wt_pfix',
 				'products_options_values_name',
 				'products_options_values_comment',
 				'attributes_price_onetime',

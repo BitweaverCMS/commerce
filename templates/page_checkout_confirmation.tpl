@@ -39,7 +39,7 @@
 				<div class="col-md-10 col-sm-9 col-xs-12">
 					<ul>
 					{foreach $orderItem.attributes item=orderItemAttribute}
-						<li><em>{$orderItemAttribute.option|escape} :</em> {$orderItemAttribute.value}</li>
+						<li><em>{$orderItemAttribute.products_options_name|escape}:</em> {$orderItemAttribute.value}</li>
 					{/foreach}
 					</ul>
 				</div>

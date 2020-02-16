@@ -50,9 +50,6 @@
 		if (zen_get_configuration_key_value('ORDER_WEIGHT_ZERO_STATUS') == '1' and !defined('MODULE_SHIPPING_FREESHIPPER_STATUS')) {
 			$shipping_errors .= '<br />' . ERROR_ORDER_WEIGHT_ZERO_STATUS;
 		}
-		if (defined('MODULE_SHIPPING_USPS_STATUS') and (MODULE_SHIPPING_USPS_USERID=='NONE' or MODULE_SHIPPING_USPS_PASSWORD == 'NONE' or MODULE_SHIPPING_USPS_SERVER == 'test')) {
-			$shipping_errors .= '<br />' . ERROR_USPS_STATUS;
-		}
 		if ($shipping_errors != '') {
 			$messageStack->add(ERROR_SHIPPING_CONFIGURATION . $shipping_errors, 'caution');
 		}
@@ -123,7 +120,6 @@
 						</table>
 	</div>
 	<div class="col-md-4">
-		<div class="well">
 <?php
 	$heading = array();
 	$contents = array();
@@ -166,8 +162,7 @@
 		echo $box->infoBox($heading, $contents);
 	}
 ?>
-					</div>
-				</div>
+	</div>
 </div>
 
 <!-- footer //-->

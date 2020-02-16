@@ -25,8 +25,8 @@
   
   $currencies = new currencies();
 
-  if (file_exists('../' . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . (($template_dir=='') ? '' : '/'.$template_dir) .'/' . 'create_account.php')) {
-    require('../' . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . (($template_dir=='') ? '' : '/'.$template_dir) . '/' . 'create_account.php');
+  if (file_exists('../' . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . (($gCommerceSystem->mTemplateDir=='') ? '' : '/'.$gCommerceSystem->mTemplateDir) .'/' . 'create_account.php')) {
+    require('../' . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . (($gCommerceSystem->mTemplateDir=='') ? '' : '/'.$gCommerceSystem->mTemplateDir) . '/' . 'create_account.php');
   } else {
     require('../' . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . 'create_account.php');
   }

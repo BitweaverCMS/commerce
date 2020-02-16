@@ -1330,7 +1330,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 					'" . $products_copy_from->fields['products_options_sort_order'] . "',
 					'" . $products_copy_from->fields['product_attribute_is_free'] . "',
 					'" . $products_copy_from->fields['products_attributes_wt'] . "',
-					'" . $products_copy_from->fields['products_attributes_wt_pfix'] . "',
 					'" . $products_copy_from->fields['attributes_display_only'] . "',
 					'" . $products_copy_from->fields['attributes_default'] . "',
 					'" . $products_copy_from->fields['attributes_discounted'] . "',
@@ -1358,7 +1357,6 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 					`products_options_sort_order` ='" . $products_copy_from->fields['products_options_sort_order'] . "',
 					`product_attribute_is_free` ='" . $products_copy_from->fields['product_attribute_is_free'] . "',
 					`products_attributes_wt` ='" . $products_copy_from->fields['products_attributes_wt'] . "',
-					`products_attributes_wt_pfix` ='" . $products_copy_from->fields['products_attributes_wt_pfix'] . "',
 					`attributes_display_only` ='" . $products_copy_from->fields['attributes_display_only'] . "',
 					`attributes_default` ='" . $products_copy_from->fields['attributes_default'] . "',
 					`attributes_discounted` ='" . $products_copy_from->fields['attributes_discounted'] . "',
@@ -1738,13 +1736,13 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 ////
 // find template or default file
 	function zen_get_file_directory($check_directory, $check_file, $dir_only = 'false') {
-		global $template_dir;
+		global $gCommerceSystem;
 
 		$zv_filename = $check_file;
 		if (!strstr($zv_filename, '.php')) $zv_filename .= '.php';
 
-		if (file_exists($check_directory . $template_dir . '/' . $zv_filename)) {
-			$zv_directory = $check_directory . $template_dir . '/';
+		if (file_exists($check_directory . $gCommerceSystem->mTemplateDir . '/' . $zv_filename)) {
+			$zv_directory = $check_directory . $gCommerceSystem->mTemplateDir . '/';
 		} else {
 			$zv_directory = $check_directory;
 		}

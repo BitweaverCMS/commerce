@@ -14,9 +14,6 @@
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}featured.php">{tr}Featured Products{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}salemaker.php">{tr}SaleMaker{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}products_expected.php">{tr}Products Expected{/tr}</a></li>
-					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}record_artists.php">{tr}Record Artists{/tr}</a></li>
-					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}record_company.php">{tr}Record Companies{/tr}</a></li>
-					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}music_genre.php">{tr}Music Genre{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}media_manager.php">{tr}Media Manager{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}media_types.php">{tr}Media Types{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}easypopulate.php">{tr}Easy Populate{/tr}</a></li>

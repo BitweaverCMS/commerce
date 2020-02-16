@@ -47,6 +47,15 @@ class order extends CommerceOrderBase {
 		}
 	}
 
+	// Abstract methods implementation
+	public function getDelivery() {
+		return $this->delivery;
+	}
+
+	public function getProductHash( $pProductsKey ) {
+		return BitBase::getParameter( $this->contents, $pProductsKey );
+	}
+
 	// Called at various times. This function calulates the total value of the order that the
 	// credit will be appled aginst. This varies depending on whether the credit class applies
 	// to shipping & tax
@@ -263,7 +272,7 @@ class order extends CommerceOrderBase {
 									'city' => $order->fields['customers_city'],
 									'postcode' => $order->fields['customers_postcode'],
 									'state' => $order->fields['customers_state'],
-									'country' => $order->fields['customers_country'],
+									'countries_name' => $order->fields['customers_country'],
 									'format_id' => $order->fields['customers_address_format_id'],
 									'telephone' => $order->fields['customers_telephone'],
 									'email_address' => $order->fields['email']); // 'email' comes from users_users, which is always most current
@@ -272,40 +281,45 @@ class order extends CommerceOrderBase {
 				$this->customer['referer_url'] = $order->fields['referer_url'];
 			}
 
-			$this->delivery = array('name' => $order->fields['delivery_name'],
-									'company' => $order->fields['delivery_company'],
-									'street_address' => $order->fields['delivery_street_address'],
-									'suburb' => $order->fields['delivery_suburb'],
-									'city' => $order->fields['delivery_city'],
-									'postcode' => $order->fields['delivery_postcode'],
-									'state' => $order->fields['delivery_state'],
-									'country' => zen_get_countries( $order->fields['delivery_country'], TRUE ),
-									'zone_id' => zen_get_zone_id( $order->fields['delivery_country'], $order->fields['delivery_state'] ),
-									'telephone' => $order->fields['delivery_telephone'],
-									'format_id' => $order->fields['delivery_address_format_id']);
+			$this->delivery = array_merge(
+								array ( 'name' => $order->fields['delivery_name'],
+										'company' => $order->fields['delivery_company'],
+										'street_address' => $order->fields['delivery_street_address'],
+										'suburb' => $order->fields['delivery_suburb'],
+										'city' => $order->fields['delivery_city'],
+										'postcode' => $order->fields['delivery_postcode'],
+										'state' => $order->fields['delivery_state'],
+										'zone_id' => zen_get_zone_id( $order->fields['delivery_country'], $order->fields['delivery_state'] ),
+										'telephone' => $order->fields['delivery_telephone'],
+										'format_id' => $order->fields['delivery_address_format_id'] ),
+								zen_get_countries( $order->fields['delivery_country'] )
+							  );
 
 			if (empty($this->delivery['name']) && empty($this->delivery['street_address'])) {
 				$this->delivery = false;
 			}
 
-			$this->billing = array('name' => $order->fields['billing_name'],
-														 'company' => $order->fields['billing_company'],
-														 'street_address' => $order->fields['billing_street_address'],
-														 'suburb' => $order->fields['billing_suburb'],
-														 'city' => $order->fields['billing_city'],
-														 'postcode' => $order->fields['billing_postcode'],
-														 'country' => zen_get_countries( $order->fields['billing_country'], TRUE ),
-														 'state' => $order->fields['billing_state'],
-														 'telephone' => $order->fields['billing_telephone'],
-														 'format_id' => $order->fields['billing_address_format_id']);
+			$this->billing = array_merge( 
+								array ( 'name' => $order->fields['billing_name'],
+										'company' => $order->fields['billing_company'],
+										'street_address' => $order->fields['billing_street_address'],
+										'suburb' => $order->fields['billing_suburb'],
+										'city' => $order->fields['billing_city'],
+										'postcode' => $order->fields['billing_postcode'],
+										'state' => $order->fields['billing_state'],
+										'telephone' => $order->fields['billing_telephone'],
+										'format_id' => $order->fields['billing_address_format_id'] ),
+								zen_get_countries( $order->fields['billing_country'] )
+							);
 
-			$orders_products_query = "SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
-																FROM " . TABLE_ORDERS_PRODUCTS . " op
-									LEFT OUTER JOIN	" . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
-									LEFT OUTER JOIN	" . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
-									LEFT OUTER JOIN	`" . BIT_DB_PREFIX . "liberty_content` lc ON ( lc.`content_id`=p.`content_id` )
-																WHERE `orders_id` = ?
-								ORDER BY op.`orders_products_id`";
+
+			$orders_products_query = 	"SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
+										FROM " . TABLE_ORDERS_PRODUCTS . " op
+											LEFT OUTER JOIN	" . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
+											LEFT OUTER JOIN	" . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
+											LEFT OUTER JOIN	`" . BIT_DB_PREFIX . "liberty_content` lc ON ( lc.`content_id`=p.`content_id` )
+										WHERE `orders_id` = ?
+										ORDER BY op.`orders_products_id`";
 			$orders_products = $this->mDb->query( $orders_products_query, array( $this->mOrdersId ) );
 
 			while (!$orders_products->EOF) {
@@ -343,19 +357,17 @@ class order extends CommerceOrderBase {
 									 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
 									 WHERE `orders_id` = ? AND `orders_products_id` = ?
 									 ORDER BY `orders_products_id`";
-				$attributes = $this->mDb->query( $attributes_query, array( $this->mOrdersId, $orders_products->fields['orders_products_id'] ) );
-				if ($attributes->RecordCount()) {
-					while (!$attributes->EOF) {
-						$this->contents[$productsKey]['attributes'][] = array( 'options_id' => $attributes->fields['products_options_id'],
-																				'options_values_id' => $attributes->fields['products_options_values_id'],
-																				'option' => $attributes->fields['products_options'],
-																				'value' => $attributes->fields['products_options_values'],
-																				'prefix' => $attributes->fields['price_prefix'],
-																				'final_price' => $this->getOrderAttributePrice( $attributes->fields, $this->contents[$productsKey] ),
-																				'price' => $attributes->fields['options_values_price'],
-																				'orders_products_attributes_id' => $attributes->fields['orders_products_attributes_id'] );
+				if( $attributes = $this->mDb->getArray( $attributes_query, array( $this->mOrdersId, $orders_products->fields['orders_products_id'] ) ) ) {
+					foreach( $attributes as $attribute ) {
+						$this->contents[$productsKey]['attributes'][] = array( 'products_options_id' => $attribute['products_options_id'],
+																				'products_options_values_id' => $attribute['products_options_values_id'],
+																				'products_options' => $attribute['products_options'],
+																				'products_options_values' => $attribute['products_options_values'],
+																				'price_prefix' => $attribute['price_prefix'],
+																				'final_price' => $this->getOrderAttributePrice( $attribute, $this->contents[$productsKey] ),
+																				'price' => $attribute['options_values_price'],
+																				'orders_products_attributes_id' => $attribute['orders_products_attributes_id'] );
 
-						$attributes->MoveNext();
 					}
 				}
 
@@ -422,7 +434,7 @@ class order extends CommerceOrderBase {
 					$productAttributes = array();
 					if( !empty( $this->contents[$productsKey]['attributes'] ) ) {
 						foreach( $this->contents[$productsKey]['attributes'] as $attribute ) {
-							$productAttributes[$attribute['options_id']] = $attribute['options_values_id'];
+							$productAttributes[$attribute['products_options_id']] = $attribute['products_options_values_id'];
 						}
 					}
 
@@ -643,12 +655,10 @@ class order extends CommerceOrderBase {
 									'postcode' => $defaultAddress['entry_postcode'],
 									'state' => ((zen_not_null($defaultAddress['entry_state'])) ? $defaultAddress['entry_state'] : $defaultAddress['zone_name']),
 									'zone_id' => $defaultAddress['entry_zone_id'],
-									'country' => array(
-										'countries_name' => $defaultAddress['countries_name'],
-										'countries_id' => $defaultAddress['countries_id'],
-										'countries_iso_code_2' => $defaultAddress['countries_iso_code_2'],
-										'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
-									),
+									'countries_name' => $defaultAddress['countries_name'],
+									'countries_id' => $defaultAddress['countries_id'],
+									'countries_iso_code_2' => $defaultAddress['countries_iso_code_2'],
+									'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
 									'format_id' => $defaultAddress['address_format_id'],
 									'telephone' => $defaultAddress['entry_telephone'],
 									'email_address' => $defaultAddress['customers_email_address']);
@@ -669,11 +679,10 @@ class order extends CommerceOrderBase {
 									'postcode' => $shippingAddress['entry_postcode'],
 									'state' => ((zen_not_null($shippingAddress['entry_state'])) ? $shippingAddress['entry_state'] : $shippingAddress['zone_name']),
 									'zone_id' => $shippingAddress['entry_zone_id'],
-									'country' => array(
-										'countries_id' => $shippingAddress['countries_id'],
-										'countries_name' => $shippingAddress['countries_name'],
-										'countries_iso_code_2' => $shippingAddress['countries_iso_code_2'],
-										'countries_iso_code_3' => $shippingAddress['countries_iso_code_3']),
+									'countries_id' => $shippingAddress['countries_id'],
+									'countries_name' => $shippingAddress['countries_name'],
+									'countries_iso_code_2' => $shippingAddress['countries_iso_code_2'],
+									'countries_iso_code_3' => $shippingAddress['countries_iso_code_3'],
 									'country_id' => $shippingAddress['entry_country_id'],
 									'telephone' => $shippingAddress['entry_telephone'],
 									'format_id' => $shippingAddress['address_format_id']);
@@ -689,11 +698,10 @@ class order extends CommerceOrderBase {
 									'postcode' => $billingAddress['entry_postcode'],
 									'state' => ((zen_not_null($billingAddress['entry_state'])) ? $billingAddress['entry_state'] : $billingAddress['zone_name']),
 									'zone_id' => $billingAddress['entry_zone_id'],
-									'country' => array(
-										'countries_id' => $billingAddress['countries_id'],
-										'countries_name' => $billingAddress['countries_name'],
-										'countries_iso_code_2' => $billingAddress['countries_iso_code_2'],
-										'countries_iso_code_3' => $billingAddress['countries_iso_code_3']),
+									'countries_id' => $billingAddress['countries_id'],
+									'countries_name' => $billingAddress['countries_name'],
+									'countries_iso_code_2' => $billingAddress['countries_iso_code_2'],
+									'countries_iso_code_3' => $billingAddress['countries_iso_code_3'],
 									'country_id' => $billingAddress['entry_country_id'],
 									'telephone' => $billingAddress['entry_telephone'],
 									'format_id' => $billingAddress['address_format_id']);
@@ -710,23 +718,15 @@ class order extends CommerceOrderBase {
 				$attributes	= $this->contents[$cartItemKey]['attributes'];
 				$this->contents[$cartItemKey]['attributes'] = array();
 				$subindex = 0;
-				foreach( $attributes as $optionKey=>$value ) {
+				foreach( $attributes as $optionKey=>$valueHash ) {
 					list( $optionId, $keyValueId ) = explode( '=', $optionKey );
-					$optionValues = zen_get_option_value( $optionId, (int)$value );
+					$this->contents[$cartItemKey]['attributes'][$subindex] = zen_get_option_value( $optionId, (int)$valueHash['products_options_values_id'] );
 					// Determine if attribute is a text attribute and change products array if it is.
-					$attrValue = $optionValues['products_options_values_name']; 
-					if( !empty( $this->contents[$cartItemKey]['attributes_values'][$optionKey] ) ) {
+					$attrValue = $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name']; 
+					if( !empty( $this->contents[$cartItemKey]['attributes_values'][$optionKey]['products_options_value_text'] ) ) {
 						$attrValue .= ' <div class="alert alert-info">'. $this->contents[$cartItemKey]['attributes_values'][$optionKey] . '</div>';
 					}
-
-					$this->contents[$cartItemKey]['attributes'][$subindex] = array('option' => $optionValues['products_options_name'],
-																			 'value' => $attrValue,
-																			 'options_id' => $optionId,
-																			 'options_values_id' => $value,
-																			 'value_id' => $value,
-																			 'prefix' => $optionValues['price_prefix'],
-																			 'price' => $optionValues['options_values_price']);
-
+					$this->contents[$cartItemKey]['attributes'][$subindex]['value'] = $attrValue;
 					$subindex++;
 				}
 			}
@@ -855,7 +855,7 @@ class order extends CommerceOrderBase {
 							'customers_city' => $this->customer['city'],
 							'customers_postcode' => $this->customer['postcode'],
 							'customers_state' => $this->customer['state'],
-							'customers_country' => $this->customer['country']['countries_name'],
+							'customers_country' => $this->customer['countries_name'],
 							'customers_telephone' => $this->customer['telephone'],
 							'customers_address_format_id' => $this->customer['format_id'],
 */
@@ -868,7 +868,7 @@ class order extends CommerceOrderBase {
 							'delivery_city' => $this->delivery['city'],
 							'delivery_postcode' => $this->delivery['postcode'],
 							'delivery_state' => $this->delivery['state'],
-							'delivery_country' => $this->delivery['country']['countries_name'],
+							'delivery_country' => $this->delivery['countries_name'],
 							'delivery_telephone' => $this->delivery['telephone'],
 							'delivery_address_format_id' => $this->delivery['format_id'],
 							'billing_name' => $this->billing['firstname'] . ' ' . $this->billing['lastname'],
@@ -878,7 +878,7 @@ class order extends CommerceOrderBase {
 							'billing_city' => $this->billing['city'],
 							'billing_postcode' => $this->billing['postcode'],
 							'billing_state' => $this->billing['state'],
-							'billing_country' => $this->billing['country']['countries_name'],
+							'billing_country' => $this->billing['countries_name'],
 							'billing_telephone' => $this->billing['telephone'],
 							'billing_address_format_id' => $this->billing['format_id'],
 							'payment_method' => ((empty( $this->info['payment_module_code'] ) && empty( $this->info['payment_method'] )) ? PAYMENT_METHOD_GV : $this->info['payment_method']),
@@ -1006,48 +1006,45 @@ class order extends CommerceOrderBase {
 			$this->products_ordered_attributes = '';
 			if( !empty($this->contents[$cartItemKey]['attributes']) ) {
 				$attributes_exist = '1';
-				foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j ) {
-					$optionValues = zen_get_option_value( (int)$this->contents[$cartItemKey]['attributes'][$j]['options_id'], (int)$this->contents[$cartItemKey]['attributes'][$j]['value_id'] );
-					if( !empty( $optionValues['purchase_group_id'] ) ) {
-						$gBitUser->addUserToGroup( $gBitUser->mUserId, $optionValues['purchase_group_id'] );
+				foreach( $this->contents[$cartItemKey]['attributes'] as $j=>$attrHash ) {
+					if( !empty( $attrHash['purchase_group_id'] ) ) {
+						$gBitUser->addUserToGroup( $gBitUser->mUserId, $attrHash['purchase_group_id'] );
 					}
 
-					if( !empty( $optionValues['products_options_id'] ) ) {
+					if( !empty( $attrHash['products_options_id'] ) ) {
 						//clr 030714 update insert query.	changing to use values form $order->contents for products_options_values.
-						$sql_data_array = array('orders_id' => $pOrdersId,
-												'orders_products_id' => $this->contents[$cartItemKey]['orders_products_id'],
-												'products_options' => $optionValues['products_options_name'],
-												'products_options_values' => $this->contents[$cartItemKey]['attributes'][$j]['value'],
-												'options_values_price' => $optionValues['options_values_price'],
-												'options_values_cogs' => $optionValues['options_values_cogs'],
-												'options_values_wholesale' => $optionValues['options_values_wholesale'],
-												'price_prefix' => $optionValues['price_prefix'],
-												'product_attribute_is_free' => $optionValues['product_attribute_is_free'],
-												'products_attributes_wt' => $optionValues['products_attributes_wt'],
-												'products_attributes_wt_pfix' => $optionValues['products_attributes_wt_pfix'],
-												'attributes_discounted' => (int)$optionValues['attributes_discounted'],
-												'attributes_price_base_inc' => (int)$optionValues['attributes_price_base_inc'],
-												'attributes_price_onetime' => $optionValues['attributes_price_onetime'],
-												'attributes_price_factor' => $optionValues['attributes_price_factor'],
-												'attributes_pf_offset' => $optionValues['attributes_pf_offset'],
-												'attributes_pf_onetime' => $optionValues['attributes_pf_onetime'],
-												'attributes_pf_onetime_offset' => $optionValues['attributes_pf_onetime_offset'],
-												'attributes_qty_prices' => $optionValues['attributes_qty_prices'],
-												'attributes_qty_prices_onetime' => $optionValues['attributes_qty_prices_onetime'],
-												'attributes_price_words' => $optionValues['attributes_price_words'],
-												'attributes_price_words_free' => $optionValues['attributes_price_words_free'],
-												'attributes_price_letters' => $optionValues['attributes_price_letters'],
-												'attributes_price_letters_free' => $optionValues['attributes_price_letters_free'],
-												'products_options_id' => $optionValues['products_options_id'],
-												'products_options_values_id' => $optionValues['products_options_values_id'],
-												);
-
-						$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $sql_data_array);
+						$bindVars = array(  'orders_id' => $pOrdersId,
+											'orders_products_id' => $this->contents[$cartItemKey]['orders_products_id'],
+											'products_options' => $attrHash['products_options_name'],
+											'products_options_values' => $this->contents[$cartItemKey]['attributes'][$j]['value'],
+											'options_values_price' => $attrHash['options_values_price'],
+											'options_values_cogs' => $attrHash['options_values_cogs'],
+											'options_values_wholesale' => $attrHash['options_values_wholesale'],
+											'price_prefix' => $attrHash['price_prefix'],
+											'product_attribute_is_free' => $attrHash['product_attribute_is_free'],
+											'products_attributes_wt' => $attrHash['products_attributes_wt'],
+											'attributes_discounted' => (int)$attrHash['attributes_discounted'],
+											'attributes_price_base_inc' => (int)$attrHash['attributes_price_base_inc'],
+											'attributes_price_onetime' => $attrHash['attributes_price_onetime'],
+											'attributes_price_factor' => $attrHash['attributes_price_factor'],
+											'attributes_pf_offset' => $attrHash['attributes_pf_offset'],
+											'attributes_pf_onetime' => $attrHash['attributes_pf_onetime'],
+											'attributes_pf_onetime_offset' => $attrHash['attributes_pf_onetime_offset'],
+											'attributes_qty_prices' => $attrHash['attributes_qty_prices'],
+											'attributes_qty_prices_onetime' => $attrHash['attributes_qty_prices_onetime'],
+											'attributes_price_words' => $attrHash['attributes_price_words'],
+											'attributes_price_words_free' => $attrHash['attributes_price_words_free'],
+											'attributes_price_letters' => $attrHash['attributes_price_letters'],
+											'attributes_price_letters_free' => $attrHash['attributes_price_letters_free'],
+											'products_options_id' => $attrHash['products_options_id'],
+											'products_options_values_id' => $attrHash['products_options_values_id'],
+										);
+						$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $bindVars);
 					}
-
-					$this->products_ordered_attributes .= "\n\t" . $optionValues['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['value']);
+					$this->products_ordered_attributes .= "\n\t" . $attrHash['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['value']);
 				}
 			}
+
 			//------insert customer choosen option eof ----
 			$this->total_weight += ($this->contents[$cartItemKey]['products_quantity'] * $this->contents[$cartItemKey]['weight']);
 //			$this->total_tax += zen_calculate_tax($total_products_price, $products_tax) * $this->contents[$cartItemKey]['products_quantity'];

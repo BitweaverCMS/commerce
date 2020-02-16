@@ -1,4 +1,5 @@
 <?php
+// We must include this file separately as admin/ has different ideas of templates and constants, etc.
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php');
 require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
@@ -62,30 +63,13 @@ if (SESSION_CHECK_IP_ADDRESS == 'True') {
 require(DIR_FS_CLASSES . 'mime.php');
 require(DIR_FS_CLASSES . 'email.php');
 
-// Set theme related directories
-$template_query = $gBitDb->Execute( "SELECT `template_dir` FROM " . TABLE_TEMPLATE_SELECT .	" WHERE `template_language` = '0'" );
-$template_dir = $template_query->fields['template_dir'];
-
-if( $langDir = $gBitDb->getOne( "SELECT `template_dir` FROM " . TABLE_TEMPLATE_SELECT .	" WHERE `template_language` = ?", array( $_SESSION['languages_id'] ) ) ) {
-	$template_dir = $langDir;
-}
-//if (template_switcher_available=="YES") $template_dir = templateswitch_custom($current_domain);
-define('DIR_WS_TEMPLATE', DIR_WS_TEMPLATES . $template_dir . '/');
-
-define('DIR_WS_TEMPLATE_IMAGES', DIR_WS_TEMPLATE . 'images/');
-define('DIR_WS_TEMPLATE_ICONS', DIR_WS_TEMPLATE_IMAGES . 'icons/');
-
-require(DIR_FS_CLASSES . 'template_func.php');
-$template = new template_func(DIR_WS_TEMPLATE);
-$gBitSmarty->assign_by_ref( 'commerceTemplate', $template );
-
 // include the language translations
 // include template specific language files
-if (file_exists(DIR_WS_LANGUAGES . $template_dir . '/' . $gBitCustomer->getLanguage() . '.php')) {
-	$template_dir_SELECT = $template_dir . '/';
-	//die('Yes ' . DIR_WS_LANGUAGES . $template_dir . '/' . $gBitCustomer->getLanguage() . '.php');
+if (file_exists(DIR_WS_LANGUAGES . $gCommerceSystem->mTemplateDir . '/' . $gBitCustomer->getLanguage() . '.php')) {
+	$template_dir_SELECT = $gCommerceSystem->mTemplateDir . '/';
+	//die('Yes ' . DIR_WS_LANGUAGES . $gCommerceSystem->mTemplateDir . '/' . $gBitCustomer->getLanguage() . '.php');
 } else {
-	//die('NO ' . DIR_WS_LANGUAGES . $template_dir . '/' . $gBitCustomer->getLanguage() . '.php');
+	//die('NO ' . DIR_WS_LANGUAGES . $gCommerceSystem->mTemplateDir . '/' . $gBitCustomer->getLanguage() . '.php');
 	$template_dir_SELECT = '';
 }
 

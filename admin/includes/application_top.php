@@ -164,16 +164,6 @@ require_once(DIR_WS_CLASSES . 'logger.php');
 
 $session_started = true;
 
-// Set theme related directories
-if( !($template_dir = $gBitDb->getOne("select `template_dir` from " . TABLE_TEMPLATE_SELECT .  " where `template_language` = ?", array( $_SESSION['languages_id'] ) )) ) {
-	$template_dir = $gBitDb->getOne("select `template_dir` from " . TABLE_TEMPLATE_SELECT .  " where `template_language` = '0'");
-}
-
-define('DIR_WS_TEMPLATE_IMAGES', DIR_WS_CATALOG_TEMPLATE . $template_dir . '/images/');
-define('DIR_WS_TEMPLATE_ICONS', DIR_WS_TEMPLATE_IMAGES . 'icons/');
-
-require_once(DIR_FS_CATALOG . DIR_WS_CLASSES . 'template_func.php');
-
 // include the language translations
 require_once(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '.php');
 $current_page = basename($_SERVER['SCRIPT_NAME']);

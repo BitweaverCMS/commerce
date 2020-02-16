@@ -46,7 +46,7 @@
 
 // Check all exisiting boxes are in the current template /sideboxes/template_dir
   $dir_check= $directory_array;
-  $boxes_directory = DIR_FS_CATALOG_MODULES . 'sideboxes/' . $template_dir . '/';
+  $boxes_directory = DIR_FS_CATALOG_MODULES . 'sideboxes/' . $gCommerceSystem->mTemplateDir . '/';
 
   $file_extension = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '.'));
 
@@ -72,13 +72,13 @@
     $file = $directory_array[$i];
 
 // Verify Definitions
-    $definitions = $gBitDb->Execute("select layout_box_name from " . TABLE_LAYOUT_BOXES . " where layout_box_name='" . $file . "' and layout_template='" . $template_dir . "'");
+    $definitions = $gBitDb->Execute("select layout_box_name from " . TABLE_LAYOUT_BOXES . " where layout_box_name='" . $file . "' and layout_template='" . $gCommerceSystem->mTemplateDir . "'");
     if ($definitions->EOF) {
       $warning_new_box .= $file . ' ';
       $gBitDb->Execute("insert into " . TABLE_LAYOUT_BOXES . "
                   (layout_id, layout_template, layout_box_name, layout_box_status, layout_box_location, layout_box_sort_order, layout_box_sort_order_single, layout_box_status_single)
                   values ('',
-                  '" . $template_dir  . "', '" . $file . "', 0, 0, 0, 0, 0)");
+                  '" . $gCommerceSystem->mTemplateDir  . "', '" . $file . "', 0, 0, 0, 0, 0)");
     }
   }
 
@@ -130,7 +130,7 @@
       case 'reset_defaults':
 
 		reset_bitcommerce_layout();
-        $messageStack->add_session(SUCCESS_BOX_RESET . $template_dir, 'success');
+        $messageStack->add_session(SUCCESS_BOX_RESET . $gCommerceSystem->mTemplateDir, 'success');
         zen_redirect( KERNEL_PKG_URL.'admin/index.php?page=layout&amp;module_package='.BITCOMMERCE_PKG_NAME );
         break;
     }
@@ -168,7 +168,7 @@ if ($warning_new_box) {
 }
 ?>
           <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE . ' ' . $template_dir; ?></td>
+            <td class="pageHeading"><?php echo HEADING_TITLE . ' ' . $gCommerceSystem->mTemplateDir; ?></td>
             <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
           </tr>
         </table></td>
@@ -195,7 +195,7 @@ if ($warning_new_box) {
   $boxes_directory = BITCOMMERCE_PKG_PATH . 'modules/mod_';
   $boxes_directory_template = BITCOMMERCE_PKG_PATH . 'modules/mod_';
 
-  $column_controller = $gBitDb->Execute("select layout_id, layout_box_name, layout_box_status, layout_box_location, layout_box_sort_order, layout_box_sort_order_single, layout_box_status_single from " . TABLE_LAYOUT_BOXES . " where layout_template='" . $template_dir . "' order by  layout_box_location, layout_box_sort_order");
+  $column_controller = $gBitDb->Execute("select layout_id, layout_box_name, layout_box_status, layout_box_location, layout_box_sort_order, layout_box_sort_order_single, layout_box_status_single from " . TABLE_LAYOUT_BOXES . " where layout_template='" . $gCommerceSystem->mTemplateDir . "' order by  layout_box_location, layout_box_sort_order");
   while (!$column_controller->EOF) {
 //    if (((!$_GET['cID']) || (@$_GET['cID'] == $column_controller->fields['layout_id'])) && (!$bInfo) && (substr($_GET['action'], 0, 3) != 'new')) {
   if ((!isset($_GET['cID']) || (isset($_GET['cID']) && ($_GET['cID'] == $column_controller->fields['layout_id']))) && !isset($bInfo) && (substr($action, 0, 3) != 'new')) {
@@ -319,7 +319,7 @@ if ($warning_new_box) {
         $contents[] = array('text' => TEXT_INFO_LAYOUT_BOX_STATUS_SINGLE . ' ' .  ($bInfo->layout_box_status_single=='1' ? TEXT_ON : TEXT_OFF) );
 
         if (!(file_exists($boxes_directory . $bInfo->layout_box_name) or file_exists($boxes_directory_template . $bInfo->layout_box_name))) {
-          $contents[] = array('align' => 'left', 'text' => '<br /><strong>' . TEXT_INFO_DELETE_MISSING_LAYOUT_BOX . '<br />' . $template_dir . '</strong>');
+          $contents[] = array('align' => 'left', 'text' => '<br /><strong>' . TEXT_INFO_DELETE_MISSING_LAYOUT_BOX . '<br />' . $gCommerceSystem->mTemplateDir . '</strong>');
           $contents[] = array('align' => 'left', 'text' => TEXT_INFO_DELETE_MISSING_LAYOUT_BOX_NOTE . '<strong>' . $bInfo->layout_box_name . '</strong>');
           $contents[] = array('align' => 'left', 'text' => '<a href="' . zen_href_link_admin(FILENAME_LAYOUT_CONTROLLER, 'page=' . $_GET['page'] . '&cID=' . $bInfo->layout_id . '&action=delete' . '&layout_box_name=' . $bInfo->layout_box_name) . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
         }
@@ -341,7 +341,7 @@ if ($warning_new_box) {
     <td><table align="center">
       <tr>
         <td class="main" align="left">
-          <?php echo '<br />' . TEXT_INFO_RESET_TEMPLATE_SORT_ORDER . '<strong>' . $template_dir . '<strong>'; ?>
+          <?php echo '<br />' . TEXT_INFO_RESET_TEMPLATE_SORT_ORDER . '<strong>' . $gCommerceSystem->mTemplateDir . '<strong>'; ?>
         </td>
       </tr>
       <tr>

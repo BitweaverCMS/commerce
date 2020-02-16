@@ -232,8 +232,8 @@ class CommerceProduct extends LibertyMime {
 	function getOneTimeCharges( $pQuantity, $pAttributes ) {
 		$ret = 0;
 		if( !empty( $pAttributes ) ) {
-			foreach( $pAttributes as $valueId ) {
-				if( $option = $this->getOptionValue( NULL, $valueId ) ) {
+			foreach( $pAttributes as $valueHash ) {
+				if( $option = $this->getOptionValue( NULL, $valueHash['products_options_values_id'] ) ) {
 					if( $option['product_attribute_is_free'] != '1' && !$this->getField( 'product_is_free' ) ) {
 						// calculate additional one time charges
 						if( !empty( $option['attributes_price_onetime'] ) ) {
@@ -443,9 +443,10 @@ If a special exist * 10+9
 			$ret = $this->getField( 'products_weight' );
 			// account for any additional attributes such as a shopping cart or order
 			if( $pAttributes ) {
-				foreach( $pAttributes as $optionId => $valueId ) {
-					$query = "SELECT `products_attributes_wt_pfix`||`products_attributes_wt` AS `weight` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa WHERE pa.`products_options_id` = ? AND pa.`products_options_values_id` = ?";
-					$ret += (int)$this->mDb->getOne( $query, array( (int)$optionId, (int)$valueId ) );
+				foreach( $pAttributes as $optionKey => $valueHash ) {
+					if( !empty( $this->mOptions[$valueHash['products_options_id']][$valueHash['products_options_values_id']]['products_attributes_wt'] ) ) {
+						$ret += (int)$this->mOptions[$valueHash['products_options_id']][$valueHash['products_options_values_id']]['products_attributes_wt'];
+					}
 				}
 			} // attributes weight
 		}
@@ -479,10 +480,10 @@ If a special exist * 10+9
 					if( is_numeric( $att ) ) {
 						// cart has a simple list of $optionId=$valueId
 						$valueId = $att;
-					} elseif( !empty( $att['options_values_id'] ) ) {
+					} elseif( !empty( $att['products_options_values_id'] ) ) {
 						// order has a hash of $optionId=$attributeHash
-						$optionId = $att['options_id'];
-						$valueId = $att['options_values_id'];
+						$optionId = $att['products_options_id'];
+						$valueId = $att['products_options_values_id'];
 					}
 					$finalPrince = $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity );
 					$taxRate = zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) );
@@ -1884,7 +1885,7 @@ If a special exist * 10+9
 
 				// collect weight information if it exists
 						if ((SHOW_PRODUCT_INFO_WEIGHT_ATTRIBUTES=='1' && !empty( $vals['products_attributes_wt'] ) )) {
-							$products_options_display_weight = ' (' . $vals['products_attributes_wt_pfix'] . round( $vals['products_attributes_wt'], 2 )	. 'lbs / '.round($vals['products_attributes_wt']*0.4536,2).'kg)';
+							$products_options_display_weight = ' (' . round( $vals['products_attributes_wt'], 2 )	. 'lbs / '.round($vals['products_attributes_wt']*0.4536,2).'kg)';
 							$products_options_array[sizeof($products_options_array)-1]['text'] .= $products_options_display_weight;
 						} else {
 							// reset

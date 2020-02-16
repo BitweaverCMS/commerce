@@ -48,7 +48,7 @@ require_once( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
 $paymentManager = new CommercePaymentManager($_SESSION['payment']);
 $paymentManager->update_status( $_REQUEST );
 
-if( $order->hasPaymentDue() && (empty( $_SESSION['payment'] ) || !$paymentManager->isModuleActive( $_SESSION['payment'].'.php' ) ) ) {
+if( $order->hasPaymentDue() && (empty( $_SESSION['payment'] ) || !$paymentManager->isModuleActive( $_SESSION['payment'] ) ) ) {
 	$messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 }

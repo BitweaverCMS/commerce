@@ -10,7 +10,7 @@
 
 require(DIR_FS_CLASSES . 'http_client.php');
 
-define( 'HEADING_TITLE', tra( 'Checkout Shipping' ) );
+$gCommerceSystem->setHeadingTitle( tra( 'Checkout Shipping' ) );
 
 if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empty( $_REQUEST['save_address'] ) ) {
 	if( $gBitUser->isRegistered() ) {
@@ -61,18 +61,15 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
 }
 
 require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
-$order = new order();
-$gBitSmarty->assign( 'order', $order );
 
 // if the no delivery address, try to get one by default
-if( empty( $_SESSION['sendto'] ) || !$gBitCustomer->isValidAddress( $order->delivery ) ) {
+if( empty( $_SESSION['sendto'] ) ) {
 	if( $defaultAddressId = $gBitCustomer->getDefaultAddress() ) {
-		$order->delivery = $gBitCustomer->getAddress( $defaultAddressId );
 		$_SESSION['sendto'] =	$defaultAddressId;
 	}
 }
 
-if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $order->delivery ) ) {
+if( isset( $_REQUEST['change_address'] ) ) {
 	if( $addresses = $gBitCustomer->getAddresses() ) {
 		$gBitSmarty->assign( 'addresses', $addresses );
 	}
@@ -81,7 +78,7 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 
 	// load all enabled shipping modules
 	require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
-	$shipping = new CommerceShipping();
+global $gCommerceShipping;
 
 	if ( defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && (MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') ) {
 		$pass = false;
@@ -118,36 +115,35 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 			$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
 		}
 
-		if ( (zen_count_shipping_modules() > 0) || ($free_shipping == true) ) {
+		if ( ($gCommerceShipping->isShippingAvailable() > 0) || ($free_shipping == true) ) {
 			if ( (isset($_POST['shipping'])) && (strpos($_POST['shipping'], '_')) ) {
 				$_SESSION['shipping'] = $_POST['shipping'];
 
-				list($module, $method) = explode('_', $_SESSION['shipping']);
-				if ( is_object($$module) || ($_SESSION['shipping'] == 'free_free') ) {
-					if ($_SESSION['shipping'] == 'free_free') {
-						$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
-						$quote[0]['methods'][0]['cost'] = '0';
-					} else {
-						$quote = $shipping->quote( $gBitCustomer->mCart->show_weight(), $method, $module);
-					}
-					if (isset($quote['error'])) {
-						$_SESSION['shipping'] = '';
-					} else {
-						if ( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
-							$_SESSION['shipping'] = array(
-								'id' => $_SESSION['shipping'],
-								'title' => (($free_shipping == true) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
-								'cost' => $quote[0]['methods'][0]['cost'],
-								'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
-								);
-							zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
-						}
-					}
+				if ($_SESSION['shipping'] == 'free_free') {
+					$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
+					$quote[0]['methods'][0]['cost'] = '0';
+				} elseif( !empty( $_SESSION['shipping'] ) ) {
+					list($module, $method) = explode('_', $_SESSION['shipping']);
+					$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
+				}
+
+				if( isset( $quote['error'] ) ) {
+					$_SESSION['shipping'] = '';
 				} else {
-					$_SESSION['shipping'] = false;
+					if( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
+						$_SESSION['shipping'] = array(
+							'id' => $_SESSION['shipping'],
+							'title' => (($free_shipping == true) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
+							'cost' => $quote[0]['methods'][0]['cost'],
+							'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
+							);
+						zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+					} else {
+						$gBitSmarty->assign( 'errors', array( 'Shipping method could not be calculated.', $quote[0]['methods'][0]['title'] ) );
+					}
 				}
 			} elseif( empty( $free_shipping ) ) {
-				$gBitSmarty->assign( 'errors', "Please select a shipping method" );
+				$gBitSmarty->assign( 'errors', 'Please select a shipping method' );
 			}
 		} else {
 			// not virtual product, but no shipping cost.
@@ -155,20 +151,38 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 		}
 	}
-	if( $gBitUser->isRegistered() && zen_count_shipping_modules() && !empty( $_SESSION['sendto'] ) && empty( $_REQUEST['change_address'] ) ) {
+	if( $gBitUser->isRegistered() && $gCommerceShipping->isShippingAvailable() && !empty( $_SESSION['sendto'] ) && empty( $_REQUEST['change_address'] ) ) {
 		// get all available shipping quotes
 		$quotes = array();
 
 		if( empty( $free_shipping ) ) {		
-			$quotes = $shipping->quote( $gBitCustomer->mCart->show_weight() );
+			$quotes = $gCommerceShipping->quote( $gBitCustomer->mCart );
 		}
 
 		// if no shipping method has been selected, automatically select the cheapest method.
 		// if the modules status was changed when none were available, to save on implementing
 		// a javascript force-selection method, also automatically select the cheapest shipping
 		// method if more than one module is now enabled
-		if ( empty( $_SESSION['shipping'] ) || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && (zen_count_shipping_modules() > 1) ) ) {
-			$_SESSION['shipping'] = $shipping->cheapest( $gBitCustomer->mCart->show_weight() );
+		if ( empty( $_SESSION['shipping'] ) || ( $_SESSION['shipping'] && ($_SESSION['shipping'] == false) && ($gCommerceShipping->isShippingAvailable() > 1) ) ) {
+			$cheapest = false;
+			if( !empty( $quotes ) ) {
+				foreach( $quotes as $quote ) {
+					if( !empty( $quote['methods'] ) ) {
+						for( $i=0; $i< count( $quote['methods'] ); $i++ ) {
+							if( empty( $cheapest ) || ($quote['methods'][$i]['cost'] < $cheapest['cost']) ) {
+								$cheapest = array( 'id' => $quote['id'] . '_' . $quote['methods'][$i]['id'],
+													'title' => $quote['module'] . ' (' . $quote['methods'][$i]['title'] . ')',
+													'cost' => $quote['methods'][$i]['cost'],
+													'module' => $quote['id']
+												 );
+							}
+						}
+					}
+				}
+			}
+			if( $cheapest ) {
+				$_SESSION['shipping'] = $cheapest;
+			}
 		}
 
 		$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
