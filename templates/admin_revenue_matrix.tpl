@@ -28,7 +28,7 @@
 		<td>
 			{if $stats.$statKey}
 			{assign var=statHash value=$stats.$statKey}
-			<div class="strong"><span style="background-color:#bfb;display:inline-block;width:{math equation="round(100*(gross/max))" gross=$statHash.gross_revenue max=$stats.stats.gross_revenue_max}%">${$statHash.gross_revenue}</span></div>
+			<div class="strong"><span style="background-color:#bfb;display:inline-block;width:{math equation="round(100*(gross/max))" gross=$statHash.gross_revenue max=$stats.stats.gross_revenue_max}%"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/revenue.php?period={$smarty.request.period}&amp;timeframe={$statKey}">${$statHash.gross_revenue}</a></span></div>
 			<div class="date"><span style="background:#def;display:inline-block;width:{math equation="round(100*(count/max))" count=$statHash.order_count max=$stats.stats.order_count_max}%">&sum;{$statHash.order_count}</span></div>
 			<div class="date">x&#772; {$gCommerceCurrencies->format($statHash.avg_order_size|round)}</div>
 			{/if}
