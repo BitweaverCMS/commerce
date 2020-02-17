@@ -199,26 +199,27 @@ eb( $products );
 					
 							$transitDays = 0;
 							$transitTime = '';
+							$deliveryDate = '';
 							if( !empty( $rateReply->DeliveryTimestamp ) ) {
 								$deliveryDate = (new DateTime( $rateReply->DeliveryTimestamp ))->format( 'Y-m-d' );
 
-							switch( $rateReply->ServiceType ) {
-								case 'FIRST_OVERNIGHT':
-								case 'STANDARD_OVERNIGHT':
-								case 'PRIORITY_OVERNIGHT':
-									$transitDays = '1'; break;
-								case 'FEDEX_2_DAY':
-									$transitDays = '2'; break;
-								case 'FEDEX_EXPRESS_SAVER':
-									$transitDays = '3'; break;
-								case 'FEDEX_GROUND':
-								case 'GROUND_HOME_DELIVERY':
-									$transitDays = '4-7'; break;
-								case 'INTERNATIONAL_PRIORITY':
-									$transitDays = '2'; break;
-								case 'INTERNATIONAL_ECONOMY':
-									$transitDays = '5'; break;
-							}
+								switch( $rateReply->ServiceType ) {
+									case 'FIRST_OVERNIGHT':
+									case 'STANDARD_OVERNIGHT':
+									case 'PRIORITY_OVERNIGHT':
+										$transitDays = '1'; break;
+									case 'FEDEX_2_DAY':
+										$transitDays = '2'; break;
+									case 'FEDEX_EXPRESS_SAVER':
+										$transitDays = '3'; break;
+									case 'FEDEX_GROUND':
+									case 'GROUND_HOME_DELIVERY':
+										$transitDays = '4-7'; break;
+									case 'INTERNATIONAL_PRIORITY':
+										$transitDays = '2'; break;
+									case 'INTERNATIONAL_ECONOMY':
+										$transitDays = '5'; break;
+								}
 							} elseif( !empty( $rateReply->TransitTime ) ) {
 								$transitDays = 0;
 								switch( $rateReply->TransitTime ) {

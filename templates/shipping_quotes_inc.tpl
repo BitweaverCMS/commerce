@@ -1,9 +1,11 @@
 <div id="shippingquotes">
 <ul class="list-unstyled text-left row">
+{* perhaps embedded somewhere like shipping quote *}
+{if $liCss==''}{assign var=liCss value="col-md-4"}{/if}
 {section name=ix loop=$quotes}
 	{if $quotes[ix].methods || $quotes[ix].error}
 		{counter assign=radioButtons start=0}
-		<li class="col-md-4">
+		<li class="{$liCss}">
 			<div class="ph-1">
 				<div class="row">
 					<div class="col-xs-8">
@@ -23,7 +25,7 @@
 				<div class="row">
 					<div class="col-xs-12">
 						{assign var=shipDate value=$quotes[ix].origin.ship_date|strtotime}
-						<div class="help-block">{tr}Ships from{/tr} {$quotes[ix].origin.countries_name} {if $quotes[ix].origin.ship_date}{tr}on{/tr} {$shipDate|bit_long_date}{/if}</div>
+						<div class="help-block">{tr}Ships from{/tr} {$quotes[ix].origin.countries_name} {*if $quotes[ix].origin.ship_date}{tr}on{/tr} {$shipDate|bit_long_date}{/if*}</div>
 					</div>
 				</div>
 				{/if}
@@ -61,7 +63,7 @@
 								<div class="help-block">
 								{if $quotes[ix].methods[jx].delivery_date}
 									{assign var=deliveryDate value=$quotes[ix].methods[jx].delivery_date|strtotime}
-									<div><strong>{tr}Estimated Arrival{/tr}</strong><br>{$deliveryDate|bit_long_date}</div>
+									<div>{tr}Estimated Arrival{/tr}<br><strong>{$deliveryDate|bit_long_date}</strong></div>
 								{else}<div>{tr}Exact delivery day cannot be estimated. Do not use if you are on a tight deadline.{/tr}</div>
 								{/if}
 								{if $quotes[ix].methods[jx].transit_time}
