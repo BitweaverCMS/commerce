@@ -124,11 +124,6 @@ class usps extends CommercePluginShippingBase {
 					$this->machinable = MODULE_SHIPPING_USPS_MACHINABLE;
 			}
 
-			// What method to use for calculating display of transit times
-			// Options: 'NEW' = <ShipDate>, 'OLD' = extra API calls, 'CUSTOM' = hard-coded elsewhere in the parseDomesticTransitTimeResults() function.
-			$this->transitTimeCalculationMode = MODULE_SHIPPING_USPS_TRANSIT_TIME_CALCULATION_MODE;
-			// NOTE: at the present time, with the Test/Staging server, using the new method of adding shipdate adds a lot more time to obtaining quotes
-
 			// request quotes
 			$this->request_display = '';
 			$this->uspsQuote = $this->_getQuote( $pShipHash );
@@ -599,9 +594,9 @@ class usps extends CommercePluginShippingBase {
 							 '<Value>' . number_format($insurable_value, 2, '.', '') . '</Value>' .
 							 $specialservices . $shipAttributes  .
 							 '<Machinable>' . ($this->machinable == 'True' ? 'TRUE' : 'FALSE') . '</Machinable>' .
-							 ($this->getTransitTime && $this->transitTimeCalculationMode == 'NEW' ? '<ShipDate>' . $this->getShippingDate( $pShipHash ) . '</ShipDate>' : '') .
+							 '<ShipDate>' . $this->getShippingDate( $pShipHash ) . '</ShipDate>' .
 							 '</Package>';
-
+// 
 				$package_id .= 'Package ID returned: ' . $package_count . ' $requested_type: ' . $requested_type . ' $service: ' . $service . ' $Container: ' . $Container . "\n";
 				$package_count++;
 			}
@@ -763,7 +758,7 @@ class usps extends CommercePluginShippingBase {
 
 		if( preg_match( '#(GXG|International)#i', $service ) ) {
 			$duration = isset($Package['SvcCommitments']) ? $Package['SvcCommitments'] : '';
-			if ($duration == '' || $this->transitTimeCalculationMode == 'CUSTOM') {
+			if( empty( $duration ) ) {
 				/********************* CUSTOM START:  IF YOU HAVE CUSTOM TRANSIT TIMES ENTER THEM HERE ***************/
 				if( preg_match('#Priority Mail Express#i', $service) ) {
 					$duration = '3 - 5 business ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
@@ -786,7 +781,7 @@ class usps extends CommercePluginShippingBase {
 		} else {
 			$duration = $this->getParameter( $Package, 'CommitmentName' );
 			$date = $this->getParameter( $Package, 'CommitmentDate' );
-			if( $duration == '' || $this->transitTimeCalculationMode == 'CUSTOM' ) {
+			if( empty( $duration ) ) {
 				/********************* CUSTOM START:  IF YOU HAVE CUSTOM TRANSIT TIMES ENTER THEM HERE ***************/
 				if( preg_match('#Priority Mail Express#i', $service)) {
 					$duration = '1 - 2 ' . MODULE_SHIPPING_USPS_TEXT_DAYS;
@@ -1320,13 +1315,6 @@ USPS Extra Service Name ServiceID - Our Extra Service Name
 				'configuration_description' => 'Select from the following the USPS options.<br />note: this adds a considerable delay in obtaining quotes.',
 				'sort_order' => $i++,
 				'set_function' => "zen_cfg_select_multioption(array('Display weight', 'Display transit time'),",
-			),
-			$this->getModuleKeyTrunk().'_TRANSIT_TIME_CALCULATION_MODE' => array(
-				'configuration_title' => 'USPS Domestic Transit Time Calculation Mode',
-				'configuration_value' => 'NEW',
-				'configuration_description' => 'Select from the following the USPS options.<br />note: NEW and OLD will add additional time to quotes. CUSTOM allows your custom shipping days.',
-				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array('CUSTOM', 'NEW', 'OLD'),",
 			),
 			$this->getModuleKeyTrunk().'_DEBUG_MODE' => array(
 				'configuration_title' => 'Debug Mode',
