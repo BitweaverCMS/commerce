@@ -31,7 +31,7 @@ class CommerceSystem extends BitSingleton {
 		return array_merge( parent::__sleep(), array( 'mConfig', 'mProductTypeLayout' ) );
 	}
 
-	public function clearFromCache() {
+	public function clearFromCache( &$pParamHash=NULL ) {
 		parent::clearFromCache();
 	}
 

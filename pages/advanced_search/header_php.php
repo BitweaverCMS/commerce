@@ -20,5 +20,5 @@
 // $Id$
 //
 require_once(DIR_FS_MODULES . 'require_languages.php');
-$gCommerceSystem->setHeadingTitle(( 'Advanced Search' );
+$gCommerceSystem->setHeadingTitle( 'Advanced Search' );
 $breadcrumb->add(NAVBAR_TITLE_1);
