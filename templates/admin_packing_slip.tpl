@@ -66,7 +66,7 @@
 		{$ordersProduct.name} [ {$ordersProduct.model} ]
 		{if !empty($ordersProduct.attributes)}
 			{section loop=$ordersProduct.attributes name=ax}
-				<br><nobr><small>&nbsp;<i>{$ordersProduct.attributes[ax].option}: {$ordersProduct.attributes[ax].value}</i></small></nobr>
+				<br><nobr><small>&nbsp;<i>{$ordersProduct.attributes[ax].products_options}: {$ordersProduct.attributes[ax].products_options_values}</i></small></nobr>
 			{/section}
 		{/if}
 	</td>
