@@ -63,7 +63,7 @@ if( empty( $_SESSION['billto'] ) || empty( $order->billing ) || !$gBitCustomer->
 	if( !empty( $_SESSION['sendto'] ) && $gBitCustomer->isValidAddress( $order->delivery ) ) {
 		$order->billing = $order->delivery;
 		$_SESSION['billto'] = $_SESSION['sendto'];
-	} elseif( $defaultAddressId = $gBitCustomer->getDefaultAddress() ) {
+	} elseif( $defaultAddressId = $gBitCustomer->getDefaultAddressId() ) {
 		$order->billing = $gBitCustomer->getAddress( $defaultAddressId );
 		$_SESSION['billto'] =	$defaultAddressId;
 	}

@@ -10,7 +10,7 @@
 
 require_once( '../kernel/setup_inc.php' );
 if( !empty( $_REQUEST['address_id'] ) ) {
-	$_SESSION['cart_address_id'] = $_REQUEST['address_id'];
+	$_SESSION['sendto'] = $_REQUEST['address_id'];
 }
 
 require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
@@ -27,7 +27,7 @@ if( $gBitUser->isRegistered() &&  $addresses = $gBitCustomer->getAddresses() ) {
 // Explicit country requested takes priority, even if registered.
 if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || empty( $_REQUEST['address_id'] ) ) && (!empty( $_REQUEST['country_id'] ) || !$gBitUser->isRegistered()) ) {
 	if( isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' ) {
-		$_SESSION['cart_address_id'] = 'custom';
+		$_SESSION['sendto'] = 'custom';
 	}
 	if( !empty( $_REQUEST['country_id'] ) ) {
 		if( !empty( $_SESSION['cart_country_id'] ) && $_SESSION['cart_country_id'] != $_REQUEST['country_id'] ) {
@@ -69,11 +69,11 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 	$stateMenu = zen_get_country_zone_list( 'zone_id', $shoppingCart->delivery['countries_id'], !empty( $_SESSION['cart_zone_id'] ) ? $_SESSION['cart_zone_id'] : NULL );
 	$gBitSmarty->assign_by_ref( 'stateMenu', $stateMenu );
 } elseif( !empty( $addresses ) && (empty( $_REQUEST['address_id'] ) || $_REQUEST['address_id'] != 'custom') ) {
-	if( empty( $_SESSION['cart_address_id'] ) && !empty( $addresses ) ) {
+	if( empty( $_SESSION['sendto'] ) && !empty( $addresses ) ) {
 		// no selected address yet, snag the first one
 		reset( $addresses );
 		$first = current( $addresses );
-		$_SESSION['cart_address_id'] = $gBitCustomer->getField( 'customers_default_address_id', $first['address_book_id'] );
+		$_SESSION['sendto'] = $gBitCustomer->getField( 'customers_default_address_id', $first['address_book_id'] );
 	}
 } else {
 

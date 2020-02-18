@@ -39,10 +39,10 @@ function shippingQuoteUpdate( pForm ) {
 		<div class="col-xs-12">
 			<select class="form-control" onchange="shippingQuoteAddressChange( this.form );" name="address_id" id="addressid">
 			{foreach from=$addresses item=addr}
-				<option value="{$addr.address_book_id}" {if $smarty.session.cart_address_id == $addr.address_book_id}{assign var=selAddr value=$addr}selected="selected"{/if}>{$addr.address_format_id|zen_address_format:$addr:0:' ':' '}</option>
+				<option value="{$addr.address_book_id}" {if $smarty.session.sendto == $addr.address_book_id}{assign var=selAddr value=$addr}selected="selected"{/if}>{$addr.address_format_id|zen_address_format:$addr:0:' ':' '}</option>
 			{/foreach}
 				<optgroup label="----------"></optgroup>
-				<option value="custom" {if $smarty.session.cart_address_id == "custom"}selected="selected"{/if}>{tr}Enter Country and Postal Code...{/tr}</option>
+				<option value="custom" {if $smarty.session.sendto == "custom"}selected="selected"{/if}>{tr}Enter Country and Postal Code...{/tr}</option>
 			</select>
 		</div>
 	</div>
@@ -50,7 +50,7 @@ function shippingQuoteUpdate( pForm ) {
 	<p><em>{tr}Select Country and Postal Code.{/tr}</em></p>
 	{/if}
 	{if $gBitCustomer->mCart->get_content_type() != 'virtual'}
-		<div id="customaddress" class="row form-group {if $addresses && $smarty.session.cart_address_id != "custom"}display-none{/if}">
+		<div id="customaddress" class="row form-group {if $addresses && $smarty.session.sendto != "custom"}display-none{/if}">
 			<div class="col-xs-8">
 				{$countryMenu}
 			</div>

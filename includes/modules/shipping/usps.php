@@ -252,7 +252,7 @@ class usps extends CommercePluginShippingBase {
 						$usps_shipping_methods_zone = $uspsQuote['Package'][$i]['Zone'];
 					} else {
 						// International
-						if (is_array($Package['ExtraServices']['ExtraService'])) {
+						if( !empty( $Package['ExtraServices']['ExtraService'] ) ) {
 
 							// if object has no legitimate children, turn it into a firstborn:
 							if (isset($Package['ExtraServices']['ExtraService']['ServiceName']) && !isset($Package['ExtraServices']['ExtraService'][0])) {

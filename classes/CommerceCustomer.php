@@ -279,7 +279,7 @@ class CommerceCustomer extends CommerceBase {
 				$this->mDb->associateInsert(TABLE_ADDRESS_BOOK, $pParamHash['address_store']);
 				$pParamHash['address'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
 			}
-			if( !$this->getDefaultAddress() || !empty( $pParamHash['primary'] ) ) {
+			if( !$this->getDefaultAddressId() || !empty( $pParamHash['primary'] ) ) {
 				$this->setDefaultAddress( $pParamHash['address'] );
 			}
 		}
@@ -325,7 +325,7 @@ class CommerceCustomer extends CommerceBase {
 		return( $ret );
 	}
 
-	function getDefaultAddress() {
+	function getDefaultAddressId() {
 		$ret = NULL;
 		if( $this->isValid() ) {
 			if( empty( $this->mInfo ) ) {

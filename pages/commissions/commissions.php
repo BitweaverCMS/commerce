@@ -23,7 +23,7 @@ if( $addresses = $gBitCustomer->getAddresses() ) {
 		$addressList[$addr['address_book_id']] = zen_address_format( zen_get_address_format_id( $addr['country_id'] ), $addr, 0, ' ', ' ' );
 	}
 	$gBitSmarty->assign_by_ref( 'addressList', $addressList );
-	$gBitSmarty->assign( 'defaultAddressId', $gBitUser->getPreference( 'commissions_check_address', $gBitCustomer->getDefaultAddress() ) );
+	$gBitSmarty->assign( 'defaultAddressId', $gBitUser->getPreference( 'commissions_check_address', $gBitCustomer->getDefaultAddressId() ) );
 }
 
 $paymentOptions[''] = tra( 'Please Select Below...' );

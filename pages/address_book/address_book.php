@@ -73,6 +73,6 @@ if( isset($_POST['action']) && (($_POST['action'] == 'process') || ($_POST['acti
 }
 
 $gBitSmarty->assign( 'formTitle', (isset( $_GET['edit'] ) ? 'Update Address Book Entry' : 'New Address Book Entry') );
-$gBitSmarty->assign( 'defaultAddressId', $gBitCustomer->getDefaultAddress() );
+$gBitSmarty->assign( 'defaultAddressId', $gBitCustomer->getDefaultAddressId() );
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_address_book.tpl' );

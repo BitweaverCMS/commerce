@@ -22,7 +22,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		global $gBitCustomer;
 		$ret = array();
 
-		$deliveryAddressId = BitBase::getParameter( $_SESSION, 'cart_address_id', BitBase::getParameter( $_SESSION, 'sendto', $gBitCustomer->getDefaultAddress() ) );
+		$deliveryAddressId = BitBase::getParameter( $_SESSION, 'sendto', $gBitCustomer->getDefaultAddressId() );
 
 		if( isset( $deliveryAddressId ) && $selAddress = $gBitCustomer->getAddress( $deliveryAddressId ) ) {
 			foreach( $selAddress as $key => $value ) {

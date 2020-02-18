@@ -64,7 +64,7 @@ require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
 
 // if the no delivery address, try to get one by default
 if( empty( $_SESSION['sendto'] ) ) {
-	if( $defaultAddressId = $gBitCustomer->getDefaultAddress() ) {
+	if( $defaultAddressId = $gBitCustomer->getDefaultAddressId() ) {
 		$_SESSION['sendto'] =	$defaultAddressId;
 	}
 }
