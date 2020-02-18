@@ -135,7 +135,8 @@ class fedexwebservices extends CommercePluginShippingBase {
 			if (MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP == 'true') {			
 				if( $packages = BitBase::getParameter( $pShipHash, 'packages' ) ) {
 					// Not fixed for bitcommerce
-eb( $products );
+bit_error_log( "MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP Not fixed for bitcommerce"); //, $products );
+eb( "MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP Not fixed for bitcommerce"); //, $products );
 					$pShipHash['shipping_num_boxes'] = 0;
 					$pShipHash['shipping_weight_total'] = 0;
 					foreach ($packages as $package) {
