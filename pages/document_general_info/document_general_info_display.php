@@ -41,7 +41,7 @@
 <?php if (PRODUCT_INFO_PREVIOUS_NEXT == '1' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
   <tr>
     <td colspan="2" align="center">
-      <?php require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_products_next_previous.php'); ?>
+      <?php require($gCommerceSystem->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_products_next_previous.php'); ?>
     </td>
   </tr>
 <?php } ?>
@@ -142,7 +142,7 @@ if ($options_attributes_image[$i] != '') {
 <?php if (PRODUCT_INFO_PREVIOUS_NEXT == '2' or PRODUCT_INFO_PREVIOUS_NEXT == '3') { ?>
   <tr>
     <td colspan="2" align="center">
-      <?php require($template->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_products_next_previous.php'); ?>
+      <?php require($gCommerceSystem->get_template_dir('/tpl_products_next_previous.php',DIR_WS_TEMPLATE, $current_page_base,'templates'). '/tpl_products_next_previous.php'); ?>
     </td>
   </tr>
 <?php } ?>

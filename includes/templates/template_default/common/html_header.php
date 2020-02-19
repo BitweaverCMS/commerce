@@ -25,10 +25,10 @@
 
 require(DIR_FS_MODULES . 'meta_tags.php');
 
-  $directory_array = $template->get_template_part($template->get_template_dir('.js',DIR_WS_TEMPLATE, $current_page_base,'common') . '/common/', '/^jscript_/', '.js');
+  $directory_array = $template->get_template_part($gCommerceSystem->get_template_dir('.js',DIR_WS_TEMPLATE, $current_page_base,'common') . '/common/', '/^jscript_/', '.js');
 
   while(list ($key, $value) = each($directory_array)) {
-    require($template->get_template_dir('.js',DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $value);
+    require($gCommerceSystem->get_template_dir('.js',DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $value);
   }
 
   $directory_array = $template->get_template_part($page_directory, '/^jscript_/');

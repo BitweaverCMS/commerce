@@ -31,7 +31,7 @@
   <tr>
     <td class="centerboxcontent" >
 <?php
-  require($template->get_template_dir('tpl_list_box_content.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_list_box_content.php');
+  require($gCommerceSystem->get_template_dir('tpl_list_box_content.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_list_box_content.php');
 ?>
     </td>
   </tr>

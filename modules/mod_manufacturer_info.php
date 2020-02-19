@@ -41,13 +41,13 @@ if ($manufacturer_info_sidebox->RecordCount() > 0) {
 	}
 	$_template->tpl_vars['sideboxManufacturerInfo'] = new Smarty_variable( $sideboxManufacturerInfo );
 
-//	require($template->get_template_dir('tpl_manufacturer_info.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_manufacturer_info.php');
+//	require($gCommerceSystem->get_template_dir('tpl_manufacturer_info.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_manufacturer_info.php');
 	$title =  BOX_HEADING_MANUFACTURER_INFO;
 	$left_corner = false;
 	$right_corner = false;
 	$right_arrow = false;
 	$title_link = false;
-//	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
+//	require($gCommerceSystem->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
 	}
 }
 ?>

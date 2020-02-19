@@ -92,5 +92,5 @@
   if ($messageStack->size('header') > 0) {
     echo $messageStack->output('header');
   }
-  require($template->get_template_dir('tpl_header.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_header.php');
+  require($gCommerceSystem->get_template_dir('tpl_header.php',DIR_WS_TEMPLATE, $current_page_base,'common'). '/tpl_header.php');
 ?>

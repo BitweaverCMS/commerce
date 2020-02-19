@@ -89,9 +89,9 @@ if ($best_sellers->RecordCount() >= MIN_DISPLAY_BESTSELLERS) {
   $right_corner = false;
   $right_arrow = false;
   $title_link = false;
-//	require($template->get_template_dir('tpl_best_sellers.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_best_sellers.php');
+//	require($gCommerceSystem->get_template_dir('tpl_best_sellers.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_best_sellers.php');
   $title =  BOX_HEADING_BESTSELLERS;
-//	require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
+//	require($gCommerceSystem->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
 }
 }
 ?>

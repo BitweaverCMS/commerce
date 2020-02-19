@@ -29,7 +29,7 @@ require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
 
 $banner_box_group= SHOW_BANNERS_GROUP_SET_ALL;
 
-//	require($template->get_template_dir('tpl_banner_box_all.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_banner_box_all.php');
+//	require($gCommerceSystem->get_template_dir('tpl_banner_box_all.php',DIR_WS_TEMPLATE, $current_page_base,'sideboxes'). '/tpl_banner_box_all.php');
 $new_banner_search = zen_build_banners_group(SHOW_BANNERS_GROUP_SET_ALL);
 
 // secure pages
