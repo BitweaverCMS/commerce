@@ -30,7 +30,8 @@ $currencies = new currencies();
 $gBitSmarty->assign_by_ref( 'currencies', $currencies ); 
 
 $listHash = array();
-$gBitSmarty->assign_by_ref( 'salesAndIncome', $gCommerceStatistics->getSalesAndIncome( $listHash ) );
+$salesAndIncome = $gCommerceStatistics->getSalesAndIncome( $listHash );
+$gBitSmarty->assign_by_ref( 'salesAndIncome', $salesAndIncome );
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_sales_and_income.tpl' );
 
