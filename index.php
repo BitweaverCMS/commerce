@@ -13,15 +13,7 @@ require_once('includes/classes/navigation_history.php');
 require_once('../kernel/setup_inc.php');
 require_once('includes/application_top.php');
 
-global $gCommercePopupTemplate;
-
-// We need to buffer output
-ob_start();
-
-// determine the page directory
-
-
-global $gBitUser, $gBitCustomer, $gBitSmarty;
+global $gBitUser, $gBitCustomer, $gBitSmarty, $gCommercePopupTemplate;
 
 // Maybe customer registered with an inline form
 if( !$gBitUser->isRegistered() && !empty( $_REQUEST['inline_registration'] ) ) {
@@ -31,6 +23,7 @@ if( !$gBitUser->isRegistered() && !empty( $_REQUEST['inline_registration'] ) ) {
 	}
 }
 
+// determine the page directory
 if( empty( $_REQUEST['main_page'] ) ) {
 	if( @BitBase::verifyId( $_REQUEST['user_id'] ) ) {
 		$_REQUEST['main_page'] = 'user_products';
@@ -49,10 +42,6 @@ if( empty( $_REQUEST['main_page'] ) ) {
 	$_GET['main_page'] = $_REQUEST['main_page'];
 }
 
-if (MISSING_PAGE_CHECK == 'true') {
-//	if (!is_dir(DIR_WS_MODULES .  'pages/' . $_REQUEST['main_page'])) $_REQUEST['main_page'] = 'index';
-}
-
 $current_page = $_REQUEST['main_page'];
 $current_page_base = $current_page;
 $code_page_directory = DIR_FS_PAGES . $current_page_base;
@@ -61,6 +50,9 @@ $gBitSmarty->assign_by_ref( 'current_page_base', $current_page_base );
 
 
 $language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/';
+
+// We need to buffer output
+ob_start();
 
 // load all files in the page directory starting with 'header_php'
 
@@ -127,7 +119,11 @@ ob_end_clean();
 if( !empty( $gCommercePopupTemplate ) ) {
 	$gBitSmarty->display( $gCommercePopupTemplate );
 } else {
-	if( $current_page_base == 'index' && empty( $_REQUEST['cPath'] ) ) {
+	if( BitBase::getParameter( $_REQUEST, 'content-type' ) == 'json' ) {
+		if( $gBitProduct->isValid() ) {
+			$gBitSystem->outputJson( $gBitProduct->exportHash(), HttpStatusCodes::HTTP_OK );
+		}
+	} elseif( $current_page_base == 'index' && empty( $_REQUEST['cPath'] ) ) {
 		// Display the template
 		$gDefaultCenter = 'bitpackage:bitcommerce/default_index.tpl';
 		$gBitSmarty->assign_by_ref( 'gDefaultCenter', $gDefaultCenter );
