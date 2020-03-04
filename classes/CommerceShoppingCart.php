@@ -33,6 +33,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				$ret['zone_id'] = (int)$selAddress['entry_zone_id'];
 			}
 			$_SESSION['country_id'] = NULL;
+		} else {
+			$ret = $this->delivery;
 		}
 
 		return $ret;

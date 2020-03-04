@@ -18,6 +18,7 @@ abstract class CommerceOrderBase extends BitBase {
 	public $free_shipping_weight;
 	public $free_shipping_price;
 	public $contents;
+	public $delivery = array();
 
 	protected $mOtClasses = array();
 	protected $mOtProcessModules = array();
@@ -85,7 +86,7 @@ abstract class CommerceOrderBase extends BitBase {
 								$packages[] = array('weight' => $product['weight'], 'length' => $dimensions->fields['products_length'], 'width' => $dimensions->fields['products_width'], 'height' => $dimensions->fields['products_height'], 'units' => strtoupper($dimensions->fields['products_dim_type']));
 							}		
 						} else {
-							$pShipHash['shipping_weight_total'] += $product['weight'] * $product['quantity']; 
+							->delivery$pShipHash['shipping_weight_total'] += $product['weight'] * $product['quantity']; 
 						}
 					}
 		return $ret;

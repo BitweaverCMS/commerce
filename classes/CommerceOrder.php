@@ -24,7 +24,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
 
 class order extends CommerceOrderBase {
 	public $mOrdersId;
-	public $info, $totals, $customer, $delivery, $content_type, $email_low_stock, $products_ordered_attributes, $products_ordered_email;
+	public $info, $totals, $customer, $content_type, $email_low_stock, $products_ordered_attributes, $products_ordered_email;
 
 	private $mNextOrdersId;
 
@@ -36,7 +36,6 @@ class order extends CommerceOrderBase {
 		$this->subtotal = 0;
 		$this->contents = array();
 		$this->customer = array();
-		$this->delivery = array();
 		$this->billing = array();
 
 		if( self::verifyId( $pOrdersId ) ) {
