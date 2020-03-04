@@ -80,7 +80,7 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 }
 
 $delivery = $shoppingCart->getDelivery();
-$gBitSmarty->assign_by_ref( 'countryMenu', zen_get_country_list( 'country_id', $delivery['countries_id'], 'onChange="updateShippingQuote(this.form);"' ) );
+$gBitSmarty->assign_by_ref( 'countryMenu', zen_get_country_list( 'country_id', BitBase::getParameter( $delivery, 'countries_id', STORE_COUNTRY ), 'onChange="updateShippingQuote(this.form);"' ) );
 
 // set the cost to be able to calculate free shipping
 $shoppingCart->info = array(
