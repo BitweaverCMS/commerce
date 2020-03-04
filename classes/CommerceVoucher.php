@@ -272,13 +272,11 @@ class CommerceVoucher extends CommerceBase {
 		return( count( $this->mErrors ) === 0 );
 	}
 
-	function getGiftAmount( $pFormat=TRUE ) {
+	static function getGiftAmount( $pFormat=TRUE ) {
 		global $gBitUser, $gBitDb, $currencies;
 		$ret = NULL;
 		if( $gBitUser->isRegistered() ) {
-			$gv_query = "select `amount`
-						from " . TABLE_COUPON_GV_CUSTOMER . "
-						where `customer_id` = ?";
+			$gv_query = "SELECT `amount` FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?";
 			if( ($ret = $gBitDb->getOne($gv_query, array( $gBitUser->mUserId ) )) && $pFormat ) {
 				$ret = $currencies->format( $ret );
 			}
@@ -286,7 +284,7 @@ class CommerceVoucher extends CommerceBase {
 		return $ret;
 	}
 
-	function getCouponAmount( $pFormat=TRUE ) {
+	static function getCouponAmount( $pFormat=TRUE ) {
 		global $gBitDb, $currencies;
 		$ret = NULL;
 		if( !empty( $_SESSION['gv_id'] ) ) {
