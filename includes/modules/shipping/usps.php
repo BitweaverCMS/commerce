@@ -91,8 +91,8 @@ class usps extends CommercePluginShippingBase {
 				$this->_setService( $pShipHash['method'] );
 			}
 
-			$this->pounds = (int)$pShipHash['shipping_weight_total'];
-			$this->ounces = ceil(round(16 * ($pShipHash['shipping_weight_total'] - $this->pounds), 2));
+			$this->pounds = (int)$pShipHash['shipping_weight_box'];
+			$this->ounces = ceil(round(16 * ($pShipHash['shipping_weight_box'] - $this->pounds), 2));
 
 			// Determine machinable or not
 			// weight must be less than 35lbs and greater than 6 ounces or it is not machinable
@@ -114,7 +114,7 @@ class usps extends CommercePluginShippingBase {
 					$this->machinable = 'False';
 					break;
 
-				case ($pShipHash['shipping_weight_total'] > 35):
+				case ($pShipHash['shipping_weight_box'] > 35):
 					// override admin choice too heavy
 					$this->machinable = 'False';
 					break;
@@ -403,7 +403,7 @@ class usps extends CommercePluginShippingBase {
 					}
 
 					// build USPS output for valid methods based on selected and weight limits
-					if( ($pShipHash['shipping_weight_total'] <= $maxweight) && ($pShipHash['shipping_weight_total'] > $minweight) ) {
+					if( ($pShipHash['shipping_weight_box'] <= $maxweight) && ($pShipHash['shipping_weight_box'] > $minweight) ) {
 						$found = false;
 
 						if( !empty( $pShipHash['method'] ) && ($pShipHash['method'] == $type && $pShipHash['method'] == $type_rebuilt) ) {
@@ -508,22 +508,22 @@ class usps extends CommercePluginShippingBase {
 // disable request for all First Class at 13oz. - First-Class Mail Letter, First-Class Mail Large Envelope, First-Class Package Service - RetailTM
 // disable all first class requests if item is over 15oz.
 // First-Class Retail and Commercial
-					if ($pShipHash['shipping_weight_total'] > 15/16) {
+					if ($pShipHash['shipping_weight_box'] > 15/16) {
 						continue;
 					} else {
 						// First-Class MailRM Letter\', \'First-Class MailRM Large Envelope\', \'First-Class Package Service - RetailTM
 						$service = 'First Class';            
 			// disable request for First-Class MailRM Letter at > .21875 and not Retail
-						if (($requested_type == 'First-Class Mail Letter') && (MODULE_SHIPPING_USPS_RATE_TYPE == 'Retail') && ($pShipHash['shipping_weight_total'] <= .21875)) {
+						if (($requested_type == 'First-Class Mail Letter') && (MODULE_SHIPPING_USPS_RATE_TYPE == 'Retail') && ($pShipHash['shipping_weight_box'] <= .21875)) {
 							$FirstClassMailType = 'LETTER';
 			// disable request for First-Class Mail Large Envelope at > 13oz and not Retail  
-						} elseif (($requested_type == 'First-Class Mail Large Envelope') && (MODULE_SHIPPING_USPS_RATE_TYPE == 'Retail') && ($pShipHash['shipping_weight_total'] <= 13/16)) {
+						} elseif (($requested_type == 'First-Class Mail Large Envelope') && (MODULE_SHIPPING_USPS_RATE_TYPE == 'Retail') && ($pShipHash['shipping_weight_box'] <= 13/16)) {
 							$FirstClassMailType = 'FLAT';
 						// disable request for First-Class Package Service - RetailTM(new retail parcel designation) at > 13oz and not Retail 			  
-						} elseif (($requested_type == 'First-Class Package Service - RetailTM') && (MODULE_SHIPPING_USPS_RATE_TYPE == 'Retail') && ($pShipHash['shipping_weight_total'] <= 13/16)) {			
+						} elseif (($requested_type == 'First-Class Package Service - RetailTM') && (MODULE_SHIPPING_USPS_RATE_TYPE == 'Retail') && ($pShipHash['shipping_weight_box'] <= 13/16)) {			
 							 $FirstClassMailType = 'PARCEL';	
 			// disable request for First-ClassTM Package Service(existing commercial parcel designation) at > 1 lb and not Online(commercial pricing) 			  
-						} elseif (($requested_type == 'First-ClassTM Package Service') && (MODULE_SHIPPING_USPS_RATE_TYPE == 'Online') && ($pShipHash['shipping_weight_total'] <= 15/16)) {
+						} elseif (($requested_type == 'First-ClassTM Package Service') && (MODULE_SHIPPING_USPS_RATE_TYPE == 'Online') && ($pShipHash['shipping_weight_box'] <= 15/16)) {
 						 $service = 'First Class Commercial';  			
 							 $FirstClassMailType = 'PACKAGE SERVICE';	   
 						} else {

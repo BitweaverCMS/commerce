@@ -55,7 +55,7 @@ class CommerceShipping extends BitSingleton {
 
 		if( !empty( $this->mShipModules ) ) {
 			$shipHash['method'] = $method;
-			$shipHash['shipping_weight_total'] = $pOrderBase->getWeight();
+			$orderTotalWeight = $pOrderBase->getWeight();
 			$shipHash['is_fragile'] = FALSE; // needs implementation
 			$shipHash['is_ground_only'] = FALSE; // needs implementation
 			$shipHash['box_width'] = NULL;
@@ -70,32 +70,36 @@ class CommerceShipping extends BitSingleton {
 				$shipHash['shipping_value'] = $pOrderBase->getShipmentValue();
 
 				// Stuff from ancient ZenCart, probably still works
-				$za_tare_array = preg_split("/[:,]/", SHIPPING_BOX_WEIGHT);
-				$zc_tare_percent= $za_tare_array[0];
-				$zc_tare_weight= $za_tare_array[1];
+				$boxWeights = preg_split("/[:,]/", SHIPPING_BOX_WEIGHT);
+				$boxPercent= $boxWeights[0];
+				$boxWeight= $boxWeights[1];
 
-				$za_large_array = preg_split("/[:,]/" , SHIPPING_BOX_PADDING);
-				$zc_large_percent = $za_large_array[0];
-				$zc_large_weight = $za_large_array[1];
+				$paddingWeights = preg_split("/[:,]/" , SHIPPING_BOX_PADDING);
+				$paddingPercent = $paddingWeights[0];
+				$paddingWeight = $paddingWeights[1];
 				foreach( $this->mShipModules as &$shipModule ) {
-					if( $shipModule->isEnabled() && empty( $module ) || ($shipModule->code == $module) ) {
+					if( $shipModule->isEnabled() && (empty( $module ) || ($shipModule->code == $module)) ) {
+						$shipHash['shipping_weight_total'] = $orderTotalWeight;
 						if ($shipHash['shipping_weight_total'] > $shipModule->maxShippingWeight() ) { // Split into many boxes
 							$shipHash['shipping_num_boxes'] = ceil( $shipHash['shipping_weight_total'] / $shipModule->maxShippingWeight() );
+							$shipHash['shipping_weight_total'] += ($shipHash['shipping_weight_total'] * ($paddingPercent/100)) + $paddingWeight;
 							$shipHash['shipping_weight_box'] = $shipHash['shipping_weight_total'] / $shipHash['shipping_num_boxes'];
 							// large box add padding
-							$shipHash['shipping_weight_total'] = ($shipHash['shipping_weight_total'] * ($zc_large_percent/100)) + $zc_large_weight;
 						} else {
 							$shipHash['shipping_num_boxes'] = 1;
-							$shipHash['shipping_weight_box'] = $shipHash['shipping_weight_total'];
 							// add tare weight < large
-							$shipHash['shipping_weight_total'] = ($shipHash['shipping_weight_total'] * ($zc_tare_percent/100)) + $zc_tare_weight;
+							$shipHash['shipping_weight_total'] += ($shipHash['shipping_weight_total'] * ($boxPercent/100)) + $boxWeight;
+							$shipHash['shipping_weight_box'] = $shipHash['shipping_weight_total'];
 						}
+
 						if( $quotes = $shipModule->quote( $shipHash ) ) {
-// vvd( $method, $shipModule->code, $quotes, $shipHash );
 							if( !empty( $quotes['methods'] ) ) {
 								foreach( array_keys( $quotes['methods'] ) as $j ) {
 									if( (empty( $method ) || $method == $quotes['methods'][$j]['id']) ) {
 										if( !empty( $quotes['methods'][$j]['cost'] ) ) {	
+											$quotes['methods'][$j]['shipping_num_boxes'] = $shipHash['shipping_num_boxes'];
+											$quotes['methods'][$j]['shipping_weight_box'] = $shipHash['shipping_weight_box'];
+											$quotes['methods'][$j]['shipping_weight_total'] = $shipHash['shipping_weight_total'];
 											$quotes['methods'][$j]['cost_add_tax'] = zen_add_tax($quotes['methods'][$j]['cost'], (isset($quotes['tax']) ? $quotes['tax'] : 0));
 											$quotes['methods'][$j]['format_add_tax'] = $currencies->format( $quotes['methods'][$j]['cost_add_tax'] );
 										}

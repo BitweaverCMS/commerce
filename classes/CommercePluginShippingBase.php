@@ -159,7 +159,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 						$show_box_weight = '(' . number_format($pShipHash['shipping_weight_total'] * $pShipHash['shipping_num_boxes'],2) . tra( 'lbs' ) . ')';
 						break;
 					default:
-						$show_box_weight = '(' . $pShipHash['shipping_num_boxes'] . ' x ' . number_format($pShipHash['shipping_weight_total'],2) . tra( 'lbs' ) . ')';
+						$show_box_weight = '(' . $pShipHash['shipping_num_boxes'] . ' x ' . number_format($pShipHash['shipping_weight_box'],2) . tra( 'lbs' ) . ')';
 						break;
 				}
 				$quoteBase = array(
