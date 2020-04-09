@@ -33,18 +33,18 @@ class cc extends CommercePluginPaymentCardBase {
 	// class constructor
 	function javascript_validation() {
 		$js = '	if (payment_value == "' . $this->code . '") {' . "\n" .
-			'		var cc_owner = document.checkout_payment.cc_owner.value;' . "\n" .
-			'		var cc_number = document.checkout_payment.cc_number.value;' . "\n";
+			'		var payment_owner = document.checkout_payment.payment_owner.value;' . "\n" .
+			'		var payment_number = document.checkout_payment.payment_number.value;' . "\n";
 
 		if (MODULE_PAYMENT_CC_COLLECT_CVV == 'True')	{
 			$js .= '		var cc_cvv = document.checkout_payment.cc_cvv.value;' . "\n";
 		}
 
-		$js .= '		if (cc_owner == "" || cc_owner.length < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
+		$js .= '		if (payment_owner == "" || payment_owner.length < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
 			 '			error_message = error_message + "' . MODULE_PAYMENT_CC_TEXT_JS_CC_OWNER . '";' . "\n" .
 			 '			error = 1;' . "\n" .
 			 '		}' . "\n" .
-			 '		if (cc_number == "" || cc_number.length < ' . CC_NUMBER_MIN_LENGTH . ') {' . "\n" .
+			 '		if (payment_number == "" || payment_number.length < ' . CC_NUMBER_MIN_LENGTH . ') {' . "\n" .
 			 '			error_message = error_message + "' . MODULE_PAYMENT_CC_TEXT_JS_CC_NUMBER . '";' . "\n" .
 			 '			error = 1;' . "\n" .
 			 '		}' . "\n";
@@ -78,11 +78,11 @@ class cc extends CommercePluginPaymentCardBase {
 							 'module' => $this->title,
 							 'fields' => array(
 											array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_OWNER,
-											 'field' => zen_draw_input_field('cc_owner', BitBase::getParameter( $_SESSION, 'cc_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'] ), 'autocomplete="cc-name"' )),
+											 'field' => zen_draw_input_field('payment_owner', BitBase::getParameter( $_SESSION, 'payment_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'] ), 'autocomplete="cc-name"' )),
 											array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_NUMBER,
-											 'field' => zen_draw_input_field('cc_number', BitBase::getParameter( $_SESSION, 'cc_number' ), ' autocomplete="cc-number" ', 'number')),
+											 'field' => zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), ' autocomplete="cc-number" ', 'number')),
 											array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_EXPIRES,
-											 'field' => zen_draw_pull_down_menu('cc_expires_month', $expires_month, ' class="input-small" autocomplete="cc-exp-month" ') . '&nbsp;' . zen_draw_pull_down_menu('cc_expires_year', $expires_year, ' class="input-small" autocomplete="cc-exp-year" '))));
+											 'field' => zen_draw_pull_down_menu('payment_expires_month', $expires_month, ' class="input-small" autocomplete="cc-exp-month" ') . '&nbsp;' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, ' class="input-small" autocomplete="cc-exp-year" '))));
 
 		if( MODULE_PAYMENT_CC_COLLECT_CVV == 'True' ) {
 			$selection['fields'][] = array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_CVV,
@@ -92,12 +92,12 @@ class cc extends CommercePluginPaymentCardBase {
 	}
 
 	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
-		if( empty( $pPaymentParameters['cc_number'] ) ) {
+		if( empty( $pPaymentParameters['payment_number'] ) ) {
 			$error = tra( 'Please enter a credit card number.' );
-		} elseif( $this->verifyCreditCard( $pPaymentParameters['cc_number'], $pPaymentParameters['cc_expires_month'], $pPaymentParameters['cc_expires_year'], $pPaymentParameters['cc_cvv'] ) ) {
+		} elseif( $this->verifyCreditCard( $pPaymentParameters['payment_number'], $pPaymentParameters['payment_expires_month'], $pPaymentParameters['payment_expires_year'], $pPaymentParameters['cc_cvv'] ) ) {
 			$ret = TRUE;
 		} else {
-			foreach( array( 'cc_owner', 'cc_number', 'cc_expires_month', 'cc_expires_year', 'cc_cvv' ) as $key ) {
+			foreach( array( 'payment_owner', 'payment_number', 'payment_expires_month', 'payment_expires_year', 'cc_cvv' ) as $key ) {
 				$_SESSION[$key] = BitBase::getParameter( $pPaymentParameters, $key );
 			}
 			$_SESSION['pfp_error'] = $this->mErrors;
@@ -110,13 +110,13 @@ class cc extends CommercePluginPaymentCardBase {
 	function confirmation( $pPaymentParameters ) {
 		global $_POST;
 
-		$confirmation = array('title' => $this->title . ': ' . $this->cc_type,
+		$confirmation = array('title' => $this->title . ': ' . $this->payment_type,
 								'fields' => array(array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_OWNER,
-														'field' => $_POST['cc_owner']),
+														'field' => $_POST['payment_owner']),
 												array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_NUMBER,
-														'field' => substr($this->cc_number, 0, 4) . str_repeat('X', (strlen($this->cc_number) - 8)) . substr($this->cc_number, -4)),
+														'field' => substr($this->payment_number, 0, 4) . str_repeat('X', (strlen($this->payment_number) - 8)) . substr($this->payment_number, -4)),
 												array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_EXPIRES,
-														'field' => strftime('%B, %Y', mktime(0,0,0,$_POST['cc_expires_month'], 1, '20' . $_POST['cc_expires_year'])))));
+														'field' => strftime('%B, %Y', mktime(0,0,0,$_POST['payment_expires_month'], 1, '20' . $_POST['payment_expires_year'])))));
 
 		if (MODULE_PAYMENT_CC_COLLECT_CVV == 'True')	{
 			$confirmation['fields'][] = array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_CVV,
@@ -128,10 +128,10 @@ class cc extends CommercePluginPaymentCardBase {
 	function process_button( $pPaymentParameters ) {
 		global $_POST;
 
-		$process_button_string = zen_draw_hidden_field('cc_owner', $_POST['cc_owner']) .
-								 zen_draw_hidden_field('cc_expires', $_POST['cc_expires_month'] . $_POST['cc_expires_year']) .
-								 zen_draw_hidden_field('cc_type', $this->cc_type) .
-								 zen_draw_hidden_field('cc_number', $this->cc_number);
+		$process_button_string = zen_draw_hidden_field('payment_owner', $_POST['payment_owner']) .
+								 zen_draw_hidden_field('payment_expires', $_POST['payment_expires_month'] . $_POST['payment_expires_year']) .
+								 zen_draw_hidden_field('payment_type', $this->payment_type) .
+								 zen_draw_hidden_field('payment_number', $this->payment_number);
 		if (MODULE_PAYMENT_CC_COLLECT_CVV == 'True')	{
 			$process_button_string .= zen_draw_hidden_field('cc_cvv', $_POST['cc_cvv']);
 		}
@@ -142,32 +142,31 @@ class cc extends CommercePluginPaymentCardBase {
 	function processPayment( &$pPaymentParameters, &$pOrder ) {
 		global $_POST, $order;
 
-		$order->info['cc_expires'] = $_POST['cc_expires'];
-		$order->info['cc_type'] = $_POST['cc_type'];
-		$order->info['cc_owner'] = $_POST['cc_owner'];
-		$order->info['cc_cvv'] = $_POST['cc_cvv'];
+		$ret = FALSE;
 
-		if (MODULE_PAYMENT_CC_STORE_NUMBER == 'True') {
-			$order->info['cc_number'] = $_POST['cc_number'];
-		} else {
-			$order->info['cc_number'] = substr($_POST['cc_number'], 0, 4) . str_repeat('X', (strlen($_POST['cc_number']) - 8)) . substr($_POST['cc_number'], -4);
+		$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
+
+		if( $ret = self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
+
+			$ret = TRUE;
+			$logHash['is_success'] = 'y';
+			$logHash['payment_status'] = 'Success';
+			$order->info['payment_expires'] = $p['payment_expires'];
+			$order->info['payment_type'] = $_POST['payment_type'];
+			$order->info['payment_owner'] = $_POST['payment_owner'];
+			$order->info['cc_cvv'] = $_POST['cc_cvv'];
+
+			if (MODULE_PAYMENT_CC_STORE_NUMBER == 'True') {
+				$order->info['payment_number'] = $_POST['payment_number'];
+			} else {
+				$order->info['payment_number'] = $this->privatizeCard( $_POST['payment_number'] );
+			}
 		}
-	}
 
-	function after_order_create($zf_order_id) {
-		global $gBitDb, $order;
-		if (MODULE_PAYMENT_CC_COLLECT_CVV == 'True')	{
-			$gBitDb->execute( "UPDATE "	. TABLE_ORDERS . " set cc_cvv ='" . $order->info['cc_cvv'] . "' where `orders_id` = '" . $zf_order_id ."'");
+		if( !empty( $logHash ) ) {
+			$this->logTransaction( $logHash );
 		}
-	}
-	
-	function get_error() {
-		global $_GET;
-
-		$error = array('title' => MODULE_PAYMENT_CC_TEXT_ERROR,
-									 'error' => stripslashes(urldecode($_GET['error'])));
-
-		return $error;
+		return $ret;
 	}
 
 	function install() {

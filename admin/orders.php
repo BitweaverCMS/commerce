@@ -163,7 +163,7 @@ if( !empty( $order ) ) {
 		case 'update_order':
 			if( !empty( $_REQUEST['charge_amount'] ) && !empty( $_REQUEST['additional_charge'] ) ) {
 				$formatCharge = $currencies->format( $_REQUEST['charge_amount'], FALSE, BitBase::getParameter( $_REQUEST, 'charge_currency' ) );
-				$_REQUEST['cc_ref_id'] = $order->info['cc_ref_id'];
+				$_REQUEST['trans_ref_id'] = $order->info['trans_ref_id'];
 				if( $paymentModule = $order->getPaymentModule() ) {
 					if( $paymentModule->processPayment( $_REQUEST, $order ) ) {
 						$statusMsg = tra( 'A payment adjustment has been made to this order for the following amount:' )."\n".$formatCharge.' '.tra( 'Transaction ID:' )."\n".$paymentModule->getTransactionReference();
@@ -175,6 +175,10 @@ if( !empty( $order ) ) {
 						$messageStack->add_session( $statusMsg, 'error');
 						$order->updateStatus( array( 'comments' => $statusMsg ) );
 					}
+				} else {
+					$statusMsg = tra( 'Payment Module could not be loaded.' ).' ('.$order->info['payment_module_code'].')';
+					$hasError = TRUE;
+					$messageStack->add_session( $statusMsg, 'error');
 				}
 			}
 
@@ -274,7 +278,7 @@ if( !empty( $order ) ) {
 		$gBitSmarty->assign_by_ref( 'fulfillmentFiles', $fulfillmentFiles );
 	}
 
-	$gBitSmarty->assign( 'customerStats', zen_get_customers_stats( $order->customer['id'] ) );
+	$gBitSmarty->assign( 'customerStats', zen_get_customers_stats( $order->customer['customers_id'] ) );
 }
 
 if( $order_exists ) {
@@ -286,7 +290,7 @@ if( $order_exists ) {
 
 	$gBitSmarty->assign( 'isForeignCurrency', !empty( $order->info['currency'] ) && $order->info['currency'] != DEFAULT_CURRENCY );
 	$gBitSmarty->assign( 'orderStatuses', commerce_get_statuses( TRUE ) );
-	$gBitSmarty->assign( 'customersInterests', CommerceCustomer::getCustomerInterests( $order->customer['id'] ) );
+	$gBitSmarty->assign( 'customersInterests', CommerceCustomer::getCustomerInterests( $order->customer['customers_id'] ) );
 
 	print '<div class="row">';
 	print '<div class="col-md-8">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' ).'</div>';

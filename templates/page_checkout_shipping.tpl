@@ -2,7 +2,8 @@
 {include file="bitpackage:bitcommerce/page_checkout_header_inc.tpl" title="Delivery Information" step=$checkoutStep}
 
 <section class="body">
-{if !$gBitUser->isRegistered() || $changeAddress}
+{assign var=cartDelivery value=$gBitCustomer->mCart->getDelivery()}
+{if !$gBitUser->isRegistered() || $changeAddress || !$cartDelivery}
 	{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_shipping"}
 		<input type="hidden" name="main_page" value="checkout_shipping" />
 		<div class="row">
@@ -46,7 +47,7 @@
 				<input type="hidden" name="main_page" value="checkout_shipping" />
 				<p>{tr}Your order will be shipped to the following address:{/tr}</p>
 				<div class="pull-right"><button class="btn btn-default btn-sm" name="change_address"><i class="icon-truck"></i> {tr}Change{/tr}</button></div>
-				{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$gBitCustomer->mCart->getDelivery()}
+				{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$cartDelivery}
 			</fieldset>
 		</div>
 		<div class="col-md-6">

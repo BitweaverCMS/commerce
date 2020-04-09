@@ -94,6 +94,32 @@ class CommerceSystem extends BitSingleton {
 		$this->loadConstants();
 	}
 
+	static public function loadModule( $pModuleType, $pModuleClass ) {
+		global $gBitCustomer;
+
+		$ret = NULL;
+
+		$moduleBase = DIR_FS_MODULES.strtolower( $pModuleType ).'/'.strtolower( $pModuleClass );
+		if( is_dir( $moduleBase ) ) {
+			$moduleSourceFile = $moduleBase.'/'.strtolower( $pModuleClass ).'.php';
+		} else {
+			$moduleSourceFile = $moduleBase.'.php';
+		}
+
+		if( !class_exists( $pModuleClass ) && file_exists( $moduleSourceFile ) ) {
+			$langFile = BITCOMMERCE_PKG_PATH.zen_get_file_directory( DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/'.$pModuleType.'/', $pModuleClass.'.php', 'false' );
+			if( file_exists( $langFile ) ) {
+				include_once( $langFile );
+			}
+			include_once( $moduleSourceFile );
+		}
+		if( class_exists( $pModuleClass ) ) {
+			$ret = new $pModuleClass();
+		}
+
+		return $ret;
+	}
+
 	static public function scanModules( $pModuleType, $pActiveOnly = FALSE ) {
 		global $gBitCustomer;
 

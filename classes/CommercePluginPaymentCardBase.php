@@ -12,12 +12,7 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
 
 abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 
-	var $cc_type;
-	var $cc_owner;
-	var $cc_number;
 	var $cc_cvv;
-	var $cc_expires_month;
-	var $cc_expires_year;
 	var $pnref = -1;
 
 	public function __construct() {
@@ -64,61 +59,103 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 	}
 
 	protected function getSessionVars() {
-		return array( 'cc_owner', 'cc_number', 'cc_cvv', 'cc_expires_month', 'cc_expires_year' );
+		return array( 'payment_owner', 'payment_number', 'cc_cvv', 'payment_expires_month', 'payment_expires_year' );
 	}
 
-	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
+	public function verifyPayment( &$pPaymentParams, &$pOrder ) {
 		global $gCommerceSystem;
 		unset( $_SESSION[$this->code.'_error'] );
 
-		if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {
+		if( !empty( $pPaymentParams['trans_ref_id'] ) ) {
 			// reference transation
-			$this->cc_ref_id = $pPaymentParameters['cc_ref_id'];
-		} elseif( empty( $pPaymentParameters['cc_number'] ) ) {
+			$this->trans_ref_id = $pPaymentParams['trans_ref_id'];
+		} elseif( empty( $pPaymentParams['payment_number'] ) ) {
 			$this->mErrors['number'] = tra( 'Please enter a credit card number.' );
-		} elseif( $this->verifyCreditCard( $pPaymentParameters['cc_number'], $pPaymentParameters['cc_expires_month'], $pPaymentParameters['cc_expires_year'], $pPaymentParameters['cc_cvv'] ) ) {
-			if( empty( $pPaymentParameters['cc_owner'] ) ) {
+		} elseif( $this->verifyCreditCard( $pPaymentParams ) ) {
+			if( !$this->getPaymentOwner( $pPaymentParams ) ) {
 				$this->mErrors['owner'] = tra( 'Please enter the name card holders name as it is written on the card.' );
-			} else {
-				$this->cc_owner = $pPaymentParameters['cc_owner'];
 			}
-			if( preg_match( '/^37/', $pPaymentParameters['cc_number'] ) && BitBase::getParameter( $pOrder->info, 'currency', $gCommerceSystem->getConfig( 'DEFAULT_CURRENCY' ) ) != 'USD' ) {
+			if( preg_match( '/^37/', $pPaymentParams['payment_number'] ) && BitBase::getParameter( $pOrder->info, 'currency', $gCommerceSystem->getConfig( 'DEFAULT_CURRENCY' ) ) != 'USD' ) {
 				 $this->mErrors['number'] = tra( 'American Express cannot process transactions in currencies other than USD. Change the currency in your cart, or use a different card.' );
 			}
+		} 
+
+		if( parent::verifyPayment( $pPaymentParams, $pOrder ) ) {
+			// payment is fully verified
+			if( $this->mErrors ) {
+				$_SESSION[$this->code.'_error'] = $this->mErrors;
+			}
 		}
 
-		$this->saveSessionDetails();
-
-		if( $this->mErrors ) {
-			$_SESSION[$this->code.'_error'] = $this->mErrors;
-		}
 		return count( $this->mErrors ) === 0;
+	}
+
+	public function getPaymentType( $pPaymentParams ) {
+		if( !$ret = $this->getParameter( $pPaymentParams, 'payment_type' ) ) {
+			if( !empty( $pPaymentParams['payment_number'] ) ) {
+				$ret = $this->getCreditCardType( $pPaymentParams['payment_number'] );
+			} elseif( !empty( $pPaymentParams['trans_ref_id'] ) ) {
+				$ret = 'Reference';
+			} else {
+			}
+		}
+		return $ret;
+	}
+
+	protected function logTransactionPrep( $pTransactionHash, $pOrder ) {
+
+		if( $logHash = parent::logTransactionPrep( $pTransactionHash, $pOrder ) ) {
+			if( !empty( $logHash['payment_number'] ) ) {
+				$logHash['payment_number'] = $this->privatizeCard( $logHash['payment_number'] );
+			}
+		}
+		// Probably should be handled somehow...
+		// 'payment_ref_type' => $this->transactiontype, //auth, sale, credit, etc.
+
+		return $logHash;
 	}
 
 	public static function privatizeCard( $pCardNumber ) {
 		if( $pCardNumber ) {
-			return substr($pCardNumber, 0, 4) . str_repeat('X', (strlen($pCardNumber) - 8)) . substr($pCardNumber, -4);
+			return substr($pCardNumber, 0, 6) . str_repeat('X', (strlen($pCardNumber) - 6)) . substr($pCardNumber, -4);
 		}
 	}
 
-	function verifyCreditCard($number, $expires_m, $expires_y, $cvv) {
-		$this->cc_type = NULL;
+	public function getCreditCardType( $pPaymentNumber ) {
+		$ret = '';
 
-		if( $this->cc_number = $this->validateCreditCardNumber( $number ) ) {
-			if (preg_match('/^4[0-9]{12}([0-9]{3})?$/', $this->cc_number) and CC_ENABLED_VISA=='1') {
-				$this->cc_type = 'Visa';
-			} elseif (preg_match('/^[25][1-5][0-9]{14}$/', $this->cc_number) and CC_ENABLED_MC=='1') {
-				$this->cc_type = 'MasterCard';
-			} elseif (preg_match('/^3[47][0-9]{13}$/', $this->cc_number) and CC_ENABLED_AMEX=='1') {
-				$this->cc_type = 'American Express';
-			} elseif (preg_match('/^3(0[0-5]|[68][0-9])[0-9]{11}$/', $this->cc_number) and CC_ENABLED_DINERS_CLUB=='1') {
-				$this->cc_type = 'Diners Club';
-			} elseif (preg_match('/^6011[0-9]{12}$/', $this->cc_number) and CC_ENABLED_DISCOVER=='1') {
-				$this->cc_type = 'Discover';
-			} elseif (preg_match('/^(3[0-9]{4}|2131|1800)[0-9]{11}$/', $this->cc_number) and CC_ENABLED_JCB=='1') {
-				$this->cc_type = 'JCB';
-			} elseif (preg_match('/^5610[0-9]{12}$/', $this->cc_number) and CC_ENABLED_AUSTRALIAN_BANKCARD=='1') {
-				$this->cc_type = 'Australian BankCard';
+		if (preg_match('/^(6334[5-9][0-9]|6767[0-9]{2})[0-9]{10}([0-9]{2,3}?)?$/', $pPaymentNumber) && CC_ENABLED_SOLO=='1') {
+			$ret = "Solo"; // is also a Maestro product
+		} else if (preg_match('/^(49369[8-9]|490303|6333[0-4][0-9]|6759[0-9]{2}|5[0678][0-9]{4}|6[0-9][02-9][02-9][0-9]{2})[0-9]{6,13}?$/', $pPaymentNumber) && CC_ENABLED_MAESTRO=='1') {
+			$ret = "Maestro";
+		} else if (preg_match('/^(49030[2-9]|49033[5-9]|4905[0-9]{2}|49110[1-2]|49117[4-9]|49918[0-2]|4936[0-9]{2}|564182|6333[0-4][0-9])[0-9]{10}([0-9]{2,3}?)?$/', $pPaymentNumber) && CC_ENABLED_MAESTRO=='1') {
+			$ret = "Maestro"; // SWITCH is now Maestro
+		} elseif (preg_match('/^4[0-9]{12}([0-9]{3})?$/', $pPaymentNumber) && CC_ENABLED_VISA=='1') {
+			$ret = 'Visa';
+		} elseif (preg_match('/^(5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$/', $pPaymentNumber) && CC_ENABLED_MC=='1') {
+			$ret = 'MasterCard'; // 510000-550000, 222100-272099
+		} elseif (preg_match('/^3[47][0-9]{13}$/', $pPaymentNumber) && CC_ENABLED_AMEX=='1') {
+			$ret = 'American Express';
+		} elseif (preg_match('/^3(0[0-5]|[68][0-9])[0-9]{11}$/', $pPaymentNumber) && CC_ENABLED_DINERS_CLUB=='1') {
+			$ret = 'Diners Club';
+		} elseif (preg_match('/^(6011[0-9]{12}|622[1-9][0-9]{12}|64[4-9][0-9]{13}|65[0-9]{14})$/', $pPaymentNumber) && CC_ENABLED_DISCOVER=='1') {
+			$ret = 'Discover';
+		} elseif (preg_match('/^(35(28|29|[3-8][0-9])[0-9]{12}|2131[0-9]{11}|1800[0-9]{11})$/', $pPaymentNumber) && CC_ENABLED_JCB=='1') {
+			$ret = "JCB";
+		} elseif (preg_match('/^5610[0-9]{12}$/', $pPaymentNumber) && CC_ENABLED_AUSTRALIAN_BANKCARD=='1') {
+			$ret = 'Australian BankCard'; // NOTE: is now obsolete
+		}
+
+		return $ret;
+	}
+
+	function verifyCreditCard( &$pPaymentParams ) {
+		$this->payment_type = NULL;
+
+		if( $validPaymentNumber = $this->validateCreditCardNumber( $pPaymentParams['payment_number'] ) ) {
+			$pPaymentParams['payment_number'] = $validPaymentNumber;
+			if( $paymentType = $this->getCreditCardType( $validPaymentNumber ) ) {
+				$pPaymentParams['payment_type'] = $paymentType;
 			} else {
 				$this->mErrors['number'] = sprintf(TEXT_CCVAL_ERROR_UNKNOWN_CARD, substr($number, 0, 4));
 			}
@@ -126,8 +163,8 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 			$this->mErrors['number'] = TEXT_CCVAL_ERROR_INVALID_NUMBER;
 		}
 
-		if (is_numeric($expires_m) && ($expires_m > 0) && ($expires_m < 13)) {
-			$this->cc_expires_month = $expires_m;
+		if( ($paymentMonth = (int)$this->getParameter( $pPaymentParams, 'payment_expires_month' )) && ($paymentMonth > 0) && ($paymentMonth < 13)) {
+			$pPaymentParams['payment_expires_month'] = $paymentMonth;
 		} else {
 			$this->mErrors['date'] = TEXT_CCVAL_ERROR_INVALID_DATE;
 		}
@@ -136,21 +173,21 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 			$this->cc_cvv = $cvv;
 		}
 
-		$current_year = date('Y');
-		if( $expires_y < 100 ) {
-			// two digit expire year
-			$expires_y = substr($current_year, 0, 2) . $expires_y;
+		$currentYear = date('Y');
+		if( ($paymentYear = (int)$this->getParameter( $pPaymentParams, 'payment_expires_year' )) < 100 ) {
+			// fix two digit expire year
+			$paymentYear = substr($currentYear, 0, 2) . $paymentYear;
 		}
 
-		if (is_numeric($expires_y) && ($expires_y >= $current_year) && ($expires_y <= ($current_year + 10))) {
-			$this->cc_expires_year = $expires_y;
-			$this->cc_expires = $this->cc_expires_month.( $this->cc_expires_year % 1000 );
+		if( ($paymentYear >= $currentYear) && ($paymentYear <= ($currentYear + 10)) ) {
+			$pPaymentParams['payment_expires_year'] = $paymentYear;
+			$pPaymentParams['payment_expires'] = $pPaymentParams['payment_expires_month'].( $pPaymentParams['payment_expires_year'] % 1000 );
 		} else {
 			$this->mErrors['date'] = TEXT_CCVAL_ERROR_INVALID_DATE;
 		}
 
-		if ($expires_y == $current_year) {
-			if ($expires_m < date('n')) {
+		if ($paymentYear == $currentYear) {
+			if ($paymentMonth < date('n')) {
 				$this->mErrors['date'] = TEXT_CCVAL_ERROR_INVALID_DATE;
 			}
 		}
@@ -187,7 +224,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 	}
 
 	function getTransactionReference() {
-		return $this->pnref;
+		return $this->trans_ref_id;
 	}
 
 	function selection() {

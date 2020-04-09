@@ -59,12 +59,12 @@ class payflowpro extends CommercePluginPaymentCardBase {
 						 'module' => $this->title,
 						 'fields' => array(
 							array(	'title' => tra( 'Name On Card' ),
-									'field' => zen_draw_input_field('cc_owner', BitBase::getParameter( $_SESSION, 'cc_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'] ), 'autocomplete="cc-name"' )
+									'field' => zen_draw_input_field('payment_owner', BitBase::getParameter( $_SESSION, 'payment_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'] ), 'autocomplete="cc-name"' )
 							),
-							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('cc_number', BitBase::getParameter( $_SESSION, 'cc_number' ), ' autocomplete="cc-number" ', 'number' ) . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="icon-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), ' autocomplete="cc-csc" ', 'number')  . '</div></div>',
+							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), ' autocomplete="cc-number" ', 'number' ) . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="icon-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), ' autocomplete="cc-csc" ', 'number')  . '</div></div>',
 							),
 							array(	'title' => tra( 'Expiration Date' ),
-									'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('cc_expires_month', $expireMonths, BitBase::getParameter( $_SESSION, 'cc_expires_month' ), ' class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('cc_expires_year', $expireYears, substr( BitBase::getParameter( $_SESSION, 'cc_expires_year', (date('Y') + 1) ), -2 ), ' class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
+									'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('payment_expires_month', $expireMonths, BitBase::getParameter( $_SESSION, 'payment_expires_month' ), ' class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('payment_expires_year', $expireYears, substr( BitBase::getParameter( $_SESSION, 'payment_expires_year', (date('Y') + 1) ), -2 ), ' class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
 							),
 						)
 					);
@@ -94,15 +94,15 @@ class payflowpro extends CommercePluginPaymentCardBase {
 	// confirmation page
 	////////////////////////////////////////////////////
 
-	function confirmation( $pPaymentParameters ) {
-		$confirmation = array('title' => $this->cc_type,
+	function confirmation( $pPaymentParams ) {
+		$confirmation = array('title' => $this->getPaymentType( $pPaymentParams ),
 								'fields' => array(
 									array(	'title' => tra( 'Card Owner' ),
-											'field' => $pPaymentParameters['cc_owner']),
+											'field' => $pPaymentParams['payment_owner']),
 									array(	'title' => tra( 'Card Number' ),
-											'field' => $this->privatizeCard( $pPaymentParameters['cc_number'] )),
+											'field' => $this->privatizeCard( $pPaymentParams['payment_number'] )),
 									array(	'title' => tra( 'Expiration Date' ),
-											'field' => strftime('%B,%Y', mktime(0,0,0,$pPaymentParameters['cc_expires_month'], 1, '20' . $pPaymentParameters['cc_expires_year']))),
+											'field' => strftime('%B,%Y', mktime(0,0,0,$pPaymentParams['payment_expires_month'], 1, '20' . $pPaymentParams['payment_expires_year']))),
 									)
 								);
 
@@ -113,13 +113,13 @@ class payflowpro extends CommercePluginPaymentCardBase {
 	// Functions to execute before finishing the form
 	// Examples: add extra hidden fields to the form
 	////////////////////////////////////////////////////
-	function process_button( $pPaymentParameters ) {
+	function process_button( $pPaymentParams ) {
 		// These are hidden fields on the checkout confirmation page
-		$process_button_string = zen_draw_hidden_field('cc_owner', $this->cc_owner ) .
-								 zen_draw_hidden_field('cc_expires_month', $this->cc_expires_month ) .
-								 zen_draw_hidden_field('cc_expires_year', $this->cc_expires_year ) .
-								 zen_draw_hidden_field('cc_type', $this->cc_type) .
-								 zen_draw_hidden_field('cc_number', $this->cc_number) .
+		$process_button_string = zen_draw_hidden_field('payment_owner', $this->payment_owner ) .
+								 zen_draw_hidden_field('payment_expires_month', $this->payment_expires_month ) .
+								 zen_draw_hidden_field('payment_expires_year', $this->payment_expires_year ) .
+								 zen_draw_hidden_field('payment_type', $this->payment_type) .
+								 zen_draw_hidden_field('payment_number', $this->payment_number) .
 								 zen_draw_hidden_field('cc_cvv', $this->cc_cvv);
 		return $process_button_string;
 	}
@@ -128,51 +128,14 @@ class payflowpro extends CommercePluginPaymentCardBase {
 		return $this->getCommerceConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
 	}
 
-	function processPayment( &$pPaymentParameters, &$pOrder ) {
+	function processPayment( &$pPaymentParams, &$pOrder ) {
 		global $messageStack, $response, $gBitDb, $gBitUser, $currencies;
 
 		$postFields = array();
 		$responseHash = array();
 		$this->result = NULL;
 
-
-		if( !self::verifyPayment ( $pPaymentParameters, $pOrder ) ) {
-			// verify basics failed
-		} elseif( !empty( $pPaymentParameters['cc_ref_id'] ) && empty( $pPaymentParameters['charge_amount'] ) ) {
-			$this->mErrors['charge_amount'] = 'Invalid amount';
-		} elseif( !($orderTotal = $pOrder->getPaymentDue()) ) {
-			$this->mErrors['charge_amount'] = 'Invalid amount';
-		} else {
-			if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {
-				// reference transaction
-				$this->paymentOrderId = $pOrder->mOrdersId;
-				$paymentCurrency = BitBase::getParameter( $pPaymentParameters, 'charge_currency', DEFAULT_CURRENCY );
-				$paymentDecimal = $currencies->get_decimal_places( $paymentCurrency );
-				$paymentLocalized = number_format( $pPaymentParameters['charge_amount'], $paymentDecimal, '.', '' ) ;
-				$paymentNative = (( $paymentCurrency != DEFAULT_CURRENCY ) ? $paymentLocalized / $pPaymentParameters['charge_currency_value'] : $paymentLocalized);
-				// completed orders have a single joined 'name' field
-				$pOrder->billing['firstname'] = substr( $pOrder->billing['name'], 0, strpos( $pOrder->billing['name'], ' ' ) );
-				$pOrder->billing['lastname'] = substr( $pOrder->billing['name'], strpos( $pOrder->billing['name'], ' ' ) + 1 );
-				$pOrder->delivery['firstname'] = substr( $pOrder->billing['name'], 0, strpos( $pOrder->billing['name'], ' ' ) );
-				$pOrder->delivery['lastname'] = substr( $pOrder->billing['name'], strpos( $pOrder->billing['name'], ' ' ) + 1 );
-			} else {
-				$pOrder->info['cc_number'] = $this->cc_number;
-				$pOrder->info['cc_expires'] = $this->cc_expires;
-				$pOrder->info['cc_type'] = $this->cc_type;
-				$pOrder->info['cc_owner'] = $this->cc_owner;
-				$pOrder->info['cc_cvv'] = $this->cc_cvv;
-				// Calculate the next expected order id
-				$this->paymentOrderId = $pOrder->getNextOrderId();
-				// orderTotal is in the system DEFAULT_CURRENCY. orderTotal * currency_value = localizedPayment
-				$paymentCurrency = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
-				$paymentDecimal = $currencies->get_decimal_places( $paymentCurrency );
-				$paymentNative = $orderTotal;
-				$paymentLocalized = number_format( ($paymentCurrency != DEFAULT_CURRENCY ? ($paymentNative * $pOrder->getField('currency_value')) : $paymentNative), $paymentDecimal, '.', '' ) ;
-			}
-
-			$paymentEmail = BitBase::getParameter( $pOrder->customer, 'email_address', $gBitUser->getField('email') );
-			$paymentUserId = BitBase::getParameter( $pOrder->customer, 'user_id', $gBitUser->getField('user_id') );
-
+		if( self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
 
 			/* === Core Credit Card Parameters ===
 
@@ -190,7 +153,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			RECURRING	(Optional) Identifies the transaction as recurring. It is one of the following values: - Y - Identifies the transaction as recurring. - N - Does not identify the transaction as recurring (default).
 			SWIPE		(Required for card-present transactions only) Used to pass the Track 1 or Track 2 data (card's magnetic stripe information) for card-present transactions. Include either Track 1 or Track 2 data, not both. If Track 1 is physically damaged, the point-of-sale (POS) application can send Track 2 data instead.
-			ORDERID		(Optional) Checks for a duplicate order. If you pass ORDERID in a request and pass it again in the future, the response returns DUPLICATE=2 along with the ORDERID.  Note: Do not use ORDERID to catch duplicate orders processed within seconds of each other. Use ORDERID with Request ID to prevent duplicates as a result of processing or communication errors. * bitcommerce note - this cannot be paymentOrderId as a failed process will block any future transactions
+			ORDERID		(Optional) Checks for a duplicate order. If you pass ORDERID in a request and pass it again in the future, the response returns DUPLICATE=2 along with the ORDERID.  Note: Do not use ORDERID to catch duplicate orders processed within seconds of each other. Use ORDERID with Request ID to prevent duplicates as a result of processing or communication errors. * bitcommerce note - this cannot be $pPaymentParams['orders_id'] as a failed process will block any future transactions
 			*/
 
 
@@ -205,9 +168,9 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 				'STREET' => $pOrder->billing['street_address'],
 				'ZIP' => $pOrder->billing['postcode'],
-				'COMMENT1' => 'OrderID: ' . $pOrder->mDb->mName . '-' . $this->paymentOrderId . ' ' . $paymentEmail . ' (' . $paymentUserId . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
-				'EMAIL' => $paymentEmail,	// (Optional) Email address of payer.  Limitations: 127 alphanumeric characters.
-				'NAME' => BitBase::getParameter( $pOrder->info, 'cc_owner' ),
+				'COMMENT1' => 'OrderID: ' . $pOrder->mDb->mName . '-' . $pPaymentParams['orders_id'] . ' ' . $pPaymentParams['payment_email'] . ' (' . $pPaymentParams['payment_user_id'] . ')', // (Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
+				'EMAIL' => $pPaymentParams['payment_email'],	// (Optional) Email address of payer.  Limitations: 127 alphanumeric characters.
+				'NAME' => $this->getPaymentOwner( $pPaymentParams ),
 
 				'BILLTOFIRSTNAME' => $pOrder->billing['firstname'], //	(Optional) Cardholder's first name.  Limitations: 30 alphanumeric characters
 				'BILLTOLASTNAME' => $pOrder->billing['lastname'], //	(Optional but recommended) Cardholder's last name.  Limitations: 30 alphanumeric characters
@@ -229,17 +192,17 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			);
 
-			if( $paymentUserId != $gBitUser->mUserId ) {
+			if( $pPaymentParams['payment_user_id'] != $gBitUser->mUserId ) {
 				$postFields['COMMENT1'] .= ' / '.$gBitUser->getField( 'login' ).' ('.$gBitUser->mUserId.')';
 			}
-			if( !empty( $pPaymentParameters['cc_ref_id'] ) ) {	
-				$postFields['ORIGID'] = $pPaymentParameters['cc_ref_id'];
+			if( !empty( $pPaymentParams['trans_ref_id'] ) ) {	
+				$postFields['ORIGID'] = $pPaymentParams['trans_ref_id'];
 				$postFields['COMMENT2'] = 'Reference Trans for '.$postFields['ORIGID']; //	(Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
 			} else {
-				$postFields['ACCT'] = $pOrder->info['cc_number']; // (Required for credit cards) Credit card or purchase card number. For example, ACCT=5555555555554444. For the pinless debit TENDER type, ACCT can be the bank account number. 
+				$postFields['ACCT'] = $this->getPaymentNumber( $pPaymentParams ); // (Required for credit cards) Credit card or purchase card number. For example, ACCT=5555555555554444. For the pinless debit TENDER type, ACCT can be the bank account number. 
 				$postFields['CVV2'] = $pOrder->getField( 'cc_cvv' ); // (Optional) A code printed (not imprinted) on the back of a credit card. Used as partial assurance that the card is in the buyer's possession.  Limitations: 3 or 4 digits
-				$postFields['EXPDATE'] = $pOrder->info['cc_expires']; // (Required) Expiration date of the credit card. For example, 1215 represents December 2015.
-				$postFields['INVNUM'] = $pOrder->mDb->mName.'-'.$this->paymentOrderId; // (Optional) Your own unique invoice or tracking number.
+				$postFields['EXPDATE'] = $this->getPaymentExpires( $pPaymentParams ); // (Required) Expiration date of the credit card. For example, 1215 represents December 2015.
+				$postFields['INVNUM'] = $pOrder->mDb->mName.'-'.$pPaymentParams['orders_id']; // (Optional) Your own unique invoice or tracking number.
 
 				$postFields['FREIGHTAMT'] = $pOrder->getFieldLocalized( 'shipping_cost' ); // 	(Optional) Total shipping costs for this order.  Nine numeric characters plus decimal.
 				// TAXAMT = L_QTY0 * L_TAXAMT0 + L_QTY1 * L_TAXAMT1 + L_QTYn * L_TAXAMTn
@@ -262,16 +225,16 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			*/ 
 
 			// Assume we are charging the native amount in the default currency. Some gateways support multiple currencies, check for that shortly
-			if( (DEFAULT_CURRENCY != $this->getProcessorCurrency()) && $paymentCurrency == DEFAULT_CURRENCY ) {
+			if( (DEFAULT_CURRENCY != $this->getProcessorCurrency()) && $pPaymentParams['payment_currency'] == DEFAULT_CURRENCY ) {
 				global $currencies;
 				// weird situtation where payflow currency default is different from the site. Need to convert site native to processor native
-				$paymentNative = $currencies->convert( $paymentNative, $this->getProcessorCurrency(), $paymentCurrency );
+				$pPaymentParams['payment_native'] = $currencies->convert( $pPaymentParams['payment_native'], $this->getProcessorCurrency(), $pPaymentParams['payment_currency'] );
 				bit_error_email( 'PAYMENT WARNING on '.php_uname( 'n' ).': mismatch Payflow currency '.$this->getProcessorCurrency().' != Default Currency '.DEFAULT_CURRENCY, bit_error_string(), array() );
 			}
-			$paymentAmount = $paymentNative;
+			$paymentAmount = $pPaymentParams['payment_native'];
 			$postFields['CURRENCY'] = $this->getProcessorCurrency();
 
-			if( $this->cc_type == 'American Express' ) {
+			if( $this->payment_type == 'American Express' ) {
 				// TODO American Express Additional Credit Card Parameters
 			}
 
@@ -301,7 +264,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 					break;
 				case 'PayPal':
 					if( $this->isCommerceConfigActive( 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY' ) ) {
-						switch( $paymentCurrency ) {
+						switch( $pPaymentParams['payment_currency'] ) {
 							// PayPal supports charging natively in these 5 currencies
 							case 'AUD': // Australian dollar 
 							case 'CAD': // Canadian dollar 
@@ -309,9 +272,9 @@ class payflowpro extends CommercePluginPaymentCardBase {
 							case 'GBP': // British pound 
 							case 'JPY': // Japanese Yen 
 							case 'USD': // US dollar 
-								if( $paymentCurrency != $postFields['CURRENCY'] ) {
-									$paymentAmount =  number_format( $paymentLocalized, $paymentDecimal, '.','' );
-									$postFields['CURRENCY'] = strtoupper( $paymentCurrency );
+								if( $pPaymentParams['payment_currency'] != $postFields['CURRENCY'] ) {
+									$paymentAmount =  number_format( $pPaymentParams['payment_localized'], $pPaymentParams['payment_decimal'], '.','' );
+									$postFields['CURRENCY'] = strtoupper( $pPaymentParams['payment_currency'] );
 								}
 								break;
 							default:
@@ -387,14 +350,14 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$paymentAmount = -1.0 * $paymentAmount;
 			}
 
-			$postFields['AMT'] = number_format($paymentAmount, $paymentDecimal,'.',''); // (Required) Amount (Default: U.S. based currency). Nnumeric characters and a decimal only. The maximum length varies depending on your processor. Specify the exact amount to the cent using a decimal point (use 34.00 not 34). Do not include comma separators (use 1199.95 not 1,199.95). Your processor or Internet Merchant Account provider may stipulate a maximum amount.
+			$postFields['AMT'] = number_format($paymentAmount, $pPaymentParams['payment_decimal'],'.',''); // (Required) Amount (Default: U.S. based currency). Nnumeric characters and a decimal only. The maximum length varies depending on your processor. Specify the exact amount to the cent using a decimal point (use 34.00 not 34). Do not include comma separators (use 1199.95 not 1,199.95). Your processor or Internet Merchant Account provider may stipulate a maximum amount.
 
 			// ITEMAMT	(Required if L_COSTn is specified). Sum of cost of all items in this order. 
 			// ITEMAMT = L_QTY0 * LCOST0 + L_QTY1 * LCOST1 + L_QTYn * L_COSTn Limitations: Nine numeric characters plus decimal.
-			$postFields['ITEMAMT'] = number_format( $pOrder->getFieldLocalized('total') - $pOrder->getFieldLocalized('shipping_cost') - $pOrder->getFieldLocalized('tax'), $paymentDecimal, '.', '' );
+			$postFields['ITEMAMT'] = number_format( $pOrder->getFieldLocalized('total') - $pOrder->getFieldLocalized('shipping_cost') - $pOrder->getFieldLocalized('tax'), $pPaymentParams['payment_decimal'], '.', '' );
 			// DISCOUNT	(Optional) Shipping discount for this order. Specify the discount as a positive amount.  Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
 
-			$postFields['DISCOUNT'] = number_format( ($pOrder->getFieldLocalized('total') - $postFields['AMT']), $paymentDecimal, '.', '' );
+			$postFields['DISCOUNT'] = number_format( ($pOrder->getFieldLocalized('total') - $postFields['AMT']), $pPaymentParams['payment_decimal'], '.', '' );
 
 			if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
 				$url='https://pilot-payflowpro.paypal.com';
@@ -438,7 +401,9 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			curl_close($ch);
 
-			$logHash = array( 'orders_id' => $this->paymentOrderId );
+			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
+			$logHash['trans_amount'] = $paymentAmount;
+
 			if( $response ) {
 				$responseHash = $this->_parseNameValueList($response);
 
@@ -447,7 +412,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				# Check result
 				if( isset( $responseHash['PNREF'] ) ) {
 					$this->pnref = $responseHash['PNREF'];
-					$logHash['ref_id'] = $responseHash['PNREF'];
+					$logHash['trans_ref_id'] = $responseHash['PNREF'];
 				}
 
 				if( isset( $responseHash['RESULT'] ) ) {
@@ -474,10 +439,13 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 		if( count( $this->mErrors ) == 0 && $this->result === 0 ) {
 			$ret = TRUE;
-			$pOrder->info['cc_ref_id'] = BitBase::getParameter( $responseHash, 'PNREF' );
+			$logHash['is_success'] = 'y';
+			$logHash['payment_status'] = 'Success';
+			$logHash['trans_ref_id'] = BitBase::getParameter( $responseHash, 'PNREF' );
+			$pOrder->info['trans_ref_id'] = BitBase::getParameter( $responseHash, 'PNREF' );
 			if( !empty( $postFields['ACCT'] ) && MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
-				$pOrder->info['cc_number'] = substr($postFields['ACCT'], 0, 6) . str_repeat('X', (strlen($postFields['ACCT']) - 6)) . substr($postFields['ACCT'], -4);
+				$pOrder->info['payment_number'] = $this->privatizeCard( $postFields['ACCT'] );
 			}
 		} else {
 			foreach( array( 'PWD', 'USER', 'VENDOR', 'PARTNER', 'CVV2' ) as $field ) {
@@ -492,7 +460,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			$ret = FALSE;
 		}
 		if( !empty( $logHash ) ) {
-			$this->logTransaction( $logHash, $pOrder );
+			$this->logTransaction( $logHash );
 		}
 		return $ret;
 	}

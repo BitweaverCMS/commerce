@@ -1,193 +1,140 @@
 <?php
-// braintree_api.php payment module class
-// needs to be loaded even in admin for edit orders
-require_once(DIR_FS_CATALOG . DIR_WS_MODULES . 'payment/braintree/lib/Braintree.php');
+/**
+ * @package bitcommerce
+ * @author spiderr <spiderr@bitweaver.org>
+ *
+ * Copyright (c) 2020 bitweaver.org
+ * Portions Copyright (c) 2019 Zen Cart									|
+ * All Rights Reserved. See below for details and a complete list of authors.
+ * This source file is subject to the GNU GENERAL PUBLIC LICENSE. See http://www.gnu.org/licenses/gpl.html for details
+ *
+ * Documentation from https://developer.paypal.com/docs/classic/payflow/integration-guide/
+ */
 
-if (!defined('TABLE_BRAINTREE'))
-    define('TABLE_BRAINTREE', DB_PREFIX . 'braintree');
+require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
-class braintree_api extends base {
+if( !defined('TABLE_BRAINTREE') ) {
+    define( 'TABLE_BRAINTREE', BITCOMMERCE_DB_PREFIX.'com_orders_payments' );
+}
 
-    var $code;
-    var $title;
-    var $description;
-    var $enabled;
-    var $zone;
-    var $cc_type_check = '';
+class braintree_api extends CommercePluginPaymentCardBase {
+
+    var $payment_type_check = '';
     var $enableDebugging = false;
-    var $sort_order = 0;
     var $order_pending_status = 1;
-    var $order_status = DEFAULT_ORDERS_STATUS_ID;
     var $_logLevel = 0;
+	var $bt_cc_firstname, $bt_cc_lastname;
+
+	protected function setCcOwner( $pPaymentParams ) {
+		$bt_cc_firstname = trim( $this->getParameter( $pPaymentParams, 'bt_cc_firstname' ) );
+		$bt_cc_lastname = trim( $this->getParameter( $pPaymentParams, 'bt_cc_lastname' ) );
+		return !empty( $bt_cc_lastname ) && !empty( $bt_cc_firstname );
+	}
+
+	public function getPaymentOwner( $pPaymentParams ) {
+		return $this->getParameter( $pPaymentParams, 'bt_cc_firstname' ).' '.$this->getParameter( $pPaymentParams, 'bt_cc_lastname' );
+	}
 
     /**
      * this module collects card-info onsite
      */
     var $collectsCardDataOnsite = TRUE;
 
+	var $cards = array();
+
     /**
      * class constructor
      */
-    function braintree_api() {
 
-        include_once(zen_get_file_directory(DIR_FS_CATALOG . DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/payment/', 'braintree_api.php', 'false'));
-        global $order;
+	public function __construct() {
+		parent::__construct();
+		$this->adminTitle = tra( 'Braintree' ); // Payment module title in Admin
+		$this->description = tra( 'Process credit cards with the Braintree payment gateway.' );
 
-        $this->code = 'braintree_api';
-        $this->title = MODULE_PAYMENT_BRAINTREE_TEXT_ADMIN_TITLE;
-        $this->codeVersion = MODULE_PAYMENT_BRAINTREE_VERSION;
-        $this->enabled = (MODULE_PAYMENT_BRAINTREE_STATUS == 'True');
+		if( $this->isEnabled() ) {
+			global $gBitUser;
 
-        // Set the title & description text based on the mode we're in
-        if (IS_ADMIN_FLAG === true) {
-            if (file_exists(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'plugin_support.php')) {
-                require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'plugin_support.php');
-                $new_version_details = plugin_version_check_for_updates(1781, MODULE_PAYMENT_BRAINTREE_VERSION);
-                if ($new_version_details !== FALSE) {
-                    $this->title .= '<span class="alert">' . ' - NOTE: A NEW VERSION OF THIS PLUGIN IS AVAILABLE. <a href="' . $new_version_details['link'] . '" target="_blank">[Details]</a>' . '</span>';
-                }
-            }
-            $this->description = sprintf(MODULE_PAYMENT_BRAINTREE_TEXT_ADMIN_DESCRIPTION, ' (rev' . $this->codeVersion . ')');
-            $this->title = MODULE_PAYMENT_BRAINTREE_TEXT_ADMIN_TITLE;
+			require_once( __DIR__ . DIRECTORY_SEPARATOR . 'lib/Braintree.php');
 
-            if ($this->enabled) {
+			include_once(zen_get_file_directory(DIR_FS_CATALOG . DIR_WS_LANGUAGES . 'en/modules/payment/', $this->code.'.php', 'false'));
 
-                if (MODULE_PAYMENT_BRAINTREE_SERVER == 'sandbox')
-                    $this->title .= '<strong><span class="alert"> (sandbox active)</span></strong>';
-                if (MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log File' || MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log and Email')
-                    $this->title .= '<strong> (Debug)</strong>';
-                if (!function_exists('curl_init'))
-                    $this->title .= '<strong><span class="alert"> CURL NOT FOUND. Cannot Use.</span></strong>';
-            }
-        } else {
 
-            $this->description = MODULE_PAYMENT_BRAINTREE_TEXT_DESCRIPTION;
-            $this->title = MODULE_PAYMENT_BRAINTREE_TEXT_TITLE; //cc
-        }
+			// Set the title & description text based on the mode we're in
+			if( $gBitUser->isAdmin() ) {
+				$this->adminTitle .= ' (rev' . $this->getModuleConfigValue( '_VERSION' ). ')';
+				if ($this->getModuleConfigValue( '_SERVER' ) == 'sandbox') {
+					$this->title .= '<strong><span class="alert"> (sandbox active)</span></strong>';
+				}
+				if ($this->getModuleConfigValue( '_DEBUGGING' ) == 'Log File' || $this->getModuleConfigValue( '_DEBUGGING' ) == 'Log and Email') {
+					$this->title .= '<strong> (Debug)</strong>';
+				}
+				if (!function_exists('curl_init')) {
+					$this->title .= '<strong><span class="alert"> CURL NOT FOUND. Cannot Use.</span></strong>';
+				}
+			}
 
-        if ((!defined('BRAINTREE_OVERRIDE_CURL_WARNING') || (defined('BRAINTREE_OVERRIDE_CURL_WARNING') && BRAINTREE_OVERRIDE_CURL_WARNING != 'True')) && !function_exists('curl_init'))
-            $this->enabled = false;
+			if ((!defined('BRAINTREE_OVERRIDE_CURL_WARNING') || (defined('BRAINTREE_OVERRIDE_CURL_WARNING') && BRAINTREE_OVERRIDE_CURL_WARNING != 'True')) && !function_exists('curl_init'))
+				$this->enabled = false;
 
-        $this->enableDebugging = (MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log File' || MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log and Email');
-        $this->emailAlerts = (MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log and Email');
-        $this->sort_order = MODULE_PAYMENT_BRAINTREE_SORT_ORDER;
-        $this->order_pending_status = MODULE_PAYMENT_BRAINTREE_ORDER_PENDING_STATUS_ID;
+			$this->enableDebugging = ($this->getModuleConfigValue( '_DEBUGGING' ) == 'Log File' || $this->getModuleConfigValue( '_DEBUGGING' ) == 'Log and Email');
+			$this->emailAlerts = ($this->getModuleConfigValue( '_DEBUGGING' ) == 'Log and Email');
+			$this->sort_order = $this->getModuleConfigValue( '_SORT_ORDER' );
+			$this->order_pending_status = $this->getModuleConfigValue( '_ORDER_PENDING_STATUS_ID' );
 
-        if ((int) MODULE_PAYMENT_BRAINTREE_ORDER_STATUS_ID > 0) {
-            $this->order_status = MODULE_PAYMENT_BRAINTREE_ORDER_STATUS_ID;
-        }
+			if ((int) $this->getModuleConfigValue( '_ORDER_STATUS_ID' ) > 0) {
+				$this->order_status = $this->getModuleConfigValue( '_ORDER_STATUS_ID' );
+			}
 
-        $this->zone = (int) MODULE_PAYMENT_BRAINTREE_ZONE;
+			$this->zone = (int) $this->getModuleConfigValue( '_ZONE' );
 
-        if (is_object($order))
-            $this->update_status();
+			// debug setup
+			if (!defined('DIR_FS_LOGS')) {
+				$log_dir = 'cache/';
+			} else {
+				$log_dir = DIR_FS_LOGS;
+			}
 
-        if (!(PROJECT_VERSION_MAJOR > 1 || (PROJECT_VERSION_MAJOR == 1 && substr(PROJECT_VERSION_MINOR, 0, 3) >= 5)))
-            $this->enabled = false;
-
-        // debug setup
-        if (!defined('DIR_FS_LOGS')) {
-            $log_dir = 'cache/';
-        } else {
-            $log_dir = DIR_FS_LOGS;
-        }
-
-        if (!@is_writable($log_dir))
-            $log_dir = DIR_FS_CATALOG . $log_dir;
-        if (!@is_writable($log_dir))
-            $log_dir = DIR_FS_SQL_CACHE;
-        // Regular mode:
-        if ($this->enableDebugging)
-            $this->_logLevel = 2;
-        // DEV MODE:
-        if (defined('BRAINTREE_DEV_MODE') && BRAINTREE_DEV_MODE == 'true')
-            $this->_logLevel = 3;
+			if (!@is_writable($log_dir))
+				$log_dir = DIR_FS_CATALOG . $log_dir;
+			if (!@is_writable($log_dir))
+				$log_dir = DIR_FS_SQL_CACHE;
+			// Regular mode:
+			if ($this->enableDebugging)
+				$this->_logLevel = 2;
+			// DEV MODE:
+			if (defined('BRAINTREE_DEV_MODE') && BRAINTREE_DEV_MODE == 'true')
+				$this->_logLevel = 3;
+		}
     }
 
-    /**
-     *  Sets payment module status based on zone restrictions etc
-     */
-    function update_status() {
-        global $order, $db;
-
-        // if store is not running in SSL, cannot offer credit card module, for PCI reasons
-        if (IS_ADMIN_FLAG === false && (!defined('ENABLE_SSL') || ENABLE_SSL != 'true')) {
-            $this->enabled = False;
-            $this->zcLog('update_status', 'Module disabled because SSL is not enabled on this site.');
-        }
-
-        // check other reasons for the module to be deactivated:
-        if ($this->enabled && (int) $this->zone > 0) {
-
-            $check_flag = false;
-
-            $sql = "SELECT zone_id
-                FROM " . TABLE_ZONES_TO_GEO_ZONES . "
-                WHERE geo_zone_id = :zoneId
-                AND zone_country_id = :countryId
-                ORDER BY zone_id";
-
-            $sql = $db->bindVars($sql, ':zoneId', $this->zone, 'integer');
-            $sql = $db->bindVars($sql, ':countryId', $order->billing['country']['id'], 'integer');
-            $check = $db->Execute($sql);
-
-            while (!$check->EOF) {
-
-                if ($check->fields['zone_id'] < 1) {
-                    $check_flag = true;
-                    break;
-                } else if ($check->fields['zone_id'] == $order->billing['zone_id']) {
-                    $check_flag = true;
-                    break;
-                }
-
-                $check->MoveNext();
-            }
-
-            if (!$check_flag) {
-                $this->enabled = false;
-                $this->zcLog('update_status', 'Module disabled due to zone restriction. Billing address is not within the Payment Zone selected in the module settings.');
-            }
-
-            // module cannot be used for purchase > $10,000 USD
-            $order_amount = $this->calc_order_amount($order->info['total'], 'USD');
-
-            if ($order_amount > 10000) {
-                $this->enabled = false;
-                $this->zcLog('update_status', 'Module disabled because purchase price (' . $order_amount . ') exceeds Braintree-imposed maximum limit of 10,000 USD.');
-            }
-
-            if ($order->info['total'] == 0) {
-                $this->enabled = false;
-                /* $this->zcLog('update_status', 'Module disabled because purchase amount is set to 0.00.' . "\n" . print_r($order, true)); */
-            }
-        }
-    }
+	protected function getSessionVars() {
+		return array( 'bt_cc_firstname', 'bt_cc_lastname', 'payment_number', 'cc_cvv', 'payment_expires_month', 'payment_expires_year' );
+	}
 
     /**
      *  Validate the credit card information via javascript (Number, Owner, and CVV Lengths)
      */
     function javascript_validation() {
         return '  if(payment_value == "' . $this->code . '") {' . "\n" .
-                '    var cc_firstname = document.checkout_payment.braintree_cc_firstname.value;' . "\n" .
-                '    var cc_lastname = document.checkout_payment.braintree_cc_lastname.value;' . "\n" .
-                '    var cc_number = document.checkout_payment.braintree_cc_number.value;' . "\n" .
-                '    var cc_checkcode = document.checkout_payment.braintree_cc_checkcode.value;' . "\n" .
+                '    var cc_firstname = document.checkout_payment.bt_cc_firstname.value;' . "\n" .
+                '    var cc_lastname = document.checkout_payment.bt_cc_lastname.value;' . "\n" .
+                '    var payment_number = document.checkout_payment.payment_number.value;' . "\n" .
+                '    var cc_checkcode = document.checkout_payment.cc_cvv.value;' . "\n" .
                 '    if(cc_firstname == "" || cc_lastname == "" || eval(cc_firstname.length) + eval(cc_lastname.length) < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
                 '      error = 1;' . "\n" .
-                '      jQuery(\'[name="braintree_cc_firstname"]\').addClass("missing");' . "\n" .
-                '      jQuery(\'[name="braintree_cc_firstname"]\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', MODULE_PAYMENT_BRAINTREE_TEXT_JS_CC_OWNER)))) . '\' + \'</span>\');' . "\n" .
-                '      jQuery(\'[name="braintree_cc_lastname"]\').addClass("missing");' . "\n" .
-                '      jQuery(\'[name="braintree_cc_lastname"]\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', MODULE_PAYMENT_BRAINTREE_TEXT_JS_CC_OWNER)))) . '\' + \'</span>\');' . "\n" .
+                '      jQuery(\'[name="bt_cc_firstname"]\').addClass("missing");' . "\n" .
+                '      jQuery(\'[name="bt_cc_firstname"]\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', $this->getModuleConfigValue( '_TEXT_JS_CC_OWNER' ))))) . '\' + \'</span>\');' . "\n" .
+                '      jQuery(\'[name="bt_cc_lastname"]\').addClass("missing");' . "\n" .
+                '      jQuery(\'[name="bt_cc_lastname"]\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', $this->getModuleConfigValue( '_TEXT_JS_CC_OWNER' ))))) . '\' + \'</span>\');' . "\n" .
                 '    }' . "\n" .
-                '    if(cc_number == "" || cc_number.length < ' . CC_NUMBER_MIN_LENGTH . ') {' . "\n" .
+                '    if(payment_number == "" || payment_number.length < ' . CC_NUMBER_MIN_LENGTH . ') {' . "\n" .
                 '      error = 1;' . "\n" .
-                '      jQuery(\'[name="braintree_cc_number"]\').addClass("missing");' . "\n" .
-                '      jQuery(\'[name="braintree_cc_number"]\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', MODULE_PAYMENT_BRAINTREE_TEXT_JS_CC_NUMBER)))) . '\' + \'</span>\');' . "\n" .
+                '      jQuery(\'[name="payment_number"]\').addClass("missing");' . "\n" .
+                '      jQuery(\'[name="payment_number"]\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', $this->getModuleConfigValue( '_TEXT_JS_CC_NUMBER' ))))) . '\' + \'</span>\');' . "\n" .
                 '    }' . "\n" .
-                '    if(document.checkout_payment.braintree_cc_checkcode.disabled == false && (cc_checkcode == "" || cc_checkcode.length < 3 || cc_checkcode.length > 4)) {' . "\n" .
-                '      jQuery(\'[name="braintree_cc_checkcode"]\').addClass("missing");' . "\n" .
-                '      jQuery(\'[name="braintree_cc_checkcode"]\').siblings(\'small\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', MODULE_PAYMENT_BRAINTREE_TEXT_JS_CC_CVV)))) . '\' + \'</span>\');' . "\n" .
+                '    if(document.checkout_payment.cc_cvv.disabled == false && (cc_checkcode == "" || cc_checkcode.length < 3 || cc_checkcode.length > 4)) {' . "\n" .
+                '      jQuery(\'[name="cc_cvv"]\').addClass("missing");' . "\n" .
+                '      jQuery(\'[name="cc_cvv"]\').siblings(\'small\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', $this->getModuleConfigValue( '_TEXT_JS_CC_CVV' ))))) . '\' + \'</span>\');' . "\n" .
                 '      error = 1;' . "\n" .
                 '    }' . "\n" .
                 '  }' . "\n";
@@ -199,20 +146,20 @@ class braintree_api extends base {
     function selection() {
         global $order;
 
-        $this->cc_type_check = 'var value = document.checkout_payment.braintree_cc_type.value;' .
+        $this->payment_type_check = 'var value = document.checkout_payment.bt_payment_type.value;' .
                 'if(value == "Solo" || value == "Maestro" || value == "Switch") {' .
-                '    document.checkout_payment.braintree_cc_issue_month.disabled = false;' .
-                '    document.checkout_payment.braintree_cc_issue_year.disabled = false;' .
-                '    document.checkout_payment.braintree_cc_checkcode.disabled = false;' .
-                '    if(document.checkout_payment.braintree_cc_issuenumber) document.checkout_payment.braintree_cc_issuenumber.disabled = false;' .
+                '    document.checkout_payment.bt_cc_issue_month.disabled = false;' .
+                '    document.checkout_payment.bt_cc_issue_year.disabled = false;' .
+                '    document.checkout_payment.cc_cvv.disabled = false;' .
+                '    if(document.checkout_payment.bt_cc_issuenumber) document.checkout_payment.bt_cc_issuenumber.disabled = false;' .
                 '} else {' .
-                '    if(document.checkout_payment.braintree_cc_issuenumber) document.checkout_payment.braintree_cc_issuenumber.disabled = true;' .
-                '    if(document.checkout_payment.braintree_cc_issue_month) document.checkout_payment.braintree_cc_issue_month.disabled = true;' .
-                '    if(document.checkout_payment.braintree_cc_issue_year) document.checkout_payment.braintree_cc_issue_year.disabled = true;' .
-                '    document.checkout_payment.braintree_cc_checkcode.disabled = false;' .
+                '    if(document.checkout_payment.bt_cc_issuenumber) document.checkout_payment.bt_cc_issuenumber.disabled = true;' .
+                '    if(document.checkout_payment.bt_cc_issue_month) document.checkout_payment.bt_cc_issue_month.disabled = true;' .
+                '    if(document.checkout_payment.bt_cc_issue_year) document.checkout_payment.bt_cc_issue_year.disabled = true;' .
+                '    document.checkout_payment.cc_cvv.disabled = false;' .
                 '}';
         if (sizeof($this->cards) == 0)
-            $this->cc_type_check = '';
+            $this->payment_type_check = '';
 
         /**
          * since we are processing via the gateway, prepare and display the CC fields
@@ -222,7 +169,7 @@ class braintree_api extends base {
         $issue_year = array();
 
         for ($i = 1; $i < 13; $i++) {
-            $expires_month[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B - (%m)', mktime(0, 0, 0, $i, 1, 2000)));
+            $expires_month[] = array('id' => sprintf('%02d', $i), 'text' => strftime('(%m) - %B', mktime(0, 0, 0, $i, 1, 2000)));
         }
 
         $today = getdate();
@@ -232,101 +179,75 @@ class braintree_api extends base {
         }
 
         $onFocus = ' onfocus="methodSelect(\'pmt-' . $this->code . '\')"';
-
+/*
         $fieldsArray = array();
-        $fieldsArray[] = array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_FIRSTNAME,
-            'field' => zen_draw_input_field('braintree_cc_firstname', $order->billing['firstname'], 'id="' . $this->code . '-cc-ownerf"' . $onFocus . ' autocomplete="off"') .
-            '<script type="text/javascript">function braintree_cc_type_check() { ' . $this->cc_type_check . ' } </script>',
+        $fieldsArray[] = array(
+			'title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_FIRSTNAME' ),
+            'field' => zen_draw_input_field('bt_cc_firstname', $order->billing['firstname'], 'id="' . $this->code . '-cc-ownerf"' . $onFocus . ' autocomplete="off"') .
+            '<script type="text/javascript">function bt_payment_type_check() { ' . $this->payment_type_check . ' } </script>',
             'tag' => $this->code . '-cc-ownerf');
-        $fieldsArray[] = array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_LASTNAME,
-            'field' => zen_draw_input_field('braintree_cc_lastname', $order->billing['lastname'], 'id="' . $this->code . '-cc-ownerl"' . $onFocus . ' autocomplete="off"'),
+        $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_LASTNAME' ),
+            'field' => zen_draw_input_field('bt_cc_lastname', $order->billing['lastname'], 'id="' . $this->code . '-cc-ownerl"' . $onFocus . ' autocomplete="off"'),
             'tag' => $this->code . '-cc-ownerl');
         if (sizeof($this->cards) > 0)
-            $fieldsArray[] = array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_TYPE,
-                'field' => zen_draw_pull_down_menu('braintree_cc_type', $this->cards, '', 'onchange="braintree_cc_type_check();" onblur="braintree_cc_type_check();"' . 'id="' . $this->code . '-cc-type"' . $onFocus),
+            $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_TYPE' ),
+                'field' => zen_draw_pull_down_menu('bt_payment_type', $this->cards, '', 'onchange="bt_payment_type_check();" onblur="bt_payment_type_check();"' . 'id="' . $this->code . '-cc-type"' . $onFocus),
                 'tag' => $this->code . '-cc-type');
-        $fieldsArray[] = array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_NUMBER,
-            'field' => zen_draw_input_field('braintree_cc_number', $ccnum, 'id="' . $this->code . '-cc-number"' . $onFocus . ' autocomplete="off"', 'tel'),
+        $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_NUMBER' ),
+            'field' => zen_draw_input_field('payment_number', $ccnum, 'id="' . $this->code . '-cc-number"' . $onFocus . ' autocomplete="off"', 'tel'),
             'tag' => $this->code . '-cc-number');
-        $fieldsArray[] = array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_EXPIRES,
-            'field' => zen_draw_pull_down_menu('braintree_cc_expires_month', $expires_month, strftime('%m'), 'id="' . $this->code . '-cc-expires-month"' . $onFocus) . '&nbsp;' . zen_draw_pull_down_menu('braintree_cc_expires_year', $expires_year, '', 'id="' . $this->code . '-cc-expires-year"' . $onFocus),
+        $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_EXPIRES' ),
+            'field' => zen_draw_pull_down_menu('payment_expires_month', $expires_month, strftime('%m'), 'id="' . $this->code . '-cc-expires-month"' . $onFocus) . '&nbsp;' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, '', 'id="' . $this->code . '-cc-expires-year"' . $onFocus),
             'tag' => $this->code . '-cc-expires-month');
-        $fieldsArray[] = array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_CHECKNUMBER,
-            'field' => zen_draw_input_field('braintree_cc_checkcode', '', 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="off"', 'tel') . '&nbsp;<small>' . MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_CHECKNUMBER_LOCATION . '</small><script type="text/javascript">braintree_cc_type_check();</script>',
+        $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_CHECKNUMBER' ),
+            'field' => zen_draw_input_field('cc_cvv', '', 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="off"', 'tel') . '&nbsp;<small>' . $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_CHECKNUMBER_LOCATION' ) . '</small><script type="text/javascript">bt_payment_type_check();</script>',
             'tag' => $this->code . '-cc-cvv');
+*/
+		$selection = array('id' => $this->code,
+						 'module' => $this->title,
+						 'fields' => array(
+							array(	'title' => tra( 'Name On Card' ),
+									'field' => '<div class="row"><div class="col-sm-6">' . zen_draw_input_field('bt_cc_firstname', BitBase::getParameter( $_SESSION, 'bt_cc_firstname', $order->billing['firstname'] ), 'id="' . $this->code . '-cc-ownerf"' . $onFocus . ' autocomplete="off"') . '</div><div class="col-sm-6">'  .zen_draw_input_field('bt_cc_lastname', BitBase::getParameter( $_SESSION, 'bt_cc_lastname', $order->billing['lastname'] ), 'id="' . $this->code . '-cc-ownerl"' . $onFocus . ' autocomplete="off"'). '</div></div>',
+							),
+							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), 'id="' . $this->code . '-cc-number"' . $onFocus . ' autocomplete="off"', 'tel') . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="icon-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="off"', 'tel')  . '</div></div>',
+							),
+							array(	'title' => tra( 'Expiration Date' ),
+									'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('payment_expires_month', $expires_month, BitBase::getParameter( $_SESSION, 'payment_expires_month', strftime('%m') ), 'id="' . $this->code . '-cc-expires-month" class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, substr( BitBase::getParameter( $_SESSION, 'payment_expires_year', (date('Y') + 1) ), -2 ), 'id="' . $this->code . '-cc-expires-year" class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
+							),
+						)
+					);
 
-        $selection = array('id' => $this->code,
-            'module' => MODULE_PAYMENT_BRAINTREE_TEXT_TITLE,
-            'fields' => $fieldsArray);
+		if( !empty( $_SESSION[$this->code.'_error']['name'] ) ) {
+			$selection['fields'][0]['error'] = $_SESSION[$this->code.'_error']['name'];
+		}
+
+		if( !empty( $_SESSION[$this->code.'_error']['number'] ) ) {
+			$selection['fields'][1]['error'] = $_SESSION[$this->code.'_error']['number'];
+		}
+
+		if( !empty( $_SESSION[$this->code.'_error']['date'] ) ) {
+			$selection['fields'][2]['error'] = $_SESSION[$this->code.'_error']['date'];
+		}
 
         return $selection;
     }
 
     /**
-     * This is the credit card check done between checkout_payment and
-     * checkout_confirmation (called from checkout_confirmation).
-     * Evaluates the Credit Card Type for acceptance and the validity of the Credit Card Number & Expiration Date
-     */
-    function pre_confirmation_check() {
-        global $messageStack, $order;
-
-        include(DIR_WS_CLASSES . 'cc_validation.php');
-        $cc_validation = new cc_validation();
-        $result = $cc_validation->validate($_POST['braintree_cc_number'], $_POST['braintree_cc_expires_month'], $_POST['braintree_cc_expires_year'], (isset($_POST['braintree_cc_issue_month']) ? $_POST['braintree_cc_issue_month'] : ''), (isset($_POST['braintree_cc_issue_year']) ? $_POST['braintree_cc_issue_year'] : ''));
-        $error = '';
-
-        switch ($result) {
-            case 1:
-                break;
-            case -1:
-                $error = MODULE_PAYMENT_BRAINTREE_TEXT_BAD_CARD; //sprintf(TEXT_CCVAL_ERROR_UNKNOWN_CARD, substr($cc_validation->cc_number, 0, 4));
-                if ($_POST['braintree_cc_number'] == '')
-                    $error = str_replace('\n', '', MODULE_PAYMENT_BRAINTREE_TEXT_JS_CC_NUMBER); // yes, those are supposed to be single-quotes.
-                break;
-            case -2:
-            case -3:
-            case -4:
-                $error = TEXT_CCVAL_ERROR_INVALID_DATE;
-                break;
-            case false:
-                $error = TEXT_CCVAL_ERROR_INVALID_NUMBER;
-                break;
-        }
-
-        $_POST['braintree_cc_checkcode'] = preg_replace('/[^0-9]/i', '', $_POST['braintree_cc_checkcode']);
-        if (isset($_POST['braintree_cc_issuenumber']))
-            $_POST['braintree_cc_issuenumber'] = preg_replace('/[^0-9]/i', '', $_POST['braintree_cc_issuenumber']);
-
-        if (($result === false) || ($result < 1)) {
-            $messageStack->add_session($this->code, $error . '<!-- [' . $this->code . '] -->' . '<!-- result: ' . $result . ' -->', 'error');
-            zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL', true, false));
-        }
-
-        $this->cc_card_type = $cc_validation->cc_type;
-        $this->cc_card_number = $cc_validation->cc_number;
-        $this->cc_expiry_month = $cc_validation->cc_expiry_month;
-        $this->cc_expiry_year = $cc_validation->cc_expiry_year;
-        $this->cc_checkcode = $_POST['braintree_cc_checkcode'];
-    }
-
-    /**
      * Display Credit Card Information for review on the Checkout Confirmation Page
      */
-    function confirmation() {
+	function confirmation( $pPaymentParams ) {
 
         $confirmation = array('title' => '',
-            'fields' => array(array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_FIRSTNAME,
-                    'field' => $_POST['braintree_cc_firstname']),
-                array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_LASTNAME,
-                    'field' => $_POST['braintree_cc_lastname']),
-                array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_TYPE,
-                    'field' => $this->cc_card_type),
-                array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_NUMBER,
-                    'field' => substr($_POST['braintree_cc_number'], 0, 4) . str_repeat('X', (strlen($_POST['braintree_cc_number']) - 8)) . substr($_POST['braintree_cc_number'], -4)),
-                array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_CREDIT_CARD_EXPIRES,
-                    'field' => strftime('%B, %Y', mktime(0, 0, 0, $_POST['braintree_cc_expires_month'], 1, '20' . $_POST['braintree_cc_expires_year'])),
-                    (isset($_POST['braintree_cc_issuenumber']) ? array('title' => MODULE_PAYMENT_BRAINTREE_TEXT_ISSUE_NUMBER,
-                        'field' => $_POST['braintree_cc_issuenumber']) : '')
+            'fields' => array(array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_FIRSTNAME' ),
+                    'field' => $_POST['bt_cc_firstname']),
+                array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_LASTNAME' ),
+                    'field' => $_POST['bt_cc_lastname']),
+                array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_NUMBER' ),
+                    'field' => substr($_POST['payment_number'], 0, 4) . str_repeat('X', (strlen($_POST['payment_number']) - 8)) . substr($_POST['payment_number'], -4)),
+                array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_EXPIRES' ),
+                    'field' => strftime('%B, %Y', mktime(0, 0, 0, $_POST['payment_expires_month'], 1, '20' . $_POST['payment_expires_year'])),
+                    (isset($_POST['bt_cc_issuenumber']) ? array('title' => $this->getModuleConfigValue( '_TEXT_ISSUE_NUMBER' ),
+                        'field' => $_POST['bt_cc_issuenumber']) : '')
         )));
 
         return $confirmation;
@@ -335,20 +256,20 @@ class braintree_api extends base {
     /**
      * Prepare the hidden fields comprising the parameters for the Submit button on the checkout confirmation page
      */
-    function process_button() {
+	function process_button( $pPaymentParams ) {
         global $order;
 
         $process_button_string = '';
-        $process_button_string .= "\n" . zen_draw_hidden_field('bt_cc_type', $_POST['braintree_cc_type']) . "\n" .
-                zen_draw_hidden_field('bt_cc_expdate_month', $_POST['braintree_cc_expires_month']) . "\n" .
-                zen_draw_hidden_field('bt_cc_expdate_year', $_POST['braintree_cc_expires_year']) . "\n" .
-                zen_draw_hidden_field('bt_cc_issuedate_month', $_POST['braintree_cc_issue_month']) . "\n" .
-                zen_draw_hidden_field('bt_cc_issuedate_year', $_POST['braintree_cc_issue_year']) . "\n" .
-                zen_draw_hidden_field('bt_cc_issuenumber', $_POST['braintree_cc_issuenumber']) . "\n" .
-                zen_draw_hidden_field('bt_cc_number', $_POST['braintree_cc_number']) . "\n" .
-                zen_draw_hidden_field('bt_cc_checkcode', $_POST['braintree_cc_checkcode']) . "\n" .
-                zen_draw_hidden_field('bt_payer_firstname', $_POST['braintree_cc_firstname']) . "\n" .
-                zen_draw_hidden_field('bt_payer_lastname', $_POST['braintree_cc_lastname']) . "\n";
+        $process_button_string .= "\n" . zen_draw_hidden_field('bt_payment_type', $_POST['bt_payment_type']) . "\n" .
+                zen_draw_hidden_field('payment_expires_month', $_POST['payment_expires_month']) . "\n" .
+                zen_draw_hidden_field('payment_expires_year', $_POST['payment_expires_year']) . "\n" .
+                zen_draw_hidden_field('bt_cc_issue_month', $_POST['bt_cc_issue_month']) . "\n" .
+                zen_draw_hidden_field('bt_cc_issue_year', $_POST['bt_cc_issue_year']) . "\n" .
+                zen_draw_hidden_field('bt_cc_issuenumber', $_POST['bt_cc_issuenumber']) . "\n" .
+                zen_draw_hidden_field('payment_number', $_POST['payment_number']) . "\n" .
+                zen_draw_hidden_field('cc_cvv', $_POST['cc_cvv']) . "\n" .
+                zen_draw_hidden_field('bt_payer_firstname', $_POST['bt_cc_firstname']) . "\n" .
+                zen_draw_hidden_field('bt_payer_lastname', $_POST['bt_cc_lastname']) . "\n";
         $process_button_string .= zen_draw_hidden_field(zen_session_name(), zen_session_id());
         return $process_button_string;
     }
@@ -358,16 +279,16 @@ class braintree_api extends base {
      */
     function process_button_ajax() {
         global $order;
-        $processButton = array('ccFields' => array('bt_cc_type' => 'braintree_cc_type',
-                'bt_cc_expdate_month' => 'braintree_cc_expires_month',
-                'bt_cc_expdate_year' => 'braintree_cc_expires_year',
-                'bt_cc_issuedate_month' => 'braintree_cc_issue_month',
-                'bt_cc_issuedate_year' => 'braintree_cc_issue_year',
-                'bt_cc_issuenumber' => 'braintree_cc_issuenumber',
-                'bt_cc_number' => 'braintree_cc_number',
-                'bt_cc_checkcode' => 'braintree_cc_checkcode',
-                'bt_payer_firstname' => 'braintree_cc_firstname',
-                'bt_payer_lastname' => 'braintree_cc_lastname',
+        $processButton = array('ccFields' => array('bt_payment_type' => 'bt_payment_type',
+                'payment_expires_month' => 'payment_expires_month',
+                'payment_expires_year' => 'payment_expires_year',
+                'bt_cc_issue_month' => 'bt_cc_issue_month',
+                'bt_cc_issue_year' => 'bt_cc_issue_year',
+                'bt_cc_issuenumber' => 'bt_cc_issuenumber',
+                'payment_number' => 'payment_number',
+                'cc_cvv' => 'cc_cvv',
+                'bt_payer_firstname' => 'bt_cc_firstname',
+                'bt_payer_lastname' => 'bt_cc_lastname',
             ), 'extraFields' => array(zen_session_name() => zen_session_id()));
         return $processButton;
     }
@@ -375,348 +296,230 @@ class braintree_api extends base {
     /**
      * Prepare and submit the final authorization to Braintree via the appropriate means as configured
      */
-    function before_process() {
-        global $order, $messageStack;
-
-        //$this->zcLog('before_process - DP-1', 'Beginning DP mode' . print_r($_POST, TRUE));
-        // Validate credit card data
-        include(DIR_WS_CLASSES . 'cc_validation.php');
-        $cc_validation = new cc_validation();
-        $response = $cc_validation->validate($_POST['bt_cc_number'], $_POST['bt_cc_expdate_month'], $_POST['bt_cc_expdate_year'], $_POST['bt_cc_issuedate_month'], $_POST['bt_cc_issuedate_year']);
-        $error = '';
-
-        switch ($response) {
-            case -1:
-                $error = sprintf(TEXT_CCVAL_ERROR_UNKNOWN_CARD, substr($cc_validation->cc_number, 0, 4));
-                break;
-            case -2:
-            case -3:
-            case -4:
-                $error = TEXT_CCVAL_ERROR_INVALID_DATE;
-                break;
-            case false:
-                $error = TEXT_CCVAL_ERROR_INVALID_NUMBER;
-                break;
-        }
-
-        if (($response === false) || ($response < 1)) {
-            $this->zcLog('before_process - DP-2', 'CC validation results: ' . $error . '(' . $response . ')');
-            $messageStack->add_session($this->code, $error . '<!-- [' . $this->code . '] -->' . '<!-- result: ' . $response . ' -->', 'error');
-            zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL', true, false));
-        }
-
-        if (!in_array($cc_validation->cc_type, array('Visa', 'MasterCard', 'Switch', 'Solo', 'Discover', 'American Express', 'Maestro'))) {
-            $messageStack->add_session($this->code, MODULE_PAYMENT_BRAINTREE_TEXT_BAD_CARD . '<!-- [' . $this->code . ' ' . $cc_validation->cc_type . '] -->', 'error');
-            zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL', true, false));
-        }
-
-        // if CC validation passed, continue using the validated data
-        $cc_number = $cc_validation->cc_number;
-        $cc_checkcode = (is_numeric($_POST['bt_cc_checkcode']) ? $_POST['bt_cc_checkcode'] : 0);
-        $cc_expdate_month = $cc_validation->cc_expiry_month;
-        $cc_expdate_year = $cc_validation->cc_expiry_year;
-        $cc_type = $cc_validation->cc_type;
-        $cc_owner_ip = current(explode(':', str_replace(',', ':', zen_get_ip_address())));
-
-        $order->info['cc_type'] = $cc_type;
-        $order->info['cc_number'] = substr($cc_number, 0, 4) . str_repeat('X', (strlen($cc_number) - 8)) . substr($cc_number, -4);
-        $order->info['cc_owner'] = $_SESSION['customer_first_name'] . ' ' . $_SESSION['customer_last_name'];
-        $order->info['cc_expires'] = $cc_expdate_month . substr($cc_expdate_year, -2);
-        $order->info['ip_address'] = $cc_owner_ip;
-
-        // Prepare products list
-
-        for ($i = 0; $i < sizeof($order->products); $i++) {
-
-            if (isset($products_list)) {
-                $products_list .= "\n";
-            }
-
-            $current_products_id = explode(':', $order->products[$i]['id']);
-
-            $products_list .= $order->products[$i]['qty'] . 'x' . $order->products[$i]['name'] . ' (' . $current_products_id[0] . ') ';
-
-            if (isset($order->products[$i]['attributes']) && sizeof($order->products[$i]['attributes']) > 0) {
-
-                for ($j = 0, $n2 = sizeof($order->products[$i]['attributes']); $j < $n2; $j++) {
-
-                    $products_list .= ' ' . $order->products[$i]['attributes'][$j]['value'];
-                }
-            }
-
-            $products_list .= ' $' . zen_round(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']), 2);
-        }
-
-        $products_list = (strlen($products_list) > 255) ? substr($products_list, 0, 250) . ' ...' : $products_list;
-
-        $this->braintree_init();
-        $setcurrentcy = MODULE_PAYMENT_BRAINTREE_CURRENCY;
-        if (!isset($setcurrentcy)) {
-            $setcurrentcy = DEFAULT_CURRENCY;
-        }
-        $merchant_account_id = MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID;
-
-        try {
-            $transaction_array = array(
-                'amount' => $this->calc_order_amount($order->info['total'], $setcurrentcy),
-                'merchantAccountId' => $merchant_account_id,
-                'creditCard' => array(
-                    'number' => $cc_number,
-                    'expirationMonth' => $cc_validation->cc_expiry_month,
-                    'expirationYear' => $cc_validation->cc_expiry_year,
-                    'cardholderName' => $order->billing['firstname'] . '' . $order->billing['lastname'],
-                    'cvv' => $cc_checkcode
-                ),
-                'customer' => array(
-                    'firstName' => $order->customer['firstname'],
-                    'lastName' => $order->customer['lastname'],
-                    'phone' => $order->customer['telephone'],
-                    'email' => $order->customer['email_address']
-                ),
-                'billing' => array(
-                    'firstName' => $order->billing['firstname'],
-                    'lastName' => $order->billing['lastname'],
-                    'streetAddress' => $order->billing['street_address'],
-                    'extendedAddress' => $order->billing['suburb'],
-                    'locality' => $order->billing['city'],
-                    'region' => $order->billing['state'],
-                    'postalCode' => $order->billing['postcode'],
-                    'countryCodeAlpha2' => $order->billing['country']['iso_code_2']
-                ),
-                'shipping' => array(
-                    'firstName' => $order->delivery['firstname'],
-                    'lastName' => $order->delivery['lastname'],
-                    'streetAddress' => $order->delivery['street_address'],
-                    'extendedAddress' => $order->delivery['suburb'],
-                    'locality' => $order->delivery['city'],
-                    'region' => $order->delivery['state'],
-                    'postalCode' => $order->delivery['postcode'],
-                    'countryCodeAlpha2' => $order->delivery['country']['iso_code_2']
-                ), /*
-                  'customFields' => array(
-                  'products_purchased' => $products_list
-                  ), */
-                'options' => array(
-                    'submitForSettlement' => MODULE_PAYMENT_BRAINTREE_SETTLEMENT
-            ));
-
-
-            $result = Braintree_Transaction::sale($transaction_array);
-
-
-
-            if ($result->success) {
-
-                //    print_r("success!: " . $result->transaction->id);
-
-                $this->zcLog('before_process - DP-5', 'Result: Success');
-
-                $this->transaction_id = $result->transaction->id;
-                $this->payment_type = MODULE_PAYMENT_BRAINTREE_TEXT_TITLE . '(' . $result->transaction->creditCardDetails->cardType . ')';
-                $this->payment_status = 'Completed';
-                $this->avs = $result->transaction->avsPostalCodeResponseCode;
-                $this->cvv2 = $result->transaction->cvvResponseCode;
-
-                $createdAt_date = new DateTime($result->transaction->createdAt->date);
-                $createdAt_formatted = $createdAt_date->format('Y-m-d H:i:s');
-
-                $this->payment_time = $createdAt_formatted;
-                $this->amt = $result->transaction->amount;
-                $this->transactiontype = 'cart';
-                $this->numitems = sizeof($order->products);
-
-                $_SESSION['bt_FIRSTNAME'] = $result->transaction->customerDetails->firstName;
-                $_SESSION['bt_LASTNAME'] = $result->transaction->customerDetails->lastName;
-                $_SESSION['bt_BUSINESS'] = $result->transaction->billingDetails->company;
-                $_SESSION['bt_NAME'] = $result->transaction->creditCardDetails->cardholderName;
-                $_SESSION['bt_SHIPTOSTREET'] = $result->transaction->shippingDetails->streetAddress;
-                $_SESSION['bt_SHIPTOSTREET2'] = $result->transaction->shippingDetails->extendedAddress;
-                $_SESSION['bt_SHIPTOCITY'] = $result->transaction->shippingDetails->locality;
-                $_SESSION['bt_SHIPTOSTATE'] = $result->transaction->shippingDetails->region;
-                $_SESSION['bt_SHIPTOZIP'] = $result->transaction->shippingDetails->postalCode;
-                $_SESSION['bt_SHIPTOCOUNTRY'] = $result->transaction->shippingDetails->countryName;
-                $_SESSION['bt_ORDERTIME'] = $createdAt_formatted;
-                $_SESSION['bt_CURRENCY'] = $result->transaction->currencyIsoCode;
-                $_SESSION['bt_AMT'] = $result->transaction->amount;
-                $_SESSION['bt_EXCHANGERATE'] = $result->transaction->disbursementDetails->settlementCurrencyExchangeRate;
-                $_SESSION['bt_EMAIL'] = $order->customer['email_address'];
-                $_SESSION['bt_PARENTTRANSACTIONID'] = $result->transaction->refundedTransactionId;
-            } else if ($result->transaction) {
-
-
-                  print_r("Error processing transaction:");
-                  print_r("\n  message: " . $result->message);
-                  print_r("\n  code: " . $result->transaction->processorResponseCode);
-                  print_r("\n  text: " . $result->transaction->processorResponseText);
-                 
-
-                $error_msg = 'Error processing transaction: ' . $result->message;
-
-                if (preg_match('/^1(\d+)/', $result->transaction->processorResponseCode)) {
-
-                    // If it's a 1000 code it's Card Approved but since it didn't suceed above we assume it's Verification Failed.
-                    // FROM " . TABLE_BRAINTREE . " : 1000 class codes mean the processor has successfully authorized the transaction; success will be true. However, the transaction could still be gateway rejected even though the processor successfully authorized the transaction if you have AVS and/or CVV rules set up and/or duplicate transaction checking is enabled and the transaction fails those validation.
-
-                    $customer_error_msg = 'We were unable to process your credit card. Please make sure that your credit card and billing information is accurate and entered properly.';
-                } else if (preg_match('/^2(\d+)/', $result->transaction->processorResponseCode)) {
-
-                    // If it's a 2000 code it's Card Declined
-                    // FROM " . TABLE_BRAINTREE . " : 2000 class codes means the authorization was declined by the processor ; success will be false and the code is meant to tell you more about why the card was declined.                
-                    if (defined('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode)) {
-                        $customer_error_msg = constant('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode);
-                    } else {
-                        $customer_error_msg = 'Processor Decline - Please try another card.';
-                    }
-                } else if (preg_match('/^3(\d+)/', $result->transaction->processorResponseCode)) {
-
-                    // If it's a 3000 code it's a processor failure
-                    // FROM " . TABLE_BRAINTREE . " : 3000 class codes are problems with the back-end processing network, and dont necessarily mean a problem with the card itself.
-
-                    $customer_error_msg = 'Processor Network Unavailable - Try Again.';
-                } else {
-
-                    // This is the default error msg but technically it shouldn't be able to get here, Braintree in the future may add codes making it possible to not be a 1, 2, or 3k class code though.
-
-                    $customer_error_msg = 'We were unable to process your credit card. Please make sure that your billing information is accurate and entered properly.';
-                }
-
-                $this->zcLog('before_process - DP-5', 'Result: ' . $error_msg);
-
-                $detailedEmailMessage = MODULE_PAYMENT_BRAINTREE_TEXT_EMAIL_ERROR_MESSAGE . "\n\n" .
-                        $result->message .
-                        "\n\nProblem occurred while customer #" .
-                        $order->customer['customer_id'] . ' -- ' .
-                        $order->customer['firstname'] . ' ' .
-                        $order->customer['lastname'] . ' -- was attempting checkout.' . "\n\n" . 'Detailed Validation errors below: ' . "\n\n" .
-                        'Code: ' . $result->transaction->processorResponseCode . ' text: ' . $result->transaction->processorResponseText;
-
-                if ($this->emailAlerts)
-                    zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, MODULE_PAYMENT_BRAINTREE_TEXT_EMAIL_ERROR_SUBJECT, $detailedEmailMessage, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML' => nl2br($detailedEmailMessage)), 'paymentalert');
-
-                $messageStack->add_session('checkout_payment', $customer_error_msg, 'error');
-                zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL', true, false));
-            } else {
-
-                /* Examples
-
-                  print_r("Message: " . $result->message);
-                  print_r("\nValidation errors: \n");
-                  print_r($result->errors->deepAll());
-
-                 */
-
-                $error_msg = 'Message: ' . $result->message;
-                $detailed_error_msg = 'Message: ' . $result->message . ' Validation error(s): ' . $result->errors->deepAll();
-
-                $this->zcLog('before_process - DP-5', 'Result: ' . $detailed_error_msg);
-
-                $detailedEmailMessage = MODULE_PAYMENT_BRAINTREE_TEXT_EMAIL_ERROR_MESSAGE . "\n\n" .
-                        $result->message .
-                        "\n\nProblem occurred while customer #" .
-                        $order->customer['customer_id'] . ' -- ' .
-                        $order->customer['firstname'] . ' ' .
-                        $order->customer['lastname'] . ' -- was attempting checkout.' . "\n\n" . 'Detailed Validation errors below: ' . "\n\n";
-
-                foreach ($result->errors->deepAll() AS $error) {
-                    $detailedEmailMessage .= ($error->code . ": " . $error->message . "\n");
-                }
-
-                if ($this->emailAlerts)
-                    zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, MODULE_PAYMENT_BRAINTREE_TEXT_EMAIL_ERROR_SUBJECT, $detailedEmailMessage, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML' => nl2br($detailedEmailMessage)), 'paymentalert');
-
-                $messageStack->add_session('checkout_payment', $error_msg, 'error');
-                zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL', true, false));
-            }
-        } catch (Exception $e) {
-
-            $this->zcLog('before_process - DP-5', 'Result: ' . $e->getMessage());
-            $messageStack->add_session('checkout_payment', 'There was an error processing your order, please try again.', 'error');
-            zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL', true, false));
-        }
-    }
-
-    /**
-     * When the order returns from the processor, this stores the results in order-status-history and logs data for subsequent use
-     */
-    function after_process() {
-        global $insert_id, $db, $order;
-
-        // Add a new Order Status History record for this order's details
-        $commentString = "Transaction ID: :transID: " .
-                "\nPayment Type: :pmtType: " .
-                ($this->payment_time != '' ? "\nTimestamp: :pmtTime: " : "") .
-                "\nPayment Status: :pmtStatus: " .
-                (isset($this->responsedata['auth_exp']) ? "\nAuth-Exp: " . $this->responsedata['auth_exp'] : "") .
-                ($this->avs != '' ? "\nAVS Code: " . $this->avs . "\nCVV2 Code: " . $this->cvv2 : '') .
-                (trim($this->amt) != '' ? "\nAmount: :orderAmt: " : "");
-
-        $commentString = $db->bindVars($commentString, ':transID:', $this->transaction_id, 'noquotestring');
-        $commentString = $db->bindVars($commentString, ':pmtType:', $this->payment_type, 'noquotestring');
-        $commentString = $db->bindVars($commentString, ':pmtTime:', $this->payment_time, 'noquotestring');
-        $commentString = $db->bindVars($commentString, ':pmtStatus:', $this->payment_status, 'noquotestring');
-        $commentString = $db->bindVars($commentString, ':orderAmt:', $this->amt, 'noquotestring');
-
-        $sql_data_array = array(array('fieldName' => 'orders_id', 'value' => $insert_id, 'type' => 'integer'),
-            array('fieldName' => 'orders_status_id', 'value' => $order->info['order_status'], 'type' => 'integer'),
-            array('fieldName' => 'date_added', 'value' => 'now()', 'type' => 'noquotestring'),
-            array('fieldName' => 'customer_notified', 'value' => 0, 'type' => 'integer'),
-            array('fieldName' => 'comments', 'value' => $commentString, 'type' => 'string'));
-
-        $db->perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
-
-        // store the Braintree order meta data -- used for later matching and back-end processing activities
-        $braintree_order = array('order_id' => $insert_id,
-            'txn_type' => $this->transactiontype,
-            'module_name' => $this->code,
-            'module_mode' => 'USA',
-            'reason_code' => $this->reasoncode,
-            'payment_type' => $this->payment_type,
-            'payment_status' => $this->payment_status,
-            'pending_reason' => $this->pendingreason,
-            'first_name' => $_SESSION['bt_FIRSTNAME'],
-            'last_name' => $_SESSION['bt_LASTNAME'],
-            'payer_business_name' => $_SESSION['bt_BUSINESS'],
-            'address_name' => $_SESSION['bt_NAME'],
-            'address_street' => $_SESSION['bt_SHIPTOSTREET'],
-            'address_city' => $_SESSION['bt_SHIPTOCITY'],
-            'address_state' => $_SESSION['bt_SHIPTOSTATE'],
-            'address_zip' => $_SESSION['bt_SHIPTOZIP'],
-            'address_country' => $_SESSION['bt_SHIPTOCOUNTRY'],
-            'payer_email' => $_SESSION['bt_EMAIL'],
-            'payment_date' => 'now()',
-            'txn_id' => $this->transaction_id,
-            'parent_txn_id' => $_SESSION['bt_PARENTTRANSACTIONID'],
-            'num_cart_items' => (float) $this->numitems,
-            'settle_amount' => (float) urldecode($_SESSION['bt_AMT']),
-            'settle_currency' => $_SESSION['bt_CURRENCY'],
-            'exchange_rate' => (urldecode($_SESSION['bt_EXCHANGERATE']) > 0 ? urldecode($_SESSION['bt_EXCHANGERATE']) : 1.0),
-            'date_added' => 'now()'
-        );
-
-        zen_db_perform(TABLE_BRAINTREE, $braintree_order);
-    }
-
-    /**
-     * Build admin-page components
-     *
-     * @param int $zf_order_id
-     * @return string
-     */
-    function admin_notification($zf_order_id) {
-
-        if (!defined('MODULE_PAYMENT_BRAINTREE_STATUS'))
-            return '';
-        global $db;
-
-        $module = $this->code;
-        $output = '';
-        $response = $this->_GetTransactionDetails($zf_order_id);
-
-        if (file_exists(DIR_FS_CATALOG . DIR_WS_MODULES . 'payment/braintree/braintree_admin_notification.php'))
-            include_once(DIR_FS_CATALOG . DIR_WS_MODULES . 'payment/braintree/braintree_admin_notification.php');
-
-        return $output;
-    }
+	function processPayment( &$pPaymentParams, &$pOrder ) {
+
+		$postFields = array();
+		$responseHash = array();
+		$this->result = NULL;
+
+		$ret = FALSE;
+
+		if( self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
+
+			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
+			$logHash['payment_mode'] = 'USA';
+
+			try {
+				// making a sale
+				$this->braintree_init();
+				$setcurrentcy = $this->getModuleConfigValue( '_CURRENCY' );
+				if (!isset($setcurrentcy)) {
+					$setcurrentcy = DEFAULT_CURRENCY;
+				}
+				$merchant_account_id = $this->getModuleConfigValue( '_MERCHANT_ACCOUNT_ID' );
+
+				$transHash = array();
+				$this->result = NULL;
+				$this->pnref = '';
+
+				if( $pPaymentParams['charge_amount'] > 0 ) {
+					if( $refId = $this->getParameter( $pPaymentParams, 'trans_ref_id' ) ) {
+						// Process a reference transaction
+						$payment = $this->mDb->getRow( "SELECT * FROM " . TABLE_ORDERS_PAYMENTS . " WHERE `trans_ref_id`=?", array( $refId ) );
+						if( !empty( $payment['trans_auth_code'] ) ) {
+							$transHash = array(
+								'paymentMethodToken' => $payment['trans_auth_code'],
+								'amount' => $pPaymentParams['charge_amount'],
+							);
+						} else {
+							$this->mErrors['process_payment'] = 'No trans_auth_code is available for '.$refId;
+						}
+					} else {
+						// Process a new transaction
+						$transHash = array(
+							'amount' => $pPaymentParams['charge_amount'],
+							'merchantAccountId' => $merchant_account_id,
+							'creditCard' => array(
+								'number' => $this->getPaymentNumber( $pPaymentParams ),
+								'expirationMonth' => $this->getParameter( $pPaymentParams, 'payment_expires_month' ),
+								'expirationYear' => $this->getParameter( $pPaymentParams, 'payment_expires_year' ),
+								'cardholderName' => $this->getPaymentOwner( $pPaymentParams ),
+								'cvv' => $this->cc_cvv
+							),
+							'customer' => array(
+								'firstName' => $pOrder->customer['firstname'],
+								'lastName' => $pOrder->customer['lastname'],
+								'phone' => $pOrder->customer['telephone'],
+								'email' => $pPaymentParams['payment_email']
+							),
+							'billing' => array(
+								'firstName' => $pOrder->billing['firstname'],
+								'lastName' => $pOrder->billing['lastname'],
+								'streetAddress' => $pOrder->billing['street_address'],
+								'extendedAddress' => $pOrder->billing['suburb'],
+								'locality' => $pOrder->billing['city'],
+								'region' => $pOrder->billing['state'],
+								'postalCode' => $pOrder->billing['postcode'],
+								'countryCodeAlpha2' => $pOrder->billing['countries_iso_code_2']
+							),
+							'shipping' => array(
+								'firstName' => $pOrder->delivery['firstname'],
+								'lastName' => $pOrder->delivery['lastname'],
+								'streetAddress' => $pOrder->delivery['street_address'],
+								'extendedAddress' => $pOrder->delivery['suburb'],
+								'locality' => $pOrder->delivery['city'],
+								'region' => $pOrder->delivery['state'],
+								'postalCode' => $pOrder->delivery['postcode'],
+								'countryCodeAlpha2' => $pOrder->delivery['countries_iso_code_2']
+							),
+							'options' => array(
+								'storeInVaultOnSuccess' => true,
+								'submitForSettlement' => $this->getModuleConfigValue( '_SETTLEMENT' )
+							)
+						);
+
+						// Prepare products list
+						$products_list = '';
+						foreach( $pOrder->contents as $key=>$hash ) {
+							if (isset($products_list)) {
+								$products_list .= "\n";
+							}
+							$current_products_id = explode(':', $hash['id']);
+							$products_list .= $hash['products_quantity'] . 'x' . $hash['name'] . ' (' . $current_products_id[0] . ') ';
+							if (isset($hash['attributes']) && sizeof($hash['attributes']) > 0) {
+								for ($j = 0, $n2 = sizeof($hash['attributes']); $j < $n2; $j++) {
+									$products_list .= ' ' . $hash['attributes'][$j]['value'];
+								}
+							}
+							$products_list .= ' $' . zen_round(zen_add_tax($hash['final_price'], $hash['tax']), 2);
+						}
+
+						$products_list = (strlen($products_list) > 255) ? substr($products_list, 0, 250) . ' ...' : $products_list;
+
+						$transHash['customFields']['products_purchased'] = $products_list;
+						$transHash['customFields']['orders_id'] = $pOrder->mDb->mName . '-' . $pPaymentParams['payment_user_id'];
+						$transHash['customFields']['customers_id'] = $pPaymentParams['payment_user_id'];
+					}
+
+					$result = Braintree_Transaction::sale($transHash);
+					if( !empty( $result->transaction->id ) ) {
+						$transactionId = $result->transaction->id;
+					}
+				} else if( $pPaymentParams['charge_amount'] < 0 ) {
+					// Process a refund
+					if( $txnID = $this->getParameter( $pPaymentParams, 'trans_ref_id' ) ) {
+						$findResult = Braintree_Transaction::find($txnID);
+
+						// Transaction is Settled so Refund
+						$creditAmount = abs( $pPaymentParams['charge_amount'] );
+
+						if( $creditAmount == $pOrder->info['total'] ) {
+							if( $findResult->status == "submitted_for_settlement" || $findResult->status == "authorized" ) {
+								// Transaction is pending so Void
+								$result = Braintree_Transaction::void($txnID);
+								$transactionId = $txnID;
+							} else if ($findResult->status == "settled" || $findResult->status == "settling") {
+								$result = Braintree_Transaction::refund( $txnID );
+								$transactionId = $result->transaction->refundId;
+							}
+						} else {
+							$result = Braintree_Transaction::refund( $txnID, $creditAmount );
+							$transactionId = $result->transaction->refundId;
+						}
+					} else {
+						$this->mErrors['process_payment'] = 'Credit parent transaction ID not set.';
+					}
+				}
+
+				if( $result->success ) {
+					$this->pnref = $result->transaction->id;
+					if( $transExchange = urldecode($result->transaction->disbursementDetails->settlementCurrencyExchangeRate) ) {
+						$logHash['exchange_rate'] = $transExchange;
+					}
+					$logHash['payment_status'] = $result->transaction->status;
+					$logHash['trans_result'] = $result->transaction->processorResponseCode || 'Failure';
+					$logHash['trans_date'] = $result->transaction->createdAt->format('Y-m-d H:i:s+00');
+					$logHash['trans_amount'] = (float) urldecode( $result->transaction->amount );
+					$logHash['trans_currency'] = $result->transaction->currencyIsoCode;
+					$logHash['trans_message'] = trim( $result->transaction->processorResponseText );
+					$logHash['trans_ref_id'] = $this->pnref;
+					$logHash['trans_parent_ref_id'] = $result->transaction->refundedTransactionId;
+//					$logHash['pending_reason'] = $this->pendingreason;
+					$logHash['address_company'] = $result->transaction->billingDetails->company;
+					$logHash['address_street'] = $result->transaction->shippingDetails->streetAddress;
+					$logHash['address_suburb'] = $result->transaction->shippingDetails->extendedAddress;
+					$logHash['address_city'] = $result->transaction->shippingDetails->locality;
+					$logHash['address_state'] = $result->transaction->shippingDetails->region;
+					$logHash['address_zip'] = $result->transaction->shippingDetails->postalCode;
+					$logHash['address_country'] = $result->transaction->shippingDetails->countryName;
+
+					if ($result->success) {
+						$ret = TRUE;
+						$logHash['is_success'] = 'y';
+
+						$pOrder->info['trans_ref_id'] = $this->pnref;
+						//replace middle CC num with XXXX
+						$pOrder->info['payment_number'] = substr($this->payment_number, 0, 6) . str_repeat('X', (strlen($this->payment_number) - 6)) . substr($this->payment_number, -4);
+						
+						$logHash['trans_auth_code'] = $result->transaction->creditCardDetails->token;
+						$this->payment_type = $this->getModuleConfigValue( '_TEXT_TITLE' ) . '(' . $result->transaction->creditCardDetails->cardType . ')';
+						$this->mPaymentStatus = 'Completed';
+						$this->avs = $result->transaction->avsPostalCodeResponseCode;
+						$this->cvv2 = $result->transaction->cvvResponseCode;
+
+						$this->amt = $result->transaction->amount;
+						$this->transactiontype = 'cart';
+						$this->numitems = sizeof($pOrder->contents);
+
+					} else {
+
+						$logHash['trans_message'] .= ' '.$result->message;
+						$error_msg = 'Error processing transaction: ' . $result->message;
+
+						if (preg_match('/^1(\d+)/', $result->transaction->processorResponseCode)) {
+							// If it's a 1000 code it's Card Approved but since it didn't suceed above we assume it's Verification Failed.
+							// FROM " . TABLE_BRAINTREE . " : 1000 class codes mean the processor has successfully authorized the transaction; success will be true. However, the transaction could still be gateway rejected even though the processor successfully authorized the transaction if you have AVS and/or CVV rules set up and/or duplicate transaction checking is enabled and the transaction fails those validation.
+							$this->mErrors['process_payment'] = 'We were unable to process your credit card. Please make sure that your credit card and billing information is accurate and entered properly.';
+						} else if (preg_match('/^2(\d+)/', $result->transaction->processorResponseCode)) {
+							// If it's a 2000 code it's Card Declined
+							// FROM " . TABLE_BRAINTREE . " : 2000 class codes means the authorization was declined by the processor ; success will be false and the code is meant to tell you more about why the card was declined.                
+							if (defined('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode)) {
+								$this->mErrors['process_payment'] = constant('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode);
+							} else {
+								$this->mErrors['process_payment'] = 'Processor Decline - Please try another card. ('.$result->transaction->processorResponseCode.')';
+							}
+						} else if (preg_match('/^3(\d+)/', $result->transaction->processorResponseCode)) {
+							// If it's a 3000 code it's a processor failure
+							// FROM " . TABLE_BRAINTREE . " : 3000 class codes are problems with the back-end processing network, and dont necessarily mean a problem with the card itself.
+							$this->mErrors['process_payment'] = 'Processor Network Unavailable - Try Again.';
+						} else {
+							// This is the default error msg but technically it shouldn't be able to get here, Braintree in the future may add codes making it possible to not be a 1, 2, or 3k class code though.
+							$this->mErrors['process_payment'] = 'We were unable to process your credit card. Please make sure that your billing information is accurate and entered properly.';
+						}
+					}
+				} elseif( empty( $this->mErrors ) ) {
+					$this->mErrors['process_payment'] = $result->message;
+				}
+			} catch (Exception $e) {
+				if( !($msg = $e->getMessage()) ) {
+					$msg = "Payment Execption";
+				}
+				$this->mErrors['process_payment'] = $e->getMessage();
+			}
+		}
+
+		if( !empty( $this->mErrors['process_payment'] ) ) {
+			$_SESSION[$this->code.'_error']['number'] = $this->mErrors['process_payment'];
+			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, $result->errors->deepAll(), 'RESPONSE' => $responseHash ) );
+			$ret = FALSE;
+		}
+
+		if( !empty( $logHash['trans_ref_id'] ) ) {
+			$this->logTransaction( $logHash, $pOrder );
+		}
+
+		return $ret;
+	}
 
     /**
      * Used to read details of an existing transaction.  FOR FUTURE USE.
@@ -731,16 +534,11 @@ class braintree_api extends base {
 
         // look up history on this order from PayPal table
 
-        $sql = "SELECT * FROM " . TABLE_BRAINTREE . " 
-            WHERE order_id = :orderID
-            AND parent_txn_id = ''
-            LIMIT 1";
-
-        $sql = $db->bindVars($sql, ':orderID', $oID, 'integer');
-        $zc_btHist = $db->Execute($sql);
+        $sql = "SELECT * FROM " . TABLE_ORDERS_PAYMENTS . " WHERE orders_id = ? AND parent_trans_ref_id = ''";
+        $zc_btHist = $this->mDb->GetOne( $sql, array( $oID ) );
         if ($zc_btHist->RecordCount() == 0)
             return false;
-        $txnID = $zc_btHist->fields['txn_id'];
+        $txnID = $zc_btHist->fields['trans_ref_id'];
         if ($txnID == '' || $txnID === 0)
             return FALSE;
 
@@ -782,186 +580,120 @@ class braintree_api extends base {
         return $response;
     }
 
-    /**
-     * Evaluate installation status of this module. Returns true if the status key is found.
-     */
-    function check() {
-        global $db,$messageStack;
+	protected function configTables() {
+		$tables = array(
+			TABLE_BRAINTREE => "
+  orders_payments_id I4 PRIMARY AUTO,
+  customers_id I4 NOTNULL,
+  customers_email X NOTNULL,
+  ip_address C(39) NOTNULL,
+  orders_id I4,
+  is_success C(1) NOTNULL DEFAULT 'n',
+  payment_date T DEFTIMESTAMP NOTNULL,
+  payment_module X NOTNULL,
+  payment_mode X NOTNULL,
+  payment_status C(256) NOTNULL,
+  trans_ref_id C(64) NOTNULL,
+  trans_parent_ref_id C(256),
+  payment_type C(256),
+  payment_owner C(64),
+  payment_number C(32),
+  payment_expires C(4),
+  trans_result C(250) NOTNULL,
+  trans_message X NOTNULL,
+  trans_amount N(11,2) NOTNULL,
+  trans_currency C(3) NOTNULL,
+  exchange_rate F NOTNULL,
+  trans_date T,
+  pending_reason C(256),
+  address_company X NOTNULL,
+  address_street X NOTNULL,
+  address_suburb X NOTNULL,
+  address_city X NOTNULL,
+  address_state X NOTNULL,
+  address_zip C(256) NOTNULL,
+  address_country C(256) NOTNULL,
+  num_cart_items I4 NOTNULL
+  CONSTRAINT ', CONSTRAINT `com_orders_payments_log_user_ref` FOREIGN KEY (`customers_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers` (`customers_id`)'			  
+			",
+//, CONSTRAINT `com_orders_payments_orders_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
+		);
+		return $tables;
+	}
 
-        if (!isset($this->_check)) {
-            $check_query = $db->Execute("SELECT configuration_value FROM " . TABLE_CONFIGURATION . " WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_STATUS'");
-            $this->_check = !$check_query->EOF;
-            if ($this->_check && defined('MODULE_PAYMENT_BRAINTREE_VERSION')) {
-                $this->version = MODULE_PAYMENT_BRAINTREE_VERSION;
-                while ($this->version != '1.4.0') {
-                    switch ($this->version) {
-                        case '1.0.0':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.0.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $db->Execute("CREATE TABLE IF NOT EXISTS " . TABLE_BRAINTREE . " (  `braintree_id` int(11) NOT NULL AUTO_INCREMENT,  `order_id` int(11) NOT NULL,  `txn_type` varchar(256) NOT NULL,  `module_name` text NOT NULL,  `reason_code` text NOT NULL,  `payment_type` varchar(256) NOT NULL,  `payment_status` varchar(256) NOT NULL,  `pending_reason` varchar(256) NOT NULL,  `first_name` text NOT NULL,  `last_name` text NOT NULL,  `payer_business_name` text NOT NULL,  `address_name` text NOT NULL,  `address_street` text NOT NULL,  `address_city` text NOT NULL,  `address_state` text NOT NULL,  `address_zip` varchar(256) NOT NULL,  `address_country` varchar(256) NOT NULL,  `payer_email` text NOT NULL,  `payment_date` date NOT NULL,  `txn_id` varchar(256) NOT NULL,  `parent_txn_id` varchar(256) NOT NULL,  `num_cart_items` int(11) NOT NULL,  `settle_amount` decimal(10,0) NOT NULL,  `settle_currency` varchar(256) NOT NULL,  `exchange_rate` decimal(10,0) NOT NULL,  `date_added` date NOT NULL,  `module_mode` text NOT NULL,  PRIMARY KEY (`braintree_id`),  UNIQUE KEY `order_id` (`order_id`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-                            $this->version = '1.0.1';
-                            $messageStack->add('Updated Braintree Payments to v1.0.1', 'success');
-                             // do not break and continue to the next version
-                        case '1.0.1':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.1.0' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.1.0', 'success');
-                            $this->version = '1.1.0';
-                        case '1.1.0':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.1.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.1.1', 'success');
-                            $this->version = '1.1.1';
-                        case '1.1.1':
-                            $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Submit for Settlement', 'MODULE_PAYMENT_BRAINTREE_SETTLEMENT', 'true', 'Would you like to automatically Submit for Settlement?  Setting to false will only authorize and not submit for settlement (also know as capture) the transaction', '6', '14', 'zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.2.0' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.2.0', 'success');
-                            $this->version = '1.2.0';
-                        case '1.2.0':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.2.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.2.1', 'success');
-                            $this->version = '1.2.1';
-                        case '1.2.1':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.2.2' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.2.2', 'success');
-                            global $sniffer;
+	/**
+	* rows for com_configuration table as associative array of column => value
+	*/
+	protected function config() {
+		$i = 20;
+		$ret = array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_ORDER_PENDING_STATUS_ID' => array(
+				'configuration_title' => 'Set Unpaid Order Status',
+				'configuration_value' => '1',
+				'configuration_description' => 'Set the status of unpaid orders made with this payment module to this value. <br /><strong>Recommended: Pending[1]</strong>',
+				'set_function' => "zen_cfg_pull_down_order_statuses(",
+				'use_function' => "zen_get_order_status_name",
+			),
+			$this->getModuleKeyTrunk().'_REFUNDED_STATUS_ID' => array(
+				'configuration_title' => 'Set Refund Order Status',
+				'configuration_value' => '1',
+				'configuration_description' => 'Set the status of refunded orders to this value. <br /><strong>Recommended: Pending[1]</strong>',
+				'set_function' => "zen_cfg_pull_down_order_statuses(",
+				'use_function' => "zen_get_order_status_name",
+			),
+			$this->getModuleKeyTrunk().'_VERSION' => array(
+				'configuration_title' => 'Version',
+				'configuration_value' => '1.4.0',
+				'configuration_description' => 'Version installed',
+			),
+			$this->getModuleKeyTrunk().'_MERCHANTID' => array(
+				'configuration_title' => 'Merchant Key',
+				'configuration_description' => 'Your Merchant ID provided under the API Keys section.',
+			),
+			$this->getModuleKeyTrunk().'_PUBLICKEY' => array(
+				'configuration_title' => 'Public Key',
+				'configuration_description' => 'Your Public Key provided under the API Keys section.',
+			),
+			$this->getModuleKeyTrunk().'_PRIVATEKEY' => array(
+				'configuration_title' => 'Private Key',
+				'configuration_description' => 'Your Private Key provided under the API Keys section.',
+			),
+			$this->getModuleKeyTrunk().'_DEFAULT_MERCHANT_ACCOUNT_ID' => array(
+				'configuration_title' => 'Default Merchant Account ID',
+				'configuration_description' => 'Your Default Merchant Account ID, this should contain your <strong>Merchant Account Name</strong>.<br>Example: myaccountUSD',
+			),
+			$this->getModuleKeyTrunk().'_DEFAULT_CURRENCY' => array(
+				'configuration_title' => 'Merchant Account Default Currency',
+				'configuration_value' => 'USD',
+				'configuration_description' => 'Your Merchant Account Settlement Currency, must be the same as currency code in your Merchant Account Name.<br> Example: USD, CAD, AUD - You can see your store currencies from the <a target=\"_blank\" href=\"currencies.php\">Localization/Currency</a>(Opens New Window).',
+			),
+			$this->getModuleKeyTrunk().'_FOREIGN_CURRENCIES' => array(
+				'configuration_title' => 'Foreign Currency Support',
+				'configuration_description' => 'Enter comma-separated list of [Currency Merchant Account ID]:[Foreign Currency Abbreviation]. For example:<br>myaccountAUD:AUD,myaccountCAD:CAD',
+			),
+			$this->getModuleKeyTrunk().'_SERVER' => array(
+				'configuration_title' => 'Production or Sandbox',
+				'configuration_value' => 'sandbox',
+				'configuration_description' => '<strong>Production: </strong> Used to process Live transactions<br><strong>Sandbox: </strong>For developers and testing',
+				'set_function' => "zen_cfg_select_option(array('production', 'sandbox'), ",
+			),
+			$this->getModuleKeyTrunk().'_DEBUGGING' => array(
+				'configuration_title' => 'Debug Mode',
+				'configuration_value' => 'Alerts Only',
+				'configuration_description' => 'Would you like to enable debug mode?  A complete detailed log of failed transactions will be emailed to the store owner if Log and Email is selected.',
+				'set_function' => "zen_cfg_select_option(array('Alerts Only', 'Log File', 'Log and Email'), ",
+			),
+			$this->getModuleKeyTrunk().'_SETTLEMENT' => array(
+				'configuration_title' => 'Submit for Settlement',
+				'configuration_value' => 'true',
+				'configuration_description' => 'Would you like to automatically Submit for Settlement?  Setting to false will only authorize and not submit for settlement (also know as capture) the transaction',
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+		) );
 
-                            if ($sniffer->table_exists('braintree') && TABLE_BRAINTREE != 'braintree') {
-                                $db->Execute("RENAME TABLE `braintree` TO `" . TABLE_BRAINTREE . "`");
-                            }
-                            $this->version = '1.2.2';
-                        case '1.2.2':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.3.0' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.3.0', 'success');
-                            $this->version = '1.3.0';
-                        case '1.3.0':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.3.1' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.3.1', 'success');
-                            $this->version = '1.3.1';
-                        case '1.3.1':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.3.2' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.3.2', 'success');
-                            $this->version = '1.3.2';
-                        case '1.3.2':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET set_function = 'zen_cfg_select_option(array(\'Alerts Only\', \'Log File\', \'Log and Email\'), ', configuration_description = 'Would you like to enable debug mode?  A complete detailed log of failed transactions will be emailed to the store owner if Log and Email is selected.' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_DEBUGGING' LIMIT 1;");                        
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.3.3' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.3.3', 'success');
-                            $this->version = '1.3.3';
-                        case '1.3.3':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_description = 'Your Merchant Account ID, this should contain your <strong>Merchant Account Name</strong>.<br>Example: myaccountUSD' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID' LIMIT 1;");
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_description = 'Your Merchant Account Settlement Currency, must be the same as currency code in your Merchant Account Name.<br> Example: USD, CAD, AUD - You can see your store currencies from the <a target=\"_blank\" href=\"currencies.php\">Localization/Currency</a>(Opens New Window).' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_CURRENCY' LIMIT 1;");
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.3.4', configuration_description = 'Version installed', set_function = 'zen_cfg_select_option(array(\'1.3.4\'), ' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.3.4', 'success');
-                            $this->version = '1.3.4';
-                        case '1.3.4':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.3.5', configuration_description = 'Version installed', set_function = 'zen_cfg_select_option(array(\'1.3.5\'), ' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.3.5', 'success');
-                            $this->version = '1.3.5';
-                        case '1.3.50':
-                            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '1.4.0', configuration_description = 'Version installed', set_function = 'zen_cfg_select_option(array(\'1.3.5\'), ' WHERE configuration_key = 'MODULE_PAYMENT_BRAINTREE_VERSION' LIMIT 1;");
-                            $messageStack->add('Updated Braintree Payments to v1.4.0', 'success');
-                            $this->version = '1.4.0';
-                        default:
-                            $this->version = '1.4.0';
-                            // break all the loops
-                            break; // this break should only appear on the last case
-                    }
-                }
-            }
-        }
-
-        return $this->_check;
-    }
-
-    /**
-     * Installs all the configuration keys for this module
-     */
-    function install() {
-        global $db, $messageStack;
-
-        if (defined('MODULE_PAYMENT_BRAINTREE_STATUS')) {
-            $messageStack->add_session('Braintree module already installed.', 'error');
-            zen_redirect(zen_href_link(FILENAME_MODULES, 'set=payment&module=braintree', 'NONSSL'));
-            return 'failed';
-        }
-
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable this Payment Module', 'MODULE_PAYMENT_BRAINTREE_STATUS', 'True', 'Do you want to enable this payment module?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Version', 'MODULE_PAYMENT_BRAINTREE_VERSION', '1.4.0', 'Version installed', '6', '2', 'zen_cfg_select_option(array(\'1.3.5\'), ', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Key', 'MODULE_PAYMENT_BRAINTREE_MERCHANTID', '', 'Your Merchant ID provided under the API Keys section.', '6', '3', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Public Key', 'MODULE_PAYMENT_BRAINTREE_PUBLICKEY', '', 'Your Public Key provided under the API Keys section.', '6', '4', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Private Key', 'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY', '', 'Your Private Key provided under the API Keys section.', '6', '5', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Account ID', 'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID', '', 'Your Merchant Account ID, this should contain your <strong>Merchant Account Name</strong>.<br>Example: myaccountUSD', '6', '6', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Production or Sandbox', 'MODULE_PAYMENT_BRAINTREE_SERVER', 'sandbox', '<strong>Production: </strong> Used to process Live transactions<br><strong>Sandbox: </strong>For developers and testing', '6', '7', 'zen_cfg_select_option(array(\'production\', \'sandbox\'), ', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Account Default Currency', 'MODULE_PAYMENT_BRAINTREE_CURRENCY', 'USD', 'Your Merchant Account Settlement Currency, must be the same as currency code in your Merchant Account Name.<br> Example: USD, CAD, AUD - You can see your store currencies from the <a target=\"_blank\" href=\"currencies.php\">Localization/Currency</a>(Opens New Window).', '6', '8', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort order of display.', 'MODULE_PAYMENT_BRAINTREE_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '9', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Payment Zone', 'MODULE_PAYMENT_BRAINTREE_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '10', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Order Status', 'MODULE_PAYMENT_BRAINTREE_ORDER_STATUS_ID', '2', 'Set the status of orders paid with this payment module to this value. <br /><strong>Recommended: Processing[2]</strong>', '6', '11', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Unpaid Order Status', 'MODULE_PAYMENT_BRAINTREE_ORDER_PENDING_STATUS_ID', '1', 'Set the status of unpaid orders made with this payment module to this value. <br /><strong>Recommended: Pending[1]</strong>', '6', '12', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Refund Order Status', 'MODULE_PAYMENT_BRAINTREE_REFUNDED_STATUS_ID', '1', 'Set the status of refunded orders to this value. <br /><strong>Recommended: Pending[1]</strong>', '6', '13', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Debug Mode', 'MODULE_PAYMENT_BRAINTREE_DEBUGGING', 'Alerts Only', 'Would you like to enable debug mode?  A complete detailed log of failed transactions will be emailed to the store owner if Log and Email is selected.', '6', '20', 'zen_cfg_select_option(array(\'Alerts Only\', \'Log File\', \'Log and Email\'), ', now())");
-        $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Submit for Settlement', 'MODULE_PAYMENT_BRAINTREE_SETTLEMENT', 'true', 'Would you like to automatically Submit for Settlement?  Setting to false will only authorize and not submit for settlement (also know as capture) the transaction', '6', '14', 'zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
-        $db->Execute("CREATE TABLE IF NOT EXISTS " . TABLE_BRAINTREE . " (  `braintree_id` int(11) NOT NULL AUTO_INCREMENT,  `order_id` int(11) NOT NULL,  `txn_type` varchar(256) NOT NULL,  `module_name` text NOT NULL,  `reason_code` text NOT NULL,  `payment_type` varchar(256) NOT NULL,  `payment_status` varchar(256) NOT NULL,  `pending_reason` varchar(256) NOT NULL,  `first_name` text NOT NULL,  `last_name` text NOT NULL,  `payer_business_name` text NOT NULL,  `address_name` text NOT NULL,  `address_street` text NOT NULL,  `address_city` text NOT NULL,  `address_state` text NOT NULL,  `address_zip` varchar(256) NOT NULL,  `address_country` varchar(256) NOT NULL,  `payer_email` text NOT NULL,  `payment_date` date NOT NULL,  `txn_id` varchar(256) NOT NULL,  `parent_txn_id` varchar(256) NOT NULL,  `num_cart_items` int(11) NOT NULL,  `settle_amount` decimal(10,0) NOT NULL,  `settle_currency` varchar(256) NOT NULL,  `exchange_rate` decimal(10,0) NOT NULL,  `date_added` date NOT NULL,  `module_mode` text NOT NULL,  PRIMARY KEY (`braintree_id`),  UNIQUE KEY `order_id` (`order_id`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
-        $this->notify('NOTIFY_PAYMENT_BRAINTREE_INSTALLED');
-    }
-
-    function keys() {
-
-        $keys_list = array(
-            'MODULE_PAYMENT_BRAINTREE_STATUS',
-            'MODULE_PAYMENT_BRAINTREE_VERSION',
-            'MODULE_PAYMENT_BRAINTREE_MERCHANTID',
-            'MODULE_PAYMENT_BRAINTREE_PUBLICKEY',
-            'MODULE_PAYMENT_BRAINTREE_PRIVATEKEY',
-            'MODULE_PAYMENT_BRAINTREE_CURRENCY',
-            'MODULE_PAYMENT_BRAINTREE_SORT_ORDER',
-            'MODULE_PAYMENT_BRAINTREE_ZONE',
-            'MODULE_PAYMENT_BRAINTREE_ORDER_STATUS_ID',
-            'MODULE_PAYMENT_BRAINTREE_ORDER_PENDING_STATUS_ID',
-            'MODULE_PAYMENT_BRAINTREE_REFUNDED_STATUS_ID',
-            'MODULE_PAYMENT_BRAINTREE_SERVER',
-            'MODULE_PAYMENT_BRAINTREE_DEBUGGING',
-            'MODULE_PAYMENT_BRAINTREE_MERCHANT_ACCOUNT_ID',
-            'MODULE_PAYMENT_BRAINTREE_SETTLEMENT'
-        );
-
-        return $keys_list;
-    }
-
-    /**
-     * Uninstall this module
-     */
-    function remove() {
-        global $db;
-
-        $db->Execute("DELETE FROM " . TABLE_CONFIGURATION . " WHERE configuration_key LIKE 'MODULE\_PAYMENT\__%'");
-        $this->notify('NOTIFY_PAYMENT_BRAINTREE_UNINSTALLED');
-    }
-
-    /**
-     * Debug Logging support
-     */
-    function zcLog($stage, $message) {
-        static $tokenHash;
-
-        if ($tokenHash == '')
-            $tokenHash = '_' . zen_create_random_value(4);
-
-        if (MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log and Email' || MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log File') {
-
-            $token = date('m-d-Y-H-i');
-            $token .= $tokenHash;
-            if (!defined('DIR_FS_LOGS')) {
-                $log_dir = 'cache/';
-            } else {
-                $log_dir = DIR_FS_LOGS;
-            }
-            $file = $log_dir . '/' . $this->code . '_Braintree_Action_' . $token . '.log';
-            if (defined('BRAINTREE_DEV_MODE') && BRAINTREE_DEV_MODE == 'true')
-                $file = $log_dir . '/' . $this->code . '_Braintree_Debug_' . $token . '.log';
-            $fp = @fopen($file, 'a');
-            @fwrite($fp, date('M-d-Y H:i:s') . ' (' . time() . ')' . "\n" . $stage . "\n" . $message . "\n=================================\n\n");
-            @fclose($fp);
-        }
-
-        $this->_doDebug($stage, $message, false);
-    }
+		$ret[$this->getModuleKeyTrunk().'_PAYMENT_LIMIT_MAX']['configuration_value'] = '10000';
+		return $ret;
+	}
 
     /**
      * Used to submit a refund for a given transaction.
@@ -969,36 +701,36 @@ class braintree_api extends base {
     function _doRefund($oID, $amount = 'Full', $note = '') {
         global $db, $doBraintree, $messageStack;
 
-        $new_order_status = (int) MODULE_PAYMENT_BRAINTREE_REFUNDED_STATUS_ID;
+        $new_order_status = (int) $this->getModuleConfigValue( '_REFUNDED_STATUS_ID' );
         $doBraintree = $this->braintree_init();
         $proceedToRefund = false;
         $refundNote = strip_tags(zen_db_input($_POST['refnote']));
 
-        if (isset($_POST['fullrefund']) && $_POST['fullrefund'] == MODULE_PAYMENT_BRAINTREE_ENTRY_REFUND_BUTTON_TEXT_FULL) {
+        if (isset($_POST['fullrefund']) && $_POST['fullrefund'] == $this->getModuleConfigValue( '_ENTRY_REFUND_BUTTON_TEXT_FULL' )) {
             $refundAmt = 'Full';
             if (isset($_POST['reffullconfirm']) && $_POST['reffullconfirm'] == 'on') {
                 $proceedToRefund = true;
             } else {
-                $messageStack->add_session(MODULE_PAYMENT_BRAINTREE_TEXT_REFUND_FULL_CONFIRM_ERROR, 'error');
+                $messageStack->add_session($this->getModuleConfigValue( '_TEXT_REFUND_FULL_CONFIRM_ERROR' ), 'error');
             }
         }
 
-        if (isset($_POST['partialrefund']) && $_POST['partialrefund'] == MODULE_PAYMENT_BRAINTREE_ENTRY_REFUND_BUTTON_TEXT_PARTIAL) {
+        if (isset($_POST['partialrefund']) && $_POST['partialrefund'] == $this->getModuleConfigValue( '_ENTRY_REFUND_BUTTON_TEXT_PARTIAL' )) {
             $refundAmt = (float) $_POST['refamt'];
             $proceedToRefund = true;
             if ($refundAmt == 0) {
-                $messageStack->add_session(MODULE_PAYMENT_BRAINTREE_TEXT_INVALID_REFUND_AMOUNT, 'error');
+                $messageStack->add_session($this->getModuleConfigValue( '_TEXT_INVALID_REFUND_AMOUNT' ), 'error');
                 $proceedToRefund = false;
             }
         }
 
         // look up history on this order FROM " . TABLE_BRAINTREE . "  table
-        $sql = "SELECT * FROM " . TABLE_BRAINTREE . "  WHERE order_id = :orderID AND parent_txn_id = '' ";
+        $sql = "SELECT * FROM " . TABLE_BRAINTREE . "  WHERE orders_id = :orderID AND parent_trans_ref_id = '' ";
         $sql = $db->bindVars($sql, ':orderID', $oID, 'integer');
         $zc_btHist = $db->Execute($sql);
         if ($zc_btHist->RecordCount() == 0)
             return false;
-        $txnID = $zc_btHist->fields['txn_id'];
+        $txnID = $zc_btHist->fields['trans_ref_id'];
 
         /**
          * Submit refund request to Braintree
@@ -1014,19 +746,19 @@ class braintree_api extends base {
                     // Transaction is pending so Void
 
                     $result = Braintree_Transaction::void($txnID);
-                    $transactionid = $txnID;
+                    $transactionId = $txnID;
                 } else if ($result->status == "settled" || $result->status == "settling") {
 
                     // Transaction is Settled so Refund
 
-                    if (isset($_POST['fullrefund']) && $_POST['fullrefund'] == MODULE_PAYMENT_BRAINTREE_ENTRY_REFUND_BUTTON_TEXT_FULL) {
+                    if (isset($_POST['fullrefund']) && $_POST['fullrefund'] == $this->getModuleConfigValue( '_ENTRY_REFUND_BUTTON_TEXT_FULL' )) {
                         $result = Braintree_Transaction::refund($txnID);
-                        $transactionid = $result->transaction->refundId;
+                        $transactionId = $result->transaction->refundId;
                     }
 
-                    if (isset($_POST['partialrefund']) && $_POST['partialrefund'] == MODULE_PAYMENT_BRAINTREE_ENTRY_REFUND_BUTTON_TEXT_PARTIAL) {
+                    if (isset($_POST['partialrefund']) && $_POST['partialrefund'] == $this->getModuleConfigValue( '_ENTRY_REFUND_BUTTON_TEXT_PARTIAL' )) {
                         $result = Braintree_Transaction::refund($txnID, $refundAmt);
-                        $transactionid = $result->transaction->refundId;
+                        $transactionId = $result->transaction->refundId;
                     }
                 }
 
@@ -1039,8 +771,7 @@ class braintree_api extends base {
 
                     $sql_data_array = array('orders_id' => $oID,
                         'orders_status_id' => (int) $new_order_status,
-                        'date_added' => 'now()',
-                        'comments' => 'REFUND INITIATED. Trans ID:' . $transactionid . "\n" . ' Gross Refund Amt: ' . $refundAmt . "\n" . $refundNote,
+                        'comments' => 'REFUND INITIATED. Trans ID:' . $transactionId . "\n" . ' Gross Refund Amt: ' . $refundAmt . "\n" . $refundNote,
                         'customer_notified' => 0
                     );
 
@@ -1050,7 +781,7 @@ class braintree_api extends base {
                         SET orders_status = '" . (int) $new_order_status . "'
                         WHERE orders_id = '" . (int) $oID . "'");
 
-                    $messageStack->add_session(sprintf(MODULE_PAYMENT_BRAINTREE_TEXT_REFUND_INITIATED, $refundAmt, $transactionid), 'success');
+                    $messageStack->add_session(sprintf($this->getModuleConfigValue( '_TEXT_REFUND_INITIATED' ), $refundAmt, $transactionId), 'success');
                     return true;
                 } else {
 
@@ -1063,51 +794,19 @@ class braintree_api extends base {
     }
 
     /**
-     * Debug Emailing support
-     */
-    function _doDebug($subject = 'Braintree debug data', $data, $useSession = true) {
-
-        if (MODULE_PAYMENT_BRAINTREE_DEBUGGING == 'Log and Email') {
-
-            $data = urldecode($data) . "\n\n";
-            if ($useSession)
-                $data .= "\nSession data: " . print_r($_SESSION, true);
-            zen_mail(STORE_NAME, STORE_OWNER_EMAIL_ADDRESS, $subject, $this->code . "\n" . $data, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, array('EMAIL_MESSAGE_HTML' => nl2br($this->code . "\n" . $data)), 'debug');
-        }
-    }
-
-    /**
      * Initialize the Braintree object for communication to the processing gateways
      */
     function braintree_init() {
 
-        if (MODULE_PAYMENT_BRAINTREE_MERCHANTID != '' && MODULE_PAYMENT_BRAINTREE_PUBLICKEY != '' && MODULE_PAYMENT_BRAINTREE_PRIVATEKEY != '') {
+        if ($this->getModuleConfigValue( '_MERCHANTID' ) != '' && $this->getModuleConfigValue( '_PUBLICKEY' ) != '' && $this->getModuleConfigValue( '_PRIVATEKEY' ) != '') {
 
-            Braintree_Configuration::environment(MODULE_PAYMENT_BRAINTREE_SERVER);
-            Braintree_Configuration::merchantId(MODULE_PAYMENT_BRAINTREE_MERCHANTID);
-            Braintree_Configuration::publicKey(MODULE_PAYMENT_BRAINTREE_PUBLICKEY);
-            Braintree_Configuration::privateKey(MODULE_PAYMENT_BRAINTREE_PRIVATEKEY);
+            Braintree_Configuration::environment($this->getModuleConfigValue( '_SERVER' ));
+            Braintree_Configuration::merchantId($this->getModuleConfigValue( '_MERCHANTID' ));
+            Braintree_Configuration::publicKey($this->getModuleConfigValue( '_PUBLICKEY' ));
+            Braintree_Configuration::privateKey($this->getModuleConfigValue( '_PRIVATEKEY' ));
         } else {
             return FALSE;
         }
-    }
-
-    /**
-     * Calculate the amount based on acceptable currencies
-     */
-    function calc_order_amount($amount, $braintreeCurrency, $applyFormatting = false) {
-        global $currencies;
-
-        $amount = ($amount * $currencies->get_value($braintreeCurrency));
-
-        if ($braintreeCurrency == 'JPY' || (int) $currencies->get_decimal_places($braintreeCurrency) == 0) {
-            $amount = (int) $amount;
-            $applyFormatting = FALSE;
-        }
-
-        $amount = round($amount, 2);
-
-        return ($applyFormatting ? number_format($amount, $currencies->get_decimal_places($braintreeCurrency)) : $amount);
     }
 
 }

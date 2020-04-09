@@ -75,12 +75,39 @@ abstract class CommercePluginBase extends CommerceBase {
 		if( !$this->isInstalled() ) {
 			$this->mDb->StartTrans();
 			$this->remove(); // clean out any existing module keys
+			if( $configTables = $this->configTables() ) {
+				$dict = NewDataDictionary( $this->mDb->mDb );
+				foreach( $configTables as $tableName=>$tableDict ) {
+					if( $sqlArray = $dict->CreateTableSQL( $tableName, $tableDict, 'REPLACE' ) ) {
+						foreach( $sqlArray as $sql ) {
+							$this->mDb->query( $sql );
+						}
+					} else {
+						eb( "Cannot create Table: ". $tableName, $tables );
+					}
+				}
+			}
 			foreach( $this->config() as $configKey => $configHash ) {
 				$this->storeModuleConfigHash( $configKey, $configHash );
 			}
 			// Backward compatibility with older modules
 			$this->mDb->CompleteTrans();
 		}
+	}
+
+	public function remove() {
+		if( $this->isInstalled() ) {
+			$this->mDb->StartTrans();	
+			
+			if( $configTables = $this->configTables() ) {
+				foreach( $configTables as $tableName=>$tableDict ) {
+					$this->mDb->Execute( "DROP TABLE ".$tableName );
+				}
+			}
+
+			$this->mDb->CompleteTrans();
+		}
+		$this->mDb->Execute("DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` LIKE '".$this->getModuleKeyTrunk()."%'");
 	}
 
 	protected function storeModuleConfigHash( $pModuleConfigKey, $pModuleConfigHash ) {
@@ -107,10 +134,6 @@ abstract class CommercePluginBase extends CommerceBase {
 
 	public function getActiveConfig() {
 		return $this->mDb->getAssoc( 'SELECT `configuration_key`, * FROM ' . TABLE_CONFIGURATION . ' WHERE `configuration_key` LIKE ?', array( $this->getModuleKeyTrunk().'_%' ) );
-	}
-
-	public function remove() {
-		$this->mDb->Execute("DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` LIKE '".$this->getModuleKeyTrunk()."%'");
 	}
 
 	public function isEnabled() {
@@ -183,6 +206,13 @@ abstract class CommercePluginBase extends CommerceBase {
 				'sort_order' => $i++,
 			),
 		);
+	}
+
+	/**
+    * Any custom tables needed for this module. Should be overridden
+    */
+	protected function configTables() {
+		return array();
 	}
 
 }

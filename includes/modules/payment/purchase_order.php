@@ -39,16 +39,16 @@ class purchase_order extends CommercePluginPaymentBase {
 		return $selection;
 	}
 
-	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
+	function verifyPayment( &$pPaymentParams, &$pOrder ) {
 		foreach( array( 'po_contact' => 'Purchaser Name',  'po_org' => 'Purchaser Organization', 'po_number' => 'PO Number' ) as $key=>$title ) {
-			if( empty( $pPaymentParameters[$key] ) ) {
+			if( empty( $pPaymentParams[$key] ) ) {
 				$this->mErrors[$key] = $title.' was not set.';
 			}
 		}
 		return (count( $this->mErrors ) === 0);
 	}
 
-	function confirmation( $pPaymentParameters ) {
+	function confirmation( $pPaymentParams ) {
 		global $_POST;
 
 		$confirmation = array(	'title' => $this->title,
@@ -62,7 +62,7 @@ class purchase_order extends CommercePluginPaymentBase {
 		return $confirmation;
 	}
 
-	function process_button( $pPaymentParameters ) {
+	function process_button( $pPaymentParams ) {
 		global $_POST;
 
 		$ret =	zen_draw_hidden_field( 'po_contact', $_POST['po_contact'] ) .
@@ -72,19 +72,17 @@ class purchase_order extends CommercePluginPaymentBase {
 		return $ret;
 	}
 
-	function processPayment( &$pPaymentParameters, &$pOrder ) {
-		if( $ret = self::verifyPayment ( $pPaymentParameters, $pOrder ) ) {
+	function processPayment( &$pPaymentParams, &$pOrder ) {
+		if( $ret = self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
 			// Calculate the next expected order id
-			$logHash = array( 'orders_id' => $pOrder->getNextOrderId() );
-			$logHash['ref_id'] = trim( $pPaymentParameters['po_org'].' / '.$pPaymentParameters['po_contact'] .' / '.$pPaymentParameters['po_number'] );
+			$logHash['trans_ref_id'] = trim( $pPaymentParams['po_org'].' / '.$pPaymentParams['po_contact'] .' / '.$pPaymentParams['po_number'] );
 			$logHash['trans_result'] = '1';
 			$logHash['trans_message'] = trim( 'Purchase Order Recevied' );
 
-			$pOrder->info['cc_number'] = $pPaymentParameters['po_number'];
-			$pOrder->info['cc_type'] = 'Purchase Order';
-			$pOrder->info['cc_owner'] = trim( $pPaymentParameters['po_org'].' '.$pPaymentParameters['po_contact'] );
-			$pOrder->info['cc_expires'] = NULL;
-			$pOrder->info['cc_cvv'] = NULL;
+			$pOrder->info['payment_number'] = $pPaymentParams['po_number'];
+			$pOrder->info['payment_type'] = 'Purchase Order';
+			$pOrder->info['payment_owner'] = trim( $pPaymentParams['po_org'].' '.$pPaymentParams['po_contact'] );
+			$pOrder->info['payment_expires'] = NULL;
 		}
 
 		$this->logTransaction( $logHash, $pOrder );

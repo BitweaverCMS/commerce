@@ -47,33 +47,33 @@ function editAddress( pAddress ) {
 	</div>
 	<div class="col-xs-6">
 		<h4>{tr}Payment Info{/tr}</h4>
-		{if $order->info.cc_type || $order->info.cc_owner || $order->info.cc_number}
+		{if $order->info.payment_type || $order->info.payment_owner || $order->info.payment_number}
 		<div class="clear">
-			<div class="floatleft">{$order->info.cc_type}: </div>
-			<div class="floatright">{$order->info.cc_owner}</div>
+			<div class="pull-left">{tr}Owner{/tr}:</div>
+			<div class="pull-right">{$order->info.payment_owner}</div>
 		</div>
 		<div class="clear">
-			<div class="floatleft">{tr}Number{/tr}: </div>
-			<div class="floatright">{$order->info.cc_number}</div>
+			<div class="pull-left">{$order->info.payment_type}:</div>
+			<div class="pull-right">{$order->info.payment_number}</div>
 		</div>
-		{if $order->info.cc_expires}
+		{if $order->info.payment_expires}
 		<div class="clear">
-			<div class="floatleft">{tr}Expires{/tr}: </div>
-			<div class="floatright">{$order->info.cc_expires}</div>
+			<div class="pull-left">{tr}Expires{/tr}: </div>
+			<div class="pull-right">{$order->info.payment_expires}</div>
 		</div>
 		{/if}
 		{/if}
 		<div class="clear">
-		{if empty( $order->info.cc_ref_id )}
-			<div class="alert alert-danger">{booticon iname="icon-warning-sign"} {tr}This payment has no Transaction ID. Verify funds were actually collected, or if this is a duplicate order.{/tr}</div>
+		{if empty( $order->info.trans_ref_id )}
+			<div class="alert alert-danger">{booticon iname="icon-warning-sign"} {$order->info.payment_module_code}: {tr}This payment has no Transaction ID. Verify funds were actually collected, or if this is a duplicate order.{/tr}</div>
 		{else}
-			<div class="floatleft">{tr}Transaction ID{/tr}: </div>
-			<div class="floatright">{$order->info.cc_ref_id}</div>
+			<div class="pull-left">{$order->info.payment_module_code} {tr}Ref ID{/tr}:</div>
+			<div class="pull-right">{$order->info.trans_ref_id}</div>
 		{/if}
 		</div>
 		<div class="clear">
-			<div class="floatleft">{tr}IP{/tr}:</div>
-			<div class="floatright"> {$order->info.ip_address}</div>
+			<div class="pull-left">{tr}IP{/tr}:</div>
+			<div class="pull-right"> {$order->info.ip_address}</div>
 		</div>
 	</div>
 </div>

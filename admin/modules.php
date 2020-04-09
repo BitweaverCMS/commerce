@@ -210,7 +210,7 @@ if( is_object( $activeModule ) ) {
 				if( $fixConfig ) {
 					$buttonContents = '<a class="btn btn-danger" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $moduleType . '&module=' . $activeModule->code . '&action=fix', 'NONSSL') . '">' . tra( 'Fix' ) . '</a> ';
 				}
-				$buttonContents .= '<a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $moduleType . (isset($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=edit', 'NONSSL') . '">' . tra( 'Edit' ) . '</a> <a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $moduleType . '&module=' . $activeModule->code . '&action=remove', 'NONSSL') . '">' . tra( 'Remove' ) . '</a>';
+				$buttonContents .= '<a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $moduleType . (isset($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=edit', 'NONSSL') . '">' . tra( 'Edit' ) . '</a> <a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $moduleType . '&module=' . $activeModule->code . '&action=remove', 'NONSSL') . '" onclick="return confirm(\''.$activeModule->getAdminTitle().': '.tra('Are you sure you want to delete this module?').' '.tra('This will delete all module data and cannot be undone.').'\')">' . tra( 'Remove' ) . '</a>';
 				$contents[] = array('text' => $buttonContents );
 				$contents[] = array('text' => '<br>' . $activeModule->description);
 				$contents[] = array('text' => '<br>' . $keys);

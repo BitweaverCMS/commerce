@@ -48,10 +48,10 @@ class CommercePaymentManager {
 	 payment modules available which would break the modules in the contributions
 	 section. This should be looked into again post 2.2.
 	*/
-	function update_status( $pPaymentParameters ) {
+	function update_status( $pPaymentParams ) {
 			if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module])) {
 				if (method_exists($this->mPaymentObjects[$this->selected_module], 'update_status')) {
-					$this->mPaymentObjects[$this->selected_module]->update_status( $pPaymentParameters );
+					$this->mPaymentObjects[$this->selected_module]->update_status( $pPaymentParams );
 				}
 			}
 	}
@@ -111,11 +111,11 @@ class CommercePaymentManager {
 		return $ret;
 	}
 
-	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
+	function verifyPayment( &$pPaymentParams, &$pOrder ) {
 		$ret = FALSE;
 		if( $pOrder->hasPaymentDue() ) {	
 			if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
-				$ret = $this->mPaymentObjects[$this->selected_module]->verifyPayment( $pPaymentParameters, $pOrder );
+				$ret = $this->mPaymentObjects[$this->selected_module]->verifyPayment( $pPaymentParams, $pOrder );
 			}
 		} else {
 			$ret = TRUE;
@@ -123,24 +123,29 @@ class CommercePaymentManager {
 		return $ret;
 	}
 
-	function confirmation( $pPaymentParameters = NULL ) {
+	function confirmation( $pPaymentParams = NULL ) {
 		if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
-			return $this->mPaymentObjects[$this->selected_module]->confirmation( $pPaymentParameters );
+			return $this->mPaymentObjects[$this->selected_module]->confirmation( $pPaymentParams );
 		}
 	}
 
-	function process_button( $pPaymentParameters = NULL ) {
+	function process_button( $pPaymentParams = NULL ) {
 		if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
-			return $this->mPaymentObjects[$this->selected_module]->process_button( $pPaymentParameters );
+			return $this->mPaymentObjects[$this->selected_module]->process_button( $pPaymentParams );
 		}
 	}
 
-	function processPayment( $pPaymentParameters, $pOrder ) {
+	function processPayment( $pPaymentParams, $pOrder ) {
 		global $gBitProduct;
 		$ret = NULL;
+
 		$gBitProduct->invokeServices( 'commerce_pre_purchase_function', $pOrder );
 		if( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
-			$ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $pPaymentParameters, $pOrder );
+			if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $pPaymentParams, $pOrder ) ) {
+				if( isset( $_SESSION['orders_id'] ) ) {
+					unset( $_SESSION['orders_id'] );
+				}
+			}
 		}
 		return $ret;
 	}

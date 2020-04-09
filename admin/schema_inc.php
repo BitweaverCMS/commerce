@@ -146,7 +146,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_admin_activity_log' => "
   admin_id I4,
   page_accessed C(80),
   page_parameters C(150),
-  ip_address C(15)
+  ip_address C(39)
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_banners' => "
@@ -437,7 +437,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupon_redeem_track' => "
   coupon_id I4,
   customer_id I4,
   redeem_date T,
-  redeem_ip C(39),
+  redeem_ip C(45),
   order_id I4
 ",
 
@@ -461,7 +461,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_coupons' => "
   coupon_expire_date T,
   quantity_max I4,
   quantity_limit I4,
-  free_ship C(1),
+  free_sh45ip C(1),
   uses_per_coupon I2 default '1',
   uses_per_user I2,
   restrict_to_products C(255),
@@ -720,10 +720,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   payment_method C(128),
   payment_module_code C(32),
   coupon_code C(32),
-  cc_type C(20),
-  cc_owner C(64),
-  cc_number C(32),
-  cc_expires C(4),
   last_modified T,
   date_purchased T,
   orders_date_finished T,
@@ -732,8 +728,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   currency_value N(14,6),
   order_total N(14,2),
   order_tax N(14,2),
-  paypal_ipn_id I4,
-  ip_address C(15)
+  ip_address C(39)
   CONSTRAINT ', CONSTRAINT `orders_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
@@ -818,6 +813,42 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_status' => "
   orders_status_name C(32)
 ",
 //  'orders_status_name_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'com_orders_status', 'cols' => 'orders_status_name', 'opts' => NULL)
+
+BITCOMMERCE_INSTALL_PREFIX.'com_orders_payments' => "
+  orders_payments_id I4 PRIMARY AUTO,
+  customers_id I4 NOTNULL,
+  customers_email X NOTNULL,
+  ip_address C(39) NOTNULL,
+  orders_id I4,
+  is_success C(1) NOTNULL DEFAULT 'n',
+  payment_date T DEFTIMESTAMP NOTNULL,
+  payment_module X NOTNULL,
+  payment_mode X NOTNULL,
+  payment_status C(256) NOTNULL,
+  trans_ref_id C(64) NOTNULL,
+  trans_parent_ref_id C(256),
+  payment_type C(256),
+  payment_owner C(64),
+  payment_number C(32),
+  payment_expires C(4),
+  trans_result C(250) NOTNULL,
+  trans_message X NOTNULL,
+  trans_amount N(11,2) NOTNULL,
+  trans_currency C(3) NOTNULL,
+  exchange_rate F NOTNULL,
+  trans_date T,
+  pending_reason C(256),
+  address_company X NOTNULL,
+  address_street X NOTNULL,
+  address_suburb X NOTNULL,
+  address_city X NOTNULL,
+  address_state X NOTNULL,
+  address_zip C(256) NOTNULL,
+  address_country C(256) NOTNULL,
+  num_cart_items I4 NOTNULL
+  CONSTRAINT ', CONSTRAINT `com_orders_payments_log_user_ref` FOREIGN KEY (`customers_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers` (`customers_id`)'			  
+			",
+//, CONSTRAINT `com_orders_payments_orders_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
 
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_status_history' => "
   orders_status_history_id I4 PRIMARY AUTO,
@@ -932,7 +963,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_whos_online' => "
   customer_id I4,
   full_name C(64),
   session_id C(128),
-  ip_address C(15),
+  ip_address C(39),
   time_entry C(14),
   time_last_click C(14),
   last_page_url C(254),
@@ -1094,17 +1125,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_paypal_pment_stat_his' => "
   pending_reason C(14),
   date_added T
   CONSTRAINT ', CONSTRAINT `paypal_pment_stat_his_ipn_ref` FOREIGN KEY ( `paypal_ipn_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_paypal`( `paypal_ipn_id` )'
-",
-
-BITCOMMERCE_INSTALL_PREFIX.'com_pubs_credit_card_log' => "
-  orders_id I4 ,
-  customers_id I4 NOTNULL ,
-  ref_id C(64) NOTNULL ,
-  trans_result C(250) NOTNULL,
-  trans_auth_code C(30) NOTNULL,
-  trans_message X NOTNULL,
-  trans_amount N(11,2) NOTNULL,
-  trans_date T NOTNULL
 ",
 
 );

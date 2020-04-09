@@ -214,11 +214,11 @@ class order extends CommerceOrderBase {
 								LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
 			}
 
-			$order_query = "SELECT co.*, uu.*, cpccl.`ref_id`, cpccl.`trans_result`, cpccl.`trans_auth_code`, cpccl.`trans_message`, cpccl.`trans_amount`, cpccl.`trans_date` $selectSql
+			$order_query = "SELECT co.*, uu.*, cpccl.`trans_ref_id`, cpccl.`trans_result`, cpccl.`trans_message`, cpccl.`trans_amount`, cpccl.`trans_date` $selectSql
 							FROM " . TABLE_ORDERS . " co
 								INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
 								$joinSql
-								LEFT JOIN " . TABLE_PUBS_CREDIT_CARD_LOG . " cpccl ON(cpccl.`orders_id`=co.`orders_id` AND `trans_result`='0')
+								LEFT JOIN " . TABLE_ORDERS_PAYMENTS . " cpccl ON(cpccl.`orders_id`=co.`orders_id` AND `is_success`='y')
 							WHERE co.`orders_id` = ?";
 			$order = $this->mDb->query( $order_query, array( $this->mOrdersId ) );
 
@@ -244,11 +244,11 @@ class order extends CommerceOrderBase {
 								'shipping_method_code' => $order->fields['shipping_method_code'],
 								'shipping_module_code' => $order->fields['shipping_module_code'],
 								'coupon_code' => $order->fields['coupon_code'],
-								'cc_type' => $order->fields['cc_type'],
-								'cc_owner' => $order->fields['cc_owner'],
-								'cc_number' => $order->fields['cc_number'],
-								'cc_expires' => $order->fields['cc_expires'],
-								'cc_ref_id' => $order->fields['ref_id'],
+								'payment_type' => $order->fields['payment_type'],
+								'payment_owner' => $order->fields['payment_owner'],
+								'payment_number' => $order->fields['payment_number'],
+								'payment_expires' => $order->fields['payment_expires'],
+								'trans_ref_id' => $order->fields['trans_ref_id'],
 								'date_purchased' => $order->fields['date_purchased'],
 								'orders_status_id' => $order->fields['orders_status'],
 								'orders_status' => $order_status->fields['orders_status_name'],
@@ -260,7 +260,7 @@ class order extends CommerceOrderBase {
 
 			$this->info['shipping_cost'] =	$this->mDb->getOne( "SELECT `orders_value` AS `shipping_cost` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( $this->mOrdersId ) );
 
-			$this->customer = array('id' => $order->fields['customers_id'],
+			$this->customer = array('customers_id' => $order->fields['customers_id'],
 									'user_id' => $order->fields['user_id'],
 									'name' => $order->fields['customers_name'],
 									'real_name' => $order->fields['real_name'],
@@ -634,7 +634,6 @@ class order extends CommerceOrderBase {
 		}
 
 		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $_SESSION, 'payment' ) ) ) {
-
 			$this->info['payment_method'] = $paymentModule->title;
 			$this->info['payment_module_code'] = $paymentModule->code;
 			if( !empty( $paymentModule->order_status ) && is_numeric( $paymentModule->order_status ) && $paymentModule->order_status > 0 ) {
@@ -775,45 +774,29 @@ class order extends CommerceOrderBase {
 	}
 
 	function loadPaymentModule( $pModule ) {
-		global $gBitCustomer;
-		$ret = NULL;
-		if( $pModule ) {
-			$moduleDir = DIR_FS_CATALOG . DIR_WS_MODULES .'payment/';
-			if( file_exists( $moduleDir . $pModule . '.php') ) {
-				require_once( $moduleDir . $pModule . '.php' );
-				$langFile = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/modules/payment/' . $pModule . '.php';
-				if( file_exists( $langFile ) ) {
-					require( $langFile );
-				}
-			}
-			if( class_exists( $pModule ) ) {
-				$ret = new $pModule();
-			}
-		}
-		return $ret;
+		return CommerceSystem::loadModule( 'payment', $pModule );
 	}
 
-	function process( $pProcessParams ) {
+	function process( $pPaymentParams ) {
 		$ret = FALSE;
 
 		// load the selected shipping module
-		if( !empty( $pProcessParams['shipping'] ) ) {
+		if( !empty( $pPaymentParams['shipping'] ) ) {
 			require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
-			$shipping_modules = new CommerceShipping($pProcessParams['shipping']);
+			$shipping_modules = new CommerceShipping($pPaymentParams['shipping']);
 		}
 
 		// load selected payment module
 		require_once( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
-		$paymentManager = new CommercePaymentManager( $pProcessParams['payment'] );
+		$paymentManager = new CommercePaymentManager( $pPaymentParams['payment'] );
 
 		// group pricing or expedite will affect total
-		$this->otProcess( $pProcessParams );
-		if( !$this->hasPaymentDue() || (!empty( $pProcessParams['payment'] ) && $paymentManager->processPayment( $pProcessParams, $this )) ) {
-			$newOrderId = $this->create();
+		$this->otProcess( $pPaymentParams );
+		if( !$this->hasPaymentDue() || (!empty( $pPaymentParams['payment'] ) && $paymentManager->processPayment( $pPaymentParams, $this )) ) {
+			$newOrderId = $this->create( $pPaymentParams );
 
 			$paymentManager->after_order_create( $newOrderId );
 			$this->sendOrderEmail();
-
 
 			$ret = TRUE;
 		}
@@ -835,7 +818,7 @@ class order extends CommerceOrderBase {
 		return $ret;
 	}
 
-	function create() {
+	function create( $pPaymentParams ) {
 		global $gBitCustomer;
 
 		$this->mDb->StartTrans();
@@ -843,7 +826,7 @@ class order extends CommerceOrderBase {
 			$this->info['shipping_module_code'] = $_SESSION['shipping'];
 		}
 
-		$this->mOrdersId = $this->getNextOrderId();
+		$this->mOrdersId =  (!empty( $pPaymentParams['orders_id'] ) ? $pPaymentParams['orders_id'] : $this->getNextOrderId());
 
 		$sql_data_array = array('orders_id' => $this->mOrdersId,
 							'customers_id' => $_SESSION['customer_id'],
@@ -880,16 +863,10 @@ class order extends CommerceOrderBase {
 							'billing_country' => $this->billing['countries_name'],
 							'billing_telephone' => $this->billing['telephone'],
 							'billing_address_format_id' => $this->billing['format_id'],
-							'payment_method' => ((empty( $this->info['payment_module_code'] ) && empty( $this->info['payment_method'] )) ? PAYMENT_METHOD_GV : $this->info['payment_method']),
-							'payment_module_code' => ((empty( $this->info['payment_module_code'] ) && empty( $this->info['payment_method'] )) ? PAYMENT_MODULE_GV : $this->info['payment_module_code']),
 							'shipping_method' => $this->info['shipping_method'],
 							'shipping_method_code' => $this->info['shipping_method_code'],
 							'shipping_module_code' => (strpos($this->info['shipping_module_code'], '_') > 0 ? substr($this->info['shipping_module_code'], 0, strpos($this->info['shipping_module_code'], '_')) : $this->info['shipping_module_code']),
 							'coupon_code' => $this->info['coupon_code'],
-							'cc_type' => $this->getField( 'cc_type' ),
-							'cc_owner' => $this->getField( 'cc_owner' ),
-							'cc_number' => $this->getField( 'cc_number' ),
-							'cc_expires' => $this->getField( 'cc_expires' ),
 							'date_purchased' => $this->mDb->NOW(),
 							'orders_status' => $this->info['order_status'],
 							'order_total' => $this->info['total'],
@@ -899,6 +876,14 @@ class order extends CommerceOrderBase {
 							'ip_address' => $_SERVER['REMOTE_ADDR']
 							);
 
+		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pPaymentParams, 'payment' ) ) ) {
+			$sql_data_array['payment_number'] = $paymentModule->getPaymentNumber( $pPaymentParams );
+			$sql_data_array['payment_expires'] = $paymentModule->getPaymentExpires( $pPaymentParams );
+			$sql_data_array['payment_type'] = $paymentModule->getPaymentType( $pPaymentParams );
+			$sql_data_array['payment_owner'] = $paymentModule->getPaymentOwner( $pPaymentParams );
+			$sql_data_array['payment_method'] = $paymentModule->title;
+			$sql_data_array['payment_module_code'] = $paymentModule->code;
+		}
 
 		$this->mDb->associateInsert(TABLE_ORDERS, $sql_data_array);
 
@@ -1153,7 +1138,7 @@ class order extends CommerceOrderBase {
 							$currencies->display_price( $this->contents[$cartItemKey]['final_price'], $this->contents[$cartItemKey]['tax'], $this->contents[$cartItemKey]['products_quantity'], $this->getField( 'currency' ), $this->getField( 'currency_value' ) ) .
 							($this->contents[$cartItemKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$cartItemKey]['onetime_charges'], $this->contents[$cartItemKey]['tax'], 1) : '');
 			foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j ) {
-				$email_order .= "\n    + " . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['option']) . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['value']);
+				$email_order .= "\n    + " . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['products_options_name']) . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['value']);
 			}
 			$email_order .= "\n\n";
 		}
