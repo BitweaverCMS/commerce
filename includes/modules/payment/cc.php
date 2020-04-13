@@ -91,14 +91,14 @@ class cc extends CommercePluginPaymentCardBase {
 		return $selection;
 	}
 
-	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
-		if( empty( $pPaymentParameters['payment_number'] ) ) {
+	function verifyPayment( &$pPaymentParams, &$pOrder ) {
+		if( empty( $pPaymentParams['payment_number'] ) ) {
 			$error = tra( 'Please enter a credit card number.' );
-		} elseif( $this->verifyCreditCard( $pPaymentParameters['payment_number'], $pPaymentParameters['payment_expires_month'], $pPaymentParameters['payment_expires_year'], $pPaymentParameters['cc_cvv'] ) ) {
+		} elseif( $this->verifyCreditCard( $pPaymentParams['payment_number'], $pPaymentParams['payment_expires_month'], $pPaymentParams['payment_expires_year'], $pPaymentParams['cc_cvv'] ) ) {
 			$ret = TRUE;
 		} else {
 			foreach( array( 'payment_owner', 'payment_number', 'payment_expires_month', 'payment_expires_year', 'cc_cvv' ) as $key ) {
-				$_SESSION[$key] = BitBase::getParameter( $pPaymentParameters, $key );
+				$_SESSION[$key] = BitBase::getParameter( $pPaymentParams, $key );
 			}
 			$_SESSION['pfp_error'] = $this->mErrors;
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
@@ -107,7 +107,7 @@ class cc extends CommercePluginPaymentCardBase {
 	}
 
 
-	function confirmation( $pPaymentParameters ) {
+	function confirmation( $pPaymentParams ) {
 		global $_POST;
 
 		$confirmation = array('title' => $this->title . ': ' . $this->payment_type,
@@ -125,7 +125,7 @@ class cc extends CommercePluginPaymentCardBase {
 		return $confirmation;
 	}
 
-	function process_button( $pPaymentParameters ) {
+	function process_button( $pPaymentParams ) {
 		global $_POST;
 
 		$process_button_string = zen_draw_hidden_field('payment_owner', $_POST['payment_owner']) .
@@ -139,7 +139,7 @@ class cc extends CommercePluginPaymentCardBase {
 		return $process_button_string;
 	}
 
-	function processPayment( &$pPaymentParameters, &$pOrder ) {
+	function processPayment( &$pPaymentParams, &$pOrder ) {
 		global $_POST, $order;
 
 		$ret = FALSE;

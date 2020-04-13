@@ -101,6 +101,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		$logHash['is_success'] = 'n';
 		$logHash['exchange_rate'] = '1.0';
 		$logHash['payment_status'] = 'default';
+		$logHash['trans_amount'] = $this->getParameter( $pPaymentParams, 'trans_amount' );
 
 		return $logHash;
 	}
@@ -123,6 +124,20 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		return array( 'id' => $this->code, 'module' => $this->title );
 	}
 
+	function getDefaultCurrency() {
+		return DEFAULT_CURRENCY;
+	}
+
+	function getSupportedCurrencies() {
+		return array( DEFAULT_CURRENCY );
+	}
+
+	protected function isCurrencySupported( $pCurrency ) {
+		// Can charge natively in the specified currency
+		$gatewayCurrencies = $this->getSupportedCurrencies();
+		return in_array( $pCurrency, $gatewayCurrencies ) ;
+	}
+
 	public function verifyPayment( &$pPaymentParams, &$pOrder ) {
 
 		global $gBitUser, $currencies;
@@ -133,52 +148,77 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		if( !empty( $pPaymentParams['trans_ref_id'] ) && empty( $pPaymentParams['charge_amount'] ) ) {
 			$this->mErrors['charge_amount'] = 'Invalid amount';
 		} elseif( empty( $pPaymentParams['charge_amount'] ) ) {
-			if( !( $pPaymentParams['charge_amount'] = $pOrder->getPaymentDue()) ) {
+			if( $pPaymentParams['charge_amount'] = $pOrder->getPaymentDue() ) {
+				$pPaymentParams['charge_currency'] = DEFAULT_CURRENCY;
+			} else {
 				$this->mErrors['charge_amount'] = 'Invalid amount';
 			}
+		} elseif( empty( $pPaymentParams['charge_currency'] ) ) {
+			$pPaymentParams['charge_currency'] = DEFAULT_CURRENCY;
 		}
 
 		if( empty( $this->mErrors ) ) {
 			if( !empty( $pPaymentParams['trans_ref_id'] ) ) {
 				// reference transaction
 				$pPaymentParams['orders_id'] = $pOrder->mOrdersId;
-				$pPaymentParams['payment_currency'] = BitBase::getParameter( $pPaymentParams, 'charge_currency', DEFAULT_CURRENCY );
-				$pPaymentParams['payment_decimal'] = $currencies->get_decimal_places( $pPaymentParams['payment_currency'] );
-				$pPaymentParams['payment_localized'] = number_format( $pPaymentParams['charge_amount'], $pPaymentParams['payment_decimal'], '.', '' ) ;
-				$pPaymentParams['payment_native'] = (( $pPaymentParams['payment_currency'] != DEFAULT_CURRENCY ) ? $pPaymentParams['payment_localized'] / $pPaymentParams['charge_currency_value'] : $pPaymentParams['payment_localized']);
+				$pPaymentParams['trans_currency'] = BitBase::getParameter( $pPaymentParams, 'charge_currency', DEFAULT_CURRENCY );
 				// completed orders have a single joined 'name' field
 				$pOrder->billing['firstname'] = substr( $pOrder->billing['name'], 0, strpos( $pOrder->billing['name'], ' ' ) );
 				$pOrder->billing['lastname'] = substr( $pOrder->billing['name'], strpos( $pOrder->billing['name'], ' ' ) + 1 );
 				$pOrder->delivery['firstname'] = substr( $pOrder->billing['name'], 0, strpos( $pOrder->billing['name'], ' ' ) );
 				$pOrder->delivery['lastname'] = substr( $pOrder->billing['name'], strpos( $pOrder->billing['name'], ' ' ) + 1 );
 			} else {
-				// Calculate the next expected order id
+				// new transaction, Calculate the next expected order id
 				$pPaymentParams['orders_id'] = (!empty( $_SESSION['orders_id'] ) ? $_SESSION['orders_id'] : $pOrder->getNextOrderId());
 				$_SESSION['orders_id'] = $pPaymentParams['orders_id'];
+				$pPaymentParams['trans_currency'] = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
 				$pOrder->info['payment_number'] = $this->getParameter( $pPaymentParams, 'payment_number' );
 				$pOrder->info['payment_expires'] = $this->getPaymentExpires( $pPaymentParams );
 				$pOrder->info['payment_type'] = $this->getParameter( $pPaymentParams, 'payment_type' );
 				$pOrder->info['payment_owner'] = $this->getPaymentOwner( $pPaymentParams );
 				$pOrder->info['cc_cvv'] = $this->cc_cvv;
-				// $pPaymentParams['charge_amount'] is in the system DEFAULT_CURRENCY. charge_amount * currency_value = localizedPayment
-				$pPaymentParams['payment_currency'] = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
-				$pPaymentParams['payment_decimal'] = $currencies->get_decimal_places( $pPaymentParams['payment_currency'] );
-				$pPaymentParams['payment_native'] = $pPaymentParams['charge_amount'];
-				$pPaymentParams['payment_localized'] = number_format( ($pPaymentParams['payment_currency'] != DEFAULT_CURRENCY ? ($pPaymentParams['payment_native'] * $pOrder->getField('currency_value')) : $pPaymentParams['payment_native']), $pPaymentParams['payment_decimal'], '.', '' ) ;
+			}
+
+			$defaultCurrency = $this->getDefaultCurrency();
+
+			if( $this->isCurrencySupported( $pPaymentParams['trans_currency'] ) ) {
+				$targetCurrency = $pPaymentParams['trans_currency'];
+			} else {
+				$targetCurrency = $defaultCurrency;
+			}
+
+			if( $targetCurrency == $pPaymentParams['charge_currency'] ) {
+				$pPaymentParams['trans_amount'] = $pPaymentParams['charge_amount'];
+			} else {
+				// we can't process the requested currency, we need to convert
+				if( !empty( $pPaymentParams['currency_value'] ) ) {
+					$convertedAmount = $pPaymentParams['trans_amount'] / $pPaymentParams['currency_value'];
+				} else {
+					$convertedAmount = $currencies->convert( $pPaymentParams['charge_amount'], $targetCurrency, $pPaymentParams['charge_currency'] );
+				}
+
+				$pPaymentParams['trans_amount'] = number_format( $convertedAmount, $currencies->get_decimal_places( $targetCurrency ), '.', '' ) ;
 			}
 
 			foreach( $this->getSessionVars() as $var ) {
 				$this->$var = $this->getParameter( $pPaymentParams, $var, NULL );
 			}
 
-			if( ($maxPayment = (int)$this->getModuleConfigValue('_PAYMENT_LIMIT_MAX')) && $pPaymentParams['payment_native'] > $maxPayment ) {
-				// purchase price exceeds payment limit
-				$this->mErrors['charge_amount'] = 'Cart total is above maximum limit '.$maxPayment;
+			$maxPayment = (int)$this->getModuleConfigValue('_PAYMENT_LIMIT_MAX');
+			$minPayment = (int)$this->getModuleConfigValue('_PAYMENT_LIMIT_MIN');
+			if( $pPaymentParams['trans_currency'] == $defaultCurrency ) {
+				$maxPayment = $currencies->convert( $maxPayment, $pPaymentParams['charge_currency'], $defaultCurrency );
+				$minPayment = $currencies->convert( $minPayment, $pPaymentParams['charge_currency'], $defaultCurrency );
 			}
 
-			if( ($minPayment = (int)$this->getModuleConfigValue('_PAYMENT_LIMIT_MIN')) && $pPaymentParams['payment_native'] < $minPayment ) {
-				// purchase price is less than payment limit
-				$this->mErrors['charge_amount'] = 'Cart total is below minimum limit '.$minPayment;
+			if( $maxPayment && $pPaymentParams['charge_amount'] > $maxPayment ) {
+				// purchase price exceeds payment limit
+				$this->mErrors['charge_amount'] = 'Cart total is above the maximum limit '.$maxPayment;
+			}
+
+			if( $minPayment && $pPaymentParams['charge_amount'] < $minPayment ) {
+				// purchase price exceeds payment limit
+				$this->mErrors['charge_amount'] = 'Cart total is below the minimum limit '.$maxPayment;
 			}
 
 			$this->saveSessionDetails();

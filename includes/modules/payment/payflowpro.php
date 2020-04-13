@@ -124,8 +124,36 @@ class payflowpro extends CommercePluginPaymentCardBase {
 		return $process_button_string;
 	}
 
-	function getProcessorCurrency() {
+	function getDefaultCurrency() {
 		return $this->getCommerceConfig( 'MODULE_PAYMENT_PAYFLOWPRO_CURRENCY', 'USD' );
+	}
+
+	function getSupportedCurrencies() {
+		$ret = array();
+		if( $currencyList = $this->getModuleConfigValue( '_FOREIGN_CURRENCIES' ) ) {
+			$ret = explode( ',', $currencyList );
+		}
+		$ret[] = $this->getDefaultCurrency();
+eb( $ret );
+		return $ret;
+	}
+
+	protected function isCurrencySupported( $pCurrency ) {
+		// Can charge natively in the specified currency
+		$ret = ($pCurrency == DEFAULT_CURRENCY);
+		if( $this->isCommerceConfigActive( 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY' ) ) {
+			switch( $pCurrency ) {
+				// PayPal supports charging natively in these 5 currencies
+				case 'AUD': // Australian dollar 
+				case 'CAD': // Canadian dollar 
+				case 'EUR': // Euro 
+				case 'GBP': // British pound 
+				case 'JPY': // Japanese Yen 
+				case 'USD': // US dollar 
+					$ret = true;
+			}
+		}
+		return $ret;
 	}
 
 	function processPayment( &$pPaymentParams, &$pOrder ) {
@@ -224,19 +252,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			- V = Void
 			*/ 
 
-			// Assume we are charging the native amount in the default currency. Some gateways support multiple currencies, check for that shortly
-			if( (DEFAULT_CURRENCY != $this->getProcessorCurrency()) && $pPaymentParams['payment_currency'] == DEFAULT_CURRENCY ) {
-				global $currencies;
-				// weird situtation where payflow currency default is different from the site. Need to convert site native to processor native
-				$pPaymentParams['payment_native'] = $currencies->convert( $pPaymentParams['payment_native'], $this->getProcessorCurrency(), $pPaymentParams['payment_currency'] );
-				bit_error_email( 'PAYMENT WARNING on '.php_uname( 'n' ).': mismatch Payflow currency '.$this->getProcessorCurrency().' != Default Currency '.DEFAULT_CURRENCY, bit_error_string(), array() );
-			}
-			$paymentAmount = $pPaymentParams['payment_native'];
-			$postFields['CURRENCY'] = $this->getProcessorCurrency();
-
-			if( $this->payment_type == 'American Express' ) {
-				// TODO American Express Additional Credit Card Parameters
-			}
+			$postFields['CURRENCY'] = $pPaymentParams['trans_currency'];
 
 			$processors = static::getProcessors();
 
@@ -263,26 +279,6 @@ class payflowpro extends CommercePluginPaymentCardBase {
 					// TODO Additional Credit Card Parameters
 					break;
 				case 'PayPal':
-					if( $this->isCommerceConfigActive( 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY' ) ) {
-						switch( $pPaymentParams['payment_currency'] ) {
-							// PayPal supports charging natively in these 5 currencies
-							case 'AUD': // Australian dollar 
-							case 'CAD': // Canadian dollar 
-							case 'EUR': // Euro 
-							case 'GBP': // British pound 
-							case 'JPY': // Japanese Yen 
-							case 'USD': // US dollar 
-								if( $pPaymentParams['payment_currency'] != $postFields['CURRENCY'] ) {
-									$paymentAmount =  number_format( $pPaymentParams['payment_localized'], $pPaymentParams['payment_decimal'], '.','' );
-									$postFields['CURRENCY'] = strtoupper( $pPaymentParams['payment_currency'] );
-								}
-								break;
-							default:
-								// all other currencies to gateway default
-								break;
-						}
-					}
-
 					$postFields['CUSTIP'] = $_SERVER['REMOTE_ADDR']; // (Optional) IP address of payer's browser as recorded in its HTTP request to your website. This value is optional but recommended.  Note: PayPal records this IP address as a means to detect possible fraud.  Limitations: 15-character string in dotted quad format: xxx.xxx.xxx.xxx
 					//$postFields['MERCHDESCR'] = ''; //	(Optional) Information that is usually displayed in the account holder's statement, for example, <Your-Not-For-Profit> <State>, <Your-Not-For-Profit> <Branch-Name>, <Your-Website> dues or <Your-Website> list fee.  Character length and limitations: 23 alphanumeric characters, can include the special characters dash (-) and dot (.) only. Asterisks (*) are NOT permitted. If it includes a space character (), enclose the "<Soft-Descriptor>" value in double quotes.
 					$postFields['MERCHANTCITY'] = substr( $_SERVER['SERVER_NAME'], 0, 21 ); //	(Optional) A unique phone number, email address or URL, which is displayed on the account holder's statement. PayPal recommends passing a toll-free phone number because, typically, this is the easiest way for a buyer to contact the seller in the case of an inquiry.
@@ -343,21 +339,24 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			if( MODULE_PAYMENT_PAYFLOWPRO_TYPE == 'Authorization' ) {
 				$postFields['TRXTYPE'] = 'A';
-			} elseif( $paymentAmount > 0 ) {
+			} elseif( $pPaymentParams['trans_amount'] > 0 ) {
 				$postFields['TRXTYPE'] = 'S';
-			} elseif( $paymentAmount < 0 ) {
+			} elseif( $pPaymentParams['trans_amount'] < 0 ) {
 				$postFields['TRXTYPE'] = 'C';
-				$paymentAmount = -1.0 * $paymentAmount;
+				$pPaymentParams['trans_amount'] = -1.0 * $pPaymentParams['trans_amount'];
 			}
 
-			$postFields['AMT'] = number_format($paymentAmount, $pPaymentParams['payment_decimal'],'.',''); // (Required) Amount (Default: U.S. based currency). Nnumeric characters and a decimal only. The maximum length varies depending on your processor. Specify the exact amount to the cent using a decimal point (use 34.00 not 34). Do not include comma separators (use 1199.95 not 1,199.95). Your processor or Internet Merchant Account provider may stipulate a maximum amount.
+			$postFields['AMT'] = $pPaymentParams['trans_amount']; // (Required) Amount (Default: U.S. based currency). Nnumeric characters and a decimal only. The maximum length varies depending on your processor. Specify the exact amount to the cent using a decimal point (use 34.00 not 34). Do not include comma separators (use 1199.95 not 1,199.95). Your processor or Internet Merchant Account provider may stipulate a maximum amount.
+
+			$paymentDecimal = $currencies->get_decimal_places( $pPaymentParams['trans_currency'] );
 
 			// ITEMAMT	(Required if L_COSTn is specified). Sum of cost of all items in this order. 
 			// ITEMAMT = L_QTY0 * LCOST0 + L_QTY1 * LCOST1 + L_QTYn * L_COSTn Limitations: Nine numeric characters plus decimal.
-			$postFields['ITEMAMT'] = number_format( $pOrder->getFieldLocalized('total') - $pOrder->getFieldLocalized('shipping_cost') - $pOrder->getFieldLocalized('tax'), $pPaymentParams['payment_decimal'], '.', '' );
+			$shippingAmount = $currencies->convert( $pPaymentParams['trans_currency'] );
+			$postFields['ITEMAMT'] = number_format( $pPaymentParams['trans_amount'] - $pOrder->getFieldLocalized('shipping_cost') - $pOrder->getFieldLocalized('tax'), $paymentDecimal, '.', '' );
 			// DISCOUNT	(Optional) Shipping discount for this order. Specify the discount as a positive amount.  Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
 
-			$postFields['DISCOUNT'] = number_format( ($pOrder->getFieldLocalized('total') - $postFields['AMT']), $pPaymentParams['payment_decimal'], '.', '' );
+//			$postFields['DISCOUNT'] = number_format( ($pOrder->getFieldLocalized('total') - $postFields['AMT']), $paymentDecimal, '.', '' );
 
 			if (MODULE_PAYMENT_PAYFLOWPRO_MODE =='Test') {
 				$url='https://pilot-payflowpro.paypal.com';
@@ -402,7 +401,6 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			curl_close($ch);
 
 			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
-			$logHash['trans_amount'] = $paymentAmount;
 
 			if( $response ) {
 				$responseHash = $this->_parseNameValueList($response);
@@ -558,16 +556,14 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				'configuration_description' => 'Payment processor configured in your Payflow Pro account.',
 				'set_function' => "zen_cfg_select_option(payflowpro::getProcessors(), ",
 			),
-			$this->getModuleKeyTrunk().'_MULTI_CURRENCY' => array(
-				'configuration_title' => 'Multiple Currency Support',
-				'configuration_value' => 'False',
-				'configuration_description' => 'Support multiple currencies? PayPal Processor only; AUD, CAD, EUR, GBP, JPY, and USD only.',
-				'set_function' => "zen_cfg_select_option(array('True', 'False'), ",
-			),
 			$this->getModuleKeyTrunk().'_CURRENCY' => array(
 				'configuration_title' => 'PayFlow Pro Currency',
 				'configuration_value' => 'USD',
 				'configuration_description' => '3-Letter Currency Code in which your Payflow transactions are made. Most typically: USD',
+			),
+			$this->getModuleKeyTrunk().'_FOREIGN_CURRENCIES' => array(
+				'configuration_title' => 'Foreign Currency Support',
+				'configuration_description' => 'Enter comma-separated list of foreign currencies abbreviations. PayPal Processor has limited support. Example: AUD,CAD,EUR,GBP,JPY',
 			),
 			$this->getModuleKeyTrunk().'_TYPE' => array(
 				'configuration_title' => 'Transaction Method',

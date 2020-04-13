@@ -13,10 +13,6 @@
 
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
 
-if( !defined('TABLE_BRAINTREE') ) {
-    define( 'TABLE_BRAINTREE', BITCOMMERCE_DB_PREFIX.'com_orders_payments' );
-}
-
 class braintree_api extends CommercePluginPaymentCardBase {
 
     var $payment_type_check = '';
@@ -24,6 +20,8 @@ class braintree_api extends CommercePluginPaymentCardBase {
     var $order_pending_status = 1;
     var $_logLevel = 0;
 	var $bt_cc_firstname, $bt_cc_lastname;
+
+	var $mCurrencySupport = array();
 
 	protected function setCcOwner( $pPaymentParams ) {
 		$bt_cc_firstname = trim( $this->getParameter( $pPaymentParams, 'bt_cc_firstname' ) );
@@ -104,6 +102,19 @@ class braintree_api extends CommercePluginPaymentCardBase {
 			// DEV MODE:
 			if (defined('BRAINTREE_DEV_MODE') && BRAINTREE_DEV_MODE == 'true')
 				$this->_logLevel = 3;
+
+			$this->mCurrencySupport = array();
+			if( $currencyList = $this->getModuleConfigValue( '_FOREIGN_CURRENCIES' ) ) {
+				if( $currencyHash = explode( ',', $currencyList ) ) {
+					foreach( $currencyHash as $currencyPair ) {
+						list( $merchId, $currencyCode ) = explode( ':', $currencyPair );
+						$this->mCurrencySupport[$currencyCode] = $merchId;
+					}
+				}
+			}
+			if( ($defaultMerchId = $this->getModuleConfigValue( '_DEFAULT_MERCHANT_ACCOUNT_ID' )) && ($defaultCurrency = $this->getModuleConfigValue( '_DEFAULT_CURRENCY' )) ) {
+				$this->mCurrencySupport[$defaultCurrency] = $defaultMerchId;
+			}
 		}
     }
 
@@ -293,6 +304,10 @@ class braintree_api extends CommercePluginPaymentCardBase {
         return $processButton;
     }
 
+	function getSupportedCurrencies() {
+		return array_keys( $this->mCurrencySupport );
+	}
+
     /**
      * Prepare and submit the final authorization to Braintree via the appropriate means as configured
      */
@@ -312,70 +327,74 @@ class braintree_api extends CommercePluginPaymentCardBase {
 			try {
 				// making a sale
 				$this->braintree_init();
-				$setcurrentcy = $this->getModuleConfigValue( '_CURRENCY' );
-				if (!isset($setcurrentcy)) {
-					$setcurrentcy = DEFAULT_CURRENCY;
+				
+				$paymentCurrency = $this->getParameter( $pPaymentParams, 'trans_currency' );
+				$defaultCurrency = $this->getModuleConfigValue( '_CURRENCY' );
+				if( $this->isCurrencySupported( $paymentCurrency ) ) {
+					$paymentAmount =  number_format( $pPaymentParams['payment_localized'], $pPaymentParams['payment_decimal'], '.','' );
+					$postFields['CURRENCY'] = strtoupper( $paymentCurrency );
 				}
-				$merchant_account_id = $this->getModuleConfigValue( '_MERCHANT_ACCOUNT_ID' );
+				if (!isset($setcurrency)) {
+					$setcurrency = DEFAULT_CURRENCY;
+				}
 
 				$transHash = array();
 				$this->result = NULL;
 				$this->pnref = '';
 
-				if( $pPaymentParams['charge_amount'] > 0 ) {
+				if( $pPaymentParams['trans_amount'] > 0 ) {
+					$transHash = array(
+						'merchantAccountId' => $this->getParameter( $this->mCurrencySupport, $pPaymentParams['trans_currency'] ),
+						'amount' => $pPaymentParams['trans_amount'],
+						'options' => array(
+							'storeInVaultOnSuccess' => true,
+							'submitForSettlement' => $this->getModuleConfigValue( '_SETTLEMENT' )
+						),
+					);
 					if( $refId = $this->getParameter( $pPaymentParams, 'trans_ref_id' ) ) {
 						// Process a reference transaction
 						$payment = $this->mDb->getRow( "SELECT * FROM " . TABLE_ORDERS_PAYMENTS . " WHERE `trans_ref_id`=?", array( $refId ) );
 						if( !empty( $payment['trans_auth_code'] ) ) {
-							$transHash = array(
-								'paymentMethodToken' => $payment['trans_auth_code'],
-								'amount' => $pPaymentParams['charge_amount'],
-							);
+							$transHash['paymentMethodToken'] = $payment['trans_auth_code'];
 						} else {
 							$this->mErrors['process_payment'] = 'No trans_auth_code is available for '.$refId;
 						}
 					} else {
 						// Process a new transaction
-						$transHash = array(
-							'amount' => $pPaymentParams['charge_amount'],
-							'merchantAccountId' => $merchant_account_id,
-							'creditCard' => array(
-								'number' => $this->getPaymentNumber( $pPaymentParams ),
-								'expirationMonth' => $this->getParameter( $pPaymentParams, 'payment_expires_month' ),
-								'expirationYear' => $this->getParameter( $pPaymentParams, 'payment_expires_year' ),
-								'cardholderName' => $this->getPaymentOwner( $pPaymentParams ),
-								'cvv' => $this->cc_cvv
-							),
-							'customer' => array(
-								'firstName' => $pOrder->customer['firstname'],
-								'lastName' => $pOrder->customer['lastname'],
-								'phone' => $pOrder->customer['telephone'],
-								'email' => $pPaymentParams['payment_email']
-							),
-							'billing' => array(
-								'firstName' => $pOrder->billing['firstname'],
-								'lastName' => $pOrder->billing['lastname'],
-								'streetAddress' => $pOrder->billing['street_address'],
-								'extendedAddress' => $pOrder->billing['suburb'],
-								'locality' => $pOrder->billing['city'],
-								'region' => $pOrder->billing['state'],
-								'postalCode' => $pOrder->billing['postcode'],
-								'countryCodeAlpha2' => $pOrder->billing['countries_iso_code_2']
-							),
-							'shipping' => array(
-								'firstName' => $pOrder->delivery['firstname'],
-								'lastName' => $pOrder->delivery['lastname'],
-								'streetAddress' => $pOrder->delivery['street_address'],
-								'extendedAddress' => $pOrder->delivery['suburb'],
-								'locality' => $pOrder->delivery['city'],
-								'region' => $pOrder->delivery['state'],
-								'postalCode' => $pOrder->delivery['postcode'],
-								'countryCodeAlpha2' => $pOrder->delivery['countries_iso_code_2']
-							),
-							'options' => array(
-								'storeInVaultOnSuccess' => true,
-								'submitForSettlement' => $this->getModuleConfigValue( '_SETTLEMENT' )
-							)
+						$transHash['amount'] = $pPaymentParams['trans_amount'];
+						$transHash['merchantAccountId'] = $this->getParameter( $this->mCurrencySupport, $pPaymentParams['trans_currency'] );
+						$transHash['creditCard'] = array(
+							'number' => $this->getPaymentNumber( $pPaymentParams ),
+							'expirationMonth' => $this->getParameter( $pPaymentParams, 'payment_expires_month' ),
+							'expirationYear' => $this->getParameter( $pPaymentParams, 'payment_expires_year' ),
+							'cardholderName' => $this->getPaymentOwner( $pPaymentParams ),
+							'cvv' => $this->cc_cvv
+						);
+						$transHash['customer'] = array(
+							'firstName' => $pOrder->customer['firstname'],
+							'lastName' => $pOrder->customer['lastname'],
+							'phone' => $pOrder->customer['telephone'],
+							'email' => $pPaymentParams['payment_email']
+						);
+						$transHash['billing'] = array(
+							'firstName' => $pOrder->billing['firstname'],
+							'lastName' => $pOrder->billing['lastname'],
+							'streetAddress' => $pOrder->billing['street_address'],
+							'extendedAddress' => $pOrder->billing['suburb'],
+							'locality' => $pOrder->billing['city'],
+							'region' => $pOrder->billing['state'],
+							'postalCode' => $pOrder->billing['postcode'],
+							'countryCodeAlpha2' => $pOrder->billing['countries_iso_code_2']
+						);
+						$transHash['shipping'] = array(
+							'firstName' => $pOrder->delivery['firstname'],
+							'lastName' => $pOrder->delivery['lastname'],
+							'streetAddress' => $pOrder->delivery['street_address'],
+							'extendedAddress' => $pOrder->delivery['suburb'],
+							'locality' => $pOrder->delivery['city'],
+							'region' => $pOrder->delivery['state'],
+							'postalCode' => $pOrder->delivery['postcode'],
+							'countryCodeAlpha2' => $pOrder->delivery['countries_iso_code_2']
 						);
 
 						// Prepare products list
@@ -579,47 +598,6 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
         return $response;
     }
-
-	protected function configTables() {
-		$tables = array(
-			TABLE_BRAINTREE => "
-  orders_payments_id I4 PRIMARY AUTO,
-  customers_id I4 NOTNULL,
-  customers_email X NOTNULL,
-  ip_address C(39) NOTNULL,
-  orders_id I4,
-  is_success C(1) NOTNULL DEFAULT 'n',
-  payment_date T DEFTIMESTAMP NOTNULL,
-  payment_module X NOTNULL,
-  payment_mode X NOTNULL,
-  payment_status C(256) NOTNULL,
-  trans_ref_id C(64) NOTNULL,
-  trans_parent_ref_id C(256),
-  payment_type C(256),
-  payment_owner C(64),
-  payment_number C(32),
-  payment_expires C(4),
-  trans_result C(250) NOTNULL,
-  trans_message X NOTNULL,
-  trans_amount N(11,2) NOTNULL,
-  trans_currency C(3) NOTNULL,
-  exchange_rate F NOTNULL,
-  trans_date T,
-  pending_reason C(256),
-  address_company X NOTNULL,
-  address_street X NOTNULL,
-  address_suburb X NOTNULL,
-  address_city X NOTNULL,
-  address_state X NOTNULL,
-  address_zip C(256) NOTNULL,
-  address_country C(256) NOTNULL,
-  num_cart_items I4 NOTNULL
-  CONSTRAINT ', CONSTRAINT `com_orders_payments_log_user_ref` FOREIGN KEY (`customers_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers` (`customers_id`)'			  
-			",
-//, CONSTRAINT `com_orders_payments_orders_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
-		);
-		return $tables;
-	}
 
 	/**
 	* rows for com_configuration table as associative array of column => value
