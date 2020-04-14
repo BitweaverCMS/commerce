@@ -176,7 +176,6 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 				$pOrder->info['payment_expires'] = $this->getPaymentExpires( $pPaymentParams );
 				$pOrder->info['payment_type'] = $this->getParameter( $pPaymentParams, 'payment_type' );
 				$pOrder->info['payment_owner'] = $this->getPaymentOwner( $pPaymentParams );
-				$pOrder->info['cc_cvv'] = $this->cc_cvv;
 			}
 
 			$defaultCurrency = $this->getDefaultCurrency();

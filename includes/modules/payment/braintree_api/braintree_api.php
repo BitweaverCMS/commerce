@@ -15,7 +15,6 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' )
 
 class braintree_api extends CommercePluginPaymentCardBase {
 
-    var $payment_type_check = '';
     var $enableDebugging = false;
     var $order_pending_status = 1;
     var $_logLevel = 0;

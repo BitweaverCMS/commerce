@@ -40,9 +40,11 @@ class purchase_order extends CommercePluginPaymentBase {
 	}
 
 	function verifyPayment( &$pPaymentParams, &$pOrder ) {
-		foreach( array( 'po_contact' => 'Purchaser Name',  'po_org' => 'Purchaser Organization', 'po_number' => 'PO Number' ) as $key=>$title ) {
-			if( empty( $pPaymentParams[$key] ) ) {
-				$this->mErrors[$key] = $title.' was not set.';
+		if( parent::verifyPayment( $pPaymentParams, $pOrder ) ) {
+			foreach( array( 'po_contact' => 'Purchaser Name',  'po_org' => 'Purchaser Organization', 'po_number' => 'PO Number' ) as $key=>$title ) {
+				if( empty( $pPaymentParams[$key] ) ) {
+					$this->mErrors[$key] = $title.' was not set.';
+				}
 			}
 		}
 		return (count( $this->mErrors ) === 0);
@@ -73,8 +75,12 @@ class purchase_order extends CommercePluginPaymentBase {
 	}
 
 	function processPayment( &$pPaymentParams, &$pOrder ) {
+
 		if( $ret = self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
-			// Calculate the next expected order id
+			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
+
+			$logHash['is_success'] = 'y';
+			$logHash['payment_status'] = 'Success';
 			$logHash['trans_ref_id'] = trim( $pPaymentParams['po_org'].' / '.$pPaymentParams['po_contact'] .' / '.$pPaymentParams['po_number'] );
 			$logHash['trans_result'] = '1';
 			$logHash['trans_message'] = trim( 'Purchase Order Recevied' );
@@ -83,9 +89,10 @@ class purchase_order extends CommercePluginPaymentBase {
 			$pOrder->info['payment_type'] = 'Purchase Order';
 			$pOrder->info['payment_owner'] = trim( $pPaymentParams['po_org'].' '.$pPaymentParams['po_contact'] );
 			$pOrder->info['payment_expires'] = NULL;
+
+			$this->logTransaction( $logHash, $pOrder );
 		}
 
-		$this->logTransaction( $logHash, $pOrder );
 		return $ret;
 	}
 

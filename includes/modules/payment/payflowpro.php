@@ -40,49 +40,6 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 
 
-	// Display Credit Card Information Submission Fields on the Checkout Payment Page
-	function selection() {
-		global $order;
-
-		$expireMonths = array();
-		for ($i=1; $i<13; $i++) {
-			$expireMonths[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B',mktime(0,0,0,$i,1,2000)));
-		}
-
-		$today = getdate();
-		$expireYears = array();
-		for ($i=$today['year']; $i < $today['year']+15; $i++) {
-			$expireYears[] = array('id' => strftime('%y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
-		}
-
-		$selection = array('id' => $this->code,
-						 'module' => $this->title,
-						 'fields' => array(
-							array(	'title' => tra( 'Name On Card' ),
-									'field' => zen_draw_input_field('payment_owner', BitBase::getParameter( $_SESSION, 'payment_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'] ), 'autocomplete="cc-name"' )
-							),
-							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), ' autocomplete="cc-number" ', 'number' ) . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="icon-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), ' autocomplete="cc-csc" ', 'number')  . '</div></div>',
-							),
-							array(	'title' => tra( 'Expiration Date' ),
-									'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('payment_expires_month', $expireMonths, BitBase::getParameter( $_SESSION, 'payment_expires_month' ), ' class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('payment_expires_year', $expireYears, substr( BitBase::getParameter( $_SESSION, 'payment_expires_year', (date('Y') + 1) ), -2 ), ' class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
-							),
-						)
-					);
-
-		if( !empty( $_SESSION[$this->code.'_error']['name'] ) ) {
-			$selection['fields'][0]['error'] = $_SESSION[$this->code.'_error']['name'];
-		}
-
-		if( !empty( $_SESSION[$this->code.'_error']['number'] ) ) {
-			$selection['fields'][1]['error'] = $_SESSION[$this->code.'_error']['number'];
-		}
-
-		if( !empty( $_SESSION[$this->code.'_error']['date'] ) ) {
-			$selection['fields'][2]['error'] = $_SESSION[$this->code.'_error']['date'];
-		}
-		return $selection;
-	}
-
 	////////////////////////////////////////////////////
 	// Pre confirmation checks (ie, check if credit card
 	// information is right before sending the info to
@@ -134,7 +91,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			$ret = explode( ',', $currencyList );
 		}
 		$ret[] = $this->getDefaultCurrency();
-eb( $ret );
+
 		return $ret;
 	}
 

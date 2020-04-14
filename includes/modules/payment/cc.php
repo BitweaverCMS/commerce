@@ -62,48 +62,13 @@ class cc extends CommercePluginPaymentCardBase {
 		return $js;
 	}
 
-	function selection() {
-		global $order;
-
-		for ($i=1; $i<13; $i++) {
-			$expires_month[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B',mktime(0,0,0,$i,1,2000)));
-		}
-
-		$today = getdate();
-		for ($i=$today['year']; $i < $today['year']+10; $i++) {
-			$expires_year[] = array('id' => strftime('%y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
-		}
-
-		$selection = array('id' => $this->code,
-							 'module' => $this->title,
-							 'fields' => array(
-											array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_OWNER,
-											 'field' => zen_draw_input_field('payment_owner', BitBase::getParameter( $_SESSION, 'payment_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'] ), 'autocomplete="cc-name"' )),
-											array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_NUMBER,
-											 'field' => zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), ' autocomplete="cc-number" ', 'number')),
-											array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_EXPIRES,
-											 'field' => zen_draw_pull_down_menu('payment_expires_month', $expires_month, ' class="input-small" autocomplete="cc-exp-month" ') . '&nbsp;' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, ' class="input-small" autocomplete="cc-exp-year" '))));
-
-		if( MODULE_PAYMENT_CC_COLLECT_CVV == 'True' ) {
-			$selection['fields'][] = array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_CVV,
-											 'field' => zen_draw_input_field( 'cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), ' autocomplete="cc-csc" ', 'number' ));
-		}
-		return $selection;
-	}
-
 	function verifyPayment( &$pPaymentParams, &$pOrder ) {
-		if( empty( $pPaymentParams['payment_number'] ) ) {
-			$error = tra( 'Please enter a credit card number.' );
-		} elseif( $this->verifyCreditCard( $pPaymentParams['payment_number'], $pPaymentParams['payment_expires_month'], $pPaymentParams['payment_expires_year'], $pPaymentParams['cc_cvv'] ) ) {
-			$ret = TRUE;
-		} else {
+		if( parent::verifyPayment( $pPaymentParams, $pOrder ) ) {
 			foreach( array( 'payment_owner', 'payment_number', 'payment_expires_month', 'payment_expires_year', 'cc_cvv' ) as $key ) {
 				$_SESSION[$key] = BitBase::getParameter( $pPaymentParams, $key );
 			}
-			$_SESSION['pfp_error'] = $this->mErrors;
-			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 		}
-		return $ret;
+		return (count( $this->mErrors ) === 0);
 	}
 
 
@@ -140,15 +105,12 @@ class cc extends CommercePluginPaymentCardBase {
 	}
 
 	function processPayment( &$pPaymentParams, &$pOrder ) {
-		global $_POST, $order;
-
-		$ret = FALSE;
-
-		$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
 
 		if( $ret = self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
+			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
 
 			$ret = TRUE;
+			$logHash['trans_result'] = '1';
 			$logHash['is_success'] = 'y';
 			$logHash['payment_status'] = 'Success';
 			$order->info['payment_expires'] = $p['payment_expires'];
@@ -161,9 +123,7 @@ class cc extends CommercePluginPaymentCardBase {
 			} else {
 				$order->info['payment_number'] = $this->privatizeCard( $_POST['payment_number'] );
 			}
-		}
 
-		if( !empty( $logHash ) ) {
 			$this->logTransaction( $logHash );
 		}
 		return $ret;
