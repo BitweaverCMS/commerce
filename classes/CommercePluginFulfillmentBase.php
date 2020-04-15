@@ -70,7 +70,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 	protected function canDeliver( $pDeliveryHash ) {
 		$allowedDestCodes = $this->getModuleConfigValue( '_DESTINATION_COUNTRY_CODES' );
 		$ret = ($allowedDestCodes == 'ALL');
-		if( !$ret ) {
+		if( !$ret && !empty( $pDeliveryHash['countries_iso_code_2'] ) ) {
 			// if we can't go to ALL countries, see if our delivery code matches or origin
 			$ret = (stripos( $allowedDestCodes, $pDeliveryHash['countries_iso_code_2'] ) !== FALSE);
 		}

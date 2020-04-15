@@ -40,16 +40,20 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 	}
 
 	// user not logged in, country is selected
-	$countryInfo = zen_get_countries($_SESSION['cart_country_id']);
-	$shoppingCart->delivery = array(	
-								'countries_id' => $countryInfo['countries_id'], 
-								'title' => $countryInfo['countries_name'], 
-								'countries_iso_code_2' => $countryInfo['countries_iso_code_2'], 
-								'countries_iso_code_3' =>	$countryInfo['countries_iso_code_3'],
-							 	'country_id' => $countryInfo['countries_id'],
-								//add state zone_id
-								'format_id' => $countryInfo['address_format_id']
-							);
+	if( $countryInfo = zen_get_countries($_SESSION['cart_country_id']) ) {
+		$shoppingCart->delivery = array(	
+									'countries_id' => $countryInfo['countries_id'], 
+									'title' => $countryInfo['countries_name'], 
+									'countries_iso_code_2' => $countryInfo['countries_iso_code_2'], 
+									'countries_iso_code_3' =>	$countryInfo['countries_iso_code_3'],
+									'country_id' => $countryInfo['countries_id'],
+									//add state zone_id
+									'format_id' => $countryInfo['address_format_id']
+								);
+		// used as a check below for existence of states
+		$stateMenu = zen_get_country_zone_list( 'zone_id', $shoppingCart->delivery['countries_id'], !empty( $_SESSION['cart_zone_id'] ) ? $_SESSION['cart_zone_id'] : NULL );
+		$gBitSmarty->assign_by_ref( 'stateMenu', $stateMenu );
+	}
 	// Check for form zip code
 	if( !empty( $_REQUEST['zip_code'] ) ) {
 		$_SESSION['cart_zip_code'] = $_REQUEST['zip_code'];
@@ -65,9 +69,6 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 		$shoppingCart->delivery['zone_id'] = (int)$_SESSION['cart_zone_id'];
 	}
 
-	// used as a check below for existence of states
-	$stateMenu = zen_get_country_zone_list( 'zone_id', $shoppingCart->delivery['countries_id'], !empty( $_SESSION['cart_zone_id'] ) ? $_SESSION['cart_zone_id'] : NULL );
-	$gBitSmarty->assign_by_ref( 'stateMenu', $stateMenu );
 } elseif( !empty( $addresses ) && (empty( $_REQUEST['address_id'] ) || $_REQUEST['address_id'] != 'custom') ) {
 	if( empty( $_SESSION['sendto'] ) && !empty( $addresses ) ) {
 		// no selected address yet, snag the first one
