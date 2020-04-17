@@ -311,10 +311,10 @@ class braintree_api extends CommercePluginPaymentCardBase {
      * Prepare and submit the final authorization to Braintree via the appropriate means as configured
      */
 	function processPayment( &$pPaymentParams, &$pOrder ) {
+		global $gCommerceSystem;
 
 		$postFields = array();
 		$responseHash = array();
-		$this->result = NULL;
 
 		$ret = FALSE;
 
@@ -327,19 +327,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 				// making a sale
 				$this->braintree_init();
 				
-				$paymentCurrency = $this->getParameter( $pPaymentParams, 'trans_currency' );
-				$defaultCurrency = $this->getModuleConfigValue( '_CURRENCY' );
-				if( $this->isCurrencySupported( $paymentCurrency ) ) {
-					$paymentAmount =  number_format( $pPaymentParams['payment_localized'], $pPaymentParams['payment_decimal'], '.','' );
-					$postFields['CURRENCY'] = strtoupper( $paymentCurrency );
-				}
-				if (!isset($setcurrency)) {
-					$setcurrency = DEFAULT_CURRENCY;
-				}
-
 				$transHash = array();
-				$this->result = NULL;
-				$this->pnref = '';
 
 				if( $pPaymentParams['trans_amount'] > 0 ) {
 					$transHash = array(
@@ -348,6 +336,11 @@ class braintree_api extends CommercePluginPaymentCardBase {
 						'options' => array(
 							'storeInVaultOnSuccess' => true,
 							'submitForSettlement' => $this->getModuleConfigValue( '_SETTLEMENT' )
+						),
+						'descriptor' => array(
+							'name' => $this->getModuleConfigValue( '_DESCRIPTOR_NAME' ),
+							'phone' => $this->getModuleConfigValue( '_DESCRIPTOR_PHONE' ),
+							'url' => $this->getModuleConfigValue( '_DESCRIPTOR_URL' )
 						),
 					);
 					if( $refId = $this->getParameter( $pPaymentParams, 'trans_ref_id' ) ) {
@@ -450,7 +443,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 				}
 
 				if( $result->success ) {
-					$this->pnref = $result->transaction->id;
+					$pnref = $result->transaction->id;
 					if( $transExchange = urldecode($result->transaction->disbursementDetails->settlementCurrencyExchangeRate) ) {
 						$logHash['exchange_rate'] = $transExchange;
 					}
@@ -460,7 +453,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 					$logHash['trans_amount'] = (float) urldecode( $result->transaction->amount );
 					$logHash['trans_currency'] = $result->transaction->currencyIsoCode;
 					$logHash['trans_message'] = trim( $result->transaction->processorResponseText );
-					$logHash['trans_ref_id'] = $this->pnref;
+					$logHash['trans_ref_id'] = $pnref;
 					$logHash['trans_parent_ref_id'] = $result->transaction->refundedTransactionId;
 //					$logHash['pending_reason'] = $this->pendingreason;
 					$logHash['address_company'] = $result->transaction->billingDetails->company;
@@ -475,9 +468,11 @@ class braintree_api extends CommercePluginPaymentCardBase {
 						$ret = TRUE;
 						$logHash['is_success'] = 'y';
 
-						$pOrder->info['trans_ref_id'] = $this->pnref;
+						$pOrder->info['trans_ref_id'] = $pnref;
 						//replace middle CC num with XXXX
-						$pOrder->info['payment_number'] = substr($this->payment_number, 0, 6) . str_repeat('X', (strlen($this->payment_number) - 6)) . substr($this->payment_number, -4);
+						if( !empty( $transHash['payment_number'] ) ) {
+							$pOrder->info['payment_number'] = substr($transHash['payment_number'], 0, 6) . str_repeat('X', (strlen($transHash['payment_number']) - 6)) . substr($transHash['payment_number'], -4);
+						}
 						
 						$logHash['trans_auth_code'] = $result->transaction->creditCardDetails->token;
 						$this->payment_type = $this->getModuleConfigValue( '_TEXT_TITLE' ) . '(' . $result->transaction->creditCardDetails->cardType . ')';
@@ -634,6 +629,18 @@ class braintree_api extends CommercePluginPaymentCardBase {
 			$this->getModuleKeyTrunk().'_PRIVATEKEY' => array(
 				'configuration_title' => 'Private Key',
 				'configuration_description' => 'Your Private Key provided under the API Keys section.',
+			),
+			$this->getModuleKeyTrunk().'_DESCRIPTOR_NAME' => array(
+				'configuration_title' => 'Descriptor Statement Name',
+				'configuration_description' => 'The company name that will appear on customer financial statements. Company name/DBA section must be either 3, 7 or 12 characters and the product descriptor can be up to 18, 14, or 9 characters respectively (with an * in between for a total descriptor name of 22 characters). Example: COMPANY*PRODUCT',
+			),
+			$this->getModuleKeyTrunk().'_DESCRIPTOR_URL' => array(
+				'configuration_title' => 'Descriptor Statement URL',
+				'configuration_description' => 'The company URL that will appear on customer financial statements. Url must be 13 characters or shorter and can only contain letters, numbers and periods.',
+			),
+			$this->getModuleKeyTrunk().'_DESCRIPTOR_PHONE' => array(
+				'configuration_title' => 'Descriptor Statement Telephone',
+				'configuration_description' => 'The company phone number that will appear on customer credit card statements. Phone must contain exactly 10 digits, and can only contain numbers, dashes and parentheses.',
 			),
 			$this->getModuleKeyTrunk().'_DEFAULT_MERCHANT_ACCOUNT_ID' => array(
 				'configuration_title' => 'Default Merchant Account ID',
