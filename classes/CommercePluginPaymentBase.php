@@ -188,6 +188,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 
 			if( $targetCurrency == $pPaymentParams['charge_currency'] ) {
 				$pPaymentParams['trans_amount'] = $pPaymentParams['charge_amount'];
+				$pPaymentParams['trans_currency'] = $pPaymentParams['charge_currency'];
 			} else {
 				// we can't process the requested currency, we need to convert
 				if( !empty( $pPaymentParams['currency_value'] ) ) {

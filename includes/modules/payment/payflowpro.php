@@ -95,24 +95,6 @@ class payflowpro extends CommercePluginPaymentCardBase {
 		return $ret;
 	}
 
-	protected function isCurrencySupported( $pCurrency ) {
-		// Can charge natively in the specified currency
-		$ret = ($pCurrency == DEFAULT_CURRENCY);
-		if( $this->isCommerceConfigActive( 'MODULE_PAYMENT_PAYFLOWPRO_MULTI_CURRENCY' ) ) {
-			switch( $pCurrency ) {
-				// PayPal supports charging natively in these 5 currencies
-				case 'AUD': // Australian dollar 
-				case 'CAD': // Canadian dollar 
-				case 'EUR': // Euro 
-				case 'GBP': // British pound 
-				case 'JPY': // Japanese Yen 
-				case 'USD': // US dollar 
-					$ret = true;
-			}
-		}
-		return $ret;
-	}
-
 	function processPayment( &$pPaymentParams, &$pOrder ) {
 		global $messageStack, $response, $gBitDb, $gBitUser, $currencies;
 
