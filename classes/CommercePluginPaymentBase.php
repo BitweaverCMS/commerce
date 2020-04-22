@@ -23,8 +23,17 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		parent::__construct();
 	}
 
-	public function getPaymentNumber( $pPaymentParams ) {
-		return $this->getParameter( $pPaymentParams, 'payment_number' );
+	public function getPaymentNumber( $pPaymentParams, $pPrivatize = FALSE ) {
+		$ret = $this->getParameter( $pPaymentParams, 'payment_number' );
+		if( $pPrivatize ) {
+			$ret = $this->privatizePaymentNumber( $ret );
+		}
+		return $ret;
+	}
+
+	public function privatizePaymentNumber( $pPaymentNumber ) {
+		// default does nother
+		return $pPaymentNumber;
 	}
 
 	public function getPaymentExpires( $pPaymentParams ) {
@@ -78,12 +87,13 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 
 		$logHash['user_id'] = $gBitUser->mUserId;
 		$logHash['orders_id'] = $this->getParameter( $pPaymentParams, 'orders_id' );
-		$logHash['payment_number'] = $this->getPaymentNumber( $pPaymentParams );
+		$logHash['payment_number'] = $this->getPaymentNumber( $pPaymentParams, TRUE );
 		$logHash['payment_expires'] = $this->getPaymentExpires( $pPaymentParams );
 		$logHash['payment_type'] = $this->getPaymentType( $pPaymentParams );
 		$logHash['payment_owner'] = $this->getPaymentOwner( $pPaymentParams );
 		$logHash['ip_address'] = $_SERVER['REMOTE_ADDR'];
 		$logHash['payment_module'] = $this->code;
+		$logHash['payment_number'] = $this->getPaymentNumber( $pPaymentParams, TRUE );
 
 		$logHash['customers_id'] = $pOrder->customer['customers_id'];
 		$logHash['customers_email'] = $pOrder->customer['email_address'];

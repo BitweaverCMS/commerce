@@ -877,7 +877,7 @@ class order extends CommerceOrderBase {
 							);
 
 		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pPaymentParams, 'payment' ) ) ) {
-			$sql_data_array['payment_number'] = $paymentModule->getPaymentNumber( $pPaymentParams );
+			$sql_data_array['payment_number'] = $paymentModule->getPaymentNumber( $pPaymentParams, TRUE );
 			$sql_data_array['payment_expires'] = $paymentModule->getPaymentExpires( $pPaymentParams );
 			$sql_data_array['payment_type'] = $paymentModule->getPaymentType( $pPaymentParams );
 			$sql_data_array['payment_owner'] = $paymentModule->getPaymentOwner( $pPaymentParams );

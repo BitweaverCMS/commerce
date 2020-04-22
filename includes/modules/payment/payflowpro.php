@@ -57,7 +57,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 									array(	'title' => tra( 'Card Owner' ),
 											'field' => $pPaymentParams['payment_owner']),
 									array(	'title' => tra( 'Card Number' ),
-											'field' => $this->privatizeCard( $pPaymentParams['payment_number'] )),
+											'field' => $this->getPaymentNumber( $pPaymentParams, TRUE )),
 									array(	'title' => tra( 'Expiration Date' ),
 											'field' => strftime('%B,%Y', mktime(0,0,0,$pPaymentParams['payment_expires_month'], 1, '20' . $pPaymentParams['payment_expires_year']))),
 									)
@@ -382,14 +382,14 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			$pOrder->info['trans_ref_id'] = BitBase::getParameter( $responseHash, 'PNREF' );
 			if( !empty( $postFields['ACCT'] ) && MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
-				$pOrder->info['payment_number'] = $this->privatizeCard( $postFields['ACCT'] );
+				$pOrder->info['payment_number'] = $this->privatizePaymentNumber( $postFields['ACCT'] );
 			}
 		} else {
 			foreach( array( 'PWD', 'USER', 'VENDOR', 'PARTNER', 'CVV2' ) as $field ) {
 				if( isset( $postFields[$field] ) ) { unset( $postFields[$field] ); }
 			}
 
-			if( isset( $postFields['ACCT'] ) ) { $postFields['ACCT'] = $this->privatizeCard( $postFields['ACCT'] ); }
+			if( isset( $postFields['ACCT'] ) ) { $postFields['ACCT'] = $this->privatizePaymentNumber( $postFields['ACCT'] ); }
 			
 			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, 'CURL' => $postFields, 'RESPONSE' => $responseHash ) );
 			$this->mDb->RollbackTrans();

@@ -145,22 +145,9 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		return $ret;
 	}
 
-	protected function logTransactionPrep( $pTransactionHash, $pOrder ) {
-
-		if( $logHash = parent::logTransactionPrep( $pTransactionHash, $pOrder ) ) {
-			if( !empty( $logHash['payment_number'] ) ) {
-				$logHash['payment_number'] = $this->privatizeCard( $logHash['payment_number'] );
-			}
-		}
-		// Probably should be handled somehow...
-		// 'payment_ref_type' => $this->transactiontype, //auth, sale, credit, etc.
-
-		return $logHash;
-	}
-
-	public static function privatizeCard( $pCardNumber ) {
-		if( $pCardNumber ) {
-			return substr($pCardNumber, 0, 6) . str_repeat('X', (strlen($pCardNumber) - 6)) . substr($pCardNumber, -4);
+	public function privatizePaymentNumber( $pPaymentNumber ) {
+		if( $pPaymentNumber ) {
+			return substr($pPaymentNumber, 0, 6) . str_repeat('X', (strlen($pPaymentNumber) - 6)) . substr($pPaymentNumber, -4);
 		}
 	}
 

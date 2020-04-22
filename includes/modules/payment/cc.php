@@ -121,7 +121,7 @@ class cc extends CommercePluginPaymentCardBase {
 			if (MODULE_PAYMENT_CC_STORE_NUMBER == 'True') {
 				$order->info['payment_number'] = $_POST['payment_number'];
 			} else {
-				$order->info['payment_number'] = $this->privatizeCard( $_POST['payment_number'] );
+				$order->info['payment_number'] = $this->privatizePaymentNumber( $_POST['payment_number'] );
 			}
 
 			$this->logTransaction( $logHash );
