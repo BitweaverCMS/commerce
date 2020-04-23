@@ -147,7 +147,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 
 	public function privatizePaymentNumber( $pPaymentNumber ) {
 		if( $pPaymentNumber ) {
-			return substr($pPaymentNumber, 0, 6) . str_repeat('X', (strlen($pPaymentNumber) - 6)) . substr($pPaymentNumber, -4);
+			return substr($pPaymentNumber, 0, 6) . str_repeat('X', (strlen($pPaymentNumber) - 10)) . substr($pPaymentNumber, -4);
 		}
 	}
 
