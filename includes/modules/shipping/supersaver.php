@@ -23,16 +23,15 @@ class supersaver extends CommercePluginShippingBase {
 
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 
-			$min = $this->getConfig( 'MODULE_SHIPPING_SUPERSAVER_MIN' );
-			$max = $this->getConfig( 'MODULE_SHIPPING_SUPERSAVER_MAX' );
+			$min = $this->getModuleConfigValue( '_MIN' );
+			$max = $this->getModuleConfigValue( '_MAX' );
 
 			$shippedTotal = $pShipHash['shipping_value'];
-
-			if( !empty( $min ) && $shippedTotal < MODULE_SHIPPING_SUPERSAVER_MIN ) {
-				$quotes['error'] = tra( 'You must spend at least '. $currencies->format( MODULE_SHIPPING_SUPERSAVER_MIN ).' to get SuperSaver Shipping.' ). ' <a href="'.zen_href_link(FILENAME_SHOPPING_CART).'">'.tra( 'Update Cart' ).'</a>';
-			} elseif( !empty( $max ) && $shippedTotal > MODULE_SHIPPING_SUPERSAVER_MAX ) {
+			if( !empty( $min ) && $shippedTotal < $min ) {
+				$quotes['error'] = tra( 'You must spend at least '. $currencies->format( $min ).' to get SuperSaver Shipping.' ). ' <a href="'.zen_href_link(FILENAME_SHOPPING_CART).'">'.tra( 'Update Cart' ).'</a>';
+			} elseif( !empty( $max ) && $shippedTotal > $max ) {
 				// no quote for you!
-				$quotes['error'] = tra( 'SuperSaver Shipping only applies to orders up to '.$currencies->format( MODULE_SHIPPING_SUPERSAVER_MAX ) ). ' <a href="'.zen_href_link(FILENAME_SHOPPING_CART).'">'.tra( 'Update Cart' ).'</a>';
+				$quotes['error'] = tra( 'SuperSaver Shipping only applies to orders up to '.$currencies->format( $max ) ). ' <a href="'.zen_href_link(FILENAME_SHOPPING_CART).'">'.tra( 'Update Cart' ).'</a>';
 			} else {
 				if( $this->isInternationOrder( $pShipHash ) ) {
 					if( $this->isEnabled( 'MODULE_SHIPPING_SUPERSAVER_INTL' ) ) {
