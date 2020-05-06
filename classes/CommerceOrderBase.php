@@ -150,8 +150,26 @@ abstract class CommerceOrderBase extends BitBase {
 			$fulfillmentPriority[] = $ret;
 		} 
 
-		uasort( $fulfillmentPriority, 'commerce_order_sort_fulfillers' );
+		uasort( $fulfillmentPriority, array( $this, 'commerce_order_sort_fulfillers' ) );
 		return current( $fulfillmentPriority );
+	}
+
+	function commerce_order_sort_fulfillers( $a, $b ) {
+		$ret = 0;
+		if ($a['priority'] == $b['priority']) {
+			// If there is a tie, default to the same country
+			if( $deliveryHash = $this->getDelivery() ) {
+				if( $deliveryHash['countries_iso_code_2'] == $a['countries_iso_code_2'] ) {
+					return -1;
+				} elseif( $deliveryHash['countries_iso_code_2'] == $b['countries_iso_code_2'] ) {
+					return 1;
+				} 
+			}
+		} else {
+			$ret = ($a['priority'] < $b['priority']) ? 1 : -1;
+		}
+
+		return $ret;
 	}
 
 	/**
@@ -367,9 +385,3 @@ abstract class CommerceOrderBase extends BitBase {
 
 }
 
-function commerce_order_sort_fulfillers( $a, $b ) {
-	    if ($a['priority'] == $b) {
-        return 0;
-    }
-    return ($a < $b) ? 1 : -1;
-}
