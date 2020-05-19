@@ -40,7 +40,7 @@
 			{foreach from=$customers.customers key=customerId item=customerHash}
 			<tr>
 				<td>{$customerHash.user_id}</td>
-				<td>{BitUser::getDisplayLink(1,$customerHash)}</td>
+				<td>{BitUser::getDisplayLink($customerHash,1)}</td>
 				<td class="text-right">{$customerHash.orders}</td>
 				<td class="text-right">{$gCommerceCurrencies->format($customerHash.revenue)}</td>
 				<td class="text-right">{$customerHash.last_purchase|zen_date_short}</td>

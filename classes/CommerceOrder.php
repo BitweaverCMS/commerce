@@ -1101,7 +1101,7 @@ class order extends CommerceOrderBase {
 		if( !empty( $this->customer['firstname'] ) ) {
 			$customerName = $this->customer['firstname'].' '.$this->customer['lastname'];
 		} else {
-			$customerName = BitUser::getDisplayNameFromHash( FALSE, $this->customer );
+			$customerName = BitUser::getDisplayNameFromHash( $this->customer, FALSE );
 		}
 		$email_order = EMAIL_TEXT_HEADER . ' ' . EMAIL_TEXT_FROM . ' ' . STORE_NAME . "\n\n" .
 						$customerName . "\n\n" .
