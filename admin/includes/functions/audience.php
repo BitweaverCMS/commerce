@@ -65,7 +65,7 @@
 											 "order by customers_lastname, customers_firstname, `real_name`, `login`, `email`");
 			while(!$customers_values->EOF) {
 			$audience_list[] = array('id' => $customers_values->fields['customers_email_address'],
-									 'text' => (!empty( $customers_values->fields['customers_lastname'] ) ? $customers_values->fields['customers_lastname'] . ', ' . $customers_values->fields['customers_firstname'] : $gBitUser->getDisplayName( FALSE, $customers_values->fields ) ) . ' (' . $customers_values->fields['email'] . ')' );
+									 'text' => (!empty( $customers_values->fields['customers_lastname'] ) ? $customers_values->fields['customers_lastname'] . ', ' . $customers_values->fields['customers_firstname'] : BitUser::getDisplayNameFromHash( $customers_values->fields ) ) . ' (' . $customers_values->fields['email'] . ')' );
 			$customers_values->MoveNext();
 			}
 		}

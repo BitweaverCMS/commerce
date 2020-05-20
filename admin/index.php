@@ -96,10 +96,6 @@ if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
 }
 
 ?>
-<header>
-	<h1 class="page-header">Order List</h1>
-</header>
-
 <div class="row">
 	<div class="col-md-8" id="colone">
 <?php
