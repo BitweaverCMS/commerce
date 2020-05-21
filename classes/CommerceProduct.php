@@ -1199,6 +1199,7 @@ If a special exist * 10+9
 			$pListHash['user_id'] = $userId;
 		}
 	}
+
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
 
@@ -1332,7 +1333,7 @@ If a special exist * 10+9
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 						INNER JOIN `" . BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
 					$joinSql
-					WHERE $whereSql ORDER BY ".$this->mDb->convertSortmode( $pListHash['sort_mode'] );
+					WHERE $whereSql ORDER BY ".$this->convertSortmode( $pListHash['sort_mode'] );
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			// if we returned fewer than the max, use size of our result set
 			if( ($rs->RecordCount() < $pListHash['max_records'] || $rs->RecordCount() == 1) && empty($pListHash['offset'])) {
