@@ -164,7 +164,7 @@ class category_tree {
 			$this->box_categories_array[$ii]['current'] = true;
 		}
 
-// display category name
+		// display category name
 		$this->box_categories_array[$ii]['name'] = $this->categories_string . $this->tree[$counter]['name'];
 
 
@@ -179,7 +179,7 @@ class category_tree {
 			}
 		}
 
-		if ($this->tree[$counter]['next_id'] != false) {
+		if( !empty( $this->tree[$counter]['next_id'] ) ) {
 			$ii++;
 			$this->zen_show_category($this->tree[$counter]['next_id'], $ii);
 		}

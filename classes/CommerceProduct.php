@@ -2434,17 +2434,17 @@ Skip deleting of images for now
 		$inCartMixed = $gBitCustomer->mCart->in_cart_mixed( $this->mProductsId );
 
 		// works on Mixed ON
-		if( $gBitCustomer->mCart->in_cart_mixed($pProductsId) == 0 ) {
+		if( !$inCartMixed ) {
 			if ($check_min >= $check_units) {
 				$ret = $check_min;
 			} else {
 				$ret = $check_units;
 			}
 		} elseif( $inCartMixed < $check_min ) {
-			$ret = $check_min - $gBitCustomer->mCart->in_cart_mixed($pProductsId);
+			$ret = $check_min - $inCartMixed;
 		} elseif( $inCartMixed > $check_min ) {
 			// set to units or difference in units to balance cart
-			$new_units = $check_units - fmod($gBitCustomer->mCart->in_cart_mixed($pProductsId), $check_units);
+			$new_units = $check_units - fmod($inCartMixed, $check_units);
 			$ret = ($new_units > 0 ? $new_units : $check_units);
 		} else {
 			$ret = $check_units;
