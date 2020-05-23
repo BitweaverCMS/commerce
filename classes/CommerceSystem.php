@@ -89,8 +89,8 @@ class CommerceSystem extends BitSingleton {
 	}
 
 	function loadConfig() {
-		$this->mConfig = $this->mDb->getAssoc( 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue` FROM ' . TABLE_CONFIGURATION, NULL, NULL, NULL, $this->mCacheTime); 
-		$this->mProductTypeLayout = $this->mDb->getAssoc( 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue` from ' . TABLE_PRODUCT_TYPE_LAYOUT, NULL, NULL, NULL, $this->mCacheTime );
+		$this->mConfig = $this->mDb->getAssoc( 'SELECT `configuration_key` AS `cfgkey`, `configuration_value` AS `cfgvalue` FROM ' . TABLE_CONFIGURATION, FALSE, NULL, NULL, $this->mCacheTime); 
+		$this->mProductTypeLayout = $this->mDb->getAssoc( 'select `configuration_key` as `cfgkey`, `configuration_value` as `cfgvalue` from ' . TABLE_PRODUCT_TYPE_LAYOUT, FALSE, NULL, NULL, $this->mCacheTime );
 		$this->loadConstants();
 	}
 
