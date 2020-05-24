@@ -21,7 +21,7 @@ if( empty( $_SESSION['customers_host_address'] ) ) {
 }
 
 // verify the ssl_session_id if the feature is enabled
-if ( ($request_type == 'SSL') && (SESSION_CHECK_SSL_SESSION_ID == 'True') && (ENABLE_SSL == 'true') && ($session_started == true) ) {
+if ( ($request_type == 'SSL') && $gCommerceSystem->isConfigActive( 'SESSION_CHECK_SSL_SESSION_ID' ) && (ENABLE_SSL == 'true') && ($session_started == true) ) {
 	$ssl_session_id = $_SERVER['SSL_SESSION_ID'];
 	if (!$_SESSION['SSL_SESSION_ID']) {
 		$_SESSION['SESSION_SSL_ID'] = $ssl_session_id;
@@ -34,7 +34,7 @@ if ( ($request_type == 'SSL') && (SESSION_CHECK_SSL_SESSION_ID == 'True') && (EN
 }
 
 // verify the browser user agent if the feature is enabled
-if (SESSION_CHECK_USER_AGENT == 'True') {
+if( $gCommerceSystem->isConfigActive( 'SESSION_CHECK_USER_AGENT' ) ) {
 	$http_user_agent = $_SERVER['HTTP_USER_AGENT'];
 	if (!$_SESSION['SESSION_USER_AGENT']) {
 		$_SESSION['SESSION_USER_AGENT'] = $http_user_agent;
@@ -47,7 +47,7 @@ if (SESSION_CHECK_USER_AGENT == 'True') {
 }
 
 // verify the IP address if the feature is enabled
-if (SESSION_CHECK_IP_ADDRESS == 'True') {
+if( $gCommerceSystem->isConfigActive( 'SESSION_CHECK_IP_ADDRESS' ) ) {
 	$ip_address = zen_get_ip_address();
 	if (!$_SESSION['SESSION_IP_ADDRESS']) {
 		$_SESSION['SESSION_IP_ADDRESS'] = $ip_address;

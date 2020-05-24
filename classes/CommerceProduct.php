@@ -392,7 +392,7 @@ If a special exist * 10+9
 		static $salemakerSales = NULL;
 
 		if( $salemakerSales === NULL ) {
-			$salemakerSales = $this->mDb->getAssoc("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'", NULL, NULL, $this->cacheQueryTime() );
+			$salemakerSales = $this->mDb->getAssoc("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'", FALSE, NULL, $this->cacheQueryTime() );
 		}
 		foreach( array_keys( $salemakerSales ) as $saleId ) {
 			$categories = explode(',', $salemakerSales[$saleId]['sale_categories_all']);
