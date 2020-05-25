@@ -81,7 +81,7 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 }
 
 $delivery = $shoppingCart->getDelivery();
-$gBitSmarty->assign_by_ref( 'countryMenu', zen_get_country_list( 'country_id', BitBase::getParameter( $delivery, 'countries_id', STORE_COUNTRY ), 'onChange="updateShippingQuote(this.form);"' ) );
+$gBitSmarty->assign( 'countryMenu', zen_get_country_list( 'country_id', BitBase::getParameter( $delivery, 'countries_id', STORE_COUNTRY ), 'onChange="updateShippingQuote(this.form);"' ) );
 
 // set the cost to be able to calculate free shipping
 $shoppingCart->info = array(
@@ -135,7 +135,7 @@ if($gBitCustomer->mCart->get_content_type() == 'virtual') {
 		$weight = 0;
 	}
 	$shipping = new CommerceShipping();
-	$gBitSmarty->assign_by_ref( 'quotes', $shipping->quote( $shoppingCart ) );
+	$gBitSmarty->assign( 'quotes', $shipping->quote( $shoppingCart ) );
 	$shoppingCart->subtotal = $gBitCustomer->mCart->show_total();
 }
 bit_error_log( $_REQUEST, $_SESSION );
