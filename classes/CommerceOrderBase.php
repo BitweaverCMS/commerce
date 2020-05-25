@@ -178,7 +178,7 @@ abstract class CommerceOrderBase extends BitBase {
 	public function getTrackingHash() {
 		$ret = array();
 		foreach( array_keys( $this->contents ) as $productsKey ) {
-			if( $prod = &$this->getProductObject( $this->contents[$productsKey]['products_id'] ) ) {
+			if( $prod = $this->getProductObject( $this->contents[$productsKey]['products_id'] ) ) {
 				$ret[] = $prod->getTrackingHash( $this->getProductHash( $productsKey ) );
 			}
 		}
