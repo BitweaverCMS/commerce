@@ -44,7 +44,7 @@
 //                       order by `" . EXPECTED_PRODUCTS_FIELD . "` " . EXPECTED_PRODUCTS_SORT;
   }
 
-  $expected = $gBitDb->query($expected_query, NULL, MAX_DISPLAY_UPCOMING_PRODUCTS);
+  $expected = $gBitDb->query($expected_query, FALSE, MAX_DISPLAY_UPCOMING_PRODUCTS);
 
   if ($expected->RecordCount() > 0) {
     require( DIR_FS_MODULES . 'tpl_modules_upcoming_products.php');
