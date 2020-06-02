@@ -138,7 +138,6 @@ if($gBitCustomer->mCart->get_content_type() == 'virtual') {
 	$gBitSmarty->assign( 'quotes', $shipping->quote( $shoppingCart ) );
 	$shoppingCart->subtotal = $gBitCustomer->mCart->show_total();
 }
-bit_error_log( $_REQUEST, $_SESSION );
 
 $gBitSmarty->assign( 'freeShipping', $freeShipping );
 // end of shipping cost
