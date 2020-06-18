@@ -127,11 +127,3 @@
     return session_destroy();
   }
 
-  function zen_session_save_path($path = '') {
-    if ($path != '') {
-      return session_save_path($path);
-    } else {
-      return session_save_path();
-    }
-  }
-?>

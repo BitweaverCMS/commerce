@@ -392,7 +392,7 @@ If a special exist * 10+9
 		static $salemakerSales = NULL;
 
 		if( $salemakerSales === NULL ) {
-			$salemakerSales = $this->mDb->getAssoc("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'", NULL, NULL, $this->cacheQueryTime() );
+			$salemakerSales = $this->mDb->getAssoc("select `sale_id`, `sale_status`, `sale_name`, `sale_categories_all`, `sale_deduction_value`, `sale_deduction_type`, `sale_pricerange_from`, `sale_pricerange_to`, `sale_specials_condition`, `sale_categories_selected`, `sale_date_start`, `sale_date_end`, `sale_date_added`, `sale_date_last_modified`, `sale_date_status_change` from " . TABLE_SALEMAKER_SALES . " where `sale_status`='1'", FALSE, NULL, $this->cacheQueryTime() );
 		}
 		foreach( array_keys( $salemakerSales ) as $saleId ) {
 			$categories = explode(',', $salemakerSales[$saleId]['sale_categories_all']);
@@ -1199,6 +1199,7 @@ If a special exist * 10+9
 			$pListHash['user_id'] = $userId;
 		}
 	}
+
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
 
@@ -2433,17 +2434,17 @@ Skip deleting of images for now
 		$inCartMixed = $gBitCustomer->mCart->in_cart_mixed( $this->mProductsId );
 
 		// works on Mixed ON
-		if( $gBitCustomer->mCart->in_cart_mixed($pProductsId) == 0 ) {
+		if( !$inCartMixed ) {
 			if ($check_min >= $check_units) {
 				$ret = $check_min;
 			} else {
 				$ret = $check_units;
 			}
 		} elseif( $inCartMixed < $check_min ) {
-			$ret = $check_min - $gBitCustomer->mCart->in_cart_mixed($pProductsId);
+			$ret = $check_min - $inCartMixed;
 		} elseif( $inCartMixed > $check_min ) {
 			// set to units or difference in units to balance cart
-			$new_units = $check_units - fmod($gBitCustomer->mCart->in_cart_mixed($pProductsId), $check_units);
+			$new_units = $check_units - fmod($inCartMixed, $check_units);
 			$ret = ($new_units > 0 ? $new_units : $check_units);
 		} else {
 			$ret = $check_units;

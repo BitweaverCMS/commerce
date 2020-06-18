@@ -22,6 +22,8 @@
 
 class category_tree {
 
+	private $tree = array();
+
 	function zen_category_tree($product_type = "all") {
 		global $gBitDb, $cPath, $cPath_array;
 		if ($product_type != 'all') {
@@ -47,13 +49,14 @@ class category_tree {
 								 ORDER BY `sort_order`, cd.`categories_name`";
 			$bindVars[] = $master_type;
 		}
-		$categories = $gBitDb->query($categories_query, $bindVars, true, 150);
-		while (!$categories->EOF)	{
+		$categories = $gBitDb->query($categories_query, $bindVars, true);
+
+		while (!$categories->EOF) {
 			$this->tree[$categories->fields['categories_id']] = array('name' => $categories->fields['categories_name'],
-																									'parent' => $categories->fields['parent_id'],
-																									'level' => 0,
-																									'path' => $categories->fields['categories_id'],
-																									'next_id' => false);
+																		'parent' => $categories->fields['parent_id'],
+																		'level' => 0,
+																		'path' => $categories->fields['categories_id'],
+																		'next_id' => false);
 
 			if (isset($parent_id)) {
 				$this->tree[$parent_id]['next_id'] = $categories->fields['categories_id'];
@@ -66,53 +69,39 @@ class category_tree {
 			}
 			$categories->MoveNext();
 		}
-		if (zen_not_null($cPath)) {
+		if( !empty( $cPath ) ) {
 			$new_path = '';
 			reset($cPath_array);
 			while (list($key, $value) = each($cPath_array)) {
 				unset($parent_id);
 				unset($first_id);
-		if ($product_type == 'all') {
-				$categories_query = "select c.`categories_id`, cd.`categories_name`, c.`parent_id`
-														 from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-														 where c.`parent_id` = '" . (int)$value . "'
-														 and c.`categories_id` = cd.`categories_id`
-														 and cd.`language_id`='" . (int)$_SESSION['languages_id'] . "'
-														 and c.`categories_status`= '1'
-														 order by `sort_order`, cd.`categories_name`";
-	 } else {
-/*
-				$categories_query = "select ptc.`category_id` as categories, cd.`categories_name`, c.`parent_id`
-														 from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc
-														 where c.`parent_id` = '" . (int)$value . "'
-														 and ptc.`category_id` = cd.`categories_id`
-													 and ptc.`product_type_id` = '" . $master_type . "'
-														 and cd.`language_id`='" . (int)$_SESSION['languages_id'] . "'
-														 and c.`categories_status`= '1'
-														 order by `sort_order`, cd.`categories_name`";
-*/
-			$categories_query = "select ptc.`category_id` as categories_id, cd.`categories_name`, c.`parent_id`
-													 from " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd, " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc
-													 where c.`parent_id` = '" . (int)$value . "'
-													 and ptc.`category_id` = cd.`categories_id`
-													 and ptc.`product_type_id` = '" . $master_type . "'
-													 and c.`categories_id` = ptc.`category_id`
-													 and cd.`language_id`='" . (int)$_SESSION['languages_id'] ."'
-													 and c.`categories_status`= '1'
-													 order by `sort_order`, cd.`categories_name`";
+				$bindVars = array( (int)$value, (int)$_SESSION['languages_id'] );
+				if ($product_type == 'all') {
+					$categories_query = "SELECT c.`categories_id`, cd.`categories_name`, c.`parent_id`
+										FROM " . TABLE_CATEGORIES . " c 
+											INNER JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON (c.`categories_id` = cd.`categories_id`) 
+										WHERE c.`parent_id` = ? AND cd.`language_id`= ? AND c.`categories_status`= '1'
+										ORDER BY `sort_order`, cd.`categories_name`";
+				} else {
+					$categories_query = "SELECT ptc.`category_id` as categories_id, cd.`categories_name`, c.`parent_id`
+										FROM " . TABLE_CATEGORIES . " c
+											INNER JOIN " . TABLE_CATEGORIES_DESCRIPTION . " cd ON (ptc.`category_id` = cd.`categories_id`)
+											INNER JOIN " . TABLE_PRODUCT_TYPES_TO_CATEGORY . " ptc ON (c.`categories_id` = ptc.`category_id`)
+										WHERE c.`parent_id` = ? AND cd.`language_id` = ? AND ptc.`product_type_id` = ? AND c.`categories_status`= '1'
+										ORDER BY `sort_order`, cd.`categories_name`";
+					$bindVars[] = $master_type;
+				}
 
-	 }
-
-				$rows = $gBitDb->Execute($categories_query);
+				$rows = $gBitDb->query($categories_query, $bindVars);
 
 				if ($rows->RecordCount()>0) {
 					$new_path .= $value;
 					while (!$rows->EOF) {
 						$this->tree[$rows->fields['categories_id']] = array('name' => $rows->fields['categories_name'],
-																								 'parent' => $rows->fields['parent_id'],
-																								 'level' => $key+1,
-																								 'path' => $new_path . '_' . $rows->fields['categories_id'],
-																								 'next_id' => false);
+																			'parent' => $rows->fields['parent_id'],
+																			'level' => $key+1,
+																			'path' => $new_path . '_' . $rows->fields['categories_id'],
+																			'next_id' => false);
 
 						if (isset($parent_id)) {
 							$this->tree[$parent_id]['next_id'] = $rows->fields['categories_id'];
@@ -124,18 +113,18 @@ class category_tree {
 						}
 
 						$last_id = $rows->fields['categories_id'];
-					$rows->MoveNext();
+						$rows->MoveNext();
 					}
 					$this->tree[$last_id]['next_id'] = $this->tree[$value]['next_id'];
 					$this->tree[$value]['next_id'] = $first_id;
 					$new_path .= '_';
 				} else {
 					break;
-			 }
-		 }
-	 }
-	 $row = 0;
-	 return $this->zen_show_category($first_element, $row);
+				}
+			}
+		}
+
+		return $this->zen_show_category($first_element, 0);
 	}
 
 	function zen_show_category($counter,$ii) {
@@ -150,7 +139,7 @@ class category_tree {
 		}
 
 
-		if ($this->tree[$counter]['parent'] == 0) {
+		if( empty( $this->tree[$counter]['parent'] ) ) {
 			$cPath_new = 'cPath=' . $counter;
 			$this->box_categories_array[$ii]['top'] = 'true';
 		} else {
@@ -164,7 +153,7 @@ class category_tree {
 			$this->box_categories_array[$ii]['current'] = true;
 		}
 
-// display category name
+		// display category name
 		$this->box_categories_array[$ii]['name'] = $this->categories_string . $this->tree[$counter]['name'];
 
 
@@ -179,7 +168,7 @@ class category_tree {
 			}
 		}
 
-		if ($this->tree[$counter]['next_id'] != false) {
+		if( !empty( $this->tree[$counter]['next_id'] ) ) {
 			$ii++;
 			$this->zen_show_category($this->tree[$counter]['next_id'], $ii);
 		}

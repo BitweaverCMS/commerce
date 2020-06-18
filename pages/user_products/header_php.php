@@ -10,8 +10,8 @@ if( !empty( $_REQUEST['user_id'] ) && $_REQUEST['user_id'] != $gBitUser->mUserId
 }
 
 
-define('NAVBAR_TITLE', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( FALSE ) );
-$gCommerceSystem->setHeadingTitle( tra( 'Products by' ).' '.$gQueryUser->getDisplayName( FALSE ) );
+define('NAVBAR_TITLE', tra( 'Products by' ).' '.$gQueryUser->getDisplayName() );
+$gCommerceSystem->setHeadingTitle( tra( 'Products by' ).' '.$gQueryUser->getDisplayName() );
 
   require_once(DIR_FS_MODULES . 'require_languages.php');
   $breadcrumb->add(NAVBAR_TITLE);
@@ -28,7 +28,7 @@ $listHash['user_id'] = $gQueryUser->mUserId;
 $userProducts = $gBitProduct->getList( $listHash );
 $gBitProduct->invokeServices( 'content_list_function', $listHash );
 $gBitSmarty->assign( 'listProducts', $userProducts );
-$gBitSmarty->assign( 'listTitle', tra( 'Products by' ).' '.$gQueryUser->getDisplayName( TRUE ) );
+$gBitSmarty->assign( 'listTitle', tra( 'Products by' ).' '.$gQueryUser->getDisplayName() );
 $gBitSmarty->assign( 'listInfo', $listHash );
 
 $gBitSmarty->assign_by_ref( 'gQueryUser', $gQueryUser );

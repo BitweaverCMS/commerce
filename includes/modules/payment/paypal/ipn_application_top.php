@@ -116,7 +116,6 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
 
 // set the session name and save path
   zen_session_name('zenid');
-  zen_session_save_path(SESSION_WRITE_DIRECTORY);
 
 // set the session ID if it exists
    if (isset($_POST[zen_session_name()])) {

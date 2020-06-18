@@ -34,17 +34,6 @@
     }
   }
 
-// check if the session folder is writeable
-  if (WARN_SESSION_DIRECTORY_NOT_WRITEABLE == 'true') {
-    if (STORE_SESSIONS == '') {
-      if (!is_dir(zen_session_save_path())) {
-        $messageStack->add('header', WARNING_SESSION_DIRECTORY_NON_EXISTENT, 'warning');
-      } elseif (!is_writeable(zen_session_save_path())) {
-        $messageStack->add('header', WARNING_SESSION_DIRECTORY_NOT_WRITEABLE, 'warning');
-      }
-    }
-  }
-
 // check if the sql cache folder is writeable
   if (WARN_SQL_CACHE_DIRECTORY_NOT_WRITEABLE == 'true' && strtolower(SQL_CACHE_METHOD) == 'file') {
     if (!is_dir(DIR_FS_SQL_CACHE)) {
