@@ -408,7 +408,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 						$products_list = (strlen($products_list) > 255) ? substr($products_list, 0, 250) . ' ...' : $products_list;
 
 						$transHash['customFields']['products_purchased'] = $products_list;
-						$transHash['customFields']['orders_id'] = $pOrder->mDb->mName . '-' . $pPaymentParams['payment_user_id'];
+						$transHash['customFields']['orders_id'] = $pOrder->mDb->mName . '-' . $pPaymentParams['orders_id'];
 						$transHash['customFields']['customers_id'] = $pPaymentParams['payment_user_id'];
 					}
 
