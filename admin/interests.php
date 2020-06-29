@@ -58,7 +58,7 @@ die;
 	$mid = 'bitpackage:bitcommerce/admin_uninterested_customers.tpl';
 }
 
-$gBitSmarty->assign_by_ref( 'interestsList', $gBitCustomer->getInterests() );
+$gBitSmarty->assign( 'interestsList', $gBitCustomer->getInterests() );
 print $gBitSmarty->fetch( $mid, tra( 'Customer Interests' ) );
 
 require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 
