@@ -40,11 +40,155 @@ class CommerceCustomer extends CommerceBase {
 		return( count( $this->mInfo ) );
 	}
 
+	function getBatchOrder() {
+		$ret = array();
+		if( $this->isValid() && ($batchArray = $this->getBatchHash()) ) {
+			// first row is the header
+			$headerRow = array_shift( $batchArray );
+
+			// Maps spreadsheet header to address fields expected by shopping cart
+			$batchKeys = array( 
+				'product_id' => 'product_id',
+				'quantity' => 'quantity',
+				'delivery_first_name' => 'firstname',
+				'delivery_last_name' => 'lastname',
+				'delivery_company' => 'company',
+				'delivery_address_1' => 'street_address',
+				'delivery_address_2' => 'suburb',
+				'delivery_city' => 'city',
+				'delivery_state' => 'state',
+				'delivery_postcode' => 'postcode',
+				'delivery_country' => 'country',
+				'delivery_telephone' => 'telephone',
+				'shipping_method' => 'shipping_method',
+				'discount_code' => 'discount_code',
+				'file_name' => 'file_name',
+				'shipping_method' => 'shipping_method',
+				'product_id' => 'product_id',
+				'option_id' => 'option_id',
+			);
+			/*
+				  'country_id' => string '223' (length=3)
+				  'zone_id' => string '1979' (length=4)
+				  'countries_id' => string '223' (length=3)
+				  'countries_name' => string 'United States' (length=13)
+				  'countries_iso_code_2' => string 'US' (length=2)
+				  'countries_iso_code_3' => string 'USA' (length=3)
+				  'countries_iso_code_num' => string '840' (length=3)
+				  'address_format_id' => string '2' (length=1)
+			*/
+
+			$batchIndex = array();
+			$headerRowIndex = array_flip( $headerRow );
+			foreach( array_keys( $batchKeys ) as $sheetKey ) {
+				if( isset( $headerRowIndex[$sheetKey] ) ) {
+					$batchIndex[$sheetKey] = $headerRowIndex[$sheetKey];
+				}
+			}
+			$i = 1;
+			foreach( $batchArray as $batchRow ) {
+				$rowHash = array( 'customers_id' => $this->mCustomerId );
+				foreach( $batchIndex as $key=>$index ) {
+					$rowHash[$batchKeys[$key]] = $batchRow[$index];
+				}
+				if( ($countryString = trim( BitBase::getParameter( $rowHash, 'country' ) ))  && ($countryHash = zen_get_countries( $countryString ) ) ) {
+					if( ($zoneString = trim( BitBase::getParameter( $rowHash, 'state' ) ))  && ($zoneHash = zen_get_zone_by_name( $countryHash['countries_id'], $zoneString ) ) ) {
+					} else {
+						$rowHash['error'][] = 'State could not be found';
+					}
+					$rowHash = array_merge( $rowHash, $countryHash, $zoneHash );
+					// stupid cruft from com_address_book.country_id inconsistency
+					$rowHash['country_id'] = $rowHash['countries_id'];
+					// stupid cruft from address_display_inc.tpl
+					$rowHash['country'] = $countryHash;
+				} else {
+					$rowHash['error'][] = 'Country could not be found';
+				}
+				// validate address has values
+				foreach( $batchKeys as $sheetKey=>$addressKey ) {
+					switch( $addressKey ) {
+						case 'suburb':
+						case 'company':
+						case 'telephone':
+						case 'discount_code':
+						case 'file_name':
+							// these are all optional
+							break;
+						default:
+							if( empty( $rowHash[$addressKey] ) ) {
+								$rowHash['error'][] = ucfirst( str_replace( '_', ' ', $addressKey ) ).' not found';
+							}
+							break;
+					}
+				}
+				if( !empty( $rowHash['product_id'] ) ) {
+					if( !empty( $rowHash['option_id'] ) ) {
+						require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
+						$productManager = new CommerceProductManager();
+						$optionsValuesIds = explode( ',', $rowHash['option_id'] );
+						foreach( $optionsValuesIds as $optionsValuesId ) {
+							$optionsValuesHash = $productManager->getOptionsValue( $optionsValuesId );
+							$rowHash['product_options'][$optionsValuesHash['products_options_id']] = $optionsValuesId;
+						}
+						
+					}
+					$productIds = explode( ',', $rowHash['product_id'] );
+					foreach( $productIds as $productId ) {
+						if( $productObject = CommerceProduct::getCommerceObject( $productId ) ) {
+							$rowHash['products'][$productId] = $productObject;
+						}
+					}
+				}
+				$rowHash['batch_index'] = $i;
+				$ret[$i] = $rowHash;
+				$i++;
+			}
+		}
+
+		return $ret;
+	}
+
+	private function getBatchHash () {
+		$ret = array();
+		$bindVars = array( 'customers_id'=>$this->mCustomerId );
+		if( $batchString = $this->mDb->getOne( "SELECT batch_hash FROM " . TABLE_CUSTOMERS_BATCH_ORDERS . " WHERE `customers_id`=?", $bindVars ) ) {
+			$ret = unserialize( $batchString );
+		}
+		return $ret;
+	}
+
+	function expungeBatchItem( $pBatchIndex ) {
+		if( $batchArray = $this->getBatchHash() ) {
+			if( isset( $batchArray[$pBatchIndex] ) ) {
+				unset( $batchArray[$pBatchIndex] );
+				$this->storeBatchOrder( array_values( $batchArray ) );
+			}
+		}
+	}
+
+	function storeBatchOrder( $pBatchHash ) {
+		if( $this->isValid() ) {
+			if( !empty( $pBatchHash ) && is_array( $pBatchHash ) ) {
+				$bindVars['batch_hash'] = serialize( $pBatchHash );
+				if( $hasBatch = $this->mDb->getOne( "SELECT `customers_id` FROM " . TABLE_CUSTOMERS_BATCH_ORDERS . " WHERE `customers_id`=?", array( $this->mCustomerId ) ) ) {
+					$bindVars['date_updated'] = $this->mDb->NOW();
+					$this->mDb->associateUpdate( TABLE_CUSTOMERS_BATCH_ORDERS, $bindVars, array( 'customers_id' => $this->mCustomerId ) );
+				} else {
+					$bindVars['customers_id'] = $this->mCustomerId;
+					$this->mDb->associateInsert( TABLE_CUSTOMERS_BATCH_ORDERS, $bindVars );
+				}
+			} else {
+				$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BATCH_ORDERS. " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			}
+		}
+	}
+
 	function expunge() {
 		if( $this->isValid() && !($this->getOrdersHistory()) ) {
 			$this->mDb->query( "DELETE FROM " . TABLE_ADDRESS_BOOK . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
 			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `customers_basket_id` IN (SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `customers_id`=?)", array( $this->mCustomerId ) );
 			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BATCH_ORDERS. " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
 			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
 			$this->mDb->query( "DELETE FROM " . TABLE_WISHLIST . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
 			$this->mDb->query( "DELETE FROM " . TABLE_FILES_UPLOADED . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );

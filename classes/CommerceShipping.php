@@ -119,6 +119,19 @@ class CommerceShipping extends BitSingleton {
 		return $ret;
 	}
 
+	function quoteToSession( $quote ) {
+		unset( $_SESSION['shipping'] );
+		if( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
+			$_SESSION['shipping'] = array(
+				'id' => $quote[0]['id'].'_'.$quote[0]['methods'][0]['id'],
+				'title' => (($quote[0]['module'] == $quote[0]['methods'][0]['title']) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
+				'cost' => $quote[0]['methods'][0]['cost'],
+				'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
+				);
+		}
+		return !empty( $_SESSION['shipping'] );	
+	}
+
 }
 
 CommerceShipping::loadSingleton();

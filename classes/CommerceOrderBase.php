@@ -19,11 +19,13 @@ abstract class CommerceOrderBase extends BitBase {
 	public $free_shipping_price;
 	public $contents;
 	public $delivery = array();
+	public $billing = array();
 
 	protected $mOtClasses = array();
 	protected $mOtProcessModules = array();
 
 	abstract public function getDelivery();
+	abstract public function getBilling();
 	abstract public function getProductHash( $pProductsKey );
 	abstract public function calculate( $pForceRecalculate=FALSE );
 

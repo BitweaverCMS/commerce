@@ -22,9 +22,11 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		global $gBitCustomer;
 		$ret = array();
 
-		$deliveryAddressId = BitBase::getParameter( $_SESSION, 'sendto', $gBitCustomer->getDefaultAddressId() );
-
-		if( isset( $deliveryAddressId ) && $selAddress = $gBitCustomer->getAddress( $deliveryAddressId ) ) {
+		if( !empty( $this->delivery ) ) {
+			$ret = $this->delivery;
+		} elseif( $ret = BitBase::getParameter( $_SESSION, 'sendtohash' ) ) {
+			
+		} elseif( $selAddress = $gBitCustomer->getAddress( BitBase::getParameter( $_SESSION, 'sendto', $gBitCustomer->getDefaultAddressId() ) ) ) {
 			foreach( $selAddress as $key => $value ) {
 				$ret[str_replace( 'entry_', '', $key)] = $value;
 			
@@ -33,12 +35,39 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				$ret['zone_id'] = (int)$selAddress['entry_zone_id'];
 			}
 			$_SESSION['country_id'] = NULL;
-		} else {
-			$ret = $this->delivery;
+
+			// cache for subsequent calls
+			$this->delivery = $ret;
 		}
 
 		return $ret;
 	}
+
+	public function getBilling() {
+		global $gBitCustomer;
+		$ret = array();
+
+		if( !empty( $this->billing ) ) {
+			$ret = $this->billing;
+		} elseif( $ret = BitBase::getParameter( $_SESSION, 'billtohash' ) ) {
+			
+		} elseif( $selAddress = $gBitCustomer->getAddress( BitBase::getParameter( $_SESSION, 'billto', $gBitCustomer->getDefaultAddressId() ) ) ) {
+			foreach( $selAddress as $key => $value ) {
+				$ret[str_replace( 'entry_', '', $key)] = $value;
+			
+			}
+			if( !empty( $_SESSION['cart_zone_id'] ) ) {
+				$ret['zone_id'] = (int)$selAddress['entry_zone_id'];
+			}
+			$_SESSION['country_id'] = NULL;
+
+			// cache for subsequent calls
+			$this->billing = $ret;
+		}
+
+		return $ret;
+	}
+
 
 	function load() {
 		global $gBitUser;
@@ -161,6 +190,12 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 // assign a temporary unique ID to the order contents to prevent hack attempts during the checkout procedure
 		$this->cartID = $this->generate_cart_id();
+	}
+
+	function emptyCart() {
+		foreach( array_keys( $this->contents ) as $productsKey ) {
+			$this->updateQuantity( $productsKey, 0 );
+		}
 	}
 
 	////

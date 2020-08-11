@@ -19,7 +19,7 @@ if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empt
 			$process = true;
 			if( $gBitCustomer->storeAddress( $_REQUEST ) ) {
 				$_SESSION['sendto'] = $_REQUEST['address'];
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING));
 			} else {
 				$gBitSmarty->assign( 'addressErrors', $gBitCustomer->mErrors );
 				$_REQUEST['change_address'] = TRUE;
@@ -28,7 +28,7 @@ if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empt
 			if( empty( $_SESSION['sendto'] ) || $_SESSION['sendto'] != $_REQUEST['address'] ) {
 				if( $gBitCustomer->isAddressOwner( $_REQUEST['address'] ) ) {
 					$_SESSION['sendto'] = $_REQUEST['address'];
-					zen_redirect( zen_href_link( FILENAME_CHECKOUT_SHIPPING, '', 'SSL' ) );
+					zen_redirect( zen_href_link( FILENAME_CHECKOUT_SHIPPING ) );
 				}
 			}
 		}
@@ -50,7 +50,7 @@ if( !$gBitCustomer->mCart->count_contents() ) {
 if( $gBitCustomer->mCart->get_content_type() == 'virtual') {
 	$_SESSION['shipping'] = false;
 	$_SESSION['sendto'] = false;
-	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT));
 }
 
 // Validate Cart for checkout
@@ -129,18 +129,10 @@ if( isset( $_REQUEST['change_address'] ) ) {
 
 				if( isset( $quote['error'] ) ) {
 					$_SESSION['shipping'] = '';
+				} elseif( $gCommerceShipping->quoteToSession( $quote ) ) {
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT));
 				} else {
-					if( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
-						$_SESSION['shipping'] = array(
-							'id' => $_SESSION['shipping'],
-							'title' => (($free_shipping == true) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
-							'cost' => $quote[0]['methods'][0]['cost'],
-							'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
-							);
-						zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
-					} else {
-						$gBitSmarty->assign( 'errors', array( 'Shipping method could not be calculated.', $quote[0]['methods'][0]['title'] ) );
-					}
+					$gBitSmarty->assign( 'errors', array( 'Shipping method could not be calculated.', $quote[0]['methods'][0]['title'] ) );
 				}
 			} elseif( empty( $free_shipping ) ) {
 				$gBitSmarty->assign( 'errors', 'Please select a shipping method' );
@@ -148,7 +140,7 @@ if( isset( $_REQUEST['change_address'] ) ) {
 		} else {
 			// not virtual product, but no shipping cost.
 			$_SESSION['shipping'] = (!$free_shipping ? 'free_free' : false);
-			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT));
 		}
 	}
 	if( $gBitUser->isRegistered() && $gCommerceShipping->isShippingAvailable() && !empty( $_SESSION['sendto'] ) && empty( $_REQUEST['change_address'] ) ) {
@@ -185,7 +177,7 @@ if( isset( $_REQUEST['change_address'] ) ) {
 			}
 		}
 
-		$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+		$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING));
 		$breadcrumb->add(NAVBAR_TITLE_2);
 
 		$gBitSmarty->assign( 'shippingModules', TRUE );

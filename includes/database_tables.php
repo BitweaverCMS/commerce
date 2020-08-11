@@ -53,6 +53,7 @@ define('TABLE_CUSTOMERS_INTERESTS_MAP', '`'.BITCOMMERCE_DB_PREFIX . 'com_custome
 define('TABLE_CUSTOMERS_INTERESTS', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers_interests`');
 define('TABLE_CUSTOMERS_BASKET', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers_basket`');
 define('TABLE_CUSTOMERS_BASKET_ATTRIBUTES', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers_basket_att`');
+define('TABLE_CUSTOMERS_BATCH_ORDERS', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers_batch_orders`');
 define('TABLE_CUSTOMERS_INFO', '`'.BITCOMMERCE_DB_PREFIX . 'com_customers_info`');
 define('TABLE_DB_CACHE', '`'.BITCOMMERCE_DB_PREFIX . 'com_db_cache`');
 define('TABLE_EMAIL_ARCHIVE', '`'.BITCOMMERCE_DB_PREFIX . 'com_email_archive`');

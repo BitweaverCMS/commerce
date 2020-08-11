@@ -517,6 +517,13 @@ BITCOMMERCE_INSTALL_PREFIX.'com_customers_basket_att' => "
   CONSTRAINT ', CONSTRAINT `cust_bask_att_bask_ref` FOREIGN KEY ( `customers_basket_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers_basket`( `customers_basket_id` )'
 ",
 
+BITCOMMERCE_INSTALL_PREFIX.'com_customers_batch_orders' => "
+  customers_id I4,
+  batch_hash X,
+  date_added T
+  CONSTRAINT ', CONSTRAINT `cust_bask_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )' 
+",
+
 BITCOMMERCE_INSTALL_PREFIX.'com_customers_info' => "
   customers_info_id I4,
   date_of_last_logon T,

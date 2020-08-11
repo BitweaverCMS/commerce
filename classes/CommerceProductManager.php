@@ -218,7 +218,7 @@ die;
 	function getOptionsValue( $pAttrId ) {
 		$ret = array();
 		if( BitBase::verifyId( $pAttrId ) ) {
-			$ret = $this->mDb->getRow( "SELECT * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_options_values_id`=?", array( $pAttrId ) );
+			$ret = $this->mDb->getRow( "SELECT * FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_options_values_id`=?", array( $pAttrId ), BIT_QUERY_CACHE_TIME );
 		}
 		return $ret;
 	}

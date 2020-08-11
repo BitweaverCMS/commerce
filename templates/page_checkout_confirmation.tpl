@@ -67,13 +67,13 @@
 			<div class="col-md-12 col-sm-4 col-xs-12">
 				{legend legend="Shipping Address"}
 					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1"><i class="icon-truck"></i> {tr}Change{/tr}</a></div>
-					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->delivery}
+					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->getDelivery()}
 				{/legend}
 			</div>
 			<div class="col-md-12 col-sm-4 col-xs-12">
 				{legend legend="Billing Address"}
 					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment&amp;change_address=1"><i class="icon-home"></i> {tr}Change{/tr}</a></div>
-					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->billing}
+					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->getBilling()}
 				{/legend}
 			</div>
 			<div class="col-md-12  col-sm-4 col-xs-12">

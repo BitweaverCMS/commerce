@@ -145,65 +145,41 @@
 
 ////
 // Get tax rate from tax description
- function zen_get_tax_rate_from_desc($tax_desc) {
-		global $gBitDb;
-		$tax_rate = 0.00;
+function zen_get_tax_rate_from_desc($tax_desc) {
+	global $gBitDb;
+	$tax_rate = 0.00;
 
-		$tax_descriptions = explode(' + ', $tax_desc);
-		foreach ($tax_descriptions as $tax_description) {
-			$tax_query = "select tax_rate
-									from " . TABLE_TAX_RATES . "
-									where tax_description = '" .
-									$tax_description . "'";
-
-			$tax = $gBitDb->Execute($tax_query);
-
-			$tax_rate += $tax->fields['tax_rate'];
-		}
-
-		return $tax_rate;
+	$tax_descriptions = explode(' + ', $tax_desc);
+	foreach ($tax_descriptions as $tax_description) {
+		$tax_rate += $gBitDb->getOne( "SELECT tax_rate FROM " . TABLE_TAX_RATES . " WHERE tax_description = ?", array( $tax_description ), FALSE, FALSE, BIT_QUERY_CACHE_TIME );
 	}
 
+	return $tax_rate;
+}
+
  function zen_get_tax_locations($store_country = -1, $store_zone = -1) {
-	global $gBitDb;
+	global $gBitCustomer;
 	$ret = array();
 	switch (STORE_PRODUCT_TAX_BASIS) {
 		case 'Shipping':
-			if( !empty( $_SESSION['sendto'] ) ) {
-				$tax_address_query = "select ab.`entry_country_id`, ab.`entry_zone_id` from " . TABLE_ADDRESS_BOOK . " ab
-										left join " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-										where ab.`customers_id` = ? and ab.`address_book_id` = ?";
-				$taxAddress = $gBitDb->getRow( $tax_address_query, array( (int)$_SESSION['customer_id'], (int)$_SESSION['sendto'] ) );
-			}
+			$taxAddress = $gBitCustomer->mCart->getDelivery();
 			break;
 		case 'Billing':
-
-			$tax_address_query = "SELECT ab.`entry_country_id`, ab.`entry_zone_id`
-									FROM " . TABLE_ADDRESS_BOOK . " ab
-										LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-									WHERE ab.`customers_id` = ?  and ab.`address_book_id` = ?";
-			$taxAddress = $gBitDb->getRow($tax_address_query, array( (int)$_SESSION['customer_id'], (int)$_SESSION['billto'] ) );
+			$taxAddress = $gBitCustomer->mCart->getBilling();
 			break;
 		case 'Store':
-			$tax_address_query = "SELECT ab.`entry_country_id`, ab.`entry_zone_id`
-									FROM " . TABLE_ADDRESS_BOOK . " ab
-										LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-									WHERE ab.`customers_id` = ? AND ab.`address_book_id` = ?";
-			$taxAddress = $gBitDb->getRow($tax_address_query, array( (int)$_SESSION['customer_id'], (int)$_SESSION['billto'] ) );
+			$taxAddress = $gBitCustomer->mCart->getBilling();
 
-			if ($taxAddress['entry_zone_id'] == STORE_ZONE) {
+			if ($taxAddress['zone_id'] == STORE_ZONE) {
 
 			} else {
-				$tax_address_query = "SELECT ab.`entry_country_id`, ab.`entry_zone_id`
-										FROM " . TABLE_ADDRESS_BOOK . " ab
-											LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-										WHERE ab.`customers_id` = ?  AND ab.`address_book_id` = ?";
-				$taxAddress = $gBitDb->getRow($tax_address_query, array( (int)$_SESSION['customer_id'], (int)$_SESSION['sendto'] ) );
+				$taxAddress = $gBitCustomer->mCart->getDelivery();
 			}
+			break;
 	}
 	if( !empty( $taxAddress ) ) {
-		$ret['zone_id'] = $taxAddress['entry_zone_id'];
-		$ret['country_id'] = $taxAddress['entry_country_id'];
+		$ret['zone_id'] = $taxAddress['zone_id'];
+		$ret['country_id'] = $taxAddress['country_id'];
 	}
 	return $ret;
 }

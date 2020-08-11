@@ -115,11 +115,14 @@ class CommercePaymentManager {
 		$ret = FALSE;
 		if( $pOrder->hasPaymentDue() ) {	
 			if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
-				$ret = $this->mPaymentObjects[$this->selected_module]->verifyPayment( $pPaymentParams, $pOrder );
+				if( !($ret = $this->mPaymentObjects[$this->selected_module]->verifyPayment( $pPaymentParams, $pOrder )) ) {
+					$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
+				}
 			}
 		} else {
 			$ret = TRUE;
 		}
+
 		return $ret;
 	}
 

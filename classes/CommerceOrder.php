@@ -36,7 +36,6 @@ class order extends CommerceOrderBase {
 		$this->subtotal = 0;
 		$this->contents = array();
 		$this->customer = array();
-		$this->billing = array();
 
 		if( self::verifyId( $pOrdersId ) ) {
 			$this->mOrdersId = $pOrdersId;
@@ -49,6 +48,10 @@ class order extends CommerceOrderBase {
 	// Abstract methods implementation
 	public function getDelivery() {
 		return $this->delivery;
+	}
+
+	public function getBilling() {
+		return $this->billing;
 	}
 
 	public function getProductHash( $pProductsKey ) {
@@ -535,71 +538,10 @@ class order extends CommerceOrderBase {
 		global $currencies, $gBitUser, $gBitCustomer;
 		$this->content_type = $gBitCustomer->mCart->get_content_type();
 
-		if( $gBitUser->isRegistered() ) {
-			$customer_address_query = "SELECT ab.`entry_firstname`, ab.`entry_lastname`, ab.`entry_telephone`, c.`customers_id`, c.`customers_email_address`, ab.`entry_company`, ab.`entry_street_address`, ab.`entry_suburb`, ab.`entry_postcode`, ab.`entry_city`, ab.`entry_zone_id`, z.`zone_name`, co.`countries_id`, co.`countries_name`, co.`countries_iso_code_2`, co.`countries_iso_code_3`, co.`address_format_id`, ab.`entry_state`, ab.`address_book_id`
-									 FROM " . TABLE_CUSTOMERS . " c, " . TABLE_ADDRESS_BOOK . " ab
-										 LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-										 LEFT JOIN " . TABLE_COUNTRIES . " co on (ab.`entry_country_id` = co.`countries_id`)
-									 WHERE c.`customers_id` = ? AND ab.`customers_id` = ?	AND c.`customers_default_address_id` = ab.`address_book_id`";
-			$defaultAddress = $this->mDb->getRow( $customer_address_query, array( $gBitUser->mUserId, $gBitUser->mUserId ) );
+		$shippingAddress = $gBitCustomer->mCart->getDelivery();
+		$billingAddress = $gBitCustomer->mCart->getBilling();
 
-			// default to primary address in case we have ended up here without anything previously selected
-			$sendToAddressId = !empty( $_SESSION['sendto'] ) ? (int)$_SESSION['sendto'] : (!empty( $defaultAddress['address_book_id'] ) ? $defaultAddress['address_book_id'] : NULL);
-			if( $sendToAddressId ) {
-				$query = "SELECT ab.*, z.`zone_name`, ab.`entry_country_id`, c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`, c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
-						 FROM " . TABLE_ADDRESS_BOOK . " ab
-							 LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-							 LEFT JOIN " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
-						 WHERE ab.`customers_id`=? AND ab.`address_book_id`=?";
-				$shippingAddress = $this->mDb->getRow( $query, array( $gBitUser->mUserId, $sendToAddressId ) );
-				if( !$shippingAddress ) {
-					$shippingAddress = $defaultAddress;
-				}
-			}
-
-			// default to primary address in case we have ended up here without anything previously selected
-			$billToAddressId = !empty( $_SESSION['billto'] ) ? (int)$_SESSION['billto'] : (!empty( $defaultAddress['address_book_id'] ) ? $defaultAddress['address_book_id'] : NULL);
-			if( $billToAddressId ) {
-				$query = "SELECT ab.*, z.`zone_name`, ab.`entry_country_id`, c.`countries_id`, c.`countries_name`, c.`countries_iso_code_2`, c.`countries_iso_code_3`, c.`address_format_id`, ab.`entry_state`
-							FROM " . TABLE_ADDRESS_BOOK . " ab
-							LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-							LEFT JOIN " . TABLE_COUNTRIES . " c on (ab.`entry_country_id` = c.`countries_id`)
-							WHERE ab.`customers_id` = ?	and ab.`address_book_id` = ?";
-				$billingAddress = $this->mDb->getRow( $query, array( $gBitUser->mUserId, $billToAddressId ) );
-			}
-
-			switch( STORE_PRODUCT_TAX_BASIS ) {
-				case 'Shipping':
-					$taxAddressId = ($this->content_type == 'virtual' ? $billToAddressId : $sendToAddressId);
-					break;
-				case 'Billing':
-					$taxAddressId = $billToAddressId;
-					break;
-				case 'Store':
-					if ($billingAddress['entry_zone_id'] == STORE_ZONE) {
-						$taxAddressId = (int)$billToAddressId;
-					} else {
-						$taxAddressId = (int)($this->content_type == 'virtual' ? $billToAddressId : $sendToAddressId);
-					}
-					break;
-			 }
-
-			//STORE_PRODUCT_TAX_BASIS
-			if( !empty( $taxAddressId ) ) {
-				$tax_address_query = "SELECT ab.entry_country_id, ab.entry_zone_id, ab.`entry_state`
-										FROM " . TABLE_ADDRESS_BOOK . " ab
-										LEFT JOIN " . TABLE_ZONES . " z on (ab.`entry_zone_id` = z.`zone_id`)
-										WHERE ab.`customers_id` = ?	and ab.`address_book_id` = ?";
-				$taxAddress = $this->mDb->getRow( $tax_address_query, array( $gBitUser->mUserId, $taxAddressId) );
-				if( !empty( $taxAddress['entry_country_id'] ) && empty( $taxAddress['entry_zone_id'] ) ) {
-					if( $gBitCustomer->getZoneCount( $taxAddress['entry_country_id'] ) && ($zoneId = $gBitCustomer->getZoneId( $taxAddress['entry_state'], $taxAddress['entry_country_id'] )) ) {
-						$taxAddress['entry_zone_id'] = $zoneId;
-					}
-					// maybe we have some newly updated zones and outdated address_book entries
-				}
-			}
-
-		}
+		$taxAddress = zen_get_tax_locations();
 
 		$coupon_code = NULL;
 		if( !empty( $_SESSION['cc_id'] ) ) {
@@ -641,7 +583,7 @@ class order extends CommerceOrderBase {
 			}
 		}
 
-		if( !empty( $defaultAddress ) ) {
+		if( $defaultAddress = $gBitCustomer->getAddress( $gBitCustomer->getDefaultAddressId() ) ) {
 			$this->customer = array('firstname' => $defaultAddress['entry_firstname'],
 									'lastname' => $defaultAddress['entry_lastname'],
 									'customers_id' => $defaultAddress['customers_id'],
@@ -659,7 +601,8 @@ class order extends CommerceOrderBase {
 									'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
 									'format_id' => $defaultAddress['address_format_id'],
 									'telephone' => $defaultAddress['entry_telephone'],
-									'email_address' => $defaultAddress['customers_email_address']);
+									'email_address' => $gBitUser->getField( 'email' )
+									 );
 		} else {
 			$this->customer = array('firstname' => $gBitCustomer->getField( 'customers_firstname' ),
 									'lastname' => $gBitCustomer->getField( 'customers_lastname' ),
@@ -668,48 +611,48 @@ class order extends CommerceOrderBase {
 		}
 
 		if( !empty( $shippingAddress ) ) {
-			$this->delivery = array('firstname' => $shippingAddress['entry_firstname'],
-									'lastname' => $shippingAddress['entry_lastname'],
-									'company' => $shippingAddress['entry_company'],
-									'street_address' => $shippingAddress['entry_street_address'],
-									'suburb' => $shippingAddress['entry_suburb'],
-									'city' => $shippingAddress['entry_city'],
-									'postcode' => $shippingAddress['entry_postcode'],
-									'state' => ((zen_not_null($shippingAddress['entry_state'])) ? $shippingAddress['entry_state'] : $shippingAddress['zone_name']),
-									'zone_id' => $shippingAddress['entry_zone_id'],
+			$this->delivery = array('firstname' => $shippingAddress['firstname'],
+									'lastname' => $shippingAddress['lastname'],
+									'company' => $this->getParameter( $shippingAddress, 'company' ),
+									'street_address' => $shippingAddress['street_address'],
+									'suburb' => $this->getParameter( $shippingAddress, 'suburb' ),
+									'city' => $shippingAddress['city'],
+									'postcode' => $shippingAddress['postcode'],
+									'state' => ((zen_not_null($shippingAddress['state'])) ? $shippingAddress['state'] : $shippingAddress['zone_name']),
+									'zone_id' => $shippingAddress['zone_id'],
 									'countries_id' => $shippingAddress['countries_id'],
 									'countries_name' => $shippingAddress['countries_name'],
 									'countries_iso_code_2' => $shippingAddress['countries_iso_code_2'],
 									'countries_iso_code_3' => $shippingAddress['countries_iso_code_3'],
-									'country_id' => $shippingAddress['entry_country_id'],
-									'telephone' => $shippingAddress['entry_telephone'],
-									'format_id' => $shippingAddress['address_format_id']);
+									'country_id' => $shippingAddress['country_id'],
+									'telephone' => $this->getParameter( $shippingAddress, 'telephone' ),
+									'format_id' => $this->getParameter( $shippingAddress, 'address_format_id' ));
 		}
 
 		if( !empty( $billingAddress ) ) {
-			$this->billing = array('firstname' => $billingAddress['entry_firstname'],
-									'lastname' => $billingAddress['entry_lastname'],
-									'company' => $billingAddress['entry_company'],
-									'street_address' => $billingAddress['entry_street_address'],
-									'suburb' => $billingAddress['entry_suburb'],
-									'city' => $billingAddress['entry_city'],
-									'postcode' => $billingAddress['entry_postcode'],
-									'state' => ((zen_not_null($billingAddress['entry_state'])) ? $billingAddress['entry_state'] : $billingAddress['zone_name']),
-									'zone_id' => $billingAddress['entry_zone_id'],
+			$this->billing = array('firstname' => $billingAddress['firstname'],
+									'lastname' => $billingAddress['lastname'],
+									'company' => $billingAddress['company'],
+									'street_address' => $billingAddress['street_address'],
+									'suburb' => $billingAddress['suburb'],
+									'city' => $billingAddress['city'],
+									'postcode' => $billingAddress['postcode'],
+									'state' => ((zen_not_null($billingAddress['state'])) ? $billingAddress['state'] : $billingAddress['zone_name']),
+									'zone_id' => $billingAddress['zone_id'],
 									'countries_id' => $billingAddress['countries_id'],
 									'countries_name' => $billingAddress['countries_name'],
 									'countries_iso_code_2' => $billingAddress['countries_iso_code_2'],
 									'countries_iso_code_3' => $billingAddress['countries_iso_code_3'],
-									'country_id' => $billingAddress['entry_country_id'],
-									'telephone' => $billingAddress['entry_telephone'],
+									'country_id' => $billingAddress['country_id'],
+									'telephone' => $billingAddress['telephone'],
 									'format_id' => $billingAddress['address_format_id']);
 		}
 
 		foreach( array_keys( $gBitCustomer->mCart->contents ) as $cartItemKey ) {
 			$this->contents[$cartItemKey] = $gBitCustomer->mCart->getProductHash( $cartItemKey );
 			if( !empty( $taxAddress ) ) {
-				$this->contents[$cartItemKey]['tax'] = zen_get_tax_rate( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['entry_country_id'], $taxAddress['entry_zone_id'] );
-				$this->contents[$cartItemKey]['tax_description'] = zen_get_tax_description( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['entry_country_id'], $taxAddress['entry_zone_id'] );
+				$this->contents[$cartItemKey]['tax'] = zen_get_tax_rate( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['country_id'], $taxAddress['zone_id'] );
+				$this->contents[$cartItemKey]['tax_description'] = zen_get_tax_description( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['country_id'], $taxAddress['zone_id'] );
 			}
 
 			if ( !empty( $this->contents[$cartItemKey]['attributes'] ) ) {
@@ -938,7 +881,7 @@ class order extends CommerceOrderBase {
 		$this->email_low_stock='';
 
 		foreach( array_keys( $this->contents ) as $cartItemKey ) {
-			$stockQty = $this->mDb->GetOne( "SELECT `products_quantity` FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( zen_get_prid($this->contents[$cartItemKey]['id']) ) );
+			$stockQty = $this->mDb->getOne( "SELECT `products_quantity` FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( zen_get_prid($this->contents[$cartItemKey]['id']) ) );
 
 			if ( $stockQty ) {
 //				$this->contents[$cartItemKey]['stock_value'] = $stockValues['products_quantity'];
