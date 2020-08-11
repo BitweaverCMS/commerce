@@ -95,25 +95,21 @@
 
 ////
 // The HTML href link wrapper function
-  function zen_href_link($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true, $search_engine_safe = true, $static = false, $use_dir_ws_catalog = true) {
+  function zen_href_link($page = '', $parameters = '', $connection = 'SSL', $add_session_id = true, $search_engine_safe = true, $static = false, $use_dir_ws_catalog = true) {
     global $gBitSystem, $request_type, $session_started, $http_domain, $https_domain;
-    if ($connection == 'SSL' && ENABLE_SSL == 'true') {
-        $link = HTTPS_SERVER ;
-    } else {
-		$link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? HTTPS_SERVER : HTTP_SERVER;
-    }
+
+	$link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? HTTPS_SERVER : HTTP_SERVER;
 
     if ($use_dir_ws_catalog) $link .= DIR_WS_CATALOG;
 
 	if( !empty( $page ) ) {
-		$page = 'main_page='. $page . "&";
+		$page = $page;
 	}
 
     if (!$static) {
+      $link .= $page;
       if (zen_not_null($parameters)) {
-        $link .= 'index.php?'. $page . zen_output_string($parameters);
-      } else {
-        $link .= 'index.php?' . $page;
+        $link .= '?' . zen_output_string($parameters);
       }
     } else {
       if (zen_not_null($parameters)) {
@@ -132,8 +128,6 @@
         $sid = SID;
 //      } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL_ADMIN == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
       } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
-
-
         if ($http_domain != $https_domain) {
           $sid = zen_session_name() . '=' . zen_session_id();
         }
@@ -163,6 +157,7 @@
     while (strstr($link, '&amp;&amp;')) $link = str_replace('&amp;&amp;', '&amp;', $link);
 
     $link = preg_replace('/&/', '&amp;', $link);
+
     return $link;
   }
 
