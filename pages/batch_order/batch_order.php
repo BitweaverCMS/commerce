@@ -75,20 +75,25 @@ eb( $batchHash['error'] );
 	} elseif( $_POST['action'] == 'clear' ) {
 		$gBitCustomer->storeBatchOrder( array() );
 	} elseif( $_POST['action'] == 'upload' ) {
-		require_once( UTIL_PKG_PATH.'includes/phpoffice/autoload.php' );
 		$verifyMime = $gBitSystem->verifyMimeType( $_FILES['batch_file']['tmp_name'] );
 		if( $verifyMime == 'application/vnd.ms-excel' || $verifyMime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ) {
-			$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load( $_FILES['batch_file']['tmp_name'] );
-
-			$worksheet = $spreadsheet->getActiveSheet();
-			if( $rows = $worksheet->toArray() ) {
-				$gBitCustomer->storeBatchOrder( $rows );
-				foreach( $rows as $rowIndex => $rowHash ) {
-					foreach( $rowHash as $colIndex => $colValue ) {
-						
-					}
+			$phpOfficeAutload = UTIL_PKG_PATH.'includes/phpoffice/autoload.php';
+			if( file_exists( $phpOfficeAutload ) ) {
+				require_once( $phpOfficeAutload );
+				$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load( $_FILES['batch_file']['tmp_name'] );
+				$worksheet = $spreadsheet->getActiveSheet();
+				$batchHash = $worksheet->toArray();
+			}
+		} elseif( $verifyMime == 'text/plain' ) {
+			if( $csvFH = fopen( $_FILES['batch_file']['tmp_name'], 'r' ) ) {
+				while( $csvRow = fgetcsv( $csvFH ) ) {
+					$batchHash[] = $csvRow;
 				}
 			}
+		}
+
+		if( !empty( $batchHash ) ) {
+			$gBitCustomer->storeBatchOrder( $batchHash );
 		}
 	}
 }

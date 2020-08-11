@@ -7,7 +7,7 @@
 	<div class="body shopping-cart">
 		{if $batchHash}
 			{foreach from=$batchHash item=batchRow}
-	{form name='batch_order' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=batch_order"  method="post" enctype="multipart/form-data"}
+				{form name='batch_order' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=batch_order"  method="post" enctype="multipart/form-data"}
 				<input type="hidden" name="batch_index" value="{$batchRow.batch_index}">
 				<fieldset {if $batchRow.error}class="error"{/if}>
 					<div class="row">
@@ -18,18 +18,16 @@
 						</div>
 						<div class="col-xs-12 col-sm-6 col-md-5">
 							<ul class="data">
-					{foreach from=$batchRow.products item=$batchProduct}
-						<li>
-							<img class="image-responsive pull-left" style="max-width:150px;padding-right:10px;" src="{$batchProduct->getThumbnailUrl()}">
-							<span class="badge"> {$batchRow.quantity} </span> <a href="{$batchProduct->getDisplayUrl()}"><span class="cartproductname">{$batchProduct->getTitle()}</span></a>
-						</li>
-					{/foreach}
+							{foreach from=$batchRow.products item=$batchProduct}
+								<li>
+									<img class="image-responsive pull-left" style="max-width:150px;padding-right:10px;" src="{$batchProduct->getThumbnailUrl()}">
+									<span class="badge"> {$batchRow.quantity} </span> <a href="{$batchProduct->getDisplayUrl()}"><span class="cartproductname">{$batchProduct->getTitle()}</span></a>
+								</li>
+							{/foreach}
 							</ul>
 						</div>
 					</div>
-{if !$batchRow.error}
-<button class="btn btn-primary btn-xs" name="action" value="checkout">{booticon iname="icon-shopping-cart"} {tr}Checkout{/tr}</button> <button class="btn btn-default btn-xs" name="action" value="remove">{booticon iname="icon-delete"} {tr}Remove{/tr}</button>
-{/if}
+{if !$batchRow.error}<button class="btn btn-primary btn-xs" name="action" value="checkout">{booticon iname="icon-shopping-cart"} {tr}Checkout{/tr}</button> {/if}<button class="btn btn-default btn-xs" name="action" value="remove">{booticon iname="icon-delete"} {tr}Remove{/tr}</button>
 				</fieldset>
 	{/form}
 			{/foreach}
