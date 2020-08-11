@@ -125,14 +125,14 @@ class CommerceCustomer extends CommerceBase {
 					if( !empty( $rowHash['option_id'] ) ) {
 						require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
 						$productManager = new CommerceProductManager();
-						$optionsValuesIds = explode( ';', $rowHash['option_id'] );
+						$optionsValuesIds = preg_split('/[\s,!\?;:-]+|[\.]\s+/', $rowHash['option_id'], -1, PREG_SPLIT_NO_EMPTY);
 						foreach( $optionsValuesIds as $optionsValuesId ) {
 							$optionsValuesHash = $productManager->getOptionsValue( $optionsValuesId );
 							$rowHash['product_options'][$optionsValuesHash['products_options_id']] = $optionsValuesId;
 						}
 						
 					}
-					$productIds = explode( ';', $rowHash['product_id'] );
+					$productIds = preg_split('/[\s,!\?;:-]+|[\.]\s+/', $rowHash['product_id'], -1, PREG_SPLIT_NO_EMPTY);
 					foreach( $productIds as $productId ) {
 						if( $productObject = CommerceProduct::getCommerceObject( $productId ) ) {
 							$rowHash['products'][$productId] = $productObject;

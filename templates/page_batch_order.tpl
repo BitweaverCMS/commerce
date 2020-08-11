@@ -19,7 +19,7 @@
 						<div class="col-xs-12 col-sm-6 col-md-5">
 							<ul class="data">
 							{foreach from=$batchRow.products item=$batchProduct}
-								<li>
+								<li class="clear">
 									<img class="image-responsive pull-left" style="max-width:150px;padding-right:10px;" src="{$batchProduct->getThumbnailUrl()}">
 									<span class="badge"> {$batchRow.quantity} </span> <a href="{$batchProduct->getDisplayUrl()}"><span class="cartproductname">{$batchProduct->getTitle()}</span></a>
 								</li>

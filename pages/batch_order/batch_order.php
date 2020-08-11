@@ -34,7 +34,10 @@ if( !empty( $_POST ) && !empty( $_POST['action'] ) ) {
 			$_SESSION['sendtohash'] = $addressHash;
 
 			$gBitCustomer->mCart->emptyCart();
-			$gBitCustomer->mCart->addToCart( $batchHash['product_id'], $batchHash['quantity'], BitBase::getParameter( $batchHash, 'product_options' ) );
+
+			foreach( array_keys( $batchHash['products'] ) as $productId ) {
+				$gBitCustomer->mCart->addToCart( $productId, $batchHash['quantity'], BitBase::getParameter( $batchHash, 'product_options' ) );
+			}
 		
 			if( !empty( $batchHash['discount_code'] ) ) {
 				$voucher = new CommerceVoucher();
