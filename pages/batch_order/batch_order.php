@@ -10,6 +10,8 @@ global $gBitSmarty, $gBitCustomer, $gBitSystem;
 
 define( 'HEADING_TITLE', 'Batch Order' );
 
+$gBitUser->verifyRegistered();
+
 $phpOfficeAutload = UTIL_PKG_PATH.'includes/phpoffice/autoload.php';
 $supportedTypes = ".csv";
 if( $isPhpOfficeInstalled = file_exists( $phpOfficeAutload ) ) {
