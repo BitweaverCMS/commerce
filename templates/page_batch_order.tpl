@@ -35,10 +35,15 @@
 
 	{form name='batch_order' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=batch_order"  method="post" enctype="multipart/form-data"}
 		{legend legend="Upload Batch Order"}
-			<p>Choose your batch order spreadsheet below.</p>
+			<p>{tr}Choose your batch order spreadsheet below.{/tr}</p>
 			{if $batchHash}<p class="alert alert-warning">This will <strong>replace your batch order</strong> above.</span></p>{/if}
-			{forminput}
-				<input type="file" name="batch_file">
+			{forminput class="pb-1"}
+				{if $isPhpOfficeInstalled}
+					{formlabel label="Select a .csv, .xls, or .xlsx file."}
+				{else}
+					{formlabel label="You must select a .csv file"}
+				{/if}
+				<input type="file" name="batch_file" class="form-input" accept="{$supportedTypes}" >
 			{/forminput}
 			<button type="submit" class="btn btn-default" name="action" value="upload">{tr}Upload{/tr}</button>{if count($batchHash)}  <button type="submit" class="btn btn-default pull-right" name="action" value="clear">{tr}Clear Batch{/tr}</button>{/if}
 		{/legend}

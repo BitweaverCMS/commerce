@@ -10,6 +10,14 @@ global $gBitSmarty, $gBitCustomer, $gBitSystem;
 
 define( 'HEADING_TITLE', 'Batch Order' );
 
+$phpOfficeAutload = UTIL_PKG_PATH.'includes/phpoffice/autoload.php';
+$supportedTypes = ".csv";
+if( $isPhpOfficeInstalled = file_exists( $phpOfficeAutload ) ) {
+	$supportedTypes .= ",.xls,.xlsx";
+}
+$gBitSmarty->assign_by_ref( 'isPhpOfficeInstalled', $isPhpOfficeInstalled );
+$gBitSmarty->assign_by_ref( 'supportedTypes', $supportedTypes );
+
 if( !empty( $_POST ) && !empty( $_POST['action'] ) ) {
 	if( !empty( $_POST['batch_index'] ) && ($batchOrder = $gBitCustomer->getBatchOrder()) && !empty( $batchOrder[$_POST['batch_index']] ) ) {
 		if( $_POST['action'] == 'checkout' ) {
@@ -77,8 +85,7 @@ eb( $batchHash['error'] );
 	} elseif( $_POST['action'] == 'upload' ) {
 		$verifyMime = $gBitSystem->verifyMimeType( $_FILES['batch_file']['tmp_name'] );
 		if( $verifyMime == 'application/vnd.ms-excel' || $verifyMime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ) {
-			$phpOfficeAutload = UTIL_PKG_PATH.'includes/phpoffice/autoload.php';
-			if( file_exists( $phpOfficeAutload ) ) {
+			if( $isPhpOfficeInstalled ) {
 				require_once( $phpOfficeAutload );
 				$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load( $_FILES['batch_file']['tmp_name'] );
 				$worksheet = $spreadsheet->getActiveSheet();
