@@ -249,15 +249,15 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
         $confirmation = array('title' => '',
             'fields' => array(array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_FIRSTNAME' ),
-                    'field' => $_POST['bt_cc_firstname']),
+                    'field' => $pPaymentParams['bt_cc_firstname']),
                 array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_LASTNAME' ),
-                    'field' => $_POST['bt_cc_lastname']),
+                    'field' => $pPaymentParams['bt_cc_lastname']),
                 array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_NUMBER' ),
-                    'field' => substr($_POST['payment_number'], 0, 4) . str_repeat('X', (strlen($_POST['payment_number']) - 8)) . substr($_POST['payment_number'], -4)),
+                    'field' => substr($pPaymentParams['payment_number'], 0, 4) . str_repeat('X', (strlen($pPaymentParams['payment_number']) - 8)) . substr($pPaymentParams['payment_number'], -4)),
                 array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_EXPIRES' ),
-                    'field' => strftime('%B, %Y', mktime(0, 0, 0, $_POST['payment_expires_month'], 1, '20' . $_POST['payment_expires_year'])),
-                    (isset($_POST['bt_cc_issuenumber']) ? array('title' => $this->getModuleConfigValue( '_TEXT_ISSUE_NUMBER' ),
-                        'field' => $_POST['bt_cc_issuenumber']) : '')
+                    'field' => strftime('%B, %Y', mktime(0, 0, 0, $pPaymentParams['payment_expires_month'], 1, '20' . $pPaymentParams['payment_expires_year'])),
+                    (isset($pPaymentParams['bt_cc_issuenumber']) ? array('title' => $this->getModuleConfigValue( '_TEXT_ISSUE_NUMBER' ),
+                        'field' => $pPaymentParams['bt_cc_issuenumber']) : '')
         )));
 
         return $confirmation;
@@ -268,19 +268,20 @@ class braintree_api extends CommercePluginPaymentCardBase {
      */
 	function process_button( $pPaymentParams ) {
         global $order;
-
         $process_button_string = '';
-        $process_button_string .= "\n" . zen_draw_hidden_field('bt_payment_type', $this->getParameter( $_POST, 'bt_payment_type' )) . "\n" .
-                zen_draw_hidden_field('payment_expires_month', $this->getParameter( $_POST, 'payment_expires_month' )) . "\n" .
-                zen_draw_hidden_field('payment_expires_year', $this->getParameter( $_POST, 'payment_expires_year' )) . "\n" .
-                zen_draw_hidden_field('bt_cc_issue_month', $this->getParameter( $_POST, 'bt_cc_issue_month' )) . "\n" .
-                zen_draw_hidden_field('bt_cc_issue_year', $this->getParameter( $_POST, 'bt_cc_issue_year' )) . "\n" .
-                zen_draw_hidden_field('bt_cc_issuenumber', $this->getParameter( $_POST, 'bt_cc_issuenumber' )) . "\n" .
-                zen_draw_hidden_field('payment_number', $this->getParameter( $_POST, 'payment_number' )) . "\n" .
-                zen_draw_hidden_field('cc_cvv', $this->getParameter( $_POST, 'cc_cvv' )) . "\n" .
-                zen_draw_hidden_field('bt_payer_firstname', $this->getParameter( $_POST, 'bt_cc_firstname' )) . "\n" .
-                zen_draw_hidden_field('bt_payer_lastname', $this->getParameter( $_POST, 'bt_cc_lastname' )) . "\n";
+/*
+        $process_button_string .= "\n" . zen_draw_hidden_field('bt_payment_type', $this->getParameter( $pPaymentParams, 'bt_payment_type' )) . "\n" .
+                zen_draw_hidden_field('payment_expires_month', $this->getParameter( $pPaymentParams, 'payment_expires_month' )) . "\n" .
+                zen_draw_hidden_field('payment_expires_year', $this->getParameter( $pPaymentParams, 'payment_expires_year' )) . "\n" .
+                zen_draw_hidden_field('bt_cc_issue_month', $this->getParameter( $pPaymentParams, 'bt_cc_issue_month' )) . "\n" .
+                zen_draw_hidden_field('bt_cc_issue_year', $this->getParameter( $pPaymentParams, 'bt_cc_issue_year' )) . "\n" .
+                zen_draw_hidden_field('bt_cc_issuenumber', $this->getParameter( $pPaymentParams, 'bt_cc_issuenumber' )) . "\n" .
+                zen_draw_hidden_field('payment_number', $this->getParameter( $pPaymentParams, 'payment_number' )) . "\n" .
+                zen_draw_hidden_field('cc_cvv', $this->getParameter( $pPaymentParams, 'cc_cvv' )) . "\n" .
+                zen_draw_hidden_field('bt_payer_firstname', $this->getParameter( $pPaymentParams, 'bt_cc_firstname' )) . "\n" .
+                zen_draw_hidden_field('bt_payer_lastname', $this->getParameter( $pPaymentParams, 'bt_cc_lastname' )) . "\n";
         $process_button_string .= zen_draw_hidden_field(zen_session_name(), zen_session_id());
+*/
         return $process_button_string;
     }
 
