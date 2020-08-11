@@ -102,7 +102,7 @@ function zen_get_countries( $pCountryMixed = '' ) {
 	}
 
 	$countries = "SELECT * FROM " . TABLE_COUNTRIES . " $whereSql ORDER BY `countries_name`";
-	if( $rs = $gBitDb->query( $countries, $bindVars ) ) {
+	if( $rs = $gBitDb->query( $countries, $bindVars, FALSE, FALSE, BIT_QUERY_CACHE_TIME ) ) {
 		while( !$rs->EOF ) {
 			$row = array( 'countries_id' => $rs->fields['countries_id'],
 						  'countries_name' => $rs->fields['countries_name'],
@@ -414,7 +414,7 @@ function zen_get_attributes_sort_order($products_id, $options_id, $options_value
 	$check = $gBitDb->getOne("SELECT `products_options_sort_order`
 								FROM " . TABLE_PRODUCTS_ATTRIBUTES . "
 									INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id`) 
-								WHERE `products_id` = ? AND `products_options_id` = ? AND pa.`products_options_values_id` = ?", array( $products_id, $options_id, $options_values_id ) );
+								WHERE `products_id` = ? AND `products_options_id` = ? AND pa.`products_options_values_id` = ?", array( $products_id, $options_id, $options_values_id ), FALSE, FALSE, BIT_QUERY_CACHE_TIME );
 
 	return $check;
 }
@@ -423,14 +423,11 @@ function zen_get_attributes_sort_order($products_id, $options_id, $options_value
 // return attributes products_options_sort_order - PRODUCTS_OPTIONS
   function zen_get_attributes_options_sort_order($products_id, $options_id, $options_values_id) {
     global $gBitDb;
-      $sortOrder = $gBitDb->getOne("select `products_options_sort_order`
-                             from " . TABLE_PRODUCTS_OPTIONS . "
-                             where `products_options_id` = '" . $options_id . "'");
-
-      $attSortOrder = $gBitDb->getOne("select `products_id`, `products_options_id`, pa.`products_options_values_id`, `products_options_sort_order`
+      $sortOrder = $gBitDb->getOne("SELECT `products_options_sort_order` from " . TABLE_PRODUCTS_OPTIONS . " where `products_options_id` = ?", array( $options_id ), FALSE, FALSE, BIT_QUERY_CACHE_TIME );
+      $attSortOrder = $gBitDb->getOne("SELECT `products_id`, `products_options_id`, pa.`products_options_values_id`, `products_options_sort_order`
                              FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 							  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
-                             WHERE `products_id` = ?  and `products_options_id` = ? and pa.`products_options_values_id` = ?", array( $products_id, $options_id, $options_values_id ) );
+                             WHERE `products_id` = ?  and `products_options_id` = ? and pa.`products_options_values_id` = ?", array( $products_id, $options_id, $options_values_id ), FALSE, FALSE, BIT_QUERY_CACHE_TIME );
       return $sortOrder . '.' . str_pad( $attSortOrder ,5 ,'0' , STR_PAD_LEFT );
   }
 
