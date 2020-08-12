@@ -1,6 +1,7 @@
 <IfModule mod_rewrite.c>
 	RewriteEngine  on
     RewriteCond	%{SCRIPT_FILENAME}  -f [OR]
+    RewriteCond	%{SCRIPT_FILENAME}.php  -f [OR]
     RewriteCond	%{SCRIPT_FILENAME}/index.php    -f
     RewriteRule	^(.*)$            - [L]
 
