@@ -24,7 +24,6 @@
 		{foreach from=$gBitCustomer->mCart->contents key=productsKey item=basket}
 		<div class="row cart-item checkout-individual-item pv-2 {cycle values="odd,even"}">
 			{assign var=product value=$gBitCustomer->mCart->getProductObject($productsKey)}
-			{assign var=productHash value=$gBitCustomer->mCart->getProductHash($productsKey)}
 			<div class="col-xs-4 col-sm-2">{if $gCommerceSystem->getConfig('IMAGE_SHOPPING_CART_STATUS')}<a href="{$product->getDisplayUrl()}"><img src="{$product->getThumbnailUrl('avatar')}" class="img-responsive center-block" alt="{$product->getTitle()|escape}"/></a>{/if}</div>
 			<div class="col-xs-8 col-sm-6"><a href="{$product->getDisplayUrl()}"><span class="cartproductname">{$product->getTitle()}</span></a>
 				{if $basket.attributes}
@@ -44,6 +43,7 @@
 			<div class="col-xs-4 col-sm-2 text-right">
 				<input type="number" class="form-control input-mini" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}">
 			</div>
+			{assign var=productHash value=$gBitCustomer->mCart->getProductHash($productsKey)}
 			<div class="col-xs-4 col-sm-1 currency text-right"><strong>{$productHash.final_price_display}</strong>{if $productHash.onetime_charges}<br/>{$productHash.onetime_charges_display}{/if}</div>
 			<div class="col-xs-4 col-sm-1">
 				{forminput label="checkbox"}
