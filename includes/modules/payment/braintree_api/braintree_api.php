@@ -255,7 +255,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
                 array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_NUMBER' ),
                     'field' => substr($pPaymentParams['payment_number'], 0, 4) . str_repeat('X', (strlen($pPaymentParams['payment_number']) - 8)) . substr($pPaymentParams['payment_number'], -4)),
                 array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_EXPIRES' ),
-                    'field' => strftime('%B, %Y', mktime(0, 0, 0, $pPaymentParams['payment_expires_month'], 1, '20' . $pPaymentParams['payment_expires_year'])),
+                    'field' => strftime('%B, %Y', mktime(0, 0, 0, $pPaymentParams['payment_expires_month'], 1, $pPaymentParams['payment_expires_year'])),
                     (isset($pPaymentParams['bt_cc_issuenumber']) ? array('title' => $this->getModuleConfigValue( '_TEXT_ISSUE_NUMBER' ),
                         'field' => $pPaymentParams['bt_cc_issuenumber']) : '')
         )));

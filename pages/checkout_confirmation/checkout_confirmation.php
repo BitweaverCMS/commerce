@@ -54,7 +54,8 @@ if( $order->hasPaymentDue() ) {
 		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 	}
 
-	if( !$paymentManager->verifyPayment( array_merge( $_SESSION, $_REQUEST ), $order ) ) {
+	$mergedPaymentParams = array_merge( $_SESSION, $_REQUEST );
+	if( !$paymentManager->verifyPayment( $mergedPaymentParams, $order ) ) {
 		$messageStack->add_session('checkout_payment', current( $paymentManager->mErrors ), 'error');
 		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 	}
