@@ -1003,8 +1003,6 @@ If a special exist * 10+9
 			} elseif( !empty( $pHash['title'] ) ) {
 				$ret = $pHash['title'];
 			}
-		} elseif( $this->isValid() ) {
-			$ret = $this->mInfo['products_name'];
 		}
 		return $ret;
 	}
