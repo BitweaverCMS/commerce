@@ -248,17 +248,23 @@ class braintree_api extends CommercePluginPaymentCardBase {
 	function confirmation( $pPaymentParams ) {
 
         $confirmation = array('title' => '',
-            'fields' => array(array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_FIRSTNAME' ),
-                    'field' => $pPaymentParams['bt_cc_firstname']),
-                array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_LASTNAME' ),
-                    'field' => $pPaymentParams['bt_cc_lastname']),
-                array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_NUMBER' ),
-                    'field' => substr($pPaymentParams['payment_number'], 0, 4) . str_repeat('X', (strlen($pPaymentParams['payment_number']) - 8)) . substr($pPaymentParams['payment_number'], -4)),
-                array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_EXPIRES' ),
-                    'field' => strftime('%B, %Y', mktime(0, 0, 0, $pPaymentParams['payment_expires_month'], 1, $pPaymentParams['payment_expires_year'])),
-                    (isset($pPaymentParams['bt_cc_issuenumber']) ? array('title' => $this->getModuleConfigValue( '_TEXT_ISSUE_NUMBER' ),
-                        'field' => $pPaymentParams['bt_cc_issuenumber']) : '')
-        )));
+            'fields' => array());
+
+		if( isset( $pPaymentParams['bt_cc_firstname'] ) ) {
+			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_FIRSTNAME' ), 'field' => $pPaymentParams['bt_cc_firstname']);
+		}
+		if( isset( $pPaymentParams['bt_cc_lastname'] ) ) {
+			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_LASTNAME' ), 'field' => $pPaymentParams['bt_cc_lastname']);
+		}
+		if( isset( $pPaymentParams['payment_number'] ) ) {
+			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_NUMBER' ), 'field' => substr($pPaymentParams['payment_number'], 0, 4) . str_repeat('X', (strlen($pPaymentParams['payment_number']) - 8)) . substr($pPaymentParams['payment_number'], -4));
+		}
+		if( isset( $pPaymentParams['payment_expires_month'] ) && isset( $pPaymentParams['payment_expires_year'] ) ) {
+			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_EXPIRES' ), 'field' => strftime('%B, %Y', mktime(0, 0, 0, $pPaymentParams['payment_expires_month'], 1, $pPaymentParams['payment_expires_year'])));
+		}
+		if( isset( $pPaymentParams['bt_cc_issuenumber'] ) ) {
+			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_ISSUE_NUMBER' ), 'field' => $pPaymentParams['bt_cc_issuenumber']);
+		}
 
         return $confirmation;
     }

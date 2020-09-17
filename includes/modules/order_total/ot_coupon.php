@@ -157,6 +157,8 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 
 					$runningDiscount = 0;
 					$runningDiscountQuantity = 0;
+					$totalDiscount = 0;
+
 					if ($coupon->getField( 'coupon_type' ) == 'P') {
 						// Max discount is a sum of percentages of valid products
 						$totalDiscount = 0;
