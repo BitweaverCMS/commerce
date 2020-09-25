@@ -47,22 +47,28 @@
 				<div class="panel panel-default height">
 					<div class="panel-heading">{tr}Payment{/tr}</div>
 					<div class="panel-body">
-						{if $order->info.cc_type}
+						{if $order->info.payment_type}
 						<div style="clear:both">
-							<div class="pull-left">{$order->info.cc_type}: </div>
-							<div class="pull-right">{$order->info.cc_owner}</div>
+							<div class="pull-left">{$order->info.payment_type}: </div>
+							<div class="pull-right">{$order->info.payment_owner}</div>
 						</div>
 						{/if}
-						{if $order->info.cc_number}
+						{if $order->info.payment_number}
 						<div style="clear:both">
 							<div class="pull-left">{tr}Number{/tr}: </div>
-							<div class="pull-right">{$order->info.cc_number}</div>
+							<div class="pull-right">{$order->info.payment_number}</div>
 						</div>
 						{/if}
-						{if $order->info.cc_ref_id}
+						{if $order->info.payment_number}
+						<div style="clear:both">
+							<div class="pull-left">{tr}Expiration{/tr}: </div>
+							<div class="pull-right">{$order->info.payment_expires}</div>
+						</div>
+						{/if}
+						{if $order->info.payment_ref_id}
 						<div style="clear:both">
 							<div class="pull-left">{tr}Transaction ID{/tr}: </div>
-							<div class="pull-right">{$order->info.cc_ref_id}</div>
+							<div class="pull-right">{$order->info.payment_ref_id}</div>
 						</div>
 						{/if}
 						<div style="clear:both">
