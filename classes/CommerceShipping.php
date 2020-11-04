@@ -127,6 +127,7 @@ class CommerceShipping extends BitSingleton {
 				'title' => (($quote[0]['module'] == $quote[0]['methods'][0]['title']) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
 				'cost' => $quote[0]['methods'][0]['cost'],
 				'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
+				'ship_date' => $quote[0]['origin']['ship_date']
 				);
 		}
 		return !empty( $_SESSION['shipping'] );	

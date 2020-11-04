@@ -124,7 +124,7 @@ if($gBitCustomer->mCart->get_content_type() == 'virtual') {
 	$shoppingCart->info['shipping_method'] = MODULE_ORDER_TOTAL_SHIPPING_TITLE;
 	$shoppingCart->info['shipping_cost'] = 0;
 } else {
-	require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
 	// weight and count needed for shipping !
 	if( $gBitProduct->isValid() && !empty( $_REQUEST['cart_quantity'] ) ) {
 		$weight = $gBitProduct->getWeight( $_REQUEST['cart_quantity'], $_REQUEST['id'] );

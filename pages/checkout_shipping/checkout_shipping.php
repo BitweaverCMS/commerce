@@ -77,7 +77,7 @@ if( isset( $_REQUEST['change_address'] ) ) {
 } else {
 
 	// load all enabled shipping modules
-	require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
 	global $gCommerceShipping;
 
 	if ( defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && (MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') ) {

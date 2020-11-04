@@ -63,7 +63,7 @@ if( $order->hasPaymentDue() ) {
 
 // load the selected shipping module
 if( !empty( $_SESSION['shipping'] ) ) {
-	require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
 	$shipping_modules = new CommerceShipping($_SESSION['shipping']);
 }
 

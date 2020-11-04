@@ -730,6 +730,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   last_modified T,
   date_purchased T,
   orders_date_finished T,
+  estimated_ship_date T,
+  estimated_arrival_date T,
   orders_status I2,
   currency C(3),
   currency_value N(14,6),

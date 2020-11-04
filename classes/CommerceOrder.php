@@ -549,6 +549,11 @@ class order extends CommerceOrderBase {
 			$coupon_code = $this->mDb->GetOne($coupon_code_query, array( (int)$_SESSION['cc_id'] ) );
 		}
 
+		require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php' );
+		global $gCommerceShipping;
+		list($module, $method) = explode('_', $_SESSION['shipping']['id'] );
+		$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
+
 		$this->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
 							'currency' => !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : NULL,
 							'currency_value' => !empty( $_SESSION['currency'] ) ? $currencies->currencies[$_SESSION['currency']]['currency_value'] : NULL,
@@ -559,6 +564,8 @@ class order extends CommerceOrderBase {
 							'shipping_method_code' => !empty( $_SESSION['shipping']['code'] ) ? $_SESSION['shipping']['code'] : '',
 							'shipping_module_code' => !empty( $_SESSION['shipping']['id'] ) ? $_SESSION['shipping']['id'] : '',
 							'shipping_cost' => !empty( $_SESSION['shipping']['cost'] ) ? $_SESSION['shipping']['cost'] : '',
+							'estimated_ship_date' => !empty( $_SESSION['shipping']['ship_date'] ) ? $_SESSION['shipping']['ship_date'] : NULL,
+							'estimated_arrival_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL,
 							'subtotal' => 0,
 							'tax' => 0,
 							'total' => 0,
@@ -725,7 +732,7 @@ class order extends CommerceOrderBase {
 
 		// load the selected shipping module
 		if( !empty( $pPaymentParams['shipping'] ) ) {
-			require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+			require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
 			$shipping_modules = new CommerceShipping($pPaymentParams['shipping']);
 		}
 
@@ -809,6 +816,8 @@ class order extends CommerceOrderBase {
 							'shipping_method' => $this->info['shipping_method'],
 							'shipping_method_code' => $this->info['shipping_method_code'],
 							'shipping_module_code' => (strpos($this->info['shipping_module_code'], '_') > 0 ? substr($this->info['shipping_module_code'], 0, strpos($this->info['shipping_module_code'], '_')) : $this->info['shipping_module_code']),
+							'estimated_arrival_date' => $this->info['estimated_arrival_date'],
+							'estimated_ship_date' => $this->info['estimated_ship_date'],
 							'coupon_code' => $this->info['coupon_code'],
 							'date_purchased' => $this->mDb->NOW(),
 							'orders_status' => $this->info['order_status'],
