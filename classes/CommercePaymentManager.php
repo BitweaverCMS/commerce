@@ -15,6 +15,8 @@ class CommercePaymentManager {
 	private $selected_module;
 	private $mPaymentObjects;
 
+	public $mErrors = array();
+
 	// class constructor
 	function __construct($module = '') {
 		global $gCommerceSystem;
