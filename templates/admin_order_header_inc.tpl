@@ -13,7 +13,6 @@ function editAddress( pAddress ) {
 /* ]]> */</script>
 {/literal}
 
-
 <div class="row">
 	<div class="col-xs-6">
 		<h4>{tr}Customer{/tr}</h4>
