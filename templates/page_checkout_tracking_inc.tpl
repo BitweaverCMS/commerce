@@ -2,7 +2,7 @@
 {* Google analytics setup *}
 {if $gBitSystem->isTracking()}
 	{* **** GOOGLE ANALYTICS **** *}
-	{if $gBitSystem->getConfig('google_analytics_ua')}
+	{if $gBitSystem->getConfig('analytics_google_ua')}
 		{if $smarty.request.main_page == 'shopping_cart'}
 			{assign var=eecStep value=1}
 			{assign var=eecEvent value='begin_checkout'}
