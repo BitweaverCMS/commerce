@@ -84,20 +84,23 @@ class canadapost extends CommercePluginShippingBase {
 				$priceQuotes = $xml->{'price-quotes'}->children('http://www.canadapost.ca/ws/ship/rate-v4');
 				if( $priceQuotes->{'price-quote'} ) {
 					foreach ( $priceQuotes as $priceQuote ) {  
-						$transitTime = '';
-						if( $transitDays = $priceQuote->{'service-standard'}->{'expected-transit-time'} ) {
-							$transitTime = $transitDays.' '.($transitDays > 1 ? tra( 'Days' ) : tra( 'Day' ));
+						if ( empty( $pShipHash['method'] ) || ($pShipHash['method'] == (string)$priceQuote->{'service-code'}) ) {
+							$transitTime = '';
+							if( $transitDays = (string)$priceQuote->{'service-standard'}->{'expected-transit-time'} ) {
+								$transitTime = $transitDays.' '.($transitDays > 1 ? tra( 'Days' ) : tra( 'Day' ));
+							}
+							$costCad = (float)$priceQuote->{'price-details'}->{'due'};
+							$costStore = $currencies->convert( (float)$priceQuote->{'price-details'}->{'due'}, DEFAULT_CURRENCY, 'CAD' ) + (float)$this->getShipperHandling();
+							$methods[] = array(
+											'id' => (string)$priceQuote->{'service-code'},
+											'title' => (string)$priceQuote->{'service-name'},
+											'cost' => $costStore,
+											'code' => (string)$priceQuote->{'service-code'},
+											'transit_days' => $transitDays,
+											'transit_time' => $transitTime,
+											'delivery_date' => (string)$priceQuote->{'service-standard'}->{'expected-delivery-date'},
+										);
 						}
-						$costCad = (float)$priceQuote->{'price-details'}->{'due'};
-						$costStore = $currencies->convert( (float)$priceQuote->{'price-details'}->{'due'}, DEFAULT_CURRENCY, 'CAD' ) + (float)$this->getShipperHandling();
-						$methods[] = array(
-										'id' => $priceQuote->{'service-code'}, 
-										'title' => $priceQuote->{'service-name'} , 
-										'cost' => $costStore,
-										'transit_days' => $transitDays,
-										'transit_time' => $transitTime,
-										'delivery_date' => $priceQuote->{'service-standard'}->{'expected-delivery-date'},
-									);
 					}
 				}
 			} else {
