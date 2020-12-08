@@ -22,6 +22,6 @@ if( !empty( $proofProducts ) ) {
 	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_proof.tpl' );
 } else { 
 	// Cart does not need to be reviewed, all products are assumed to be OK
-	bit_redirect(BITCOMMERCE_PKG_SSL_URI.'?main_page=checkout_shipping');
+	bit_redirect( zen_get_page_url( 'checkout_shipping' ) );
 }
 ?>

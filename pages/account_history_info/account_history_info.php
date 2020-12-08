@@ -10,6 +10,6 @@ if( $order->hasViewPermission() ) {
 	$gBitSmarty->assign( 'order', $order );
 	$gBitSmarty->display( 'bitpackage:bitcommerce/order_invoice.tpl' );
 } else {
-	bit_redirect( BITCOMMERCE_PKG_SSL_URI.'index.php?main_page='.FILENAME_ACCOUNT_HISTORY );
+	bit_redirect( BITCOMMERCE_PKG_URL.'index.php?main_page='.FILENAME_ACCOUNT_HISTORY );
 }
 

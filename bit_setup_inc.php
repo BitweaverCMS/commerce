@@ -14,12 +14,6 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 		define( 'BITCOMMERCE_PKG_ADMIN_URI', str_replace( 'http:', 'https:', BITCOMMERCE_PKG_URI.'admin/' ) );
 	}
 
-	if( defined( 'IS_LIVE' ) && IS_LIVE ) {
-		define( 'BITCOMMERCE_PKG_SSL_URI', str_replace( 'http:', 'https:', BITCOMMERCE_PKG_URI ) );
-	} else {
-		define( 'BITCOMMERCE_PKG_SSL_URI', BITCOMMERCE_PKG_URI );
-	}
-
 	$menuHash = array(
 		'package_name'  => BITCOMMERCE_PKG_NAME,
 		'index_url'     => BITCOMMERCE_PKG_URL.'index.php',

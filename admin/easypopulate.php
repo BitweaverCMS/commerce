@@ -765,9 +765,9 @@ if ($ep_dlmethod == 'stream' or  $ep_dlmethod == 'tempfile'){
 			// adding url for froogle, but it should be available no matter what
 			
 				if ($num_of_langs == 1) {
-					$row['v_froogle_products_url_' . $lid] = zen_catalog_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $row['v_products_id']);
+					$row['v_froogle_products_url_' . $lid] = zen_get_page_uri(FILENAME_PRODUCT_INFO, 'products_id=' . $row['v_products_id']);
 				} else {
-					$row['v_froogle_products_url_' . $lid] = zen_catalog_href_link(FILENAME_PRODUCT_INFO, 'products_id=' . $row['v_products_id'] . '&language=' . $lid);
+					$row['v_froogle_products_url_' . $lid] = zen_get_page_uri(FILENAME_PRODUCT_INFO, 'products_id=' . $row['v_products_id'] . '&language=' . $lid);
 				}
 
 			$row['v_products_name_' . $lid]   = $row2['products_name'];

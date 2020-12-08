@@ -4,7 +4,7 @@
 {foreach from=$ordersHistory item=ordersRow key=ordersId}
 <tr>
 	<td>
-		<a href="{$smarty.const.BITCOMMERCE_PKG_SSL_URI}index.php?main_page=account_history_info&order_id={$ordersRow.orders_id}">{tr}#{/tr}{$ordersRow.orders_id}</a>
+		<a href="{'account_history_info'|zen_get_page_url:"order_id=`$ordersRow.orders_id`"}">{tr}#{/tr}{$ordersRow.orders_id}</a>
 		<div class="small">{$ordersRow.date_purchased|zen_date_short}</div>
 	</td>
 	<td>

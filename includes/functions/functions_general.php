@@ -42,12 +42,6 @@ function zen_redirect($url) {
 		$_SESSION['loginfrom'] = $_SERVER['REQUEST_URI'];
 	}
 
-	if ( (ENABLE_SSL == true) && !empty( $_SERVER['HTTPS'] ) && ($_SERVER['HTTPS'] == 'on') ) { // We are loading an SSL page
-		if (substr($url, 0, strlen(HTTP_SERVER)) == HTTP_SERVER) { // NONSSL url
-			$url = HTTPS_SERVER . substr($url, strlen(HTTP_SERVER)); // Change it to SSL
-		}
-	}
-
 	// clean up URL before executing it
 	while (strstr($url, '&&')) $url = str_replace('&&', '&', $url);
 	while (strstr($url, '&amp;&amp;')) $url = str_replace('&amp;&amp;', '&amp;', $url);
@@ -641,19 +635,6 @@ function zen_redirect($url) {
 
 // Set back button
   function zen_back_link() {
-/*
-    if (sizeof($_SESSION['navigation']->path)-2 > 0) {
-      $back = sizeof($_SESSION['navigation']->path)-2;
-      $link = '<a href="' . zen_href_link($_SESSION['navigation']->path[$back]['page'], zen_array_to_string($_SESSION['navigation']->path[$back]['get'], array('action')), $_SESSION['navigation']->path[$back]['mode']) . '">';
-    } else {
-      if (strstr(HTTP_SERVER, $_SERVER['HTTP_REFERER'])) {
-        $link= $_SERVER['HTTP_REFERER'];
-      } else {
-        $link = '<a href="' . zen_href_link(FILENAME_DEFAULT) . '">';
-      }
-      $_SESSION['navigation'] = new navigationHistory;
-    }
-*/
     return '<a href="javascript:history.back()">';
   }
 
@@ -665,11 +646,7 @@ function zen_redirect($url) {
       $back = sizeof($_SESSION['navigation']->path)-2;
       $link = zen_href_link($_SESSION['navigation']->path[$back]['page'], zen_array_to_string($_SESSION['navigation']->path[$back]['get'], array('action')), $_SESSION['navigation']->path[$back]['mode']);
     } else {
-      if (strstr(HTTP_SERVER, $_SERVER['HTTP_REFERER'])) {
-        $link= $_SERVER['HTTP_REFERER'];
-      } else {
-        $link = zen_href_link(FILENAME_DEFAULT);
-      }
+      $link = zen_href_link(FILENAME_DEFAULT);
       $_SESSION['navigation'] = new navigationHistory;
     }
 

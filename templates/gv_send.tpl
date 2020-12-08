@@ -66,21 +66,21 @@
     <form action="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=gv_send&action=send" method="post">
 	<div class="form-group">
         {formlabel label="Recipients Name"}
-        {forminput}<input type="text" name="to_name" value ="{$smarty.post.to_name|escape:html}" size="40" />{/forminput}
+        {forminput}<input type="text" name="to_name" value ="{$smarty.post.to_name|escape:html}" class="form-control"/>{/forminput}
 	</div>
 	<div class="form-group">
         {formfeedback error=$feedback.error.error_email}
         {formlabel label="Recipients E-Mail Address"}
-        {forminput}<input type="text" name="email" value ="{$smarty.post.email}" size="40" />{/forminput}
+        {forminput}<input type="text" name="email" value ="{$smarty.post.email}" class="form-control"/>{/forminput}
 	</div>
 	<div class="form-group">
 		{formfeedback error=$feedback.error.error_amount}
         {formlabel label="Amount of Gift Certificate"}
-       	{forminput}<input type="text" name="amount" value ="{$smarty.post.amount|default:$gvBalance}" />{/forminput}
+       	{forminput}<input type="text" name="amount" value ="{$smarty.post.amount|default:$gvBalance}" class="form-control"/>{/forminput}
 	</div>
 	<div class="form-group">
         {formlabel label="Message to Recipients"}
-        {forminput}<textarea name='message' rows="15" cols="50" >{$smarty.post.message|escape:html}</textarea>{/forminput}
+        {forminput}<textarea name='message' rows="15" class="form-control">{$smarty.post.message|escape:html}</textarea>{/forminput}
 	</div>
 
 	<div class="form-group submit">

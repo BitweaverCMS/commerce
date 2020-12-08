@@ -6,6 +6,6 @@
 		{rdelim}
 		//]]></script>
 		{$sideboxShoppingCartContent}
-		<em><a href="{$smarty.const.HTTPS_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping">{tr}Checkout{/tr}&nbsp;&raquo;</a></em>
+		<em><a href="{checkout_shipping|zen_get_page_url}">{tr}Checkout{/tr}&nbsp;&raquo;</a></em>
 	{/bitmodule}
 {/if}

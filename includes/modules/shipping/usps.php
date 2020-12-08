@@ -710,7 +710,7 @@ class usps extends CommercePluginShippingBase {
 		// Send quote request via CURL
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $usps_server . '/' . $api_dll);
-		curl_setopt($ch, CURLOPT_REFERER, HTTPS_SERVER . DIR_WS_HTTPS_CATALOG);
+		curl_setopt($ch, CURLOPT_REFERER, zen_get_page_uri() );
 		curl_setopt($ch, CURLOPT_FRESH_CONNECT, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_VERBOSE, 0);

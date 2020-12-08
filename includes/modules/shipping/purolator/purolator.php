@@ -74,7 +74,7 @@ class purolator extends CommercePluginShippingBase {
 			require_once( dirname( __FILE__ ).'/nusoap/nusoap.php');
 
 			//Set the parameters for the Non-WSDL mode SOAP communication with your Development/Production credentials
-			$this->client = new nusoap_client(HTTP_SERVER . "/EstimatingService.wsdl", 'wsdl');
+			$this->client = new nusoap_client(BITCOMMERCE_PKG_URI . "/EstimatingService.wsdl", 'wsdl');
 			$this->client->setCredentials($this->key, $this->pass, 'basic');
 			//if($this->client->getError()) echo '<!--Auth Error: '.$this->client->getError().'-->'; //commented, used to test for authorisation errors
 			//Define the SOAP Envelope Headers

@@ -3,5 +3,5 @@
 	<h4><a href="{$newProduct.display_url}">{$newProduct.products_name}</a></h4>
 	{$newProduct.display_price}
 	<br/>
-	<a class="moreinfo" href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=products_new">{tr}See more...{/tr}</a>
+	<a class="moreinfo" href="{'products_new'|zen_get_page_url}">{tr}See more...{/tr}</a>
 {/bitmodule}

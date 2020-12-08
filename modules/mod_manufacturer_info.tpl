@@ -7,7 +7,7 @@
 		{/if}
 
 		{if $sideboxManufacturerInfo.manufacturers_url}
-			<a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=redirect&action=manufacturer&manufacturers_id={$sideboxManufacturerInfo.manufacturers_url}" target="_blank">{$sideboxManufacturerInfo.manufacturers_name}</a>
+			<a href="{'redirect'|zen_get_page_url:"action=manufacturer&manufacturers_id=`$sideboxManufacturerInfo.manufacturers_url`"}" target="_blank">{$sideboxManufacturerInfo.manufacturers_name}</a>
 			<br />
 		{/if}
 	{/bitmodule}

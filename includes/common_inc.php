@@ -98,7 +98,7 @@
   function zen_href_link($page = '', $parameters = '', $connection = 'SSL', $add_session_id = true, $search_engine_safe = true, $static = false, $use_dir_ws_catalog = true) {
     global $gBitSystem, $request_type, $session_started, $http_domain, $https_domain;
 
-	$link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? HTTPS_SERVER : HTTP_SERVER;
+	$link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://'.$_SERVER['HTTP_HOST'];
 
     if ($use_dir_ws_catalog) $link .= DIR_WS_CATALOG;
 
@@ -1004,6 +1004,48 @@ function reset_bitcommerce_layout() {
 	}
 }
 
+
+/**
+ * Get a link to a product or main_page, adjusting for pretty_url enabled
+ *
+ * @param string $pTarget A string, numeric is assumed to be a product_id, everything else is assumed to be a main_page
+ */
+function zen_get_page_url( $pTarget=NULL, $pParams=NULL ) {
+	global $gBitSystem;
+
+	$ret = BITCOMMERCE_PKG_URL;
+	if( $gBitSystem->isFeatureActive( 'pretty_urls' ) ) {
+		$ret .= $pTarget;
+		if( !empty( $pParams ) ) {
+			$ret .= '?';
+		}
+	} else {
+		if( BitBase::verifyId( $pTarget ) ) {
+			$ret .= 'index.php?products_id='.$pTarget;
+		} else {
+			$ret .= 'index.php?main_page='.$pTarget;
+		}
+		if( !empty( $pParams ) ) {
+			$ret .= '&';
+		}
+	}
+	if( is_array( $pParams ) ) {
+		$ret .= implode( '&', $pParams );
+	} else {
+		$ret .= $pParams;
+	}
+
+	return $ret;
+}
+
+function zen_get_root_uri() {
+	global $gCommerceSystem;
+	return $gCommerceSystem->getConfig( 'STORE_URL', BIT_ROOT_URI );
+}
+
+function zen_get_page_uri( $pTarget=NULL, $pParams=NULL ) {
+	return zen_get_root_uri().zen_get_page_url( $pTarget, $pParams );
+}
 
 ////
   function zen_get_top_level_domain($url) {

@@ -10,7 +10,7 @@
 				{assign var=new_style value='category-products'}
 			{/if}
 
-			<a class="{$new_style}" href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=index&amp;{$sideboxDocumentCategories[ix].path}">
+			<a class="{$new_style}" href="{'index'|zen_get_page_url:$sideboxDocumentCategories[ix].path}">
 				{if $sideboxDocumentCategories[ix].current}
 					{if $sideboxDocumentCategories[ix].has_sub_cat}
 						<span class="category-subs-parent">{$sideboxDocumentCategories[ix].name}</span>

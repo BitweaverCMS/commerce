@@ -25,14 +25,11 @@ require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCategory.php' );
 require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCustomer.php' );
 
 // Define the webserver and path parameters
-  // Main webserver: eg, http://localhost - should not be empty for productive servers
-  define('HTTP_SERVER', 'http://'.$_SERVER['HTTP_HOST']);
-  // Secure webserver: eg, https://localhost - should not be empty for productive servers
-  define('HTTPS_SERVER', 'https://'.$_SERVER['HTTP_HOST']);
-  // secure webserver for checkout procedure?
-  if( !defined( 'ENABLE_SSL' ) ) {
+
+// secure webserver for checkout procedure?
+if( !defined( 'ENABLE_SSL' ) ) {
 	define('ENABLE_SSL', 'true');
-  }
+}
 
 // NOTE: be sure to leave the trailing '/' at the end of these lines if you make changes!
 // * DIR_WS_* = Webserver directories (virtual/URL)

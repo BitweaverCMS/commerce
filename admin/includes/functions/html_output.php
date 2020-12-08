@@ -23,72 +23,43 @@
 require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
 ////
 // The HTML href link wrapper function
-  function zen_href_link_admin($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true) {
-    global $request_type, $session_started, $http_domain, $https_domain;
-    if ($page == '') {
- bt();
-      die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine the page link!<br><br>Function used:<br><br>zen_href_link_admin(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
-    }
+function zen_href_link_admin($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true) {
+	global $request_type, $session_started, $http_domain, $https_domain;
 
-    if ($connection == 'NONSSL') {
-      $link = HTTP_SERVER . DIR_WS_ADMIN;
-    } elseif ($connection == 'SSL') {
-      $link = HTTPS_SERVER . DIR_WS_HTTPS_ADMIN;
-    } else {
-      die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine connection method on a link!<br><br>Known methods: NONSSL SSL<br><br>Function used:<br><br>zen_href_link_admin(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
-    }
-    if (!strstr($page, '.php')) $page .= '.php';
-    if ($parameters == '') {
-      $link = $link . $page;
-      $separator = '?';
-    } else {
-      $link = $link . $page . '?' . $parameters;
-      $separator = '&';
-    }
+	$link = DIR_WS_HTTPS_ADMIN;
 
-    while ( (substr($link, -1) == '&') || (substr($link, -1) == '?') ) $link = substr($link, 0, -1);
+	if (!strstr($page, '.php')) {
+		$page .= '.php';
+	}
+
+	if ($parameters == '') {
+		$link = $link . $page;
+		$separator = '?';
+	} else {
+		$link = $link . $page . '?' . $parameters;
+		$separator = '&';
+	}
+
+	while ( (substr($link, -1) == '&') || (substr($link, -1) == '?') ) $link = substr($link, 0, -1);
 
 // Add the session ID when moving from different HTTP and HTTPS servers, or when SID is defined
-    if ( ($add_session_id == true) && ($session_started == true) ) {
-      if (defined('SID') && zen_not_null(SID)) {
-        $sid = SID;
-      } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL_ADMIN == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
+	if ( ($add_session_id == true) && ($session_started == true) ) {
+		if (defined('SID') && zen_not_null(SID)) {
+			$sid = SID;
+		} elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL_ADMIN == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
 //die($connection);
-        if ($http_domain != $https_domain) {
-          $sid = zen_session_name() . '=' . zen_session_id();
-        }
-      }
-    }
+			if ($http_domain != $https_domain) {
+				$sid = zen_session_name() . '=' . zen_session_id();
+			}
+		}
+	}
 
-    if (isset($sid)) {
-      $link .= $separator . $sid;
-    }
+	if (isset($sid)) {
+		$link .= $separator . $sid;
+	}
 
-    return $link;
-  }
-
-  function zen_catalog_href_link($page = '', $parameters = '', $connection = 'NONSSL') {
-    if ($connection == 'NONSSL') {
-      $link = HTTP_CATALOG_SERVER . DIR_WS_CATALOG;
-    } elseif ($connection == 'SSL') {
-      if (ENABLE_SSL_CATALOG == 'true') {
-        $link = HTTPS_CATALOG_SERVER . DIR_WS_HTTPS_CATALOG;
-      } else {
-        $link = HTTP_CATALOG_SERVER . DIR_WS_CATALOG;
-      }
-    } else {
-      die('</td></tr></table></td></tr></table><br><br><font color="#ff0000"><b>Error!</b></font><br><br><b>Unable to determine connection method on a link!<br><br>Known methods: NONSSL SSL<br><br>Function used:<br><br>zen_href_link_admin(\'' . $page . '\', \'' . $parameters . '\', \'' . $connection . '\')</b>');
-    }
-    if ($parameters == '') {
-      $link .= 'index.php?main_page='. $page;
-    } else {
-      $link .= 'index.php?main_page='. $page . "&" . zen_output_string($parameters);
-    }
-
-    while ( (substr($link, -1) == '&') || (substr($link, -1) == '?') ) $link = substr($link, 0, -1);
-
-    return $link;
-  }
+	return $link;
+}
 
 ////
 // Draw a 1 pixel black line

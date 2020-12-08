@@ -5,7 +5,7 @@
 		<input type="text" name="keyword" size="15" />
 		<input type="submit" name="search" value="{tr}Search{/tr}" />
 		<div class="row">
-			<a href="{$smarty.const.HTTP_SERVER}{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=advanced_search">{tr}Advanced Search{/tr}</a>
+			<a href="{'advanced_search'|zen_get_page_url}">{tr}Advanced Search{/tr}</a>
 		</div>
 	{/form}
 {/bitmodule}

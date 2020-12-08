@@ -234,19 +234,30 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
 
 			//check for some specifics that need to be included with all messages
-			if( empty( $block['EMAIL_STORE_NAME'] ) )			 $block['EMAIL_STORE_NAME']			 = STORE_NAME;
-			if( empty( $block['EMAIL_STORE_URL'] ) )				$block['EMAIL_STORE_URL']				= '<a href="'. BITCOMMERCE_PKG_URI .'">'.STORE_NAME.'</a>';
-			if( empty( $block['EMAIL_STORE_OWNER'] ) )			$block['EMAIL_STORE_OWNER']			= STORE_OWNER;
-			if( empty( $block['EMAIL_FOOTER_COPYRIGHT'] ) ) $block['EMAIL_FOOTER_COPYRIGHT'] = EMAIL_FOOTER_COPYRIGHT;
-			if( empty( $block['EMAIL_DISCLAIMER'] ) )			 $block['EMAIL_DISCLAIMER']			 = sprintf(EMAIL_DISCLAIMER, '<a href="mailto:' . STORE_OWNER_EMAIL_ADDRESS . '">'. STORE_OWNER_EMAIL_ADDRESS .' </a>');
-			if( empty( $block['EMAIL_SPAM_DISCLAIMER'] ) )	$block['EMAIL_SPAM_DISCLAIMER']	= EMAIL_SPAM_DISCLAIMER;
-			if( empty( $block['BASE_HREF'] ) )							$block['BASE_HREF']							= HTTP_SERVER . DIR_WS_CATALOG;
-			if( empty( $block['EMAIL_DATE_SHORT'] ) )			 $block['EMAIL_DATE_SHORT']			 = zen_date_short(date("Y-m-d"));
-			if( empty( $block['EMAIL_DATE_LONG'] ) )				$block['EMAIL_DATE_LONG']				= zen_date_long(date("Y-m-d"));
-
-			if( empty( $block['GV_LINK_OTHER'] ) )	$block['GV_LINK_OTHER']	= '';
-			if( empty( $block['EXTRA_INFO'] ) || $block['EXTRA_INFO'] =='EXTRA_INFO' )	$block['EXTRA_INFO']	= '';
-			if (substr($module,-6) != '_extra' && $module != 'contact_us')	$block['EXTRA_INFO']	= '';
+			if( empty( $block['EMAIL_STORE_NAME'] ) )
+				 $block['EMAIL_STORE_NAME'] = STORE_NAME;
+			if( empty( $block['EMAIL_STORE_URL'] ) )			
+				$block['EMAIL_STORE_URL'] = '<a href="'. zen_get_root_uri() .'">'.STORE_NAME.'</a>';
+			if( empty( $block['EMAIL_STORE_OWNER'] ) )		
+				$block['EMAIL_STORE_OWNER']	= STORE_OWNER;
+			if( empty( $block['EMAIL_FOOTER_COPYRIGHT'] ) )
+				$block['EMAIL_FOOTER_COPYRIGHT'] = EMAIL_FOOTER_COPYRIGHT;
+			if( empty( $block['EMAIL_DISCLAIMER'] ) )			 
+				$block['EMAIL_DISCLAIMER'] = sprintf(EMAIL_DISCLAIMER, '<a href="mailto:' . STORE_OWNER_EMAIL_ADDRESS . '">'. STORE_OWNER_EMAIL_ADDRESS .' </a>');
+			if( empty( $block['EMAIL_SPAM_DISCLAIMER'] ) )
+				$block['EMAIL_SPAM_DISCLAIMER']	= EMAIL_SPAM_DISCLAIMER;
+			if( empty( $block['BASE_HREF'] ) )						
+				$block['BASE_HREF'] = zen_get_page_uri();
+			if( empty( $block['EMAIL_DATE_SHORT'] ) )
+				$block['EMAIL_DATE_SHORT'] = zen_date_short(date("Y-m-d"));
+			if( empty( $block['EMAIL_DATE_LONG'] ) )			
+				$block['EMAIL_DATE_LONG'] = zen_date_long(date("Y-m-d"));
+			if( empty( $block['GV_LINK_OTHER'] ) )
+				$block['GV_LINK_OTHER']	= '';
+			if( empty( $block['EXTRA_INFO'] ) || $block['EXTRA_INFO'] =='EXTRA_INFO' )
+				$block['EXTRA_INFO'] = '';
+			if (substr($module,-6) != '_extra' && $module != 'contact_us')
+				$block['EXTRA_INFO'] = '';
 
 			$block['COUPON_BLOCK'] = '';
 			if( !empty( $block['COUPON_TEXT_VOUCHER_IS'] ) && !empty( $block['COUPON_TEXT_TO_REDEEM'] ) ) {
@@ -259,13 +270,9 @@ define('EMAIL_SYSTEM_DEBUG','off');
 			}
 
 			//prepare the "unsubscribe" link:
-			if (function_exists( 'zen_catalog_href_link' )) {
-				$block['UNSUBSCRIBE_LINK'] = str_replace("\n",'',tra('Unsubscribe')) . ' <a href="' . zen_catalog_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '">' . zen_catalog_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '</a>';
-			} else {
-				$block['UNSUBSCRIBE_LINK'] = str_replace("\n",'',tra('Unsubscribe')) . ' <a href="' . zen_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '">' . zen_href_link(FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS']) . '</a>';
-			}
+			$block['UNSUBSCRIBE_LINK'] = str_replace("\n",'',tra('Unsubscribe')) . ' <a href="' . zen_get_page_uri( FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS'] ) . '">' . zen_get_page_uri( FILENAME_UNSUBSCRIBE, "unsubscribe_address=" . $block['EMAIL_TO_ADDRESS'] ) . '</a>';
 
-		//now replace the $BLOCK_NAME items in the template file with the values passed to this function's array
+			//now replace the $BLOCK_NAME items in the template file with the values passed to this function's array
 			foreach ($block as $key=>$value) {
 				if( !is_object( $block[$key] ) ) {
 					$htmlMessage = str_replace('$' . $key, $value, $htmlMessage);

@@ -98,15 +98,8 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
 // load extra functions
   include(DIR_WS_MODULES . 'extra_functions.php');
 
-
-// set the top level domains
-  $http_domain = zen_get_top_level_domain(HTTP_SERVER);
-  $https_domain = zen_get_top_level_domain(HTTPS_SERVER);
-
-
 // include shopping cart class
   require(DIR_FS_CLASSES . 'shopping_cart.php');
-
 
 // include navigation history class
   require(DIR_FS_CLASSES . 'navigation_history.php');

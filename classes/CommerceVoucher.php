@@ -332,18 +332,12 @@ class CommerceVoucher extends CommerceBase {
 			$html_msg['GV_AMOUNT']  = $currencies->format($pParamHash['amount']);
 			$html_msg['GV_CODE']  = $id1; 
 			$html_msg['GV_WORTH']  = TEXT_GV_WORTH  . $currencies->format($pParamHash['amount']) .'<br />';
-			$html_msg['GV_REDEEM'] = TEXT_TO_REDEEM . TEXT_WHICH_IS . ' <strong>' . $id1 . '</strong> ' . TEXT_IN_CASE . '<p>' . TEXT_OR_VISIT .  '<a href="'.HTTP_SERVER  . DIR_WS_CATALOG.'">' . STORE_NAME . '</a>' . TEXT_ENTER_CODE . '</p>';
+			$html_msg['GV_REDEEM'] = TEXT_TO_REDEEM . TEXT_WHICH_IS . ' <strong>' . $id1 . '</strong> ' . TEXT_IN_CASE . '<p>' . TEXT_OR_VISIT .  '<a href="'. zen_get_page_uri() .'">' . STORE_NAME . '</a>' . TEXT_ENTER_CODE . '</p>';
 
-			
-			if ( 0 && $this->isCommerceConfigActive( 'SEARCH_ENGINE_FRIENDLY_URLS' ) ) { // TODO Fix
-				$html_msg['GV_CODE_URL']  = HTTP_SERVER . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1;
-				$html_msg['GV_CODE_LINK'] = '<a href="'.HTTP_SERVER . DIR_WS_CATALOG . 'index.php/gv_redeem/gv_no/'.$id1.'">' .TEXT_CLICK_TO_REDEEM . '</a>';
-			} else {
-				$html_msg['GV_CODE_URL'] = HTTP_SERVER . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1;
-				$html_msg['GV_CODE_LINK']  =  '<a href="'. HTTP_SERVER . DIR_WS_CATALOG . 'index.php?main_page=gv_redeem&gv_no='.$id1 .'">' .TEXT_CLICK_TO_REDEEM . '</a>';
-			}
+			$html_msg['GV_CODE_URL'] = zen_get_page_uri( 'gv_redeem', 'gv_no='.$id1 );
+			$html_msg['GV_CODE_LINK']  =  '<a href="'. $html_msg['GV_CODE_URL'] .'">' .TEXT_CLICK_TO_REDEEM . '</a>';
 
-			$message .= $html_msg['GV_CODE_URL'] . "\n\n" . TEXT_OR_VISIT . HTTP_SERVER  . DIR_WS_CATALOG  . TEXT_ENTER_CODE . "\n\n";
+			$message .= $html_msg['GV_CODE_URL'] . "\n\n" . TEXT_OR_VISIT . zen_get_page_uri()  . TEXT_ENTER_CODE . "\n\n";
 			$html_msg['EMAIL_MESSAGE_HTML'] = !empty( $pParamHash['message_html'] ) ? zen_db_prepare_input($pParamHash['message_html']) : '';
 			$html_msg['EMAIL_FIRST_NAME'] = ''; // unknown, since only an email address was supplied
 			$html_msg['EMAIL_LAST_NAME']  = ''; // unknown, since only an email address was supplied

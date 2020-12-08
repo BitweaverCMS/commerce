@@ -1057,13 +1057,7 @@ class order extends CommerceOrderBase {
 		} else {
 			$customerName = BitUser::getDisplayNameFromHash( $this->customer, FALSE );
 		}
-		$email_order = EMAIL_TEXT_HEADER . ' ' . EMAIL_TEXT_FROM . ' ' . STORE_NAME . "\n\n" .
-						$customerName . "\n\n" .
-						EMAIL_THANKS_FOR_SHOPPING . "\n\n" . EMAIL_DETAILS_FOLLOW . "\n" .
-						EMAIL_SEPARATOR . "\n" .
-						EMAIL_TEXT_ORDER_NUMBER . ' ' . $this->mOrdersId . "\n" .
-						EMAIL_TEXT_DATE_ORDERED . ' ' . strftime(DATE_FORMAT_LONG) . "\n" .
-						EMAIL_TEXT_INVOICE_URL . ' ' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $this->mOrdersId, 'SSL', false) . "\n\n";
+		$emailVars['INTRO_URL_VALUE']			 = zen_get_page_uri( FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $this->mOrdersId);
 		$emailVars['EMAIL_TEXT_HEADER']		 = EMAIL_TEXT_HEADER;
 		$emailVars['EMAIL_TEXT_FROM']			 = EMAIL_TEXT_FROM;
 		$emailVars['INTRO_STORE_NAME']			= STORE_NAME;
@@ -1074,7 +1068,14 @@ class order extends CommerceOrderBase {
 		$emailVars['INTRO_DATE_TITLE']			= EMAIL_TEXT_DATE_ORDERED;
 		$emailVars['INTRO_DATE_ORDERED']		= strftime(DATE_FORMAT_LONG);
 		$emailVars['INTRO_URL_TEXT']				= EMAIL_TEXT_INVOICE_URL_CLICK;
-		$emailVars['INTRO_URL_VALUE']			 = zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $this->mOrdersId, 'SSL', false);
+
+		$email_order = $emailVars['EMAIL_TEXT_HEADER'] . ' ' . $emailVars['EMAIL_TEXT_FROM'] . ' ' . STORE_NAME . "\n\n" .
+						$customerName . "\n\n" .
+						$emailVars['EMAIL_THANKS_FOR_SHOPPING'] . "\n\n" . $emailVars['EMAIL_DETAILS_FOLLOW'] . "\n" .
+						EMAIL_SEPARATOR . "\n" .
+						$emailVars['INTRO_ORDER_NUM_TITLE'] . ' ' . $this->mOrdersId . "\n" .
+						$emailVars['INTRO_DATE_TITLE'] . ' ' . strftime(DATE_FORMAT_LONG) . "\n" .
+						$emailVars['INTRO_URL_TEXT'] . ' ' .  zen_get_page_uri( FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $this->mOrdersId ) . "\n\n";
 
 		//comments area
 		if( !empty( $this->info['comments'] ) ) {
@@ -1449,22 +1450,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 	}
 
 	function getDisplayUrl( $page = '', $parameters = '', $connection = 'NONSSL') {
-		global $gCommerceSystem;
-		if( $gCommerceSystem->getConfig( 'ENABLE_SSL_CATALOG' ) == 'true') {
-			$link = BITCOMMERCE_PKG_SSL_URI;
-		} else {
-			$link = BITCOMMERCE_PKG_URI;
-		}
-
-		if( $this->isValid() ) {
-			$link .= 'index.php?main_page=account_history_info&'.$this->mOrdersId;
-		} else {
-			$link .= 'index.php?main_page=account_history_info';
-		}
-
-		while ( (substr($link, -1) == '&') || (substr($link, -1) == '?') ) $link = substr($link, 0, -1);
-
-		return $link;
+		return zen_get_page_uri( 'account_history_info', 'order_id='.$this->mOrdersId );
 	}
 
 	static function getObjectByOrdersProduct( $pOrdersProductId, $pVerify=TRUE ) {

@@ -58,7 +58,7 @@
 		}
 	}
 
-	$gBitSmarty->assign( 'gvBalance', $currencies->format( $gvBalance, true ) );
+	$gBitSmarty->assign( 'gvBalance', $gvBalance );
 
 	if ($requestAction == 'complete') {
 		zen_redirect(zen_href_link(FILENAME_GV_SEND, 'action=doneprocess'));
