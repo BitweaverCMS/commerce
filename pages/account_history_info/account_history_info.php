@@ -7,6 +7,7 @@ $order = new order( $_GET['order_id'] );
 
 if( $order->hasViewPermission() ) {
 	$order->loadHistory();
+	$gBitSmarty->assign( 'showPricing', TRUE );
 	$gBitSmarty->assign( 'order', $order );
 	$gBitSmarty->display( 'bitpackage:bitcommerce/order_invoice.tpl' );
 } else {

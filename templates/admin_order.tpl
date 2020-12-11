@@ -239,7 +239,7 @@ function getShippingQuotes( pOrderId ) {
 
 <div class="row">
 	<div class="col-xs-12">
-		<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}">{tr}Invoice{/tr}</a> <a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}packingslip.php?oID={$smarty.request.oID}">{tr}Packing Slip{/tr}</a> <form class="form-inline inline" method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
+		<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}">{tr}Invoice{/tr}</a> <a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}&amp;type=packing">{tr}Packing Slip{/tr}</a> <form class="form-inline inline" method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
 			<input type="hidden" name="email_to" value="{$order->customer.email_address}" />
 			<input type="hidden" name="oID" value="{$smarty.request.oID}" />
 			<input class="btn btn-default" type="submit" name="Send" value="Send Gift Certificate" />
