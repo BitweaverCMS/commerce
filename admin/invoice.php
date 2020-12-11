@@ -19,6 +19,8 @@ $gBitSmarty->assign( 'order', $order );
 <div class="container">
 <?php
 
+$type = BitBase::getParameter( $_REQUEST, 'type' );
+$gBitSmarty->assign( 'showPricing', $type != 'packing' );
 $gBitSmarty->display( 'bitpackage:bitcommerce/order_invoice.tpl' );
 
 ?>

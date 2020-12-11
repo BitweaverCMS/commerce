@@ -246,6 +246,7 @@ class order extends CommerceOrderBase {
 								'shipping_method' => $order->fields['shipping_method'],
 								'shipping_method_code' => $order->fields['shipping_method_code'],
 								'shipping_module_code' => $order->fields['shipping_module_code'],
+								'shipping_tracking_number' => $order->fields['shipping_tracking_number'],
 								'estimated_ship_date' => $order->fields['estimated_ship_date'],
 								'estimated_arrival_date' => $order->fields['estimated_arrival_date'],
 								'coupon_code' => $order->fields['coupon_code'],
