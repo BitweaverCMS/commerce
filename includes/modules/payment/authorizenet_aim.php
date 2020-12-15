@@ -182,7 +182,7 @@ function process_button( $pPaymentParameters ) {
 			$process_button_string .= zen_draw_hidden_field('cc_cvv', $_POST['authorizenet_aim_cc_cvv']);
 		}
 
-		$process_button_string .= zen_draw_hidden_field(zen_session_name(), zen_session_id());
+		$process_button_string .= zen_draw_hidden_field(session_name(), session_id());
 
 		return $process_button_string;
 	return false;
@@ -256,7 +256,7 @@ function processPayment( &$pPaymentParameters, &$pOrder ) {
 	// Merchant defined variables go here
 	Date => $order_time,
 	IP => $_SERVER['REMOTE_ADDR'],
-	Session => zen_session_id());
+	Session => session_id());
 
 	if(MODULE_PAYMENT_AUTHORIZENET_AIM_TESTMODE == 'Test') {
 		$submit_data['x_test_request'] = 'TRUE';
@@ -324,7 +324,7 @@ function processPayment( &$pPaymentParameters, &$pOrder ) {
 		$db_response_text = $response_text[0];
 		$db_transaction_id = $transaction_id[0];
 		$db_authorization_type = $authorization_type[0];
-		$db_session_id = zen_session_id();
+		$db_session_id = session_id();
 
 
 		// Insert the data into the database

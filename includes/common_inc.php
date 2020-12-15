@@ -129,7 +129,7 @@
 //      } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL_ADMIN == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
       } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
         if ($http_domain != $https_domain) {
-          $sid = zen_session_name() . '=' . zen_session_id();
+          $sid = session_name() . '=' . session_id();
         }
       }
     }

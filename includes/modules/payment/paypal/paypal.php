@@ -88,7 +88,7 @@ class paypal extends CommercePluginPaymentBase {
 //																zen_draw_hidden_field('shipping', number_format($order->info['shipping_cost'] * $currencies->get_value($my_currency), $currencies->get_decimal_places($my_currency))) .
 															zen_draw_hidden_field('amount', number_format(($order->info['total']) * $currencies->get_value($my_currency), $currencies->get_decimal_places($my_currency))) .
 															zen_draw_hidden_field('shipping', '0.00') .
-															zen_draw_hidden_field('custom', zen_session_name() . '=' . zen_session_id() ) .
+															zen_draw_hidden_field('custom', session_name() . '=' . session_id() ) .
 															zen_draw_hidden_field('upload', sizeof( $order->contents ) ) .
 															zen_draw_hidden_field('redirect_cmd', '_xclick') .
 															zen_draw_hidden_field('first_name', $order->customer['firstname']) .

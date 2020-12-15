@@ -272,7 +272,7 @@ function zen_hide_session_id() {
 	global $session_started;
 
 	if ( ($session_started == true) && defined('SID') && zen_not_null(SID) ) {
-		return zen_draw_hidden_field(zen_session_name(), zen_session_id());
+		return zen_draw_hidden_field(session_name(), session_id());
 	}
 }
 

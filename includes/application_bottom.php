@@ -21,7 +21,7 @@
 //
 
 // close session (store variables)
-  zen_session_close();
+  session_close();
 
   // breaks things
   // pconnect disabled safety switch

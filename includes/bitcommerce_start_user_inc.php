@@ -28,7 +28,7 @@ if ( ($request_type == 'SSL') && $gCommerceSystem->isConfigActive( 'SESSION_CHEC
 	}
 
 	if ($_SESSION['SESSION_SSL_ID'] != $ssl_session_id) {
-		zen_session_destroy();
+		session_destroy();
 		zen_redirect(zen_href_link(FILENAME_SSL_CHECK));
 	}
 }
@@ -41,7 +41,7 @@ if( $gCommerceSystem->isConfigActive( 'SESSION_CHECK_USER_AGENT' ) ) {
 	}
 
 	if ($_SESSION['SESSION_USER_AGENT'] != $http_user_agent) {
-		zen_session_destroy();
+		session_destroy();
 		zen_redirect(FILENAME_LOGIN);
 	}
 }
@@ -54,7 +54,7 @@ if( $gCommerceSystem->isConfigActive( 'SESSION_CHECK_IP_ADDRESS' ) ) {
 	}
 
 	if ($_SESSION['SESSION_IP_ADDRESS'] != $ip_address) {
-		zen_session_destroy();
+		session_destroy();
 		zen_redirect(FILENAME_LOGIN);
 	}
 }

@@ -236,7 +236,7 @@ class authorizenet extends CommercePluginPaymentCardBase {
 														 $this->InsertFP(MODULE_PAYMENT_AUTHORIZENET_LOGIN, MODULE_PAYMENT_AUTHORIZENET_TXNKEY, number_format($order->info['total'], 2), $sequence);
 		if (MODULE_PAYMENT_AUTHORIZENET_TESTMODE == 'Test') $process_button_string .= zen_draw_hidden_field('x_Test_Request', 'TRUE');
 
-		$process_button_string .= zen_draw_hidden_field(zen_session_name(), zen_session_id());
+		$process_button_string .= zen_draw_hidden_field(session_name(), session_id());
 
 		return $process_button_string;
 	}

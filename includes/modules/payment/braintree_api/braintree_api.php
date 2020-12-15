@@ -286,7 +286,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
                 zen_draw_hidden_field('cc_cvv', $this->getParameter( $pPaymentParams, 'cc_cvv' )) . "\n" .
                 zen_draw_hidden_field('bt_payer_firstname', $this->getParameter( $pPaymentParams, 'bt_cc_firstname' )) . "\n" .
                 zen_draw_hidden_field('bt_payer_lastname', $this->getParameter( $pPaymentParams, 'bt_cc_lastname' )) . "\n";
-        $process_button_string .= zen_draw_hidden_field(zen_session_name(), zen_session_id());
+        $process_button_string .= zen_draw_hidden_field(session_name(), session_id());
 */
         return $process_button_string;
     }
@@ -306,7 +306,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
                 'cc_cvv' => 'cc_cvv',
                 'bt_payer_firstname' => 'bt_cc_firstname',
                 'bt_payer_lastname' => 'bt_cc_lastname',
-            ), 'extraFields' => array(zen_session_name() => zen_session_id()));
+            ), 'extraFields' => array(session_name() => session_id()));
         return $processButton;
     }
 

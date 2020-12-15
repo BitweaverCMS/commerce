@@ -24,7 +24,7 @@
   $breadcrumb->add(NAVBAR_TITLE_2);
 
   if (sizeof($_SESSION['navigation']->snapshot) > 0) {
-    $origin_href = zen_href_link($_SESSION['navigation']->snapshot['page'], zen_array_to_string($_SESSION['navigation']->snapshot['get'], array(zen_session_name())), $_SESSION['navigation']->snapshot['mode']);
+    $origin_href = zen_href_link($_SESSION['navigation']->snapshot['page'], zen_array_to_string($_SESSION['navigation']->snapshot['get'], array(session_name())), $_SESSION['navigation']->snapshot['mode']);
     $_SESSION['navigation']->clear_snapshot();
   } else {
     $origin_href = zen_href_link(FILENAME_DEFAULT);
