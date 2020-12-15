@@ -98,7 +98,7 @@
   function zen_href_link($page = '', $parameters = '', $connection = 'SSL', $add_session_id = true, $search_engine_safe = true, $static = false, $use_dir_ws_catalog = true) {
     global $gBitSystem, $request_type, $session_started, $http_domain, $https_domain;
 
-	$link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://'.$_SERVER['HTTP_HOST'];
+	$link = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://').$_SERVER['HTTP_HOST'];
 
     if ($use_dir_ws_catalog) $link .= DIR_WS_CATALOG;
 
