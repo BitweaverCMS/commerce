@@ -28,7 +28,7 @@
  * Stop from parsing any further PHP code
 */
   function zen_exit() {
-   session_close();
+   session_write_close();
    exit();
   }
 
