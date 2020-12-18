@@ -2319,6 +2319,7 @@ If a special exist * 10+9
 	}
 
 	function storeDiscount( $pParamHash ) {
+
 		if( !empty( $pParamHash['discount_id'] ) && empty( $pParamHash['discount_qty'] ) ) {
 			$this->expungeDiscount( $pParamHash['discount_id'] );
 		} elseif( $this->verifyDiscount( $pParamHash ) ) {
@@ -2335,11 +2336,12 @@ If a special exist * 10+9
 				 $pParamHash['discounts_store']['discount_qty'] = $pParamHash['discount_qty'];
 			}
 			if( !isset( $pParamHash['discounts_store']['discount_price'] ) ) {
-				 $pParamHash['discount_price']['discount_qty'] = $pParamHash['discount_price'];
+				 $pParamHash['discounts_store']['discount_qty'] = $pParamHash['discount_price'];
 			}
 			$this->mDb->associateInsert( TABLE_PRODUCTS_DISCOUNT_QUANTITY, $pParamHash['discounts_store'] );
 		}
-		return( !empty( $pParamHash['discount_price'] ) && count( $pParamHash['discount_price'] ) );
+
+		return( !empty( $pParamHash['discounts_store'] ) && count( $pParamHash['discounts_store'] ) );
 	}
 
 	////

@@ -269,7 +269,7 @@ abstract class CommerceOrderBase extends BitBase {
 	//
 	function otCreditSelection() {
 		$this->scanOtModules();
-		$ret = '';
+		$ret = array();
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
 			$selection = $otObject->credit_selection();
 			if (is_array($selection)) {

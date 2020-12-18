@@ -554,8 +554,11 @@ class order extends CommerceOrderBase {
 
 		require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php' );
 		global $gCommerceShipping;
-		list($module, $method) = explode('_', $_SESSION['shipping']['id'] );
-		$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
+		
+		if( !empty( $_SESSION['shipping'] ) ) {
+			list($module, $method) = explode('_', $_SESSION['shipping']['id'] );
+			$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
+		}
 
 		$this->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
 							'currency' => !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : NULL,
@@ -706,10 +709,10 @@ class order extends CommerceOrderBase {
 			$this->info['tax'] = zen_round($this->info['tax'],2);
 		}
 
-		if (DISPLAY_PRICE_WITH_TAX == 'true') {
-			$this->info['total'] = $this->subtotal + $this->info['shipping_cost'];
-		} else {
-			$this->info['total'] = $this->subtotal + $this->info['tax'] + $this->info['shipping_cost'];
+		$this->info['total'] = (int)$this->subtotal + $this->getField( 'shipping_cost', 0.0 );
+
+		if (DISPLAY_PRICE_WITH_TAX != 'true') {
+			$this->info['total'] += $this->info['tax'];
 		}
 	}
 

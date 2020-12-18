@@ -41,7 +41,7 @@ class supersaver extends CommercePluginShippingBase {
 													'title' => trim( $desc ),
 													'code' => 'supersaverintl',
 													'transit_time' => MODULE_SHIPPING_SUPERSAVER_INTL_TRANSIT_TIME,
-													'cost' => MODULE_SHIPPING_SUPERSAVER_INTL_COST + MODULE_SHIPPING_SUPERSAVER_HANDLING
+													'cost' => (float)MODULE_SHIPPING_SUPERSAVER_INTL_COST + (float)MODULE_SHIPPING_SUPERSAVER_HANDLING
 												);
 					}
 				} elseif( $this->isEnabled( 'MODULE_SHIPPING_SUPERSAVER_DOMESTIC' ) ) {
@@ -51,7 +51,7 @@ class supersaver extends CommercePluginShippingBase {
 												'title' => trim( $desc ),
 												'code' => 'supersaver',
 												'transit_time' => MODULE_SHIPPING_SUPERSAVER_DOMESTIC_TRANSIT_TIME,
-												'cost' => MODULE_SHIPPING_SUPERSAVER_DOMESTIC_COST + MODULE_SHIPPING_SUPERSAVER_HANDLING
+												'cost' => (float)MODULE_SHIPPING_SUPERSAVER_DOMESTIC_COST + (float)MODULE_SHIPPING_SUPERSAVER_HANDLING
 												);
 				}
 			}

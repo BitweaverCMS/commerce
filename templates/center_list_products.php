@@ -24,7 +24,7 @@ if( !empty( $moduleParams['module_params']['commissioned'] ) ) {
 }
 $row = 0;
 $col = 0;
-$listBoxContents = '';
+$listBoxContents = array();
 if( is_object( $gBitProduct ) && $listedProducts = $gBitProduct->getList( $listHash ) ) {
 	// show only when 1 or more
 	$num_products_count = count( $listedProducts );
