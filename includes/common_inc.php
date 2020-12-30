@@ -98,7 +98,7 @@
   function zen_href_link($page = '', $parameters = '', $connection = 'SSL', $add_session_id = true, $search_engine_safe = true, $static = false, $use_dir_ws_catalog = true) {
     global $gBitSystem, $request_type, $session_started, $http_domain, $https_domain;
 
-	$link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://'.$_SERVER['HTTP_HOST'];
+	$link = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://').$_SERVER['HTTP_HOST'];
 
     if ($use_dir_ws_catalog) $link .= DIR_WS_CATALOG;
 
@@ -129,7 +129,7 @@
 //      } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL_ADMIN == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
       } elseif ( ( ($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL == 'true') ) || ( ($request_type == 'SSL') && ($connection == 'NONSSL') ) ) {
         if ($http_domain != $https_domain) {
-          $sid = zen_session_name() . '=' . zen_session_id();
+          $sid = session_name() . '=' . session_id();
         }
       }
     }

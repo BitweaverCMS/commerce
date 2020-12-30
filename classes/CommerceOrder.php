@@ -246,6 +246,7 @@ class order extends CommerceOrderBase {
 								'shipping_method' => $order->fields['shipping_method'],
 								'shipping_method_code' => $order->fields['shipping_method_code'],
 								'shipping_module_code' => $order->fields['shipping_module_code'],
+								'shipping_tracking_number' => $order->fields['shipping_tracking_number'],
 								'estimated_ship_date' => $order->fields['estimated_ship_date'],
 								'estimated_arrival_date' => $order->fields['estimated_arrival_date'],
 								'coupon_code' => $order->fields['coupon_code'],
@@ -553,8 +554,11 @@ class order extends CommerceOrderBase {
 
 		require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php' );
 		global $gCommerceShipping;
-		list($module, $method) = explode('_', $_SESSION['shipping']['id'] );
-		$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
+		
+		if( !empty( $_SESSION['shipping'] ) ) {
+			list($module, $method) = explode('_', $_SESSION['shipping']['id'] );
+			$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
+		}
 
 		$this->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
 							'currency' => !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : NULL,
@@ -705,10 +709,10 @@ class order extends CommerceOrderBase {
 			$this->info['tax'] = zen_round($this->info['tax'],2);
 		}
 
-		if (DISPLAY_PRICE_WITH_TAX == 'true') {
-			$this->info['total'] = $this->subtotal + $this->info['shipping_cost'];
-		} else {
-			$this->info['total'] = $this->subtotal + $this->info['tax'] + $this->info['shipping_cost'];
+		$this->info['total'] = (int)$this->subtotal + $this->getField( 'shipping_cost', 0.0 );
+
+		if (DISPLAY_PRICE_WITH_TAX != 'true') {
+			$this->info['total'] += $this->info['tax'];
 		}
 	}
 

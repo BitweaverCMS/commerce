@@ -134,10 +134,10 @@ function zen_image($src, $alt = '', $width = '', $height = '', $parameters = '')
 	}
 
 
-	if (zen_not_null($width) && zen_not_null($height) and file_exists($srcPath)) {
+	if (zen_not_null($width) && zen_not_null($height) and file_exists($srcPath) && is_file( $srcPath ) ) {
 //			$image .= ' width="' . zen_output_string($width) . '" height="' . zen_output_string($height) . '"';
 // proportional images
-		$image_size = @getimagesize($srcPath);
+		$image_size = getimagesize($srcPath);
 		// fix division by zero error
 		$ratio = ($image_size[0] != 0 ? $width / $image_size[0] : 1);
 		if ($image_size[1]*$ratio > $height) {
@@ -272,7 +272,7 @@ function zen_hide_session_id() {
 	global $session_started;
 
 	if ( ($session_started == true) && defined('SID') && zen_not_null(SID) ) {
-		return zen_draw_hidden_field(zen_session_name(), zen_session_id());
+		return zen_draw_hidden_field(session_name(), session_id());
 	}
 }
 

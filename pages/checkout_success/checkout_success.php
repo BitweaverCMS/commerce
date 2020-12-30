@@ -36,11 +36,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'update')) {
 		}
 		if (strlen($notify_string) > 0) $notify_string = substr($notify_string, 0, -1);
 	}
-	if ($notify_string == 'action=notify&') {
-		zen_redirect(zen_href_link(FILENAME_DEFAULT, '', 'SSL'));
-	} else {
-		zen_redirect(zen_href_link(FILENAME_DEFAULT, $notify_string));
-	}
+	zen_redirect( zen_get_page_url( 'account' ) );
 }
 
 require_once(DIR_FS_MODULES . 'require_languages.php');

@@ -144,19 +144,6 @@ if ( defined( 'USE_CACHE' ) && USE_CACHE == 'true') {
 // include navigation history class
 require_once(DIR_FS_CLASSES . 'navigation_history.php');
 
-// define how the session functions will be used
-require_once(DIR_FS_FUNCTIONS . 'sessions.php');
-
-// set the session name and save path
-zen_session_name('zenid');
-
-// set the session ID if it exists
- if (isset($_REQUEST[zen_session_name()])) {
-	 zen_session_id($_REQUEST[zen_session_name()]);
- } elseif ( ($request_type == 'SSL') && isset($_REQUEST[zen_session_name()]) ) {
-	 zen_session_id($_REQUEST[zen_session_name()]);
- }
-
 // include the breadcrumb class and start the breadcrumb trail
 require_once( BITCOMMERCE_PKG_PATH.'includes/classes/breadcrumb.php' );
 $breadcrumb = new breadcrumb;

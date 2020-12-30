@@ -20,9 +20,6 @@
 // $Id$
 //
 
-// close session (store variables)
-  zen_session_close();
-
   // breaks things
   // pconnect disabled safety switch
   // $gBitDb->close();

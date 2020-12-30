@@ -60,6 +60,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		if( $this->isIntraCountry( $pOrderBase ) ) {
 			$ret++;
 		}
+
 		$ret += count( $pCompletionHash );
 		return $ret;
 	}
@@ -86,7 +87,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 			$ret['code'] = $this->code;
 			$ret['products'] = $completion;
 			$ret['completion'] = count( $completion ) / count( $pOrderBase->contents );
-			$ret['priority'] = $this->getPriority( $pOrderBase, $ret['completion'] );
+			$ret['priority'] = $this->getPriority( $pOrderBase, $completion );
 			$ret['ship_date'] = $this->getEstimatedShipDate( $pOrderBase );
 		}
 

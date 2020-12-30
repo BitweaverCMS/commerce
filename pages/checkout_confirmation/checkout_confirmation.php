@@ -90,9 +90,8 @@ if ( $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_INSTALLED' ) ) {
 	$order->otProcess();
 }
 
+$gBitSmarty->assign( 'formActionUrl', $paymentManager->get_form_action_url() );
 $gBitSmarty->assign( 'paymentModules', $paymentManager );
 $gBitSmarty->assign( 'paymentConfirmation', $paymentManager->confirmation( $_SESSION ) );
 	
-$gBitSmarty->assign( 'formActionUrl', (isset($$_SESSION['payment']->form_action_url) ? $$_SESSION['payment']->form_action_url : zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL') ) );
-
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_confirmation.tpl' );

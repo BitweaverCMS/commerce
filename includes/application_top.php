@@ -221,9 +221,9 @@ if (isset($_REQUEST['action'])) {
 								if ($products_options_file->parse(TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i])) {
 									$products_image_extention = substr($products_options_file->filename, strrpos($products_options_file->filename, '.'));
 									if ($_SESSION['customer_id']) {
-										$gBitDb->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, customers_id, files_uploaded_name) values('" . zen_session_id() . "', '" . $_SESSION['customer_id'] . "', '" . zen_db_input($products_options_file->filename) . "')");
+										$gBitDb->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, customers_id, files_uploaded_name) values('" . session_id() . "', '" . $_SESSION['customer_id'] . "', '" . zen_db_input($products_options_file->filename) . "')");
 									} else {
-										$gBitDb->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, files_uploaded_name) values('" . zen_session_id() . "', '" . zen_db_input($products_options_file->filename) . "')");
+										$gBitDb->Execute("insert into " . TABLE_FILES_UPLOADED . " (sesskey, files_uploaded_name) values('" . session_id() . "', '" . zen_db_input($products_options_file->filename) . "')");
 									}
 									$insert_id = zen_db_insert_id( TABLE_FILES_UPLOADED, 'files_uploaded_id' );
 									$cartAttributes[TEXT_PREFIX . $_REQUEST[UPLOAD_PREFIX . $i]] = $insert_id . ". " . $products_options_file->filename;

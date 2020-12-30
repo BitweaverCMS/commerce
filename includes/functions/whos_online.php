@@ -41,7 +41,7 @@
       $wo_full_name = 'Guest';
     }
 
-    $wo_session_id = zen_session_id();
+    $wo_session_id = session_id();
     $wo_ip_address = $_SERVER['REMOTE_ADDR'];
     $wo_last_page_url = $_SERVER['REQUEST_URI'];
     $wo_user_agent = (!empty( $_SERVER['HTTP_USER_AGENT'] ) ? zen_db_prepare_input($_SERVER['HTTP_USER_AGENT']) : '-');

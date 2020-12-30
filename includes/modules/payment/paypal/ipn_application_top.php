@@ -108,13 +108,13 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
   require(DIR_FS_FUNCTIONS . 'sessions.php');
 
 // set the session name and save path
-  zen_session_name('zenid');
+  session_name('zenid');
 
 // set the session ID if it exists
-   if (isset($_POST[zen_session_name()])) {
-     zen_session_id($_POST[zen_session_name()]);
-   } elseif ( ($request_type == 'SSL') && isset($_GET[zen_session_name()]) ) {
-     zen_session_id($_GET[zen_session_name()]);
+   if (isset($_POST[session_name()])) {
+     session_id($_POST[session_name()]);
+   } elseif ( ($request_type == 'SSL') && isset($_GET[session_name()]) ) {
+     session_id($_GET[session_name()]);
    }
 
 if (!$_SESSION['customer_id']) {

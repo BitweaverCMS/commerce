@@ -174,6 +174,11 @@ class CommercePaymentManager {
 		}
 	}
 
+	function get_form_action_url() {
+		$formActionUrl = (is_object( $this->selected_module ) && !empty( $this->selected_module->form_action_url ) ? $this->selected_module->form_action_url : zen_href_link( FILENAME_CHECKOUT_PROCESS, '', 'SSL') );
+		return $formActionUrl;
+	}
+
 	function get_error() {
 		if (is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
 			return $this->mPaymentObjects[$this->selected_module]->get_error();

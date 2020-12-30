@@ -35,5 +35,5 @@
 //  $_SESSION['cot_gv'] = '0.00';
 
 //  $gBitCustomer->mCart->reset();
- zen_session_destroy();
+ session_destroy();
 ?>

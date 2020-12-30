@@ -75,7 +75,7 @@ if (isset($_SESSION['SSL_SESSION_ID'])) {
   $show_session_expire = $gBitDb->Execute("select * from " . TABLE_SESSIONS . " where sessions_id= '" . $_SESSION['SSL_SESSION_ID'] . "'");
 }
 echo '<br /><b>TESTING INFO:</b> Time page: <strong>' . $_GET['main_page'] . '</strong> was loaded is: <strong>' . date('H:i:s', time()) . '</strong><br><br>';
-echo 'Session ID: ' . zen_session_id() . '<br / >';
+echo 'Session ID: ' . session_id() . '<br / >';
 echo 'REGISTERED GLOBALS is: <b>' . (ini_get('register_globals')=='1' ? 'ON' : 'OFF') . '</b>' . ' Session Timeout: <b>' . ini_get('session.gc_maxlifetime') . 's</b><br><br>';
 echo "GLOBALS[$main_page] and HTTP_GET_VARS['main_page'] and _GET['main_page'] = " . $GLOBALS['main_page'] . ' - ' . $_GET['main_page'] . ' - ' . $_GET['main_page']  . '<br><br>';
 echo "_SERVER['SCRIPT_NAME'] and _GET['SCRIPT_NAME'] and _SESSION['SCRIPT_NAME'] = " . $_SERVER['SCRIPT_NAME'] . ' - ' . $_GET['SCRIPT_NAME'] . ' - ' . $_SESSION['SCRIPT_NAME'] . '<br><br>';

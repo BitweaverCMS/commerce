@@ -28,7 +28,7 @@
  * Stop from parsing any further PHP code
 */
   function zen_exit() {
-   zen_session_close();
+   session_write_close();
    exit();
   }
 
@@ -99,7 +99,7 @@ function zen_redirect($url) {
     if (is_array($_GET) && (sizeof($_GET) > 0)) {
       reset($_GET);
       while (list($key, $value) = each($_GET)) {
-        if ( !empty( $value ) && ($key != 'main_page') && ($key != zen_session_name()) && ($key != 'error') && (!in_array($key, $exclude_array)) && ($key != 'x') && ($key != 'y') ) {
+        if ( !empty( $value ) && ($key != 'main_page') && ($key != session_name()) && ($key != 'error') && (!in_array($key, $exclude_array)) && ($key != 'x') && ($key != 'y') ) {
           if ( (SEARCH_ENGINE_FRIENDLY_URLS == 'true') && ($search_engine_safe == true) ) {
 //	  die ('here');
             $get_url .= $key . '/' . rawurlencode(stripslashes($value)) . '/';

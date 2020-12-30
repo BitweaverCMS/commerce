@@ -94,7 +94,7 @@
           }
         }
 
-        if (SID) $display_links .= zen_draw_hidden_field(zen_session_name(), zen_session_id());
+        if (SID) $display_links .= zen_draw_hidden_field(session_name(), session_id());
 
 		$display_links .= '</ul>';
         $display_links .= '</form>';

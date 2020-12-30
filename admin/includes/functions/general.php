@@ -103,7 +103,7 @@
 
 		reset($_GET);
 		while (list($key, $value) = each($_GET)) {
-			if (($key != zen_session_name()) && ($key != 'error') && (!in_array($key, $exclude_array))) $get_url .= $key . '=' . $value . '&';
+			if (($key != session_name()) && ($key != 'error') && (!in_array($key, $exclude_array))) $get_url .= $key . '=' . $value . '&';
 		}
 
 		return $get_url;
