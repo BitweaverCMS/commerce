@@ -26,7 +26,7 @@
 */
   class sniffer {
 
-    function sniffer() {
+    function __construct() {
       $this->browser = Array();
       $this->php = Array();
       $this->server = Array();

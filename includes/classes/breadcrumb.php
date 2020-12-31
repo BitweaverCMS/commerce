@@ -23,7 +23,7 @@
 class breadcrumb {
 	var $mTrail;
 
-	function breadcrumb() {
+	function __construct() {
 		$this->reset();
 	}
 

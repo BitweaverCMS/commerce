@@ -24,7 +24,7 @@
 	var $modules, $selected_module;
 
 // class constructor
-	function products($module = '') {
+	function __construct($module = '') {
 	}
 
 	function get_products_in_category($zf_category_id, $zf_recurse=true, $zf_product_ids_only=false) {

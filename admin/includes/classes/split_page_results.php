@@ -21,7 +21,7 @@
 //
 
   class splitPageResults {
-    function splitPageResults(&$current_page_number, $max_rows_per_page, &$sql_query, &$query_num_rows) {
+    function __construct(&$current_page_number, $max_rows_per_page, &$sql_query, &$query_num_rows) {
       global $gBitDb;
       if (empty($current_page_number)) $current_page_number = 1;
 

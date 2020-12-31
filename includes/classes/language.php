@@ -23,7 +23,7 @@
   class language {
     var $languages, $catalog_languages, $browser_languages, $language;
 
-    function language($lng = '') {
+    function __construct($lng = '') {
       global $gBitDb;
       $this->languages = array('ar' => array('ar([-_][[:alpha:]]{2})?|arabic', 'arabic', 'ar'),
                                'bg-win1251' => array('bg|bulgarian', 'bulgarian-win1251', 'bg'),

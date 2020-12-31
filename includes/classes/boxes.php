@@ -30,7 +30,7 @@
     var $table_data_parameters = '';
 
 // class constructor
-    function tableBox($contents, $direct_output = false) {
+    function __construct($contents, $direct_output = false) {
       $tableBox_string = '<table border="' . zen_output_string($this->table_border) . '" width="' . zen_output_string($this->table_width) . '" cellspacing="' . zen_output_string($this->table_cellspacing) . '" cellpadding="' . zen_output_string($this->table_cellpadding) . '"';
       if (zen_not_null($this->table_parameters)) $tableBox_string .= ' ' . $this->table_parameters;
       $tableBox_string .= '>' . "\n";

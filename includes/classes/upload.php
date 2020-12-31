@@ -24,7 +24,7 @@
   class upload {
     var $file, $filename, $destination, $permissions, $extensions, $tmp_filename, $message_location;
 
-    function upload($file = '', $destination = '', $permissions = '666', $extensions = array() ) {
+    function __construct() ) {
       $this->set_file($file);
       $this->set_destination($destination);
       $this->set_permissions($permissions);

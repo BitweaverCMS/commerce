@@ -23,7 +23,7 @@
   class objectInfo {
 
 // class constructor
-    function objectInfo($object_array) {
+    function __construct($object_array) {
 //this line should be added, but should be tested first:
 //      if (!is_array($object_array)) return;
       reset($object_array);

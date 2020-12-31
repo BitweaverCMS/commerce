@@ -25,7 +25,7 @@
     var $payment_code, $keys;
 
 // class constructor
-    function paymentModuleInfo($pmInfo_array) {
+    function __construct($pmInfo_array) {
       global $gBitDb;
       $this->payment_code = $pmInfo_array['payment_code'];
 

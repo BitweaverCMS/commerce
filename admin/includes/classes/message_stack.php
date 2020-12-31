@@ -32,7 +32,7 @@
   class messageStack extends tableBlock {
     var $size = 0;
 
-    function messageStack() {
+    function __construct() {
 
       $this->errors = array();
 
