@@ -29,7 +29,7 @@
   if ($messageStack->size > 0) echo $messageStack->output();
 */
 
-  class messageStack extends tableBlock {
+  class messageStack {
     var $size = 0;
 
     function __construct() {

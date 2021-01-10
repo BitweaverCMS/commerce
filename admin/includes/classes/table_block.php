@@ -29,7 +29,7 @@
     var $table_row_parameters = '';
     var $table_data_parameters = '';
 
-    function __construct($contents) {
+    function renderTableBlock($contents) {
       $tableBox_string = '';
 
       $form_set = false;

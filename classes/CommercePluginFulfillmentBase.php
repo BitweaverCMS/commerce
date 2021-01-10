@@ -56,7 +56,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 	// Intended to be overridden
 	// Generic priority is the lowest of 0. Higher the more preferred, no upper limit
 	function getPriority( $pOrderBase, $pCompletionHash ) {
-		$ret = $this->getDefaultPriority();
+		$ret = (int)$this->getDefaultPriority();
 		if( $this->isIntraCountry( $pOrderBase ) ) {
 			$ret++;
 		}
