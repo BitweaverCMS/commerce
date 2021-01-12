@@ -530,7 +530,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
 		if( !empty( $this->mErrors['process_payment'] ) ) {
 			$_SESSION[$this->code.'_error']['number'] = $this->mErrors['process_payment'];
-			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, $result->errors->deepAll(), 'RESPONSE' => $responseHash ) );
+			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, $result->errors, 'RESPONSE' => $responseHash ) );
 			$ret = FALSE;
 		}
 
