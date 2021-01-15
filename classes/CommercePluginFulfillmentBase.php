@@ -133,6 +133,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		$delivery = $pOrderBase->getDelivery();
 		if( !($ret = ($originCode == $delivery['countries_iso_code_2']) ) ) {
 			if( $delivery['countries_iso_code_3'] == 'PRI' || $delivery['countries_iso_code_3'] == 'VIR' || $delivery['countries_iso_code_3'] == 'UMI' ) {
+				$storeCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY' );
 				$storeCountry = zen_get_countries( $storeCountryId );
 				if( $storeCountry['countries_iso_code_3'] == 'USA' ) {
 					$ret = TRUE;

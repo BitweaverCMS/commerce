@@ -83,8 +83,10 @@ class canadapost extends CommercePluginShippingBase {
 			if ($xml->{'price-quotes'} ) {
 				$priceQuotes = $xml->{'price-quotes'}->children('http://www.canadapost.ca/ws/ship/rate-v4');
 				if( $priceQuotes->{'price-quote'} ) {
+					$allowedTypes = $this->getAllowedServiceTypes();
 					foreach ( $priceQuotes as $priceQuote ) {  
-						if ( empty( $pShipHash['method'] ) || ($pShipHash['method'] == (string)$priceQuote->{'service-code'}) ) {
+						$serviceCode = (string)$priceQuote->{'service-code'};
+						if( empty( $allowedTypes ) || in_array( $serviceCode, $allowedTypes ) || (!empty( $pShipHash['method'] ) && ($pShipHash['method'] == $serviceCode)) ) {
 							$transitTime = '';
 							if( $transitDays = (string)$priceQuote->{'service-standard'}->{'expected-transit-time'} ) {
 								$transitTime = $transitDays.' '.($transitDays > 1 ? tra( 'Days' ) : tra( 'Day' ));
@@ -125,11 +127,11 @@ class canadapost extends CommercePluginShippingBase {
 				$quotes['methods'] = $methods;
 			} else {
 				if ($canadapostQuote != false) {
-					$errmsg = $canadapostQuote;
+					$errmsg = tra( 'No shipping options are available for this delivery address using this shipping service.' );
 				} else {
 					$errmsg = tra( 'An unknown error occured with the Canada Post shipping calculations.' );
 				}
-				$quotes = array('module' => $this->title , 'error' => $errmsg);
+				$quotes['error'] = $errmsg;
 			}
 		}
 
@@ -251,6 +253,16 @@ class canadapost extends CommercePluginShippingBase {
 		return $val;
 	}
 
+	private function getAllowedServiceTypes() {
+		$ret = array();
+
+		global $gCommerceSystem;
+		if( $allowedTypes = $gCommerceSystem->getConfig( $this->getModuleKeyTrunk().'_TYPES' ) ) {
+			$ret = array_map('trim', explode(',', $allowedTypes));
+		}
+
+		return $ret;
+	}
 				
 	/**
 	* rows for com_configuration table as associative array of column => value
