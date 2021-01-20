@@ -13,7 +13,7 @@
 
 	$row = 0;
 	$col = 0;
-	$listBoxContents = '';
+	$listBoxContents = array();
 
 	// show only when 1 or more
 	if( $commissionedProducts = $gBitProduct->getList( $listHash ) ) {

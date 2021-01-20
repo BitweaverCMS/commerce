@@ -56,7 +56,7 @@
 
   $row = 0;
   $col = 0;
-  $listBoxContents = '';
+	$listBoxContents = array();
 
 // show only when 1 or more
   if ( $specialProducts = $gBitProduct->getList( $listHash ) ) {

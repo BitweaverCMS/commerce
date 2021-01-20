@@ -35,7 +35,7 @@
   $new_products = $gBitProduct->getList( $listHash );
   $row = 0;
   $col = 0;
-  $listBoxContents = '';
+  $listBoxContents = array();
 
   $num_products_count = count( $new_products );
 
