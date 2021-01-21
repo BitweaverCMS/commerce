@@ -456,6 +456,7 @@ If a special exist * 10+9
 	function getPurchasePrice( $pQuantity=1, $pAttributes=array() ) {
 		$ret = NULL;
 		if( $this->isValid() ) {
+			$this->loadDiscounts();
 			if( $this->getField( 'product_is_free' ) ) {
 			} else {
 				// Base price always includes the commission. For purchasing, we might not have to pay it, so back it out
