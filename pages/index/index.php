@@ -26,7 +26,7 @@ if( !empty( $_REQUEST['manufacturers_id'] ) && ($_REQUEST['manufacturers_id'] <=
 	unset($manufacturers_id);
 }
 
-if ($category_depth == 'nested') {
+if (!empty( $category_depth ) && ($category_depth == 'nested') ) {
 	$sql = "select cd.`categories_name`, c.categories_image
 			from   " . TABLE_CATEGORIES . " c, " .
 					 TABLE_CATEGORIES_DESCRIPTION . " cd

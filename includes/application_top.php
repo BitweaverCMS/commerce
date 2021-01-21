@@ -48,7 +48,7 @@ if (isset($_REQUEST['main_page'])) $_REQUEST['main_page'] = preg_replace('/[^0-9
 clean_input( $_REQUEST );
 
 function clean_input( &$pArray ) {
-	while (list($key, $value) = each($pArray)) {
+	foreach( $pArray as $key => $value ) {
 		if( is_array( $pArray[$key] ) ) {
 			clean_input( $pArray );
 		} else {

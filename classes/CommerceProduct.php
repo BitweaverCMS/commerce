@@ -28,8 +28,8 @@ require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
  */
 class CommerceProduct extends LibertyMime {
 	public $mProductsId;
-	public $mOptions;
-	public $mDiscounts;
+	public $mOptions = array();
+	public $mDiscounts = array();
 
 	function __construct( $pProductsId=NULL, $pContentId=NULL ) {
 		$this->mProductsId = $pProductsId;
@@ -48,8 +48,6 @@ class CommerceProduct extends LibertyMime {
 		$this->mUpdateContentPerm	= 'p_bitcommerce_product_update';
 		$this->mCreateContentPerm	= 'p_bitcommerce_product_create';
 		$this->mAdminContentPerm = 'p_bitcommerce_admin';
-		$this->mOptions = NULL;
-		$this->mDiscounts = NULL;
 	}
 
 	public function __sleep() {
