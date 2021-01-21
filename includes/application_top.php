@@ -45,18 +45,6 @@ if (isset($_REQUEST['manufacturers_id'])) $_REQUEST['manufacturers_id'] = preg_r
 if (isset($_REQUEST['cPath'])) $_REQUEST['cPath'] = preg_replace('/[^0-9_]/', '', $_REQUEST['cPath']);
 if (isset($_REQUEST['main_page'])) $_REQUEST['main_page'] = preg_replace('/[^0-9a-zA-Z_]/', '', $_REQUEST['main_page']);
 
-clean_input( $_REQUEST );
-
-function clean_input( &$pArray ) {
-	foreach( $pArray as $key => $value ) {
-		if( is_array( $pArray[$key] ) ) {
-			clean_input( $pArray );
-		} else {
-			$pArray[$key] = preg_replace('/[<>]/', '', $value);
-		}
-	}
-}
-
 // navigation history
 if (!isset($_SESSION['navigation'])) {
 	$_SESSION['navigation'] = new navigationHistory;
