@@ -1270,7 +1270,7 @@ If a special exist * 10+9
 		}
 
 		if( !empty( $pListHash['content_id_list'] ) ) { // you can use an array of titles
-			$whereSql .= " AND p.`content_id` IN ( ".implode( ',',array_fill( 0,count( $pListHash['content_id_list'] ),'?' ) ).") ";
+			$whereSql .= " AND p.`content_id` IN ( ".implode( ',', array_fill( 0,count( $pListHash['content_id_list'] ),'?' ) ).") ";
 			$bindVars = array_merge( $bindVars, $pListHash['content_id_list'] );
 		}
 
@@ -1643,7 +1643,7 @@ If a special exist * 10+9
 					$this->mDb->associateInsert( TABLE_PRODUCTS_DESCRIPTION, $bindVars );
 				} elseif ($action == 'update_product') {
 					if( !empty( $bindVars ) ) {
-						$query = "UPDATE " . TABLE_PRODUCTS_DESCRIPTION . " SET `".implode( array_keys( $bindVars ), '`=?, `' ).'`=?' . " WHERE `products_id` =? AND `language_id`=?";
+						$query = "UPDATE " . TABLE_PRODUCTS_DESCRIPTION . " SET `".implode( '`=?, `', array_keys( $bindVars ) ).'`=?' . " WHERE `products_id` =? AND `language_id`=?";
 						$bindVars['products_id'] = $this->mProductsId;
 						$bindVars['language_id'] = $language_id;
 						$this->mDb->query( $query, $bindVars );

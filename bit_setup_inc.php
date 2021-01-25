@@ -62,7 +62,7 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 			$exCustomer = new CommerceCustomer( $pObject->mUserId );
 			if( $exCustomer->load() ) {
 				if( $orderHistory = $exCustomer->getOrdersHistory() ) {
-					$pObject->mErrors['expunge_check'][] = tra( 'Customer has completed orders: ' ).'#'.implode( array_keys( $orderHistory ), ', #' );
+					$pObject->mErrors['expunge_check'][] = tra( 'Customer has completed orders: ' ).'#'.implode( ', #', array_keys( $orderHistory ) );
 				}
 			}
 		}
