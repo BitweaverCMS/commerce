@@ -147,7 +147,7 @@ while (!$show_display_category->EOF) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-} elseif ($category_depth == 'products' || !empty( $_GET['user_id'] ) || zen_check_url_get_terms() ) {
+} elseif( (!empty( $category_depth ) && $category_depth == 'products') || !empty( $_GET['user_id'] ) || zen_check_url_get_terms() ) {
 	global $gBitProduct;
 
 	$listProducts = $gBitProduct->getList( $_REQUEST );
