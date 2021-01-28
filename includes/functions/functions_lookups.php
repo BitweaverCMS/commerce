@@ -443,27 +443,27 @@ function zen_get_attributes_sort_order($products_id, $options_id, $options_value
 					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 					  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
 					  WHERE `products_id`=? and `products_options_id`=? and pa.`products_options_values_id`=?";
-		  $check_attributes = $gBitDb->query( $query, array( $product_id, str_replace('txt_', '', $option), '0'  ) );
-		// text cannot be blank
-		  if ($check_attributes->fields['attributes_required'] == '1' and empty($value)) {
-			$check_valid = false;
-		  }
+			$check_attributes = $gBitDb->query( $query, array( $product_id, str_replace('txt_', '', $option), '0' ) );
+			// text cannot be blank
+			if ($check_attributes->fields['attributes_required'] == '1' and empty($value)) {
+				$check_valid = false;
+			}
 		} else {
 			// regular attribute validation
 			$query = "SELECT `attributes_display_only`, `attributes_required` 
 					  FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 					  	INNER JOIN " . TABLE_PRODUCTS_OPTIONS_MAP . " pom ON( pa.`products_options_values_id`=pom.`products_options_values_id` )
 					  WHERE `products_id`=? and `products_options_id`=? and pa.`products_options_values_id`=?";
-			$check_attributes = $gBitDb->query( $query, array( (int)$product_id, (int)$option, (int)$value ) );
-
-			// display only cannot be selected
-			if ($check_attributes->fields['attributes_display_only'] == '1') {
-			  $check_valid = false;
+			if( $check_attributes = $gBitDb->query( $query, array( (int)$product_id, (int)$option, (int)$value ) ) ) {
+				// display only cannot be selected
+				if( !empty( $check_attributes->fields ) && $check_attributes->fields['attributes_display_only'] == '1') {
+					$check_valid = false;
+				}
 			}
 
 		}
 
-	    return $check_valid;
+		return $check_valid;
 	}
 
 ////
