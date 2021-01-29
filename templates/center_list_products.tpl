@@ -1,7 +1,8 @@
 {if $listBoxContents}
 <div class="listproducts" id="module{$moduleParams.module_id}">
+{if $productListTitle}
 <h2 class="centerboxheading">{$productListTitle|default:"Products"}</h2>
-
+{/if}
 
 <div class="row">
 {foreach name=listedProducts from=$listedProducts item=prod key=productId}
