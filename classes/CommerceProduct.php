@@ -1349,28 +1349,30 @@ If a special exist * 10+9
 			$ret = $rs->GetAssoc();
 			global $currencies;
 			foreach( array_keys( $ret ) as $productId ) {
-				$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
-				if( !empty( $ret[$productId]['type_class_file'] ) && file_exists( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] ) ) {
-					require_once( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] );
-				}
 				if( empty( $ret[$productId]['type_class'] ) ) {
 					$ret[$productId]['type_class'] = 'CommerceProduct';
 				}
-				$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrlFromHash( $ret[$productId] );
-				$ret[$productId]['display_uri'] = $ret[$productId]['type_class']::getDisplayUriFromHash( $ret[$productId] );
-				if( empty( $ret[$productId]['products_image'] ) ) {
-					$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrlFromHash( $ret[$productId], $pListHash['thumbnail_size'] );
-				}
+				if( class_exists( $ret[$productId]['type_class'] ) ) {
+					$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
+					if( !empty( $ret[$productId]['type_class_file'] ) && file_exists( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] ) ) {
+						require_once( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] );
+					}
+					$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrlFromHash( $ret[$productId] );
+					$ret[$productId]['display_uri'] = $ret[$productId]['type_class']::getDisplayUriFromHash( $ret[$productId] );
+					if( empty( $ret[$productId]['products_image'] ) ) {
+						$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrlFromHash( $ret[$productId], $pListHash['thumbnail_size'] );
+					}
 
-				if( empty( $taxRate[$ret[$productId]['products_tax_class_id']] ) ) {
-					$taxRate[$ret[$productId]['products_tax_class_id']] = zen_get_tax_rate( $ret[$productId]['products_tax_class_id'] );
-				}
-				$ret[$productId]['products_weight_kg'] = $ret[$productId]['products_weight'] * .45359;
+					if( empty( $taxRate[$ret[$productId]['products_tax_class_id']] ) ) {
+						$taxRate[$ret[$productId]['products_tax_class_id']] = zen_get_tax_rate( $ret[$productId]['products_tax_class_id'] );
+					}
+					$ret[$productId]['products_weight_kg'] = $ret[$productId]['products_weight'] * .45359;
 
-				$ret[$productId]['regular_price'] = $currencies->display_price( $ret[$productId]['products_price'], $taxRate[$ret[$productId]['products_tax_class_id']] );
-				// zen_get_products_display_price is a query hog
-				$ret[$productId]['display_price'] = $ret[$productId]['type_class']::getDisplayPriceFromHash( $ret[$productId] );
-				$ret[$productId]['title'] = $ret[$productId]['products_name'];
+					$ret[$productId]['regular_price'] = $currencies->display_price( $ret[$productId]['products_price'], $taxRate[$ret[$productId]['products_tax_class_id']] );
+					// zen_get_products_display_price is a query hog
+					$ret[$productId]['display_price'] = $ret[$productId]['type_class']::getDisplayPriceFromHash( $ret[$productId] );
+					$ret[$productId]['title'] = $ret[$productId]['products_name'];
+				}
 			}
 		}
 
