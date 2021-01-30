@@ -1352,11 +1352,11 @@ If a special exist * 10+9
 				if( empty( $ret[$productId]['type_class'] ) ) {
 					$ret[$productId]['type_class'] = 'CommerceProduct';
 				}
+				if( !class_exists( $ret[$productId]['type_class'] ) && !empty( $ret[$productId]['type_class_file'] ) && file_exists( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] ) ) {
+					require_once( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] );
+				}
 				if( class_exists( $ret[$productId]['type_class'] ) ) {
 					$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
-					if( !empty( $ret[$productId]['type_class_file'] ) && file_exists( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] ) ) {
-						require_once( BIT_ROOT_PATH.$ret[$productId]['type_class_file'] );
-					}
 					$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrlFromHash( $ret[$productId] );
 					$ret[$productId]['display_uri'] = $ret[$productId]['type_class']::getDisplayUriFromHash( $ret[$productId] );
 					if( empty( $ret[$productId]['products_image'] ) ) {
