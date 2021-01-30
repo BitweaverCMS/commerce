@@ -2641,6 +2641,7 @@ Skip deleting of images for now
 		$product = NULL;
 		$lookupValue = NULL;
 		$lookupKey = NULL;
+		$productClass = '';
 
 		if( is_array( $pLookupMixed ) && count( $pLookupMixed ) == 1 ) {
 			$currentValue = current( $pLookupMixed );
@@ -2658,28 +2659,34 @@ Skip deleting of images for now
 					FROM " . TABLE_PRODUCT_TYPES . " cpt
 						LEFT JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
 					WHERE `$lookupKey`=?";
-			$productTypes = $gBitDb->getRow( $sql, array( $lookupValue ), BIT_QUERY_CACHE_TIME );
-
-			if( !empty( $productTypes['type_class'] ) && !empty( $productTypes['type_class_file'] ) ) {
-				require_once( BIT_ROOT_PATH.$productTypes['type_class_file'] );
-				if( class_exists(	$productTypes['type_class'] ) ) {
+			if( ($productTypes = $gBitDb->getRow( $sql, array( $lookupValue ), BIT_QUERY_CACHE_TIME )) ) {
+				if( !class_exists( $productTypes['type_class'] ) && file_exists( BIT_ROOT_PATH.$productTypes['type_class_file'] ) ) {
+					require_once( BIT_ROOT_PATH.$productTypes['type_class_file'] );
+					if( class_exists( $productTypes['type_class'] ) ) {
+						$productClass = $productTypes['type_class'];
+					}
+				} else {
 					$productClass = $productTypes['type_class'];
 				}
 			}
 		}
 
+/*
+		// this will create an object for an unknown product type. Prob. not a good idea
 		if( empty( $productClass ) ) {
 			$productClass = get_called_class();
 		}
+*/
+		if( class_exists( $productTypes['type_class'] ) ) {
+			$productsId = ( $lookupKey == 'products_id' ) ? $lookupValue : NULL;
+			$contentId = ( $lookupKey == 'content_id' ) ? $lookupValue : NULL;
 
-		$productsId = ( $lookupKey == 'products_id' ) ? $lookupValue : NULL;
-		$contentId = ( $lookupKey == 'content_id' ) ? $lookupValue : NULL;
+			if( !($product = $productClass::loadFromCache( $productsId )) ) {
+				$product = new $productClass( $productsId, $contentId );
 
-		if( !($product = $productClass::loadFromCache( $productsId )) ) {
-			$product = new $productClass( $productsId, $contentId );
-
-			if( !$product->load() ) {
-				unset( $product->mProductsId );
+				if( !$product->load() ) {
+					unset( $product->mProductsId );
+				}
 			}
 		}
 
