@@ -893,7 +893,8 @@ class order extends CommerceOrderBase {
 		$this->products_ordered_html = '';
 
 		// lowstock email report
-		$this->email_low_stock='';
+		$this->email_low_stock = '';
+		$this->total_weight = 0;
 
 		foreach( array_keys( $this->contents ) as $cartItemKey ) {
 			$stockQty = $this->mDb->getOne( "SELECT `products_quantity` FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( zen_get_prid($this->contents[$cartItemKey]['id']) ) );
@@ -1120,7 +1121,7 @@ class order extends CommerceOrderBase {
 //addresses area: Delivery
 		$emailVars['HEADING_ADDRESS_INFORMATION']= tra( 'Address Information' );
 		$emailVars['ADDRESS_DELIVERY_TITLE']		 = EMAIL_TEXT_DELIVERY_ADDRESS;
-		$emailVars['ADDRESS_DELIVERY_DETAIL']		= ($this->content_type != 'virtual') ? zen_address_label($this->customer['user_id'], $this->delivery, true, '', "<br />") : 'n/a';
+		$emailVars['ADDRESS_DELIVERY_DETAIL']		= ($this->content_type != 'virtual') ? zen_address_format($this->customer['format_id'], $this->delivery, true, '', "<br />") : 'n/a';
 		$emailVars['SHIPPING_METHOD_TITLE']			= HEADING_SHIPPING_METHOD;
 		$emailVars['SHIPPING_METHOD_DETAIL']		 = (zen_not_null($this->info['shipping_method'])) ? $this->info['shipping_method'] : 'n/a';
 
@@ -1131,7 +1132,7 @@ class order extends CommerceOrderBase {
 		//addresses area: Billing
 		$email_order .= "\n" . EMAIL_TEXT_BILLING_ADDRESS . "\n" .	EMAIL_SEPARATOR . "\n" . zen_address_format($this->billing['format_id'], $this->billing, FALSE, '', "\n" ) . "\n\n";
 		$emailVars['ADDRESS_BILLING_TITLE']	 = EMAIL_TEXT_BILLING_ADDRESS;
-		$emailVars['ADDRESS_BILLING_DETAIL']	= zen_address_label($this->customer['user_id'], $this->billing, true, '', "<br />");
+		$emailVars['ADDRESS_BILLING_DETAIL']	= zen_address_format($this->customer['format_id'], $this->billing, true, '', "<br />");
 
 		$emailVars['PAYMENT_METHOD_TITLE'] = $emailVars['PAYMENT_METHOD_DETAIL'] = $emailVars['PAYMENT_METHOD_FOOTER'] = '';
 		if( $paymentModule = $this->getPaymentModule() ) {
