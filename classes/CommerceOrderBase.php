@@ -17,7 +17,7 @@ abstract class CommerceOrderBase extends BitBase {
 	public $free_shipping_item;
 	public $free_shipping_weight;
 	public $free_shipping_price;
-	public $contents;
+	public $contents = array();
 	public $delivery = array();
 	public $billing = array();
 
