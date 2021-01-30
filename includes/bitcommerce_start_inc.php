@@ -188,16 +188,17 @@ if ( isset( $_REQUEST['products_id'] ) ) {
 	if( !empty( $_POST['products_id'] ) ) {
 		$_POST['products_id'] = $_GET['products_id']; 
 	}
-	$gBitProduct = bc_get_commerce_product( array( 'products_id' => $_REQUEST['products_id'] ) );
 
-	if( $gBitProduct->isValid() ) {
-		if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
-			$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
+	if( $gBitProduct = bc_get_commerce_product( array( 'products_id' => $_REQUEST['products_id'] ) ) ) {
+		if( $gBitProduct->isValid() ) {
+			if( empty( $_REQUEST['cPath'] ) && !empty( $gBitProduct->mInfo['master_categories_id'] ) ) {
+				$_REQUEST['cPath'] = $gBitProduct->mInfo['master_categories_id'];
+			}
+		} else {
+			global $gBitSystem;
+			$gBitSystem->setHttpStatus( HttpStatusCodes::HTTP_NOT_FOUND );
+			unset( $gBitProduct );
 		}
-	} else {
-		global $gBitSystem;
-		$gBitSystem->setHttpStatus( HttpStatusCodes::HTTP_NOT_FOUND );
-		unset( $gBitProduct );
 	}
 }
 

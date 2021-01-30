@@ -525,8 +525,9 @@ function zen_get_languages() {
 	function zen_get_products_base_price( $pProductsId ) {
 		static $sBasePriceCache = array();
 		if( empty( $sBasePriceCache[$pProductsId] ) ) {
-			$product = bc_get_commerce_product( $pProductsId );
-			$sBasePriceCache[$pProductsId] = $product->getBasePrice();
+			if( $product = bc_get_commerce_product( $pProductsId ) ) {
+				$sBasePriceCache[$pProductsId] = $product->getBasePrice();
+			}
 		}
 
 		return $sBasePriceCache[$pProductsId];
