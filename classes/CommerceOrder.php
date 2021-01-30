@@ -1121,7 +1121,7 @@ class order extends CommerceOrderBase {
 //addresses area: Delivery
 		$emailVars['HEADING_ADDRESS_INFORMATION']= tra( 'Address Information' );
 		$emailVars['ADDRESS_DELIVERY_TITLE']		 = EMAIL_TEXT_DELIVERY_ADDRESS;
-		$emailVars['ADDRESS_DELIVERY_DETAIL']		= ($this->content_type != 'virtual') ? zen_address_format($this->customer['format_id'], $this->delivery, true, '', "<br />") : 'n/a';
+		$emailVars['ADDRESS_DELIVERY_DETAIL']		= ($this->content_type != 'virtual') ? zen_address_format($this->delivery['format_id'], $this->delivery, true, '', "<br />") : 'n/a';
 		$emailVars['SHIPPING_METHOD_TITLE']			= HEADING_SHIPPING_METHOD;
 		$emailVars['SHIPPING_METHOD_DETAIL']		 = (zen_not_null($this->info['shipping_method'])) ? $this->info['shipping_method'] : 'n/a';
 
@@ -1132,7 +1132,7 @@ class order extends CommerceOrderBase {
 		//addresses area: Billing
 		$email_order .= "\n" . EMAIL_TEXT_BILLING_ADDRESS . "\n" .	EMAIL_SEPARATOR . "\n" . zen_address_format($this->billing['format_id'], $this->billing, FALSE, '', "\n" ) . "\n\n";
 		$emailVars['ADDRESS_BILLING_TITLE']	 = EMAIL_TEXT_BILLING_ADDRESS;
-		$emailVars['ADDRESS_BILLING_DETAIL']	= zen_address_format($this->customer['format_id'], $this->billing, true, '', "<br />");
+		$emailVars['ADDRESS_BILLING_DETAIL']	= zen_address_format($this->billing['format_id'], $this->billing, true, '', "<br />");
 
 		$emailVars['PAYMENT_METHOD_TITLE'] = $emailVars['PAYMENT_METHOD_DETAIL'] = $emailVars['PAYMENT_METHOD_FOOTER'] = '';
 		if( $paymentModule = $this->getPaymentModule() ) {
