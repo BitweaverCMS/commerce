@@ -107,7 +107,7 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 					$contentId = $product['content_id'];
 					$product['data'] = $product['products_description'];
 					$product['format_guid'] = 'bithtml';
-					$product['stripped_data'] = (!empty( $product['data'] ) ? strip_tags( $gBitProduct->parseData( $product['data'], $product['format_guid'] ) ) : '' );
+					$product['stripped_data'] = (!empty( $product['data'] ) ? strip_tags( LibertyContent::parseDataHash( $product ) ) : '' );
 					$pResults['matches'][$contentId] = array_merge( $pResults['matches'][$contentId], $product );
 					$excerptSources[array_search($contentId,$contentIds)] = $product['stripped_data'];
 				}

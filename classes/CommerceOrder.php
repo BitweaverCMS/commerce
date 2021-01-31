@@ -606,7 +606,7 @@ class order extends CommerceOrderBase {
 									'suburb' => $defaultAddress['entry_suburb'],
 									'city' => $defaultAddress['entry_city'],
 									'postcode' => $defaultAddress['entry_postcode'],
-									'state' => ((zen_not_null($defaultAddress['entry_state'])) ? $defaultAddress['entry_state'] : $defaultAddress['zone_name']),
+									'state' => (!empty( $defaultAddress['entry_state'] ) ? $defaultAddress['entry_state'] : NULL),
 									'zone_id' => $defaultAddress['entry_zone_id'],
 									'countries_name' => $defaultAddress['countries_name'],
 									'countries_id' => $defaultAddress['countries_id'],
@@ -631,7 +631,7 @@ class order extends CommerceOrderBase {
 									'suburb' => $this->getParameter( $shippingAddress, 'suburb' ),
 									'city' => $shippingAddress['city'],
 									'postcode' => $shippingAddress['postcode'],
-									'state' => ((zen_not_null($shippingAddress['state'])) ? $shippingAddress['state'] : $shippingAddress['zone_name']),
+									'state' => (!empty( $shippingAddress['state'] ) ? $shippingAddress['state'] : NULL),
 									'zone_id' => $shippingAddress['zone_id'],
 									'countries_id' => $shippingAddress['countries_id'],
 									'countries_name' => $shippingAddress['countries_name'],
@@ -650,7 +650,7 @@ class order extends CommerceOrderBase {
 									'suburb' => $billingAddress['suburb'],
 									'city' => $billingAddress['city'],
 									'postcode' => $billingAddress['postcode'],
-									'state' => ((zen_not_null($billingAddress['state'])) ? $billingAddress['state'] : $billingAddress['zone_name']),
+									'state' => (!empty( $billingAddress['state'] ) ? $billingAddress['state'] : ''),
 									'zone_id' => $billingAddress['zone_id'],
 									'countries_id' => $billingAddress['countries_id'],
 									'countries_name' => $billingAddress['countries_name'],
@@ -1123,7 +1123,7 @@ class order extends CommerceOrderBase {
 		$emailVars['ADDRESS_DELIVERY_TITLE']		 = EMAIL_TEXT_DELIVERY_ADDRESS;
 		$emailVars['ADDRESS_DELIVERY_DETAIL']		= ($this->content_type != 'virtual') ? zen_address_format($this->delivery['format_id'], $this->delivery, true, '', "<br />") : 'n/a';
 		$emailVars['SHIPPING_METHOD_TITLE']			= HEADING_SHIPPING_METHOD;
-		$emailVars['SHIPPING_METHOD_DETAIL']		 = (zen_not_null($this->info['shipping_method'])) ? $this->info['shipping_method'] : 'n/a';
+		$emailVars['SHIPPING_METHOD_DETAIL']		 = (!empty( $this->info['shipping_method'] ) ? $this->info['shipping_method'] : 'n/a');
 
 		if ($this->content_type != 'virtual') {
 			$email_order .= "\n" . EMAIL_TEXT_DELIVERY_ADDRESS . "\n" .	EMAIL_SEPARATOR . "\n" . zen_address_format($this->delivery['format_id'], $this->delivery, FALSE, '', "\n" ) . "\n\n";

@@ -31,10 +31,10 @@ class CommerceCustomer extends CommerceBase {
 	}
 
 	function load() {
+		$this->mInfo = array();
 		if( $this->isValid() ) {
-			$sql = "SELECT * FROM " . TABLE_CUSTOMERS . " WHERE `customers_id`=?";
-			if( $rs = $this->mDb->query( $sql, array( $this->mCustomerId ) ) ) {
-				$this->mInfo = $rs->fields;
+			if( $info = $this->mDb->getRow( "SELECT * FROM " . TABLE_CUSTOMERS . " WHERE `customers_id`=?", array( $this->mCustomerId ) ) ) {
+				$this->mInfo = $info;
 			}
 		}
 		return( count( $this->mInfo ) );
