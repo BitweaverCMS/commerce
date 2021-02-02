@@ -8,7 +8,7 @@
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingBase.php' );
 
 class fedexwebservices extends CommercePluginShippingBase {
 	function __construct() {

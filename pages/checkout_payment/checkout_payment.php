@@ -54,7 +54,7 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
-require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
+require_once(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 $order = new order;
 $gBitSmarty->assign( 'order', $order );
 

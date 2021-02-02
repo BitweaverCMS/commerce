@@ -20,7 +20,7 @@
 // $Id$
 //
 global $gBitDb, $gBitProduct;
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 
 if (isset($_GET['products_id'])) {
 $manufacturer_info_sidebox_query = "select m.`manufacturers_id`, m.`manufacturers_name`, m.`manufacturers_image`,

@@ -19,7 +19,7 @@
 // +----------------------------------------------------------------------+
 //// $Id$
 //
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php' );
 
 	$gBitSmarty->assign( 'gvBalance', CommerceVoucher::getGiftAmount() );
 	$gBitSmarty->assign( 'couponAmount', CommerceVoucher::getCouponAmount() );

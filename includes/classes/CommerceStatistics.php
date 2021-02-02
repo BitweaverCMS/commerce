@@ -11,7 +11,7 @@
 // +----------------------------------------------------------------------+
 /* vim: :set fdm=marker : */
 
-require_once( KERNEL_PKG_PATH . 'BitSingleton.php' );
+require_once( KERNEL_PKG_CLASS_PATH.'BitSingleton.php' );
 
 class CommerceStatistics extends BitSingleton {
 

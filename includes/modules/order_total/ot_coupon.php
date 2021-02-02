@@ -8,8 +8,8 @@
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginOrderTotalBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginOrderTotalBase.php' );
 
 class ot_coupon extends CommercePluginOrderTotalBase  {
 

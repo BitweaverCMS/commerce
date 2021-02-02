@@ -10,7 +10,7 @@
 // +--------------------------------------------------------------------+
 //
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderBase.php' );
 
 define( 'MAX_CART_QUANTITY', 9999999 );
 

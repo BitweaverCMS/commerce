@@ -13,7 +13,7 @@
 //
 
 
-require_once( KERNEL_PKG_PATH.'BitBase.php' );
+require_once( KERNEL_PKG_CLASS_PATH.'BitBase.php' );
 
 class CommerceCategory extends BitBase {
 	public $pCategoryId;

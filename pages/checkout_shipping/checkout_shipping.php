@@ -60,7 +60,7 @@ if( !$gBitCustomer->mCart->verifyCheckout() ) {
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
-require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
+require_once(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 
 // if the no delivery address, try to get one by default
 if( empty( $_SESSION['sendto'] ) ) {
@@ -77,7 +77,7 @@ if( isset( $_REQUEST['change_address'] ) ) {
 } else {
 
 	// load all enabled shipping modules
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
 	global $gCommerceShipping;
 
 	if ( defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && (MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') ) {

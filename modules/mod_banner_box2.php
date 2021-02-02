@@ -21,7 +21,7 @@
 //
 global $gBitDb, $gCommerceSystem, $gBitProduct;
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 
 $banner_box_group= SHOW_BANNERS_GROUP_SET8;
 

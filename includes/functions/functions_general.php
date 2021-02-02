@@ -856,11 +856,10 @@ function zen_redirect($url) {
 ////
 // call additional function files
 // gv and coupons
-  require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php');
+  require_once(BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php');
 // categories, paths, pulldowns
-  require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_categories.php');
+  require_once(BITCOMMERCE_PKG_INCLUDE_PATH.'functions/functions_categories.php');
 // customers and addresses
-  require_once(BITCOMMERCE_PKG_PATH.'includes/functions/functions_customers.php');
+  require_once(BITCOMMERCE_PKG_INCLUDE_PATH.'functions/functions_customers.php');
 ////
 /////////////////////////////////////////////
-?>

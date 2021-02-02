@@ -18,7 +18,7 @@
 
 require('includes/application_top.php');
 define('HEADING_TITLE', tra( 'Customer Interests' ) );
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceStatistics.php' );
 
 $mid = 'bitpackage:bitcommerce/admin_interests.tpl';
 

@@ -19,7 +19,7 @@
 /**
  * Initialization
  */
-require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyMime.php' );
 
 /**
  * Class for handling the commerce product
@@ -1786,7 +1786,7 @@ If a special exist * 10+9
 
 	function getProductOptions( $pSelectedId = NULL, $pCart = NULL, &$productSettings = NULL ) {
 		global $currencies;
-		require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
+		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/html_output.php' );
 		$productOptions = array();
 
 		if ( $this->loadAttributes() ) {
@@ -2708,7 +2708,7 @@ if( !defined( 'TABLE_PRODUCTS' ) ) {
 	// we might be coming in from LibertyBase::getLibertyObject
 	// keep bitcommerce_start_inc at the bottom of the file, *after* the class has been declared
 	// because bitcommerce_start_inc creates a default gBitProduct of type CommerceProduct
-	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+	require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 }
 
 ?>

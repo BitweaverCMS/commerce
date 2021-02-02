@@ -21,7 +21,7 @@
 //
 global $gBitDb, $gCommerceSystem, $gBitProduct, $lng;
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 
 $show_languages= false;
 if (substr(basename($_SERVER['SCRIPT_NAME']), 0, 8) != 'checkout') {
@@ -30,7 +30,7 @@ if (substr(basename($_SERVER['SCRIPT_NAME']), 0, 8) != 'checkout') {
 
 if ($show_languages == true) {
 	if (!isset($lng) || (isset($lng) && !is_object($lng))) {
-		require_once( BITCOMMERCE_PKG_PATH.'includes/classes/language.php' );
+		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'classes/language.php' );
 		$lng = new language;
 	}
 	reset($lng->catalog_languages);

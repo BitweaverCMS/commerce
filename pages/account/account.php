@@ -13,7 +13,7 @@
  * @package	bitcommerce
  * @author	 spider <spider@steelsun.com>
  */
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php' );
 
 	global $gBitSmarty;
 

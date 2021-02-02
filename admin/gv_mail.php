@@ -21,8 +21,8 @@
 //
 
 require_once('includes/application_top.php');
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php');
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php');
 
 $_REQUEST['amount'] = (!empty( $_REQUEST['amount'] ) ? preg_replace( '/[^\d.]/', '', $_REQUEST['amount'] ) : NULL);
 

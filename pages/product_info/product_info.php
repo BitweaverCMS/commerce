@@ -26,7 +26,7 @@ if ( $gBitProduct->isAvailable() ) {
 	if( $gCommerceSystem->getConfig( 'SHOW_PRODUCT_INFO_REVIEWS' ) ) {
 		$comments_return_url = $gBitProduct->getDisplayUrl();
 		$commentsParentId = $gBitProduct->mContentId;
-		include_once ( LIBERTY_PKG_PATH.'comments_inc.php' );
+		include_once ( LIBERTY_PKG_INCLUDE_PATH.'comments_inc.php' );
 	}
 } else {
 	$gCommerceSystem->setHeadingTitle( tra( 'Product not found' ) );

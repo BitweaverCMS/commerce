@@ -20,7 +20,7 @@
 // $Id$
 //
 global $gBitDb, $gBitProduct;
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 
 $record_company_query = "select record_company_id, record_company_name
 		from " . TABLE_RECORD_COMPANY . "

@@ -7,8 +7,8 @@
 // +----------------------------------------------------------------------+
 //  $Id$
 require('includes/application_top.php');
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
 
 $order->calculate();
 

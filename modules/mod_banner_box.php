@@ -21,7 +21,7 @@
 //
 global $gBitDb, $gCommerceSystem, $gBitProduct, $banner;
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'banner.php');
 require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'html_output.php');
 

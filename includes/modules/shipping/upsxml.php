@@ -46,7 +46,7 @@ require DIR_FS_CATALOG . 'includes/classes/xmldocument.php';
 // if using the optional dimensional support, set to 1, otherwise leave as 0
 define('DIMENSIONS_SUPPORTED', 0);
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingBase.php' );
 
 class upsxml extends CommercePluginShippingBase {
 	public $moduleVersion = '1.7.7';

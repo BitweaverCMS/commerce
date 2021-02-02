@@ -33,7 +33,7 @@ if( defined( 'FLAT_STORAGE_NAME' ) ) {
 }
 
 // include shopping cart class
-// 	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/shopping_cart.php' );
+// 	require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'classes/shopping_cart.php' );
 if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 	define( 'BITPRODUCT_CONTENT_TYPE_GUID', 'bitproduct' );
 	$gLibertySystem->registerService( LIBERTY_SERVICE_COMMERCE, BITCOMMERCE_PKG_NAME, array(
@@ -44,7 +44,7 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 	) );
 
 	function bitcommerce_content_expunge ( &$pObject ) {
-		require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 		if( $relProduct = bc_get_commerce_product( array( 'related_content_id' => $pObject->mContentId ) ) ) {
 			// do not delete products if related content is getting deleted, but product has been purchased
 			if( $relProduct->isPurchased() ) {
@@ -58,7 +58,7 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 
 	function bitcommerce_user_expunge_check( &$pObject ) {
 		if( is_a( $pObject, 'BitUser' ) && !empty( $pObject->mUserId ) ) {
-			require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+			require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 			$exCustomer = new CommerceCustomer( $pObject->mUserId );
 			if( $exCustomer->load() ) {
 				if( $orderHistory = $exCustomer->getOrdersHistory() ) {
@@ -71,7 +71,7 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 	// make sure all mail_queue messages from a deleted user are nuked
 	function bitcommerce_user_expunge( &$pObject ) {
 		if( is_a( $pObject, 'BitUser' ) && !empty( $pObject->mUserId ) ) {
-			require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+			require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 			$pObject->StartTrans();
 			$exCustomer = new CommerceCustomer( $pObject->mUserId );
 			if( $exCustomer->load() ) {
@@ -82,7 +82,7 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 	}
 	
 	function bitcommerce_user_register( &$pObject ) {
-		require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 		if( is_a( $pObject, 'BitUser' ) && !empty( $pObject->mUserId ) && !empty( $_REQUEST['com_interests'] ) ) {
 			CommerceCustomer::syncBitUser( $pObject->mInfo );
 			$newCustomer = new CommerceCustomer( $pObject->mUserId );
@@ -94,7 +94,7 @@ if( $gBitSystem->isPackageActive( 'bitcommerce' ) ) {
 
 	function sphinx_bitcommerce_results( $pResults ) {
 		global $gSphinxSystem, $gBitUser, $gBitProduct;
-		require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 		if( !empty( $pResults['matches'] ) ) {
 			$contentIds = array_keys( $pResults['matches'] );
 

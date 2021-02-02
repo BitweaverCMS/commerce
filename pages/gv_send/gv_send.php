@@ -19,8 +19,8 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/http_client.php' );
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+	require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'classes/http_client.php' );
+	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php' );
 
 // if the customer is not logged on, redirect them to the login page
 	$gBitUser->verifyRegistered();

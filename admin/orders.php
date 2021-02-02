@@ -31,7 +31,7 @@ $gBitSystem->mConfig['layout-body'] = '-fluid';
 $currencies = new currencies();
 
 if( $gBitThemes->isAjaxRequest() ) {
-	require( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
+	require( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
 	$productManager = new CommerceProductManager();
 
 	if( !empty( $_REQUEST['new_option_id'] ) ) {
@@ -83,7 +83,7 @@ require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 define('HEADING_TITLE', ( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : tra( 'Orders' )));
 
 if( !empty( $order ) ) {
-	require( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
+	require( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
 	$productManager = new CommerceProductManager();
 	$optionsList = $productManager->getOptions();
 	$optionsList[0] = "Add new order option...";

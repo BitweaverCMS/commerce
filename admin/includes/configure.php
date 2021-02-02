@@ -21,7 +21,7 @@
 
 
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/configure.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'configure.php' );
 
 define('HTTP_CATALOG_SERVER', 'http://'.$_SERVER['HTTP_HOST'] );
 define('HTTPS_CATALOG_SERVER', 'https://'.$_SERVER['HTTP_HOST'] );

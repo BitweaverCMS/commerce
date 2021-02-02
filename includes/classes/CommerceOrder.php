@@ -20,7 +20,7 @@
 // $Id$
 //
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderBase.php' );
 
 class order extends CommerceOrderBase {
 	public $mOrdersId;
@@ -552,7 +552,7 @@ class order extends CommerceOrderBase {
 			$coupon_code = $this->mDb->GetOne($coupon_code_query, array( (int)$_SESSION['cc_id'] ) );
 		}
 
-		require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php' );
+		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php' );
 		global $gCommerceShipping;
 		
 		if( !empty( $_SESSION['shipping'] ) ) {
@@ -738,12 +738,12 @@ class order extends CommerceOrderBase {
 
 		// load the selected shipping module
 		if( !empty( $pPaymentParams['shipping'] ) ) {
-			require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+			require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
 			$shipping_modules = new CommerceShipping($pPaymentParams['shipping']);
 		}
 
 		// load selected payment module
-		require_once( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
+		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
 		$paymentManager = new CommercePaymentManager( $pPaymentParams['payment'] );
 
 		// group pricing or expedite will affect total
@@ -1039,7 +1039,7 @@ class order extends CommerceOrderBase {
 
 		$language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' ;
 		require_once( BITCOMMERCE_PKG_PATH . $language_page_directory . 'checkout_process.php' );
-		require_once( BITCOMMERCE_PKG_PATH. './includes/functions/functions_customers.php' );
+		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/functions_customers.php' );
 
 		if( empty( $pEmailRecipient ) ) {
 			$pEmailRecipient = $this->customer['email_address'];

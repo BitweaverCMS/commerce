@@ -4,12 +4,12 @@ global $gBitProduct, $gCommerceSystem, $gBitDb, $gBitSmarty, $gBitThemes, $gBitU
 $directory_array = array();
 
 // Set the local configuration parameters - mainly for developers
-if (file_exists(BITCOMMERCE_PKG_PATH.'includes/local/configure.php')) {
-	require_once(BITCOMMERCE_PKG_PATH.'includes/local/configure.php');
+if (file_exists(BITCOMMERCE_PKG_INCLUDE_PATH.'local/configure.php')) {
+	require_once(BITCOMMERCE_PKG_INCLUDE_PATH.'local/configure.php');
 }
 // include server parameters
-if (file_exists(BITCOMMERCE_PKG_PATH.'includes/configure.php')) {
-	require_once(BITCOMMERCE_PKG_PATH.'includes/configure.php');
+if (file_exists(BITCOMMERCE_PKG_INCLUDE_PATH.'configure.php')) {
+	require_once(BITCOMMERCE_PKG_INCLUDE_PATH.'configure.php');
 }
 
 // include the list of extra configure files
@@ -76,7 +76,7 @@ CommerceSystem::loadSingleton();
 
 // set the language
 if( empty( $_SESSION['languages_id'] ) || isset($_GET['language'])) {
-	require_once( BITCOMMERCE_PKG_PATH.'includes/classes/language.php' );
+	require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'classes/language.php' );
 	$lng = new language();
 
 	if (isset($_GET['language']) && zen_not_null($_GET['language'])) {
@@ -119,7 +119,7 @@ $gBitCustomer->load();
 $gBitSmarty->assign( 'gBitCustomer', $gBitCustomer );
 
 // lookup information
-require(BITCOMMERCE_PKG_PATH.'includes/functions/functions_lookups.php');
+require(BITCOMMERCE_PKG_INCLUDE_PATH.'functions/functions_lookups.php');
 
 if( !isset( $_SESSION['cc_id'] ) ) {
 	$_SESSION['cc_id'] = NULL;
@@ -145,7 +145,7 @@ if ( defined( 'USE_CACHE' ) && USE_CACHE == 'true') {
 require_once(DIR_FS_CLASSES . 'navigation_history.php');
 
 // include the breadcrumb class and start the breadcrumb trail
-require_once( BITCOMMERCE_PKG_PATH.'includes/classes/breadcrumb.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'classes/breadcrumb.php' );
 $breadcrumb = new breadcrumb;
 $gBitSmarty->assign( 'gCommerceBreadcrumbs', $breadcrumb );
 

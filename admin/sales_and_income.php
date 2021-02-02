@@ -23,7 +23,7 @@ $gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/la
 $gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/calendar-setup.js' );
 $gBitThemes->loadCss( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/calendar-win2k-cold-1.css' );
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceStatistics.php' );
 global $gCommerceStatistics;
 
 $currencies = new currencies();

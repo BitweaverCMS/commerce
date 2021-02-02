@@ -28,7 +28,7 @@ if( !empty( $_POST['comments'] ) ) {
 	$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
 }
 
-require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
+require(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 $order = new order();
 
 // load the before_process function from the payment modules

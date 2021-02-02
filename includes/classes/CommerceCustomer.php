@@ -10,8 +10,8 @@
 // +--------------------------------------------------------------------+
 //
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceBase.php' );
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShoppingCart.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShoppingCart.php' );
 
 class CommerceCustomer extends CommerceBase {
 	public $mCustomerId;
@@ -123,7 +123,7 @@ class CommerceCustomer extends CommerceBase {
 				}
 				if( !empty( $rowHash['product_id'] ) ) {
 					if( !empty( $rowHash['option_id'] ) ) {
-						require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
+						require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
 						$productManager = new CommerceProductManager();
 						$optionsValuesIds = preg_split('/[\s,!\?;:-]+|[\.]\s+/', $rowHash['option_id'], -1, PREG_SPLIT_NO_EMPTY);
 						foreach( $optionsValuesIds as $optionsValuesId ) {

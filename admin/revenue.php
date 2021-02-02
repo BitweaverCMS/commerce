@@ -11,7 +11,7 @@
 
 require('includes/application_top.php');
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceStatistics.php' );
 
 // $gBitSmarty->assign( 'loadAjax', 'mochikit' );
 // $gBitSmarty->assign( 'mochikitLibs', array( 'DOM.js', 'Iter.js', 'Style.js', 'Signal.js', 'Color.js', 'Position.js', 'Visual.js', 'DragAndDrop.js', 'Sortable.js' ) );

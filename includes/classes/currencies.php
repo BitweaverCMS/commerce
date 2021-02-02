@@ -24,7 +24,7 @@
 // Class to handle currencies
 // TABLES: currencies
 
-require_once( KERNEL_PKG_PATH.'BitSingleton.php' );
+require_once( KERNEL_PKG_CLASS_PATH.'BitSingleton.php' );
 
 class currencies extends BitBase {
 	var $currencies;

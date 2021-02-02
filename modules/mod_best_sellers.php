@@ -22,7 +22,7 @@
 global $gBitDb, $gBitProduct, $gCommerceSystem;
 
 if( empty( $gCommerceSystem ) ) {
-	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+	require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 }
 
 // test if box should display

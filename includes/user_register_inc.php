@@ -15,7 +15,7 @@
 global $gBitSmarty, $gBitSystem;
 
 if( $gBitSystem->getConfig( 'commerce_register_interests' ) ) {
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCustomer.php' );
+	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceCustomer.php' );
 	$gBitSmarty->assign('comInterests', CommerceCustomer::getInterests() );
 }
 ?>

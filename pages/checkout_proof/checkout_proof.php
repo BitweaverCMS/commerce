@@ -1,6 +1,6 @@
 <?php
 	
-require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
+require_once(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 
 $gCommerceSystem->setHeadingTitle( tra( 'Checkout Proof' ) );
 

@@ -9,7 +9,7 @@
 // | This source file is subject to version 2.0 of the GPL license		|
 // +--------------------------------------------------------------------+
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginPaymentCardBase.php' );
 
 class amazonmws extends CommercePluginPaymentBase { 
 	var $code;

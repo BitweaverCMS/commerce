@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 
 require('includes/application_top.php');
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCommission.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceCommission.php' );
 
 if( count( $_GET ) > 2 || count( $_POST ) > 2 ) {
 	$gBitUser->verifyTicket();

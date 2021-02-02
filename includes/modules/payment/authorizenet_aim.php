@@ -24,7 +24,7 @@
 // +----------------------------------------------------------------------+
 // $Id$
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginPaymentCardBase.php' );
 
 class authorizenet_aim extends CommercePluginPaymentCardBase {
 	var $code, $title, $description, $enabled, $response;

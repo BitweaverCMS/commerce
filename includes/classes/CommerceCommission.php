@@ -12,8 +12,8 @@
 //  $Id$
 //
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCommissionBase.php' );
-require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_customers.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceCommissionBase.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/functions_customers.php' );
 
 define( 'COMMISSION_TYPE_PRODUCT_SALE', 'product sale' );
 

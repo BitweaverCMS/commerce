@@ -10,7 +10,7 @@
  * UPS Shipping Module class
  * NOTE: This retrieves generic shipping quotes, not specific to a given shipper account's negotiated rates. For negotiated rates, use the UPSXML module instead.
  */
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingBase.php' );
 
 class ups extends CommercePluginShippingBase {
 

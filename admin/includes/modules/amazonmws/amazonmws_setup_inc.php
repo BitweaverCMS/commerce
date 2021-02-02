@@ -149,7 +149,7 @@ function amazon_process_order( $pAmazonOrderId ) {
 				$azOrderList = $getOrderResult->getOrders();
 
 				if( $azOrders = $azOrderList->getOrder() ) {
-					require_once(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
+					require_once(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 					$order = new order();
 
 					$order->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,

@@ -5,7 +5,7 @@ $currencies = new currencies();
 
 $oID = zen_db_prepare_input($_GET['oID']);
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
 $order = new order($oID);
 $gBitSmarty->assign( 'order', $order );
 ?>

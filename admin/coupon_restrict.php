@@ -61,7 +61,7 @@ $productsList = $gBitDb->getAssoc("select p.`products_id`, pd.`products_name` fr
 $gBitSmarty->assign_by_ref( 'productsList', $productsList );
 $gBitSmarty->assign_by_ref( 'gCoupon', $gCoupon );
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceProductManager.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
 $productManager = new CommerceProductManager();
 $gBitSmarty->assign( 'optionsList', $productManager->getOptionsList() );
 

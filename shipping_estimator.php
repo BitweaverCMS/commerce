@@ -13,9 +13,9 @@ if( !empty( $_REQUEST['address_id'] ) ) {
 	$_SESSION['sendto'] = $_REQUEST['address_id'];
 }
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_user_inc.php' );
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShoppingCart.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_user_inc.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShoppingCart.php' );
 
 global $gBitDb, $gBitUser, $gBitCustomer, $currencies;
 $shoppingCart = new CommerceShoppingCart();
@@ -124,7 +124,7 @@ if($gBitCustomer->mCart->get_content_type() == 'virtual') {
 	$shoppingCart->info['shipping_method'] = MODULE_ORDER_TOTAL_SHIPPING_TITLE;
 	$shoppingCart->info['shipping_cost'] = 0;
 } else {
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
 	// weight and count needed for shipping !
 	if( $gBitProduct->isValid() && !empty( $_REQUEST['cart_quantity'] ) ) {
 		$weight = $gBitProduct->getWeight( $_REQUEST['cart_quantity'], $_REQUEST['id'] );

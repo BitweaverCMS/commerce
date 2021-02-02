@@ -21,7 +21,7 @@
 //
 	global $gBitDb, $gBitProduct, $currencies;
 
-	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+	require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 
 	$listHash['freshness'] = SHOW_NEW_PRODUCTS_LIMIT;
 	$listHash['max_records'] = 1;

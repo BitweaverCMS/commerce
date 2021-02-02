@@ -21,8 +21,8 @@
 //
 
 global $gBitDb, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php' );
 
 if( !empty( $gBitCustomer->mCart ) && is_object( $gBitCustomer->mCart ) ) {
   switch (true) {

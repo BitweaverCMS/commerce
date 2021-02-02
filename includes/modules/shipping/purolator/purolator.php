@@ -18,7 +18,7 @@
 	Props to bitsmith2k for helping me solve the 1.39h issue with the _xmlentities function
  */
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingBase.php' );
 
 class purolator extends CommercePluginShippingBase {
 

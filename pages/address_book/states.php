@@ -1,7 +1,7 @@
 <?php
 require_once( '../../../kernel/setup_inc.php' );
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/html_output.php' );
 if( empty( $entry ) ) {
 	$entry = $_REQUEST;
 }

@@ -957,7 +957,7 @@ function zen_update_lowest_purchase_price($product_id) {
 
 
 function reset_bitcommerce_layout() {
-	require_once( THEMES_PKG_PATH.'BitThemes.php' );
+	require_once( THEMES_PKG_CLASS_PATH.'BitThemes.php' );
 	global $gBitThemes;
 
 	$modules = array(

@@ -18,11 +18,11 @@
 // | license@zen-cart.com so we can mail you a copy immediately.          |
 // +----------------------------------------------------------------------+
 //
-require_once( BITCOMMERCE_PKG_PATH.'includes/common_inc.php' );
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceSystem.php' );
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceProduct.php' );
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCategory.php' );
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceCustomer.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'common_inc.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceSystem.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProduct.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceCategory.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceCustomer.php' );
 
 // Define the webserver and path parameters
 

@@ -4,7 +4,7 @@
 // +---------------------------------------------------------------------------+
 //
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginFulfillmentBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginFulfillmentBase.php' );
 
 class demo extends CommercePluginFulfillmentBase { 
 	 var $code;

@@ -1,6 +1,6 @@
 <?php
 require_once( '../kernel/setup_inc.php' );
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceProduct.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProduct.php' );
 $gSiteMapHash = array();
 
 $listHash['max_records'] = -1;

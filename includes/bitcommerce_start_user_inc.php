@@ -1,8 +1,8 @@
 <?php
 // We must include this file separately as admin/ has different ideas of templates and constants, etc.
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php');
-require_once( BITCOMMERCE_PKG_PATH.'includes/functions/functions_general.php');
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/html_output.php');
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/functions_general.php');
 
 
 // define general functions used application-wide

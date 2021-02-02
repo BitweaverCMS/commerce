@@ -22,7 +22,7 @@
 global $gBitDb, $gCommerceSystem, $gBitProduct, $currencies;
 
 if( empty( $gCommerceSystem ) ) {
-	require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+	require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 }
 
 $listHash['max_records'] = 1; // ? MAX_RANDOM_SELECT_FEATURED_PRODUCTS;

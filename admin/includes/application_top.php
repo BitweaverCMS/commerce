@@ -21,7 +21,7 @@
 
 require_once( '../../kernel/setup_inc.php' );
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 
 // Force hiding of columns in admin side for maximum real estate and productivity. - spiderr
 $gBitSystem->mConfig["bitcommerce_hide_right_col"] = 'y';
@@ -146,7 +146,7 @@ if ( (GZIP_LEVEL == '1') && ($ext_zlib_loaded = extension_loaded('zlib')) && (PH
 
 // define our general functions used application-wide
 require_once(DIR_WS_FUNCTIONS . 'general.php');
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceVoucher.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php' );
 require_once(DIR_WS_FUNCTIONS . 'html_output.php');
 require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'functions_email.php');
 
@@ -314,7 +314,7 @@ if (!isset($_SESSION['html_editor_preference_status'])) {
 	$_SESSION['html_editor_preference_status'] = HTML_EDITOR_PREFERENCE;
 }
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
 if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) && $_REQUEST['oID'] < 0x1FFFFFFF ) {
 	$oID = zen_db_prepare_input($_REQUEST['oID']);
 	if( $order_exists = $gBitDb->GetOne("select orders_id from " . TABLE_ORDERS . " where `orders_id` = ?", array( $oID ) ) ) {

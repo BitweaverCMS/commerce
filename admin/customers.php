@@ -21,7 +21,7 @@
 //
 
 require('includes/application_top.php');
-require( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php');
+require( BITCOMMERCE_PKG_CLASS_PATH.'CommerceStatistics.php');
 
 if( empty( $_GET['list_order'] ) ) {
 	$_GET['list_order'] = '';

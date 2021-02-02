@@ -11,7 +11,7 @@
  * Documentation from https://developer.paypal.com/docs/classic/payflow/integration-guide/
  */
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginPaymentCardBase.php' );
 
 class payflowpro extends CommercePluginPaymentCardBase {
 

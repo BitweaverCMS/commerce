@@ -2,7 +2,7 @@
 
 require('includes/application_top.php');
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrderManager.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderManager.php' );
 
 $orderManager = new CommerceOrderManager();
 

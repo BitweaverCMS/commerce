@@ -1,6 +1,6 @@
 <?php
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceStatistics.php' );
 $stats = new CommerceStatistics();
 
 $listHash = array( 'period' => 'Y-m-d', 'order_min'=>0.01, 'max_records' => 8 );

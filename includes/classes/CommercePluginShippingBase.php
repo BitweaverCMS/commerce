@@ -9,7 +9,7 @@
  *
  */
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginBase.php' );
 
 abstract class CommercePluginShippingBase extends CommercePluginBase {
 

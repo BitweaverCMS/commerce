@@ -26,7 +26,7 @@
 	Ref https://qa-sellonline.canadapost.ca/DevelopersResources/protocolV3/index.html
 */
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginShippingBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingBase.php' );
 
 class canadapost extends CommercePluginShippingBase {
 

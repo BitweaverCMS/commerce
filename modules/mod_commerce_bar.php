@@ -13,7 +13,7 @@
 //
 global $gBitDb, $gCommerceSystem, $gBitProduct, $currencies, $gBitUser, $gBitCustomer;
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 if( !empty( $gBitCustomer->mCart ) && is_object( $gBitCustomer->mCart ) && $gBitCustomer->mCart->count_contents() > 0 ) {
 	$_template->tpl_vars['sessionCart'] = new Smarty_variable( $gBitCustomer->mCart );
 }

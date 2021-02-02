@@ -55,7 +55,7 @@ $featured_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_FEATURED . " WHE
 $salemaker = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '0'");
 $salemaker_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES . " WHERE `sale_status` = '1'");
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
 
 $listHash = array( 'max_records' => '1000', 'recent_comment' => TRUE );
 if( !empty( $_REQUEST['orders_status_comparison'] ) ) {

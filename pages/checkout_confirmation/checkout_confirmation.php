@@ -37,7 +37,7 @@ if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
 	}
 }
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
 $order = new order;
 
 $order->otCollectPosts( $_POST );
@@ -63,7 +63,7 @@ if( $order->hasPaymentDue() ) {
 
 // load the selected shipping module
 if( !empty( $_SESSION['shipping'] ) ) {
-	require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
 	$shipping_modules = new CommerceShipping($_SESSION['shipping']);
 }
 

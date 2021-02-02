@@ -1,7 +1,7 @@
 <?php
 global $gBitProduct, $gQueryUser, $currencies;
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 $listHash = array();
 $title						= !empty( $moduleParams['title'] ) ? $moduleParams['title'] : (!empty( $moduleParams['module_params']['title'] ) ? $moduleParams['module_params']['title'] : '');
 $columnCount 				= !empty( $moduleParams['module_params']['columns'] ) ? $moduleParams['module_params']['columns'] : 3;

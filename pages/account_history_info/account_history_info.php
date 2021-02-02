@@ -2,7 +2,7 @@
 
 global $gBitSmarty;
 
-require(BITCOMMERCE_PKG_PATH.'classes/CommerceOrder.php');
+require(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 $order = new order( $_GET['order_id'] );
 
 if( $order->hasViewPermission() ) {

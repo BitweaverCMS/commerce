@@ -20,7 +20,7 @@
 //  $Id$
 //
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/functions/html_output.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/html_output.php' );
 ////
 // The HTML href link wrapper function
 function zen_href_link_admin($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true) {

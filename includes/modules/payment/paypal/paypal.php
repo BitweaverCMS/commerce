@@ -26,7 +26,7 @@
 // Note this is temporary
 DEFINE('MODULE_PAYMENT_PAYPAL_RM', '2');
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginPaymentCardBase.php' );
 
 class paypal extends CommercePluginPaymentBase {
 

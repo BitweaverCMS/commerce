@@ -50,7 +50,7 @@ if( !empty( $_POST ) && !empty( $_POST['action'] ) ) {
 			}
 
 			if( !empty( $batchHash['shipping_method'] ) ) {
-				require( BITCOMMERCE_PKG_PATH.'classes/CommerceShipping.php');
+				require( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
 				global $gCommerceShipping;
 				unset( $_SESSION['shipping'] );
 				list( $shipper, $method ) = explode( ' ', $batchHash['shipping_method'] );

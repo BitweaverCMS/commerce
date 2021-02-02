@@ -21,7 +21,7 @@
 //
 global $gBitDb, $gCommerceSystem, $gBitProduct;
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 $main_category_tree = new category_tree;
 $row = 0;
 $box_categories_array = array();

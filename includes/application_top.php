@@ -35,8 +35,8 @@ if( empty( $_REQUEST['main_page'] ) ) {
 
 define( 'BITCOMMERCE_ADMIN', FALSE );
 
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_user_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_user_inc.php' );
 
 
 // Sanitize get parameters in the url

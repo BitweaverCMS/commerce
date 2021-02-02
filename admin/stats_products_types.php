@@ -27,7 +27,7 @@ $gBitThemes->loadCss( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/calendar-
 $gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/jquery/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js' );
 $gBitThemes->loadCss( UTIL_PKG_URL.'javascript/jquery/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css' );
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommerceStatistics.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceStatistics.php' );
 
 $stats = new CommerceStatistics();
 

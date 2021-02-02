@@ -8,7 +8,7 @@
  * This source file is subject to the GNU GENERAL PUBLIC LICENSE. See http://www.gnu.org/licenses/gpl.html for details
  */
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginPaymentBase.php' );
 
 abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 

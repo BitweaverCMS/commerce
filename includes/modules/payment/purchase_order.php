@@ -15,7 +15,7 @@
 // | license@zen-cart.com so we can mail you a copy immediately.			|
 // +------------------------------------------------------------------------+
 
-require_once( BITCOMMERCE_PKG_PATH.'classes/CommercePluginPaymentCardBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginPaymentCardBase.php' );
 
 class purchase_order extends CommercePluginPaymentBase {
 	var $mPONumber;

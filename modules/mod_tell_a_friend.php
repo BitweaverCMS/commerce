@@ -20,7 +20,7 @@
 // $Id$
 //
 global $gBitDb, $gBitProduct;
-require_once( BITCOMMERCE_PKG_PATH.'includes/bitcommerce_start_inc.php' );
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 
 // test if box should display
 $show_tell_a_friend= false;
