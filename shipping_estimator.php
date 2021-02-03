@@ -8,7 +8,7 @@
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 
-require_once( '../kernel/setup_inc.php' );
+require_once( '../kernel/includes/setup_inc.php' );
 if( !empty( $_REQUEST['address_id'] ) ) {
 	$_SESSION['sendto'] = $_REQUEST['address_id'];
 }

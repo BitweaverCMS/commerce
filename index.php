@@ -10,7 +10,7 @@
 
 // These classes need to be included first so they get written to the session properly
 require_once('includes/classes/navigation_history.php');
-require_once('../kernel/setup_inc.php');
+require_once('../kernel/includes/setup_inc.php');
 require_once('includes/application_top.php');
 
 global $gBitUser, $gBitCustomer, $gBitSmarty, $gCommercePopupTemplate;
