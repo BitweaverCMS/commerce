@@ -142,7 +142,7 @@ print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
 </div></div>
 
 <?php
-	include( BITCOMMERCE_PKG_PATH.'admin/revenue_inc.php' );
+	include( BITCOMMERCE_PKG_ADMIN_PATH.'revenue_inc.php' );
 ?>
 
 <div class="col-md-12 col-sm-6"><div class="well nopadding">

@@ -112,7 +112,7 @@
 				</div>
 				{if $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '2' || $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '3'}
 				<div class="form-group">
-					{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`includes/templates/template_default/common/tpl_products_next_previous.php"}
+					{include_php file="`$smarty.const.BITCOMMERCE_PKG_INCLUDE_PATH`templates/template_default/common/tpl_products_next_previous.php"}
 				</div>
 				{/if}
 

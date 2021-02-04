@@ -170,8 +170,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 if (file_exists(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $current_page)) {
 	include_once(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' . $current_page);
 }
-require_once( BITCOMMERCE_PKG_PATH.'admin/includes/languages/en/orders.php' );
-
+require_once( BITCOMMERCE_PKG_ADMIN_PATH.'includes/languages/en/orders.php' );
 
 if ($za_dir = @dir(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/extra_definitions')) {
 	while ($zv_file = $za_dir->read()) {

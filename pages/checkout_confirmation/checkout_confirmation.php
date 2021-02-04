@@ -43,7 +43,7 @@ $order = new order;
 $order->otCollectPosts( $_POST );
 
 // load the selected payment module
-require_once( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
 
 $paymentManager = new CommercePaymentManager($_SESSION['payment']);
 $paymentManager->update_status( $_REQUEST );

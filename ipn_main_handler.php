@@ -85,7 +85,7 @@ if(!$fp) {
 }
 
 require(DIR_FS_CLASSES . 'shipping.php');
-require( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
+require( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
 $payment_modules = new CommercePaymentManager($_SESSION['payment']);
 $shipping_modules = new shipping($_SESSION['shipping']);
 require(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');

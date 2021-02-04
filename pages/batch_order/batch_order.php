@@ -12,7 +12,7 @@ define( 'HEADING_TITLE', 'Batch Order' );
 
 $gBitUser->verifyRegistered();
 
-$phpOfficeAutload = UTIL_PKG_PATH.'includes/phpoffice/autoload.php';
+$phpOfficeAutload = UTIL_PKG_INCLUDE_PATH.'phpoffice/autoload.php';
 $supportedTypes = ".csv";
 if( $isPhpOfficeInstalled = file_exists( $phpOfficeAutload ) ) {
 	$supportedTypes .= ",.xls,.xlsx";

@@ -76,7 +76,7 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 	$gBitSmarty->assign( 'changeAddress', TRUE );
 } else {
 	// load all enabled payment modules
-	require( BITCOMMERCE_PKG_PATH . 'classes/CommercePaymentManager.php' );
+	require( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
 	$paymentManager = new CommercePaymentManager();
 	echo $paymentManager->javascript_validation(); 
 	$gBitSmarty->assign( 'paymentSelection', $paymentManager->selection() );

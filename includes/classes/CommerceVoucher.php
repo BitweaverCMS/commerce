@@ -302,8 +302,8 @@ class CommerceVoucher extends CommerceBase {
 	function adminSendCoupon( $pParamHash ) {
 		global $gBitUser, $gBitCustomer, $gBitSystem, $currencies;
 
-		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/gv_mail.php' );
-		require_once( BITCOMMERCE_PKG_PATH. 'admin/'. DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/email_extras.php' );
+		require_once( BITCOMMERCE_PKG_ADMIN_PATH . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/gv_mail.php' );
+		require_once( BITCOMMERCE_PKG_ADMIN_PATH . DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/email_extras.php' );
 		$ret = FALSE;
 		if( !empty( $pParamHash['email_to'] ) && !empty( $pParamHash['amount'] ) )  {
 			$this->StartTrans();

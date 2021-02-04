@@ -1,6 +1,6 @@
 {include file="bitpackage:bitcommerce/admin_header_inc.tpl"}
 
-{include_php file="`$smarty.const.BITCOMMERCE_PKG_PATH`admin/includes/header_navigation.php"}
+{include_php file="`$smarty.const.BITCOMMERCE_PKG_ADMIN_PATH`includes/header_navigation.php"}
 
 <div class="admin bitcommerce">
 	<div class="page-header">
