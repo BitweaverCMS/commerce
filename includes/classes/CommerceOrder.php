@@ -68,9 +68,10 @@ class order extends CommerceOrderBase {
 	public function displayOrderProductData( $opid ) {
 		if( $this->isValid() && $this->contents[$opid] ) {
 			$ordersProduct = $this->contents[$opid];
-			$productObject = $this->getProductObject( $ordersProduct['products_id'] );
-			$ordersProductFile = BITCOMMERCE_PKG_PATH.'pages/'.$ordersProduct['type_handler'].'_info/orders_product_inc.php';
-			$productObject->displayOrderData( $ordersProduct );
+			if( $productObject = $this->getProductObject( $ordersProduct['products_id'] ) ) {
+				$ordersProductFile = BITCOMMERCE_PKG_PATH.'pages/'.$ordersProduct['type_handler'].'_info/orders_product_inc.php';
+				$productObject->displayOrderData( $ordersProduct );
+			}
 		}
 	}
 

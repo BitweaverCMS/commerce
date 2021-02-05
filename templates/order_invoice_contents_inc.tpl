@@ -14,7 +14,7 @@
 {foreach from=$order->contents item=ordersProduct key=opid}
 {assign var=product value=$order->getProductObject($ordersProduct.products_id)}
 <tr>
-	<td class="item" valign="top" align="right" width="48"><img src="{$product->getThumbnailUrl('icon')}" style="min-width:100px"/>
+	<td class="item" valign="top" align="right" width="48"><img src="{if $product|is_object}{$product->getThumbnailUrl('icon')}{else}{$ordersProduct.default_image}{/if}" style="min-width:100px"/>
 	<td valign="top">
 		{$ordersProduct.products_quantity}&nbsp;x <a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>
 		<br/>{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}
