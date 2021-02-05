@@ -218,7 +218,7 @@ if( !empty( $order ) ) {
 			break;
 		case 'deleteconfirm':
 			$gBitUser->verifyTicket();
-			if( $order->expunge( $_POST['restock'] ) ) {
+			if( $order->expunge( !empty( $_POST['restock'] ) ) ) {
 				bit_redirect( BITCOMMERCE_PKG_URL.'admin/' );
 			}
 			break;
