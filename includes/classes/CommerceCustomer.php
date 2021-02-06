@@ -441,7 +441,7 @@ class CommerceCustomer extends CommerceBase {
 			}
 			$query = "DELETE FROM " . TABLE_ADDRESS_BOOK . " cab WHERE `address_book_id`=? $whereSql";
 			if( $rs = $this->mDb->query( $query, $bindVars ) ) {
-				$ret = $this->mDb->Affected_Rows;
+				$ret = $this->mDb->Affected_Rows();
 			}
 		}
 		return( $ret );
