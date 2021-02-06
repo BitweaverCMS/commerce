@@ -143,6 +143,7 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	function exportList( $pList ) {
+		$ret = array();
 		foreach( $pList as $productsId=>$hash ) {
 			$product = CommerceProduct::getCommerceObject( $productsId );
 			$ret[$productsId] = $product->exportHash();
