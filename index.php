@@ -58,7 +58,7 @@ ob_start();
 
 $directory_array = $gCommerceSystem->get_template_part($code_page_directory, '/^header_php/');
 
-while(list ($key, $value) = each($directory_array)) {
+foreach( $directory_array as $key=>$value ) {
 	require($code_page_directory . '/' . $value);
 }
 
