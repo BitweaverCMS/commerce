@@ -77,7 +77,7 @@ require($gCommerceSystem->get_template_dir('main_template_vars.php',DIR_WS_TEMPL
 // NOTE: on_load_*.js files must contain just the raw code to be inserted in the <body> tag in the on_load="" parameter.
 // Looking in "/includes/modules/pages" for files named "on_load_*.js"
 $directory_array = $gCommerceSystem->get_template_part(DIR_FS_PAGES . $current_page_base, '/^on_load_/', '.js');
-while(list ($key, $value) = each($directory_array)) {
+foreach( $directory_array as $key => $value ) {
 	$onload_file = DIR_FS_PAGES . $current_page_base . '/' . $value;
 	$read_contents='';
 	$lines = @file($onload_file);
