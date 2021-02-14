@@ -3,9 +3,7 @@
 global $gBitSmarty;
 
 require(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
-$order = new order( $_GET['order_id'] );
-
-if( $order->hasViewPermission() ) {
+if( !empty( $_REQUEST['order_id'] ) && ($order = new order( $_REQUEST['order_id'] ) ) && $order->hasViewPermission() ) {
 	$order->loadHistory();
 	$gBitSmarty->assign( 'showPricing', TRUE );
 	$gBitSmarty->assign( 'order', $order );
@@ -13,4 +11,3 @@ if( $order->hasViewPermission() ) {
 } else {
 	bit_redirect( BITCOMMERCE_PKG_URL.'index.php?main_page='.FILENAME_ACCOUNT_HISTORY );
 }
-
