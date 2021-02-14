@@ -3,7 +3,7 @@ global $gBitSystem;
 
 $registerHash = array(
 	'package_name' => 'bitcommerce',
-	'package_path' => dirname( __FILE__ ).'/',
+	'package_path' => dirname( dirname( __FILE__ ) ).'/',
 	'service' => LIBERTY_SERVICE_COMMERCE,
 	'homeable' => TRUE,
 );
