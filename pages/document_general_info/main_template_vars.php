@@ -259,5 +259,5 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
 		require( DIR_FS_PAGES . $current_page_base . '/' . $tpl_page_body);
 	}
 
-  require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_ALSO_PURCHASED_PRODUCTS));
+  require zen_get_module_path( FILENAME_ALSO_PURCHASED_PRODUCTS );
 ?>

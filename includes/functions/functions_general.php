@@ -796,6 +796,20 @@ function zen_redirect($url) {
 // include template specific immediate /modules files
 // new_products, products_new_listing, featured_products, featured_products_listing, product_listing, specials_index, upcoming,
 // products_all_listing, products_discount_prices, also_purchased_products
+function zen_get_module_path($check_file, $dir_only = 'false') {
+	$ret = '';
+	if( $modDir = zen_get_module_directory($check_file, $dir_only) ) {
+		$ret = DIR_FS_MODULES.$modDir;
+	}
+	return $ret;
+}
+
+
+////
+// find module directory
+// include template specific immediate /modules files
+// new_products, products_new_listing, featured_products, featured_products_listing, product_listing, specials_index, upcoming,
+// products_all_listing, products_discount_prices, also_purchased_products
   function zen_get_module_directory($check_file, $dir_only = 'false') {
     global $template_dir;
 

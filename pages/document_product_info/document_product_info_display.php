@@ -188,7 +188,7 @@ if (CUSTOMERS_APPROVAL == '3' and TEXT_LOGIN_FOR_PRICE_BUTTON_REPLACE_SHOWROOM =
 <?php
   if ($products_discount_type != 0) {
     echo '<tr><td colspan="2">';
-      require(DIR_FS_MODULES . zen_get_module_directory(FILENAME_PRODUCTS_DISCOUNT_PRICES));
+      require zen_get_module_path( FILENAME_PRODUCTS_DISCOUNT_PRICES );
     echo '</td></tr>';
   }
 ?>

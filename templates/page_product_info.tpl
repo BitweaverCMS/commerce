@@ -82,8 +82,7 @@
 
 				{if $gBitProduct->getField('products_discount_type')}
 					<div class="form-group">
-						{assign var="modDir" value=$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_directory}
-						{include_php file="`$smarty.const.DIR_FS_MODULES``$modDir`"}
+						{include_php file=$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_path}
 					</div>
 				{/if}
 
