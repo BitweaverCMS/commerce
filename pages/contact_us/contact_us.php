@@ -69,13 +69,13 @@
     <td class="plainBoxHeading" colspan="2"><?php echo ENTRY_NAME; ?></td>
   </tr>
   <tr>
-    <td class="main" colspan="2"><?php echo zen_draw_input_field('name', $_SESSION['name']); ?></td>
+    <td class="main" colspan="2"><?php echo zen_draw_input_field('name', BitBase::getParameter( $_SESSION, 'name' ) ); ?></td>
   </tr>
   <tr>
     <td class="plainBoxHeading" colspan="2"><?php echo ENTRY_EMAIL; ?></td>
   </tr>
   <tr>
-    <td class="main" colspan="2"><?php echo zen_draw_input_field('email', ($error ? $_POST['name'] : $first_name), ' size="50"'); ?></td>
+    <td class="main" colspan="2"><?php echo zen_draw_input_field('email', ($error ? $_POST['name'] : ($gBitUser->isRegistered() ? $gBitUser->getField( 'real_name' ) : ''))); ?></td>
   </tr>
   <tr>
     <td class="plainBoxHeading" colspan="2"><?php echo ENTRY_ENQUIRY; ?></td>
