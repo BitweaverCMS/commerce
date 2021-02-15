@@ -46,7 +46,6 @@ define('FILENAME_DEFAULT', 'index');
 // define page editor files
 define('FILENAME_DEFINE_PAGES_EDITOR', 'define_pages_editor');
 define('FILENAME_DEFINE_MAIN_PAGE', 'define_main_page');
-define('FILENAME_DEFINE_CONTACT_US', 'define_contact_us');
 define('FILENAME_DEFINE_PRIVACY', 'define_privacy');
 define('FILENAME_DEFINE_SHIPPINGINFO', 'define_shippinginfo');
 define('FILENAME_DEFINE_CONDITIONS', 'define_conditions');
