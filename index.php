@@ -130,8 +130,9 @@ if( !empty( $gCommercePopupTemplate ) ) {
 		if( !empty( $_REQUEST['products_id'] ) && !$gBitProduct->isValid() ) {
 			$gBitSystem->setHttpStatus( HttpStatusCodes::HTTP_NOT_FOUND );
 		}
+		$pageTitle = (defined( 'HEADING_TITLE' ) ? constant( 'HEADING_TITLE' ) : '');
 		// Display the template
-		$gBitSystem->display( 'bitpackage:kernel/dynamic.tpl', constant( 'HEADING_TITLE' ), array( 'display_mode' => 'display' ));
+		$gBitSystem->display( 'bitpackage:kernel/dynamic.tpl', $pageTitle, array( 'display_mode' => 'display' ));
 	} else {
 		$gBitSystem->display( 'bitpackage:bitcommerce/view_bitcommerce.tpl', constant( 'HEADING_TITLE' ), array( 'display_mode' => 'display' ));
 	}
