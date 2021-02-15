@@ -87,8 +87,4 @@
     }
   }
 
-// include template specific file name defines
-  $define_contact_us = zen_get_file_directory(DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/html_includes/', FILENAME_DEFINE_CONTACT_US, 'false');
-
   $breadcrumb->add(NAVBAR_TITLE);
-?>

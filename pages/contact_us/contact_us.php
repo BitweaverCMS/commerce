@@ -32,12 +32,6 @@
   </tr>
 <?php } ?>
 
-<?php if (DEFINE_CONTACT_US_STATUS == '1') { ?>
-  <tr>
-    <td class="plainBox" colspan="2"><?php require($define_contact_us); ?></td>
-  </tr>
-<?php } ?>
-
 <?php
   if ($messageStack->size('contact') > 0) {
 ?>
