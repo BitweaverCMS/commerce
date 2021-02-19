@@ -70,9 +70,7 @@ if( empty( $_SESSION['sendto'] ) ) {
 }
 
 if( isset( $_REQUEST['change_address'] ) ) {
-	if( $addresses = $gBitCustomer->getAddresses() ) {
-		$gBitSmarty->assign( 'addresses', $addresses );
-	}
+	$gBitSmarty->assign( 'addresses', $gBitCustomer->getAddresses() );
 	$gBitSmarty->assign( 'changeAddress', TRUE );
 } else {
 

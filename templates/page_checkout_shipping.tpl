@@ -13,7 +13,7 @@
 			</div>
 			{/if}
 
-			{if count( $addresses )}
+			{if $addresses}
 			<div class="col-md-6">
 				{legend legend="Choose Shipping Address"}
 					{include file="bitpackage:bitcommerce/address_list_inc.tpl"}

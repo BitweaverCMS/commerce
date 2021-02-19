@@ -448,7 +448,7 @@ class CommerceCustomer extends CommerceBase {
 	}
 
 	function getAddress( $pAddressId, $pSecure = TRUE ) {
-		$ret = NULL;
+		$ret = array();
 		if( is_numeric( $pAddressId ) && (!$pSecure || ($pSecure && $this->isValid())) ) {
 			$bindVars = array( $pAddressId );
 			$whereSql = '';
