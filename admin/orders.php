@@ -170,7 +170,7 @@ if( !empty( $order ) ) {
 						$_REQUEST['comments'] = (!empty( $_REQUEST['comments'] ) ? $_REQUEST['comments']."\n\n" : '').$statusMsg;
 						
 					} else {
-						$statusMsg = tra( 'Additional charge could not be made:' ).' '.$formatCharge.'<br/>'.implode( $paymentModule->mErrors, '<br/>' );
+						$statusMsg = tra( 'Additional charge could not be made:' ).' '.$formatCharge.'<br/>'.implode( '<br/>', $paymentModule->mErrors );
 						$hasError = TRUE;
 						$messageStack->add_session( $statusMsg, 'error');
 						$order->updateStatus( array( 'comments' => $statusMsg ) );
