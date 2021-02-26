@@ -186,6 +186,7 @@ class usps extends CommercePluginShippingBase {
 					}
 				}
 
+				$PackageSize = 0;
 				if( $destCountryCode== 'US' ) {
 					$PackageSize = sizeof($uspsQuote['Package']);
 					// if object has no legitimate children, turn it into a firstborn:
@@ -193,12 +194,14 @@ class usps extends CommercePluginShippingBase {
 						$uspsQuote['Package'][] = $uspsQuote['Package'];
 						$PackageSize = 1;
 					}
-				} else {
+				} elseif( !empty( $uspsQuote['Package']['Service'] ) ) {
 					$PackageSize = sizeof($uspsQuote['Package']['Service']);
 				}
 
 				// display 1st occurance of First Class and skip others for the US - start counter
 				$cnt_first = 0;
+
+				$methods = array();
 
 				for ($i=0; $i<$PackageSize; $i++) {
 					if( !empty( $uspsQuote['Package'][$i]['Error'] ) ) {
@@ -209,7 +212,6 @@ class usps extends CommercePluginShippingBase {
 					$hiddenCost = 0;
 					$handling = 0;
 					$usps_insurance_charge = 0;
-
 					$Package = ($pShipHash['destination']['countries_iso_code_2'] == 'US') ? $uspsQuote['Package'][$i]['Postage'] : $uspsQuote['Package']['Service'][$i];
 
 					// Domestic first
