@@ -30,41 +30,43 @@ $activeCurrency = FALSE;
 if( $activeCode = BitBase::getParameter( $_REQUEST, 'code' ) ) {
 	$activeCurrency = BitBase::getParameter( $currencies->currencies, $activeCode );
 }
+
 if( $action = BitBase::getParameter( $_GET, 'action' ) ) {
+	switch ($action) {
+		case 'insert':
+		case 'save':
+			$currencies->store( $_REQUEST );
 
-	if (zen_not_null($action)) {
-		switch ($action) {
-			case 'insert':
-			case 'save':
-				$currencies->store( $_REQUEST );
+			if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
+				$gCommerceSystem->storeConfig( 'DEFAULT_CURRENCY', $code );
+			}
 
-				if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
-					$gCommerceSystem->storeConfig( 'DEFAULT_CURRENCY', $code );
-				}
+			zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'action=edit&code=' . $activeCode));
+			break;
 
-				zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'action=edit&code=' . $activeCode));
-				break;
+		case 'deleteconfirm':
+			if( !$currencies->expungeCurrency( $activeCode ) ) {
+				$messageStack->add(ERROR_REMOVE_DEFAULT_CURRENCY, 'error');
+			}
+			zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page']));
+			break;
 
-			case 'deleteconfirm':
-				if( !$currencies->expungeCurrency( $activeCode ) ) {
-					$messageStack->add(ERROR_REMOVE_DEFAULT_CURRENCY, 'error');
-				}
-				zen_redirect(zen_href_link_admin(FILENAME_CURRENCIES, 'page=' . $_GET['page']));
-				break;
+		case 'api':
+			$gCommerceSystem->storeConfig( 'CURRENCY_EXCHANGERATESAPI_KEY', BitBase::getParameter( $_REQUEST, 'exchangeratesapi_key' ) );
+			break;
 
-			case 'bulk':
-				$currencies->bulkImport( $_REQUEST['bulk_currencies'] );
-				break;
+		case 'bulk':
+			$currencies->bulkImport( $_REQUEST['bulk_currencies'] );
+			break;
 
-			case 'update':
-				$server_used = CURRENCY_SERVER_PRIMARY;
-				$output = currency_update_quotes();
-				foreach( $output as $result ) {
-					$messageStack->add_session($result['message'], $result['result']);
-				}
-				zen_redirect( zen_href_link_admin(FILENAME_CURRENCIES, 'code=' . $activeCode ) );
-				break;
-		}
+		case 'update':
+			$server_used = CURRENCY_SERVER_PRIMARY;
+			$output = currency_update_quotes();
+			foreach( $output as $result ) {
+				$messageStack->add_session($result['message'], $result['result']);
+			}
+			zen_redirect( zen_href_link_admin(FILENAME_CURRENCIES, 'code=' . $activeCode ) );
+			break;
 	}
 }
 ?>
@@ -114,6 +116,9 @@ if( $action = BitBase::getParameter( $_GET, 'action' ) ) {
 	}
 ?>
 <hr>
+
+
+
 <?=zen_draw_form_admin('currencies', FILENAME_CURRENCIES, 'action=bulk')?>
 <fieldset>
 	<legend>Bulk Import Currencies</legend>
@@ -129,6 +134,15 @@ JPY Japan Yen				0.0089098765		112.2350011215
 <span class="help-block">[three letter abbreviatinon] [Name separated by at most one space] [dollar/currency] [currency/dollar]</span>
 
 <br/><input type="submit" name="bulk_submit" value="Bulk Update"  class="btn btn-default"/>
+</fieldset>
+</form>
+
+<?=zen_draw_form_admin('currencies', FILENAME_CURRENCIES, 'action=api')?>
+<fieldset>
+	<legend>Exchangerates API</legend>
+<p>API Key from https://exchangeratesapi.io</p>
+<input type="text" name="exchangeratesapi_key" value="<?php echo $gCommerceSystem->getConfig('CURRENCY_EXCHANGERATESAPI_KEY')?>" class="form-control">
+<input type="submit" name="exapikey_submit" value="Save"  class="btn btn-default"/>
 </fieldset>
 </form>
 
