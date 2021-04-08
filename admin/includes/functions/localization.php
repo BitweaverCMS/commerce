@@ -65,11 +65,12 @@ function currency_update_quotes() {
 }
 
 function currency_exchangeratesapi_quote( $pSymbols, $base = DEFAULT_CURRENCY ) {
-	global $gBitDb, $gYahooCurrencies;
+	global $gBitDb, $gYahooCurrenciesi, $gCommerceSystem;
 	$rates = array();
 
 	$searchPairs = implode( ',', $pSymbols );
-	$exUrl = 'https://api.exchangeratesapi.io/latest?base='.$base.'&symbols='.$searchPairs;
+	
+	$exUrl = 'http://api.exchangeratesapi.io/v1/latest?access_key='.$gCommerceSystem->getConfig('CURRENCY_EXCHANGERATESAPI_KEY').'&symbols='.$searchPairs;
 	if( $jsonQuotes = file_get_contents( $exUrl ) ) {
 		if( $quoteHash = json_decode( $jsonQuotes, true ) ) {
 			if( !empty( $quoteHash['rates'] ) ) {
