@@ -406,6 +406,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				$product = $this->getProductObject( $prid );
 				// sometimes 0 hash things can get stuck in cart.
 				if( $product && $product->isValid() ) {
+					// make sure this file is included. weird state had it missing
+					require_once(DIR_FS_FUNCTIONS . 'functions_taxes.php');
 					$productAttributes = !empty( $this->contents[$cartItemKey]['attributes'] ) ? $this->contents[$cartItemKey]['attributes'] : array();
 					$products_tax = zen_get_tax_rate($product->getField('products_tax_class_id'));
 					$purchasePrice = $product->getPurchasePrice( $qty, $productAttributes );
