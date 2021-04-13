@@ -4087,6 +4087,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (222, 'CLACK', 'Clackmannanshire')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (222, 'CON', 'Conwy')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (222, 'CORN', 'Cornwall')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (222, 'CMA', 'Cumbria')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (222, 'DNBG', 'Denbighshire')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (222, 'DERBY', 'Derbyshire')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (222, 'DVN', 'Devon')",
