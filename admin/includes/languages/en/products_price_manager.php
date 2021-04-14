@@ -42,21 +42,21 @@ define('TEXT_PRODUCT_AVAILABLE', 'In Stock');
 define('TEXT_PRODUCT_NOT_AVAILABLE', 'Out of Stock');
 
 define('TEXT_PRODUCT_INFO_NONE', 'Please select a Product from above ...');
-  define('TEXT_PRODUCT_IS_FREE','Product is Free:');
-  define('TEXT_PRODUCTS_IS_FREE_EDIT','<br />*Product marked FREE');
-  define('TEXT_PRODUCT_IS_CALL','Call for Price:');
-  define('TEXT_PRODUCTS_IS_CALL_EDIT','<br />*Product marked CALL FOR PRICE');
-  define('TEXT_PRODUCTS_PRICED_BY_ATTRIBUTES','Priced by Attributes:');
-  define('TEXT_PRODUCT_IS_PRICED_BY_ATTRIBUTE','Yes');
-  define('TEXT_PRODUCT_NOT_PRICED_BY_ATTRIBUTE','No');
-  define('TEXT_PRODUCTS_PRICED_BY_ATTRIBUTES_EDIT','<br />*Display price will include lowest group attributes prices plus price');
-  define('TEXT_PRODUCTS_MIXED','Qty Min/Unit Mix:');
-  define('TEXT_PRODUCTS_MIXED_DISCOUNT_QUANTITY', 'Discount Qty Applies to Mixed Attributes');
+define('TEXT_PRODUCT_IS_FREE','Product is Free:');
+define('TEXT_PRODUCTS_IS_FREE_EDIT','<br />*Product marked FREE');
+define('TEXT_PRODUCT_IS_CALL','Call for Price:');
+define('TEXT_PRODUCTS_IS_CALL_EDIT','<br />*Product marked CALL FOR PRICE');
+define('TEXT_PRODUCTS_PRICED_BY_ATTRIBUTES','Priced by Attributes:');
+define('TEXT_PRODUCT_IS_PRICED_BY_ATTRIBUTE','Yes');
+define('TEXT_PRODUCT_NOT_PRICED_BY_ATTRIBUTE','No');
+define('TEXT_PRODUCTS_PRICED_BY_ATTRIBUTES_EDIT','<br />*Display price will include lowest group attributes prices plus price');
+define('TEXT_PRODUCTS_MIXED','Qty Min/Unit Mix:');
+define('TEXT_PRODUCTS_MIXED_DISCOUNT_QUANTITY', 'Discount Qty Applies to Mixed Attributes');
 
-  define('TEXT_PRODUCTS_QUANTITY_MIN_RETAIL','Qty Min:');
-  define('TEXT_PRODUCTS_QUANTITY_UNITS_RETAIL','Qty Units:');
-  define('TEXT_PRODUCTS_QUANTITY_MAX_RETAIL','Qty Max:');
-  define('TEXT_PRODUCTS_QUANTITY_MAX_RETAIL_EDIT','0= Unlimited<br />1= No Qty Box/Max Value');
+define('TEXT_PRODUCTS_QUANTITY_MIN_RETAIL','Qty Min:');
+define('TEXT_PRODUCTS_QUANTITY_UNITS_RETAIL','Qty Units:');
+define('TEXT_PRODUCTS_QUANTITY_MAX_RETAIL','Qty Max:');
+define('TEXT_PRODUCTS_QUANTITY_MAX_RETAIL_EDIT','0= Unlimited<br />1= No Qty Box/Max Value');
 
 define('TEXT_FEATURED_PRODUCT_INFO', 'Featured Product Info:');
 define('TEXT_FEATURED_PRODUCT', 'Product:');
@@ -92,13 +92,13 @@ define('TEXT_IMAGE_NONEXISTENT', 'No Image Exists');
 define('TEXT_INFO_HEADING_DELETE_FEATURED', 'Delete Featured');
 define('TEXT_INFO_DELETE_INTRO', 'Are you sure you want to delete the featured product?');
 
-  define('TEXT_ATTRIBUTES_INSERT_INFO', '<strong>Define the Attribute Settings then press Insert to apply</strong>');
-  define('TEXT_PRICED_BY_ATTRIBUTES', 'Priced by Attributes');
-  define('TEXT_PRODUCTS_PRICE', 'Products Price: ');
-  define('TEXT_SPECIAL_PRICE', 'Special Price: ');
-  define('TEXT_SALE_PRICE', 'Sale Price: ');
-  define('TEXT_FREE', 'FREE');
-  define('TEXT_CALL_FOR_PRICE', 'Call for Price');
+define('TEXT_ATTRIBUTES_INSERT_INFO', '<strong>Define the Attribute Settings then press Insert to apply</strong>');
+define('TEXT_PRICED_BY_ATTRIBUTES', 'Priced by Attributes');
+define('TEXT_PRODUCTS_PRICE', 'Products Price: ');
+define('TEXT_SPECIAL_PRICE', 'Special Price: ');
+define('TEXT_SALE_PRICE', 'Sale Price: ');
+define('TEXT_FREE', 'FREE');
+define('TEXT_CALL_FOR_PRICE', 'Call for Price');
 
 define('TEXT_ADD_ADDITIONAL_DISCOUNT', 'Add ' . DISCOUNT_QTY_ADD . ' Blank Qty Discounts:');
 define('TEXT_BLANKS_INFO','All 0 Quantity Discounts will be removed when Updated');

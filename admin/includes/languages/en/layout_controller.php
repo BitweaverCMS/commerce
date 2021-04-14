@@ -7,7 +7,7 @@
 // |                                                                      |
 // | http://www.zen-cart.com/index.php                                    |
 // |                                                                      |
-// | Portions Copyright (c) 2003 osCommerce                                 |
+// | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.0 of the GPL license,       |
 // | that is bundled with this package in the file LICENSE, and is        |

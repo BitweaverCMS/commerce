@@ -69,6 +69,9 @@ if( $action = BitBase::getParameter( $_GET, 'action' ) ) {
 			break;
 	}
 }
+
+require(DIR_FS_ADMIN_INCLUDES . 'header.php');
+
 ?>
 
 <div class="row">
