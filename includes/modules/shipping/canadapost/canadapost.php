@@ -106,7 +106,7 @@ class canadapost extends CommercePluginShippingBase {
 					}
 				}
 			} else {
-				$quotes['error'] .= 'Failed loading XML' . $curl_response . "<ul>";
+				$quotes['error'] .= 'Failed loading XML <ul>';
 				foreach(libxml_get_errors() as $error) {
 					$quotes['error'] .= '<li>' . $error->message . '</li>';
 				}
