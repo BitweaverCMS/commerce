@@ -1316,53 +1316,57 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 		global $currencies;
 		$this->StartTrans();
 		$newTotal = 0;
-		foreach( array_keys( $this->totals ) as $k ) {
-			if( $this->totals[$k]['class'] == 'ot_shipping' ) {
-				$initialShipping = $this->totals[$k];
-				$this->totals[$k]['title'] = $pQuote['module'].' '.$pQuote['methods'][0]['title'];
-				$this->totals[$k]['text'] = $pQuote['methods'][0]['format_add_tax'];
-				$this->totals[$k]['orders_value'] = $pQuote['methods'][0]['cost_add_tax'];
-				$finalShipping = $this->totals[$k];
+
+		// assume a single method
+		if( $newMethod = current( $pQuote['methods'] ) ) {
+			foreach( array_keys( $this->totals ) as $k ) {
+				if( $this->totals[$k]['class'] == 'ot_shipping' ) {
+					$initialShipping = $this->totals[$k];
+					$this->totals[$k]['title'] = $pQuote['module'].' '.$newMethod['title'];
+					$this->totals[$k]['text'] = $newMethod['format_add_tax'];
+					$this->totals[$k]['orders_value'] = $newMethod['cost_add_tax'];
+					$finalShipping = $this->totals[$k];
+				}
+				if( $this->totals[$k]['class'] == 'ot_total' ) {
+					$initialTotal = $this->totals[$k]['orders_value'];
+					$totalKey = $k;
+				} else {
+					$newTotal += $this->totals[$k]['orders_value'];
+				}
 			}
-			if( $this->totals[$k]['class'] == 'ot_total' ) {
-				$initialTotal = $this->totals[$k]['orders_value'];
-				$totalKey = $k;
+
+			$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `shipping_module_code`=?, `shipping_method_code`=? WHERE `orders_id`=?", array( $pQuote['id'], $newMethod['code'], $this->mOrdersId ) );
+			if( empty( $initialShipping ) ) {
+				$finalShipping['orders_id'] = $this->mOrdersId;
+				$finalShipping['class'] = 'ot_shipping';
+				$finalShipping['title'] = $pQuote['module'].' '.$newMethod['title'];
+				$finalShipping['text'] = $newMethod['format_add_tax'];
+				$finalShipping['sort_order'] = 200;
+				$finalShipping['orders_value'] = $newMethod['cost_add_tax'];
+				$newTotal += $finalShipping['orders_value'];
+				$this->mDb->associateInsert( TABLE_ORDERS_TOTAL, $finalShipping );
+				$formatString = tra( "The shipping method was added '%s', %s for a cost change of %s. Previous order total was %s" );
+				$message = sprintf( $formatString, $finalShipping['title'], $currencies->format( $finalShipping['orders_value'] ), $currencies->format( round( ($newTotal - $initialTotal), 2 ) ), $currencies->format( round( ($initialTotal), 2 ) ) );
 			} else {
-				$newTotal += $this->totals[$k]['orders_value'];
+				$formatString = tra( "The shipping method was changed from '%s',%s to '%s',%s for a cost change of %s. Previous order total was %s" );
+				$message = sprintf( $formatString, $initialShipping['title'], $currencies->format( $initialShipping['orders_value'] ), $finalShipping['title'], $currencies->format( $finalShipping['orders_value'] ), $currencies->format( round( ($newTotal - $initialTotal), 2 ) ), $currencies->format( round( ($initialTotal), 2 ) ) );
 			}
-		}
+			$this->totals[$totalKey]['orders_value'] = $newTotal;
+			$this->totals[$totalKey]['text'] = $currencies->format( $newTotal );
+			if( !empty( $_REQUEST['update_totals'] ) ) {
+				$this->mDb->query( "UPDATE " . TABLE_ORDERS_TOTAL . " SET `title`=?, `orders_value`=?, `text`=? WHERE `orders_id`=? AND `class`=?", array( $finalShipping['title'], $finalShipping['orders_value'], $finalShipping['text'], $this->mOrdersId, 'ot_shipping' ) );
+				$this->mDb->query( "UPDATE " . TABLE_ORDERS_TOTAL . " SET `title`=?, `orders_value`=?, `text`=? WHERE `orders_id`=? AND `class`=?", array( $this->totals[$totalKey]['title'], $this->totals[$totalKey]['orders_value'], $this->totals[$totalKey]['text'], $this->mOrdersId, 'ot_total' ) );
+				$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `order_total`=? WHERE `orders_id`=?", array( $newTotal, $this->mOrdersId ) );
+			} else {
+				$message .= "\n!!! ".tra( 'The order totals were NOT updated.' );
+			}
 
-		$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `shipping_method_code`=? WHERE `orders_id`=?", array( $pQuote['methods'][0]['code'], $this->mOrdersId ) );
-		if( empty( $initialShipping ) ) {
-			$finalShipping['orders_id'] = $this->mOrdersId;
-			$finalShipping['class'] = 'ot_shipping';
-			$finalShipping['title'] = $pQuote['module'].' '.$pQuote['methods'][0]['title'];
-			$finalShipping['text'] = $pQuote['methods'][0]['format_add_tax'];
-			$finalShipping['sort_order'] = 200;
-			$finalShipping['orders_value'] = $pQuote['methods'][0]['cost_add_tax'];
-			$newTotal += $finalShipping['orders_value'];
-			$this->mDb->associateInsert( TABLE_ORDERS_TOTAL, $finalShipping );
-			$formatString = tra( "The shipping method was added '%s', %s for a cost change of %s. Previous order total was %s" );
-			$message = sprintf( $formatString, $finalShipping['title'], $currencies->format( $finalShipping['orders_value'] ), $currencies->format( round( ($newTotal - $initialTotal), 2 ) ), $currencies->format( round( ($initialTotal), 2 ) ) );
-		} else {
-			$formatString = tra( "The shipping method was changed from '%s',%s to '%s',%s for a cost change of %s. Previous order total was %s" );
-			$message = sprintf( $formatString, $initialShipping['title'], $currencies->format( $initialShipping['orders_value'] ), $finalShipping['title'], $currencies->format( $finalShipping['orders_value'] ), $currencies->format( round( ($newTotal - $initialTotal), 2 ) ), $currencies->format( round( ($initialTotal), 2 ) ) );
+			if( !empty( $pParamHash['comment'] ) ) {
+				$message .= "\n--\n".trim( $pParamHash['comment'] );
+			}
+			$this->updateStatus( array( 'notify' => FALSE , "comments" => $message ) );
+			$this->CompleteTrans();
 		}
-		$this->totals[$totalKey]['orders_value'] = $newTotal;
-		$this->totals[$totalKey]['text'] = $currencies->format( $newTotal );
-		if( !empty( $_REQUEST['update_totals'] ) ) {
-			$this->mDb->query( "UPDATE " . TABLE_ORDERS_TOTAL . " SET `title`=?, `orders_value`=?, `text`=? WHERE `orders_id`=? AND `class`=?", array( $finalShipping['title'], $finalShipping['orders_value'], $finalShipping['text'], $this->mOrdersId, 'ot_shipping' ) );
-			$this->mDb->query( "UPDATE " . TABLE_ORDERS_TOTAL . " SET `title`=?, `orders_value`=?, `text`=? WHERE `orders_id`=? AND `class`=?", array( $this->totals[$totalKey]['title'], $this->totals[$totalKey]['orders_value'], $this->totals[$totalKey]['text'], $this->mOrdersId, 'ot_total' ) );
-			$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `order_total`=? WHERE `orders_id`=?", array( $newTotal, $this->mOrdersId ) );
-		} else {
-			$message .= "\n!!! ".tra( 'The order totals were NOT updated.' );
-		}
-
-		if( !empty( $pParamHash['comment'] ) ) {
-			$message .= "\n--\n".trim( $pParamHash['comment'] );
-		}
-		$this->updateStatus( array( 'notify' => FALSE , "comments" => $message ) );
-		$this->CompleteTrans();
 	}
 
 	function combineOrders( $pParamHash ) {
