@@ -776,14 +776,12 @@
 				$categories->MoveNext();
 			}
 		} elseif ($from == 'category') {
-			$category = $gBitDb->Execute("SELECT cd.`categories_name`, c.`parent_id`
-																FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd
-																WHERE c.`categories_id` = '" . (int)$id . "'
-																and c.`categories_id` = cd.`categories_id`
-																and cd.`language_id` = '" . (int)$_SESSION['languages_id'] . "'");
-
-			$categories_array[$index][] = array('id' => $id, 'text' => $category->fields['categories_name']);
-			if ( (zen_not_null($category->fields['parent_id'])) && ($category->fields['parent_id'] != '0') ) $categories_array = zen_generate_category_path($category->fields['parent_id'], 'category', $categories_array, $index);
+			if( $id && ($category = $gBitDb->getRow( "SELECT cd.`categories_name`, c.`parent_id` FROM " . TABLE_CATEGORIES . " c, " . TABLE_CATEGORIES_DESCRIPTION . " cd WHERE c.`categories_id` = ? and c.`categories_id` = cd.`categories_id` and cd.`language_id` = ?", array( (int)$id, (int)$_SESSION['languages_id'] ) )) ) {
+				$categories_array[$index][] = array('id' => $id, 'text' => $category['categories_name']);
+				if( !empty($category['parent_id'] ) ) {
+					$categories_array = zen_generate_category_path($category['parent_id'], 'category', $categories_array, $index);
+				}
+			}
 		}
 
 		return $categories_array;
@@ -1875,32 +1873,17 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // meta tags
 	function zen_get_metatags_title($product_id, $language_id) {
 		global $gBitDb;
-		$product = $gBitDb->Execute("SELECT `metatags_title`
-														 FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "
-														 WHERE `products_id` = '" . (int)$product_id . "'
-														 and `language_id` = '" . (int)$language_id . "'");
-
-		return $product->fields['metatags_title'];
+		return $gBitDb->getOne("SELECT `metatags_title` FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id`=? AND `language_id`=?" , array( (int)$product_id, (int)$language_id ) );
 	}
 
 	function zen_get_metatags_keywords($product_id, $language_id) {
 		global $gBitDb;
-		$product = $gBitDb->Execute("SELECT `metatags_keywords`
-														 FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "
-														 WHERE `products_id` = '" . (int)$product_id . "'
-														 and `language_id` = '" . (int)$language_id . "'");
-
-		return $product->fields['metatags_keywords'];
+		return $gBitDb->getOne("SELECT `metatags_keywords` FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id`=? AND `language_id`=?" , array( (int)$product_id, (int)$language_id ) );
 	}
 
 	function zen_get_metatags_description($product_id, $language_id) {
 		global $gBitDb;
-		$product = $gBitDb->Execute("SELECT `metatags_description`
-														 FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . "
-														 WHERE `products_id` = '" . (int)$product_id . "'
-														 and `language_id` = '" . (int)$language_id . "'");
-
-		return $product->fields['metatags_description'];
+		return $gBitDb->getOne("SELECT `metatags_description` FROM " . TABLE_META_TAGS_PRODUCTS_DESCRIPTION . " WHERE `products_id`=? AND `language_id`=?" , array( (int)$product_id, (int)$language_id ) );
 	}
 
 ////
@@ -1908,14 +1891,7 @@ function zen_copy_products_attributes($products_id_from, $products_id_to) {
 // TABLES: categories
 	function zen_get_parent_category_id($product_id) {
 		global $gBitDb;
-
-		$categories_lookup = $gBitDb->Execute("SELECT `master_categories_id`
-																FROM " . TABLE_PRODUCTS . "
-																WHERE `products_id` = '" . (int)$product_id . "'");
-
-		$parent_id = $categories_lookup->fields['master_categories_id'];
-
-		return $parent_id;
+		return $gBitDb->getOne("SELECT `master_categories_id` FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( (int)$product_id ) );
 	}
 
 ?>
