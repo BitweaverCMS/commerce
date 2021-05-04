@@ -60,7 +60,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 
 		if( !($shipDate = BitBase::getParameter( $pShipHash['origin'], 'ship_date' ) ) ) {
 			// no ship_date in the order
-			$delay += (int)$this->getConfig( 'STORE_FULFILLMENT_DAYS', '5' );
+			$delay += (int)$this->getConfig( 'SHIPPING_FULFILLMENT_DAYS', '5' );
 
 			$dow = date( 'w' );
 			if( $dow > 5 ) {
@@ -75,15 +75,35 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		// safety calculation for cutoff time
 		$cutoffTime = $this->getShippingCutoffTime( $pShipHash );
 		$hourMin = (int)date( 'Hm' );
+		$dayOfWeek = (int)date( 'w' );
 		if( $hourMin > $cutoffTime ) { 
 			$delay++;
 		}
 
 		if( $delay ) {
-			$newDate->add( new DateInterval( 'P'.$delay.'D') );
+			$weekEndCount = (int)(($delay + $dayOfWeek) / 7);
+			$shipDay = $delay + ($weekEndCount * 2);
+			$shipDayOfWeek = (int)date( 'w', (time() + (86400 * $shipDay)) );
+			if( $shipDayOfWeek === 0 )  {
+				$shipDay += 1;
+			} elseif( $shipDayOfWeek === 6 )  {
+				$shipDay += 2;
+			}
+			$holidays = BitDate::getHolidays();
+			$count = 1;
+			while( $count <= $shipDay ) {
+				$countTime = strtotime( '+'.$count.'days' );
+				$dateStr = date( 'Y-m-d', $countTime );
+				$countDow = date( 'w', $countTime );
+				if( isset( $holidays[$dateStr] ) ) { // && ($countDow == 0 || $countDow == 6) ) {
+					$shipDay++;
+				}
+				$count++;
+			}
+			$newDate->add( new DateInterval( 'P'.$shipDay.'D') );
 			$shipDate = $newDate->format( 'Y-m-d' );
 		}
-		
+
 		return $shipDate;
 	}
 
