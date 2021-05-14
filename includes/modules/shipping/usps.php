@@ -212,7 +212,7 @@ class usps extends CommercePluginShippingBase {
 					$hiddenCost = 0;
 					$handling = 0;
 					$usps_insurance_charge = 0;
-					$Package = ($pShipHash['destination']['countries_iso_code_2'] == 'US') ? $uspsQuote['Package'][$i]['Postage'] : $uspsQuote['Package']['Service'][$i];
+					$Package = ($destCountryCode == 'US') ? $uspsQuote['Package'][$i]['Postage'] : $uspsQuote['Package']['Service'][$i];
 
 					// Domestic first
 					if ($destCountryCode == 'US') {
@@ -486,7 +486,8 @@ class usps extends CommercePluginShippingBase {
 		$insurable_value = (float)BitBase::getParameter( $pShipHash, 'shipping_value', 0 );
 
 		// US Domestic destinations
-		if ($pShipHash['destination']['countries_iso_code_2'] == 'US') {
+		$destCountryCode = $this->verifyCountryCode( $pShipHash['destination']['countries_iso_code_2'] );
+		if( $destCountryCode == 'US' ) {
 
 			// build special services for domestic
 			// Some Special Services cannot work with others
