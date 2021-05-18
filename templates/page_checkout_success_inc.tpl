@@ -22,21 +22,6 @@
 </script>
 	{/literal}
 	{/if}
-	{if $gBitSystem->getConfig('boostsuite_site_id')}
-	{literal}
-	<script type="text/javascript">
-	var _bsc = _bsc || {"suffix":"pageId={/literal}{$gBitSystem->getConfig('boostsuite_tracking_checkout_id')}{literal}&siteId={/literal}{$gBitSystem->getConfig('boostsuite_site_id')}{literal}"}; 
-	(function() {
-		var bs = document.createElement('script');
-		bs.type = 'text/javascript';
-		bs.async = true;
-		bs.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://d2so4705rl485y.cloudfront.net/widgets/tracker/tracker.js';
-		var s = document.getElementsByTagName('script')[0];
-		s.parentNode.insertBefore(bs, s); 
-	})();
-	</script>
-	{/literal}
-	{/if}
 	{if $gBitSystem->getConfig('shopperapproved_site_id')}
 <script type="text/javascript">{literal}
 	/* Include all products in the following object using the key value pairs: 'product id':'Product Name' */ 
