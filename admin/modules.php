@@ -141,11 +141,11 @@ if( is_object( $activeModule ) ) {
 				}
 			}
 			if( !empty( $missingConfig ) ) {
-				$contents[] = array( 'text' => 'Module is missing the following configurations: <ol><li>'.implode( $missingConfig, '</li><li>' ).'</li></ol>' );
+				$contents[] = array( 'text' => 'Module is missing the following configurations: <ol><li>'.implode( '</li><li>', $missingConfig ).'</li></ol>' );
 			}
 		}
 		if( $unusedConfig = array_diff( array_keys( $activeConfig ), $activeModule->keys() ) ) {
-			$contents[] = array( 'text' => 'Module has the following unused configurations: <ol><li>'.implode( $unusedConfig, '</li><li>' ).'</li></ol>' );
+			$contents[] = array( 'text' => 'Module has the following unused configurations: <ol><li>'.implode( '</li><li>', $unusedConfig ).'</li></ol>' );
 		}
 	}
 
