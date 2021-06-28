@@ -259,7 +259,7 @@ class CommerceVoucher extends CommerceBase {
 				$query = "SELECT COUNT( `coupon_id` ) AS `redeem_count` 
 						  FROM " . TABLE_COUPON_REDEEM_TRACK . " ccrt
 							LEFT JOIN " . TABLE_ORDERS . " co ON (ccrt.`order_id`=co.`orders_id`)
-						  WHERE coupon_id = ? AND customer_id = ? AND `orders_status` > 0 ";
+						  WHERE coupon_id = ? AND customer_id = ? AND `orders_status_id` > 0 ";
 				$redeemCount = $this->mDb->getOne( $query, array( $this->mCouponId, $_SESSION['customer_id'] ) );
 				if ( $redeemCount >= $this->getField('uses_per_user') && $this->getField('uses_per_user') > 0) {
 					$this->mErrors['redeem_error'] = 'You have used coupon code the maximum number of times allowed per customer.';

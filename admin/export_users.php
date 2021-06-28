@@ -27,7 +27,7 @@ if( !empty( $_REQUEST['export'] ) ) {
 				LEFT JOIN " . TABLE_CUSTOMERS . " cc ON (cc.`customers_id`=uu.`user_id`)
 				 LEFT JOIN " . TABLE_ADDRESS_BOOK ." cab ON (cc.`customers_default_address_id` = cab.`address_book_id`)
 				 LEFT JOIN " . TABLE_COUNTRIES . " ccou ON (ccou.`countries_id` = cab.`entry_country_id`)
-				 LEFT JOIN " . TABLE_ORDERS . " co ON (cab.customers_id = co.customers_id AND co.`orders_status` > 0)
+				 LEFT JOIN " . TABLE_ORDERS . " co ON (cab.customers_id = co.customers_id AND co.`orders_status_id` > 0)
 				 $joinSql
 	 		WHERE ugm.`group_id` = ? AND uu.`user_id`>0
 			GROUP BY uu.email,uu.real_name,uu.user_id,uu.registration_date,cab.address_book_id,cab.customers_id,cab.entry_gender,cab.entry_company,cab.entry_firstname,cab.entry_lastname,cab.entry_street_address,cab.entry_suburb,cab.entry_postcode,cab.entry_city,cab.entry_state,cab.entry_country_id,cab.entry_zone_id,cab.entry_telephone,ccou.countries_name $groupSql

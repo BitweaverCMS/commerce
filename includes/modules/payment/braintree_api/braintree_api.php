@@ -768,9 +768,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
                     zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 
-                    $db->Execute("UPDATE " . TABLE_ORDERS . "
-                        SET orders_status = '" . (int) $new_order_status . "'
-                        WHERE orders_id = '" . (int) $oID . "'");
+                    $db->Execute("UPDATE " . TABLE_ORDERS . " SET orders_status = ? WHERE orders_id = ?", array( (int)$new_order_status, (int)$oID ) );
 
                     $messageStack->add_session(sprintf($this->getModuleConfigValue( '_TEXT_REFUND_INITIATED' ), $refundAmt, $transactionId), 'success');
                     return true;

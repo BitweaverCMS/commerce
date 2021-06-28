@@ -112,11 +112,11 @@ print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
 <table class="table data">
 <tr><th><?php echo tra( 'Order Summary' ); ?></th><th class="text-right">#</th></tr>
 <?php	 $orders_contents = '';
-	$query = "SELECT `orders_status_id` AS `key`, `orders_status_name`, `orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
+	$query = "SELECT co.`orders_status_id` AS `key`, `orders_status_name`, co.`orders_status_id`, COUNT(co.`orders_id`) AS `orders_count`
 				FROM " . TABLE_ORDERS . " co
-				INNER JOIN " . TABLE_ORDERS_STATUS . " cos ON(co.`orders_status`=cos.`orders_status_id`)
-				GROUP BY `orders_status_name`, `orders_status_id`
-				ORDER BY `orders_status_id` DESC";
+				INNER JOIN " . TABLE_ORDERS_STATUS . " cos ON(co.`orders_status_id`=cos.`orders_status_id`)
+				GROUP BY cos.`orders_status_name`, co.`orders_status_id`
+				ORDER BY co.`orders_status_id` DESC";
 	if( $statusHash = $gBitDb->getAssoc( $query ) ) {
 		function cmp($a, $b) {
 			$ret = 0;
@@ -133,8 +133,8 @@ print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
 		}
 
 		usort($statusHash, "cmp");
-		foreach( $statusHash as $orders_status ) {
-			print '<tr class="order-'.($orders_status['orders_status_id'] > 0 ? 'live' : 'dead').' '.strtolower( $orders_status['orders_status_name'] ).'"><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $orders_status['orders_status_id'] . '">' . tra( $orders_status['orders_status_name'] ) . '</a></td><td class="text-right"> ' . $orders_status['orders_count'] . '</td></tr>';
+		foreach( $statusHash as $ordersStatusHash ) {
+			print '<tr class="order-'.($ordersStatusHash['orders_status_id'] > 0 ? 'live' : 'dead').' '.strtolower( $ordersStatusHash['orders_status_name'] ).'"><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison=&orders_status_id=' . $ordersStatusHash['orders_status_id'] . '">' . tra( $ordersStatusHash['orders_status_name'] ) . '</a></td><td class="text-right"> ' . $ordersStatusHash['orders_count'] . '</td></tr>';
 		}
 	}
 ?>

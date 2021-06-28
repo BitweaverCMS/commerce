@@ -35,18 +35,18 @@ function zen_get_order_status_name($order_status_id, $language_id = '') {
 function commerce_get_statuses( $pHash=FALSE ) {
 	global $gBitDb;
 	$ret = array();
-	$orders_status = $gBitDb->query("select `orders_status_id`, `orders_status_name`
+	$ordersStatus = $gBitDb->query("select `orders_status_id`, `orders_status_name`
 								 from " . TABLE_ORDERS_STATUS . "
 								 where `language_id` = '" . (int)$_SESSION['languages_id'] . "' ORDER BY `orders_status_id`");
 
-	while (!$orders_status->EOF) {
+	while (!$ordersStatus->EOF) {
 		if( $pHash ) {
-			$ret[$orders_status->fields['orders_status_id']] = '[' . $orders_status->fields['orders_status_id'] . '] '.$orders_status->fields['orders_status_name'];
+			$ret[$ordersStatus->fields['orders_status_id']] = '[' . $ordersStatus->fields['orders_status_id'] . '] '.$ordersStatus->fields['orders_status_name'];
 		} else {
-			$ret[] = array( 'id' => $orders_status->fields['orders_status_id'],
-							'text' => '[' . $orders_status->fields['orders_status_id'] . '] '.$orders_status->fields['orders_status_name'] );
+			$ret[] = array( 'id' => $ordersStatus->fields['orders_status_id'],
+							'text' => '[' . $ordersStatus->fields['orders_status_id'] . '] '.$ordersStatus->fields['orders_status_name'] );
 		}
-		$orders_status->MoveNext();
+		$ordersStatus->MoveNext();
 	}
 	return $ret;
 }
