@@ -33,7 +33,7 @@ $error = false;
 $processed = false;
 
 if( BitBase::getParameter( $_GET, 'user_id' ) ) {
-	switch ($action) {
+	switch( BitBase::getParameter( $_REQUEST, 'action' ) ) {
 		case 'status':
 			if ($_GET['current'] == CUSTOMERS_APPROVAL_AUTHORIZATION) {
 				$sql = "update " . TABLE_CUSTOMERS . " set `customers_authorization`=0 where `customers_id`='" . $_GET['user_id'] . "'";
