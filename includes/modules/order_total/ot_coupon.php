@@ -317,7 +317,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 						if( !empty( $restriction['products_options_values_id'] ) ) {
 							if( !empty( $pProductHash['attributes'] ) ) {
 								foreach( array_keys( $pProductHash['attributes'] ) as $key ) {
-									if( $prodIsMatch = ( $restriction['products_options_values_id'] == $pProductHash['attributes'][$key]['options_values_id'] ) ) {
+									if( $prodIsMatch = ( $restriction['products_options_values_id'] == $pProductHash['attributes'][$key]['products_options_values_id'] ) ) {
 										break;
 									}
 								}
