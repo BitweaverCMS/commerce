@@ -1132,15 +1132,13 @@ If a special exist * 10+9
 	public static function getImageUrlFromHash( $pMixed=NULL, $pSize='small' ) {
 		$ret = NULL;
 
-		if( is_array( $pMixed ) && !empty( $pMixed['products_id'] ) ) {
-			$productsId = $pMixed['products_id'];
-		} elseif( is_numeric( $pMixed ) ) {
-			$productsId = $pMixed;
+		if( is_numeric( $pMixed ) ) {
+			$pMixed = array( 'products_id' => $pMixed );
 		}
 
-		if( !empty( $productsId ) ) {
-			$branch = static::getImageBranchFromId( $productsId );
-			$basePath = static::getImageBasePathFromId( $productsId );
+		if( is_array( $pMixed ) ) {
+			$branch = static::getImageBranch( $pMixed );
+			$basePath = static::getImageBasePath( $pMixed );
 			if( is_dir( $basePath.'thumbs/' ) ) {
 				$basePath .= 'thumbs/';
 				$branch .= 'thumbs/';
@@ -1158,12 +1156,16 @@ If a special exist * 10+9
 		return $ret;
 	}
 
-	protected static function getImageBasePathFromId( $pProductsId ) {
-		return STORAGE_PKG_PATH.static::getImageBranchFromId( $pProductsId );
+	protected static function getImageBasePath( $pMixed ) {
+		return STORAGE_PKG_PATH.static::getImageBranch( $pMixed );
 	}
 
-	protected static function getImageBranchFromId( $pProductsId ) {
-		return BITCOMMERCE_PKG_NAME.'/'.($pProductsId % 1000).'/'.$pProductsId.'/';
+	protected static function getImageBranch( $pMixed ) {
+		$ret = NULL;
+		if( $productsId = BitBase::getParameter( $pMixed, 'products_id' ) ) {
+			$ret = BITCOMMERCE_PKG_NAME.'/'.($productsId % 1000).'/'.$productsId.'/';
+		}
+		return $ret;
 	}
 
 	function getGatekeeperSql( &$pSelectSql, &$pJoinSql, &$pWhereSql ) {
@@ -1704,7 +1706,7 @@ If a special exist * 10+9
 				if( !empty( $pParamHash['dest_branch'] ) ) {
 					$fileHash['dest_branch']	= $pParamHash['dest_branch'];
 				} else {
-					$fileHash['dest_branch']	= static::getImageBranchFromId( $pParamHash['products_id'] );
+					$fileHash['dest_branch']	= static::getImageBranch( $pParamHash, $pParamHash['products_id'] );
 				}
 				mkdir_p( STORAGE_PKG_PATH.$fileHash['dest_branch'] );
 				$fileHash['dest_base_name']	= 'original';
