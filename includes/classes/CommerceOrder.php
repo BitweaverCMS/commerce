@@ -89,7 +89,7 @@ class order extends CommerceOrderBase {
 		}
 
 		if( isset( $pListHash['orders_status_id'] ) ) {
-			$whereSql .= ' AND `orders_status`'.$comparison.'? ';
+			$whereSql .= ' AND co.`orders_status_id`'.$comparison.'? ';
 			$bindVars[] = $pListHash['orders_status_id'];
 		}
 
@@ -167,7 +167,7 @@ class order extends CommerceOrderBase {
 
 		$query = "SELECT co.`orders_id` AS `hash_key`, ot.`text` AS `order_total`, co.*, uu.*, os.*, ".$gBitDb->SQLDate( 'Y-m-d H:i', 'co.`date_purchased`' )." AS `purchase_time` $selectSql
 					FROM " . TABLE_ORDERS . " co
-						INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(co.`orders_status`=os.`orders_status_id`)
+						INNER JOIN " . TABLE_ORDERS_STATUS . " os ON(co.`orders_status_id`=os.`orders_status_id`)
 						INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON(co.`customers_id`=uu.`user_id`)
 					$joinSql
 						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (co.`orders_id` = ot.`orders_id` AND `class` = 'ot_total')
@@ -237,9 +237,6 @@ class order extends CommerceOrderBase {
 				$totals->MoveNext();
 			}
 
-			$order_status_query = "select `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `orders_status_id` = ? AND `language_id` = ?";
-			$order_status = $this->mDb->query( $order_status_query, array( $order->fields['orders_status'], $_SESSION['languages_id'] ) );
-
 			$this->info = array('currency' => $order->fields['currency'],
 								'currency_value' => $order->fields['currency_value'],
 								'payment_method' => $order->fields['payment_method'],
@@ -257,8 +254,8 @@ class order extends CommerceOrderBase {
 								'payment_expires' => $order->fields['payment_expires'],
 								'trans_ref_id' => $order->fields['trans_ref_id'],
 								'date_purchased' => $order->fields['date_purchased'],
-								'orders_status_id' => $order->fields['orders_status'],
-								'orders_status' => $order_status->fields['orders_status_name'],
+								'orders_status_id' => $order->fields['orders_status_id'],
+								'orders_status_name' => zen_get_order_status_name( $order->fields['orders_status_id'] ),
 								'last_modified' => $order->fields['last_modified'],
 								'total' => $order->fields['order_total'],
 								'tax' => $order->fields['order_tax'],
@@ -561,7 +558,7 @@ class order extends CommerceOrderBase {
 			$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
 		}
 
-		$this->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
+		$this->info = array('orders_status_id' => DEFAULT_ORDERS_STATUS_ID,
 							'currency' => !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : NULL,
 							'currency_value' => !empty( $_SESSION['currency'] ) ? $currencies->currencies[$_SESSION['currency']]['currency_value'] : NULL,
 							'payment_method' => '',
@@ -583,17 +580,17 @@ class order extends CommerceOrderBase {
 
 		if ($this->info['total'] == 0) {
 			if (DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID == 0) {
-				$this->info['order_status'] = DEFAULT_ORDERS_STATUS_ID;
+				$this->info['orders_status_id'] = DEFAULT_ORDERS_STATUS_ID;
 			} else {
-				$this->info['order_status'] = DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID;
+				$this->info['orders_status_id'] = DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID;
 			}
 		}
 
 		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $_SESSION, 'payment' ) ) ) {
 			$this->info['payment_method'] = $paymentModule->title;
 			$this->info['payment_module_code'] = $paymentModule->code;
-			if( !empty( $paymentModule->order_status ) && is_numeric( $paymentModule->order_status ) && $paymentModule->order_status > 0 ) {
-				$this->info['order_status'] = $paymentModule->order_status;
+			if( !empty( $paymentModule->orders_status ) && is_numeric( $paymentModule->orders_status ) && $paymentModule->orders_status > 0 ) {
+				$this->info['orders_status_id'] = $paymentModule->orders_status;
 			}
 		}
 
@@ -827,7 +824,7 @@ class order extends CommerceOrderBase {
 							'estimated_ship_date' => $this->info['estimated_ship_date'],
 							'coupon_code' => $this->info['coupon_code'],
 							'date_purchased' => $this->mDb->NOW(),
-							'orders_status' => $this->info['order_status'],
+							'orders_status_id' => $this->info['orders_status_id'],
 							'order_total' => $this->info['total'],
 							'order_tax' => $this->info['tax'],
 							'currency' => $this->info['currency'],
@@ -872,7 +869,7 @@ class order extends CommerceOrderBase {
 
 		$customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
 		$sqlParams = array( 'orders_id' => $this->mOrdersId,
-							'orders_status_id' => $this->info['order_status'],
+							'orders_status_id' => $this->info['orders_status_id'],
 							'user_id' => $_SESSION['customer_id'],
 							'date_added' => $this->mDb->NOW(),
 							'customer_notified' => $customer_notification,
@@ -1185,7 +1182,7 @@ class order extends CommerceOrderBase {
 						FROM " . TABLE_ORDERS . " o
 						INNER JOIN " . TABLE_ORDERS_PRODUCTS . " op ON (o.`orders_id`=op.`orders_id`)
 						INNER JOIN " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd ON (op.`orders_products_id`=opd.`orders_products_id`)
-						WHERE o.`customers_id` = ? AND (o.`orders_status` >= ? AND o.`orders_status` <= ?) AND o.`orders_id` = ?	AND opd.`orders_products_filename` != ''
+						WHERE o.`customers_id` = ? AND (o.`orders_status_id` >= ? AND o.`orders_status_id` <= ?) AND o.`orders_id` = ?	AND opd.`orders_products_filename` != ''
 						ORDER BY op.`orders_products_id`";
 			$ret = $this->mDb->getAll( $query, array( $this->getField('customers_id'), DOWNLOADS_CONTROLLER_ORDERS_STATUS, DOWNLOADS_CONTROLLER_ORDERS_STATUS_END, $this->mOrdersId ) );
 
@@ -1243,10 +1240,10 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 		if( $statusCleared ) {
 			if( $statusChanged || !empty( $comments ) ) {
 				$this->StartTrans();
-				$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `orders_status` = ?, `last_modified` = ".$this->mDb->NOW()." WHERE `orders_id` = ?", array( $status, $this->mOrdersId ) );
+				$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `orders_status_id` = ?, `last_modified` = ".$this->mDb->NOW()." WHERE `orders_id` = ?", array( $status, $this->mOrdersId ) );
 
 				$this->info['orders_status_id'] = $status;
-				$this->info['orders_status'] = zen_get_order_status_name( $status );
+				$this->info['orders_status_name'] = zen_get_order_status_name( $status );
 				$customer_notified = '0';
 				if( isset( $pParamHash['notify'] ) && ( $pParamHash['notify'] == 'on' ) ) {
 					$notify_comments = '';
@@ -1262,7 +1259,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 						strip_tags($notify_comments) ;
 					
 					if( $statusChanged ) {
-						$textMessage .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status'] . "\n\n";
+						$textMessage .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status_name'] . "\n\n";
 					}
 					$textMessage .= tra( 'Please reply to this email if you have any questions.' );
 
@@ -1273,7 +1270,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 					$emailVars['EMAIL_TEXT_STATUS_COMMENTS'] = nl2br( $notify_comments );
 					if( $statusChanged ) {
 						$emailVars['EMAIL_TEXT_STATUS_UPDATED'] = tra( 'Your order has been updated to the following status' ) . ': ';
-						$emailVars['EMAIL_TEXT_NEW_STATUS'] = $this->info['orders_status'];
+						$emailVars['EMAIL_TEXT_NEW_STATUS'] = $this->info['orders_status_name'];
 					}
 					$emailVars['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = tra( 'Please reply to this email if you have any questions.' );
 
@@ -1381,9 +1378,9 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 			$this->mErrors['combine'] = "Order $pParamHash[source_orders_id] not found";
 		} elseif( empty( $destHash ) ) {
 			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] not found";
-		} elseif( $sourceHash['orders_status'] != DEFAULT_ORDERS_STATUS_ID ) {
+		} elseif( $sourceHash['orders_status_id'] != DEFAULT_ORDERS_STATUS_ID ) {
 			$this->mErrors['combine'] = "Order $pParamHash[source_orders_id] does not have status " . zen_get_order_status_name( DEFAULT_ORDERS_STATUS_ID );
-		} elseif( $destHash['orders_status'] != DEFAULT_ORDERS_STATUS_ID ) {
+		} elseif( $destHash['orders_status_id'] != DEFAULT_ORDERS_STATUS_ID ) {
 			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] does not have status " . zen_get_order_status_name( DEFAULT_ORDERS_STATUS_ID );
 		} elseif( ($sourceHash['delivery_street_address'] == $destHash['delivery_street_address']) &&
 			($sourceHash['delivery_suburb'] == $destHash['delivery_suburb']) &&

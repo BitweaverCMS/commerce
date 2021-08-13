@@ -229,7 +229,7 @@ if( !empty( $order ) ) {
 			}
 			if( !empty( $_GET['download_reset_on'] ) ) {
 				// adjust download_maxdays based on current date
-				$check_status = $gBitDb->Execute("select customers_name, customers_email_address, orders_status,
+				$check_status = $gBitDb->Execute("select customers_name, customers_email_address, orders_status_id,
 											date_purchased from " . TABLE_ORDERS . "
 											where `orders_id` = '" . $_REQUEST['oID'] . "'");
 				$zc_max_days = zen_date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + DOWNLOAD_MAX_DAYS;

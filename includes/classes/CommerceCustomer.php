@@ -222,7 +222,7 @@ class CommerceCustomer extends CommerceBase {
 			$query =   "SELECT o.`orders_id` AS `hash_key`, o.*, ot.`text` as `order_total`, s.`orders_status_name`
 						FROM   " . TABLE_ORDERS . " o 
 							INNER JOIN " . TABLE_ORDERS_TOTAL . "  ot ON (o.`orders_id` = ot.`orders_id`) 
-							INNER JOIN " . TABLE_ORDERS_STATUS . " s ON (o.`orders_status` = s.`orders_status_id`)
+							INNER JOIN " . TABLE_ORDERS_STATUS . " s ON (o.`orders_status_id` = s.`orders_status_id`)
 						WHERE o.`customers_id` = ? AND ot.`class` = 'ot_total' AND s.`language_id` = ?
 						ORDER BY `orders_id` DESC";
 
@@ -239,7 +239,7 @@ class CommerceCustomer extends CommerceBase {
 		$bindVars[] = $pCustomerId;
 		$bindVars[] = DEFAULT_ORDERS_STATUS_ID;
 
-		$sql = "SELECT count( `orders_id` ), sum( `order_total` ) FROM " . TABLE_ORDERS . " WHERE `customers_id`=? AND `orders_status` > ?";
+		$sql = "SELECT count( `orders_id` ), sum( `order_total` ) FROM " . TABLE_ORDERS . " WHERE `customers_id`=? AND `orders_status_id` > ?";
 		return $gBitDb->getRow( $sql, $bindVars );
 	}
 
@@ -684,7 +684,7 @@ class CommerceCustomer extends CommerceBase {
 				FROM `".BIT_DB_PREFIX."users_users` uu 
 					INNER JOIN " . TABLE_ORDERS . " co ON (uu.`user_id`=co.`customers_id`) 
 					LEFT JOIN " . TABLE_CUSTOMERS_INTERESTS_MAP . " ccim ON (ccim.`customers_id`=co.`customers_id`) 
-				WHERE co.`orders_status` > 0 AND ccim.`interests_id` IS NULL 
+				WHERE co.`orders_status_id` > 0 AND ccim.`interests_id` IS NULL 
 				GROUP BY (uu.`user_id`) 
 				ORDER BY SUM(co.`order_total`) DESC";
 		return $gBitDb->getAssoc( $sql );

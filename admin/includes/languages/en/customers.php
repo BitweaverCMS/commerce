@@ -20,8 +20,6 @@
 //  $Id$
 //
 
-define('HEADING_TITLE', 'Customers');
-
 define('TABLE_HEADING_ID', 'ID#');
 define('TABLE_HEADING_FIRSTNAME', 'First Name');
 define('TABLE_HEADING_LASTNAME', 'Last Name');

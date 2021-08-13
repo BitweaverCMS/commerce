@@ -204,7 +204,7 @@ function zen_draw_selection_field( $pParamHash ) { // $name, $type, $value = '',
 			break;
 	}
 
-	$selection = '<div class="'.$pParamHash['type'].' products-option-'.(is_numeric( $pParamHash['value'] ) ? $pParamHash['value'] : $pParamHash['type']).'"><label><input class="'.$cssClass.'" type="' . zen_output_string($pParamHash['type']) . '" name="' . zen_output_string($pParamHash['name']) . '"';
+	$selection = '<div class="'.$pParamHash['type'].' products-option-'.(!empty( $pParamHash['value'] ) && is_numeric( $pParamHash['value'] ) ? $pParamHash['value'] : $pParamHash['type']).'"><label><input class="'.$cssClass.'" type="' . zen_output_string($pParamHash['type']) . '" name="' . zen_output_string($pParamHash['name']) . '"';
 
 	if( isset( $pParamHash['value'] ) ) {
 		$selection .= ' value="' . zen_output_string($pParamHash['value']) . '"';

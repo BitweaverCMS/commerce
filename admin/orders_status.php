@@ -30,33 +30,33 @@ if (zen_not_null($action)) {
 	switch ($action) {
 		case 'insert':
 		case 'save':
-			$orders_status_id = (int)BitBase::getParameter( $_REQUEST, 'orders_status_id' );
+			$ordersStatusId = (int)BitBase::getParameter( $_REQUEST, 'orders_status_id' );
 
 			for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
-				$orders_status_name_array = $_POST['orders_status_name'];
+				$ordersStatus_name_array = $_POST['orders_status_name'];
 				$language_id = $languages[$i]['id'];
 
-				$sql_data_array = array('orders_status_name' => zen_db_prepare_input($orders_status_name_array[$language_id]));
+				$sql_data_array = array('orders_status_name' => zen_db_prepare_input($ordersStatus_name_array[$language_id]));
 
 				if ($action == 'insert') {
-					if (empty($orders_status_id)) {
-						$orders_status_id	= $gBitDb->GetOne("select max(orders_status_id) as orders_status_id from " . TABLE_ORDERS_STATUS . "");
+					if (empty($ordersStatusId)) {
+						$ordersStatusId	= $gBitDb->GetOne("select max(orders_status_id) as orders_status_id from " . TABLE_ORDERS_STATUS . "");
 					}
 
-					$insert_sql_data = array('orders_status_id' => $orders_status_id, 'language_id' => $language_id);
+					$insert_sql_data = array('orders_status_id' => $ordersStatusId, 'language_id' => $language_id);
 					$sql_data_array = array_merge($sql_data_array, $insert_sql_data);
 
 					$gBitDb->associateInsert(TABLE_ORDERS_STATUS, $sql_data_array);
 				} elseif ($action == 'save') {
-					$gBitDb->query( "UPDATE " . TABLE_ORDERS_STATUS . " SET `orders_status_name`=? WHERE `orders_status_id`=? AND `language_id`=? ", array( $orders_status_name_array[$language_id], (int)$orders_status_id, $language_id ) );
+					$gBitDb->query( "UPDATE " . TABLE_ORDERS_STATUS . " SET `orders_status_name`=? WHERE `orders_status_id`=? AND `language_id`=? ", array( $ordersStatus_name_array[$language_id], (int)$ordersStatusId, $language_id ) );
 				}
 			}
 
 			if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
-				$gBitDb->query( "UPDATE " . TABLE_CONFIGURATION . " set `configuration_value` = ? where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'", array( $orders_status_id ) );
+				$gBitDb->query( "UPDATE " . TABLE_CONFIGURATION . " set `configuration_value` = ? where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'", array( $ordersStatusId ) );
 			}
 
-			zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $orders_status_id));
+			zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $ordersStatusId));
 			break;
 		case 'deleteconfirm':
 			// demo active test
@@ -65,25 +65,25 @@ if (zen_not_null($action)) {
 				$messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
 				zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page']));
 			}
-			$orders_status_id = zen_db_prepare_input($_GET['orders_status_id']);
+			$ordersStatusId = zen_db_prepare_input($_GET['orders_status_id']);
 
-			$orders_status = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
+			$ordersStatusHash = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
 
-			if ($orders_status->fields['configuration_value'] == $orders_status_id) {
+			if ($ordersStatusHash->fields['configuration_value'] == $ordersStatusId) {
 				$gBitDb->Execute("update " . TABLE_CONFIGURATION . " set `configuration_value` = '' where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
 			}
 
-			$gBitDb->Execute("delete from " . TABLE_ORDERS_STATUS . " where orders_status_id = '" . zen_db_input($orders_status_id) . "'");
+			$gBitDb->Execute("delete from " . TABLE_ORDERS_STATUS . " where orders_status_id = '" . zen_db_input($ordersStatusId) . "'");
 
 			zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page']));
 			break;
 		case 'delete':
-			$orders_status_id = zen_db_prepare_input($_GET['orders_status_id']);
+			$ordersStatusId = zen_db_prepare_input($_GET['orders_status_id']);
 
-			$status = $gBitDb->Execute("select count(*) as `ocount` from " . TABLE_ORDERS . " where orders_status = '" . (int)$orders_status_id . "'");
+			$status = $gBitDb->Execute("select count(*) as `ocount` from " . TABLE_ORDERS . " where `orders_status_id` = '" . (int)$ordersStatusId . "'");
 
 			$remove_status = true;
-			if ($orders_status_id == DEFAULT_ORDERS_STATUS_ID) {
+			if ($ordersStatusId == DEFAULT_ORDERS_STATUS_ID) {
 				$remove_status = false;
 				$messageStack->add(ERROR_REMOVE_DEFAULT_ORDER_STATUS, 'error');
 			} elseif ($status->fields['ocount'] > 0) {
@@ -92,7 +92,7 @@ if (zen_not_null($action)) {
 			} else {
 				$history = $gBitDb->Execute("select count(*) as `oscount`
 																 from " . TABLE_ORDERS_STATUS_HISTORY . "
-																 where orders_status_id = '" . (int)$orders_status_id . "'");
+																 where orders_status_id = '" . (int)$ordersStatusId . "'");
 
 				if ($history->fields['oscount'] > 0) {
 					$remove_status = false;
@@ -116,36 +116,36 @@ if (zen_not_null($action)) {
 			<td class="text-right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
 		</tr>
 <?php
-$orders_status_query_raw = "select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . (int)$_SESSION['languages_id'] . "' order by `orders_status_id`";
-$orders_status_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $orders_status_query_raw, $orders_status_query_numrows);
-$orders_status = $gBitDb->Execute($orders_status_query_raw);
-while (!$orders_status->EOF) {
-	if ((!isset($_GET['orders_status_id']) || (isset($_GET['orders_status_id']) && ($_GET['orders_status_id'] == $orders_status->fields['orders_status_id']))) && !isset($oInfo) && (substr($action, 0, 3) != 'new')) {
-		$oInfo = new objectInfo($orders_status->fields);
+$ordersStatus_query_raw = "select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . (int)$_SESSION['languages_id'] . "' order by `orders_status_id`";
+$ordersStatus_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $ordersStatus_query_raw, $ordersStatus_query_numrows);
+$ordersStatus = $gBitDb->Execute($ordersStatus_query_raw);
+while (!$ordersStatus->EOF) {
+	if ((!isset($_GET['orders_status_id']) || (isset($_GET['orders_status_id']) && ($_GET['orders_status_id'] == $ordersStatus->fields['orders_status_id']))) && !isset($oInfo) && (substr($action, 0, 3) != 'new')) {
+		$oInfo = new objectInfo($ordersStatus->fields);
 	}
 
-	if (isset($oInfo) && is_object($oInfo) && ($orders_status->fields['orders_status_id'] == $oInfo->orders_status_id)) {
+	if (isset($oInfo) && is_object($oInfo) && ($ordersStatus->fields['orders_status_id'] == $oInfo->orders_status_id)) {
 		echo '									<tr id="defaultSelected" class="info" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id) . '\'">' . "\n";
 	} else {
-		echo '									<tr class="dataTableRow" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $orders_status->fields['orders_status_id']) . '\'">' . "\n";
+		echo '									<tr class="dataTableRow" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $ordersStatus->fields['orders_status_id']) . '\'">' . "\n";
 	}
 
-	echo '<td class="dataTableContent currency">' . '#' . $orders_status->fields['orders_status_id'] . '</td><td class="dataTableContent">' . $orders_status->fields['orders_status_name'];
-	if (DEFAULT_ORDERS_STATUS_ID == $orders_status->fields['orders_status_id']) {
+	echo '<td class="dataTableContent currency">' . '#' . $ordersStatus->fields['orders_status_id'] . '</td><td class="dataTableContent">' . $ordersStatus->fields['orders_status_name'];
+	if (DEFAULT_ORDERS_STATUS_ID == $ordersStatus->fields['orders_status_id']) {
 		echo '<strong>(' . tra( 'Default' ) . ')</strong>';
 	}
 	echo "</td>\n";
 ?>
-			<td class="dataTableContent" align="right"><?php if (isset($oInfo) && is_object($oInfo) && ($orders_status->fields['orders_status_id'] == $oInfo->orders_status_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $orders_status->fields['orders_status_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+			<td class="dataTableContent" align="right"><?php if (isset($oInfo) && is_object($oInfo) && ($ordersStatus->fields['orders_status_id'] == $oInfo->orders_status_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $ordersStatus->fields['orders_status_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
 						</tr>
 <?php
-	$orders_status->MoveNext();
+	$ordersStatus->MoveNext();
 }
 ?>
 						</table>
 		<div class="row">
-			<div class="col-sm-6 text-left"><?php echo $orders_status_split->display_count($orders_status_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_ORDERS_STATUS); ?></div>
-							<div class="col-sm-6 text-right"><?php echo $orders_status_split->display_links($orders_status_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></div>
+			<div class="col-sm-6 text-left"><?php echo $ordersStatus_split->display_count($ordersStatus_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_ORDERS_STATUS); ?></div>
+							<div class="col-sm-6 text-right"><?php echo $ordersStatus_split->display_links($ordersStatus_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></div>
 					</div>
 <?php
 if (empty($action)) {
@@ -168,10 +168,10 @@ switch ($action) {
 		$contents = array('form' => zen_draw_form_admin('status', FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&action=insert'));
 		$contents[] = array('text' => TEXT_INFO_INSERT_INTRO);
 
-		$orders_status_inputs_string = '';
+		$ordersStatus_inputs_string = '';
 		$languages = zen_get_languages();
 		for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
-			$orders_status_inputs_string .= '
+			$ordersStatus_inputs_string .= '
 			<div class="input-group">
 				'.zen_draw_input_field('orders_status_name[' . $languages[$i]['id'] . ']').'
 				<span class="input-group-addon">'.zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']).'</span>
@@ -179,7 +179,7 @@ switch ($action) {
 			;
 		}
 
-		$contents[] = array('text' => '<label>'.tra( TEXT_INFO_ORDERS_STATUS_NAME ).'</label>' . $orders_status_inputs_string );
+		$contents[] = array('text' => '<label>'.tra( TEXT_INFO_ORDERS_STATUS_NAME ).'</label>' . $ordersStatus_inputs_string );
 		$contents[] = array('text' => '<label>'.tra( 'Status ID' ).'</label>'.zen_draw_input_field( 'orders_status_id', (int)BitBase::getParameter( $_REQUEST, 'orders_status_id' ), NULL, 'number' ) );
 		$contents[] = array('text' => zen_draw_selection_field( array( 'type' => 'checkbox', 'name'=>'default', 'label' => TEXT_SET_DEFAULT ) ) );
 		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_insert.gif', IMAGE_INSERT) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
@@ -190,17 +190,17 @@ switch ($action) {
 		$contents = array('form' => zen_draw_form_admin('status', FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id	. '&action=save'));
 		$contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
 
-		$orders_status_inputs_string = '';
+		$ordersStatus_inputs_string = '';
 		$languages = zen_get_languages();
 		for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
-			$orders_status_inputs_string .= 
+			$ordersStatus_inputs_string .= 
 				'<div class="input-group">
 					'.zen_draw_input_field('orders_status_name[' . $languages[$i]['id'] . ']', zen_get_orders_status_name($oInfo->orders_status_id, $languages[$i]['id'])).'
 					<span class="input-group-addon">'.zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']).'</span>
 				</div>';
 		}
 
-		$contents[] = array('text' => '<br>' . TEXT_INFO_ORDERS_STATUS_NAME . $orders_status_inputs_string);
+		$contents[] = array('text' => '<br>' . TEXT_INFO_ORDERS_STATUS_NAME . $ordersStatus_inputs_string);
 		if (DEFAULT_ORDERS_STATUS_ID != $oInfo->orders_status_id) $contents[] = array('text' => '<br>' . zen_draw_selection_field( array( 'type' => 'checkbox', 'name'=>'default', 'label' => TEXT_SET_DEFAULT ) ));
 		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 		break;
@@ -218,13 +218,13 @@ switch ($action) {
 
 			$contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
 
-			$orders_status_inputs_string = '';
+			$ordersStatus_inputs_string = '';
 			$languages = zen_get_languages();
 			for ($i = 0, $n = sizeof($languages); $i < $n; $i++) {
-				$orders_status_inputs_string .= '<br>' . zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . zen_get_orders_status_name($oInfo->orders_status_id, $languages[$i]['id']);
+				$ordersStatus_inputs_string .= '<br>' . zen_image(DIR_WS_CATALOG_LANGUAGES . $languages[$i]['directory'] . '/images/' . $languages[$i]['image'], $languages[$i]['name']) . '&nbsp;' . zen_get_orders_status_name($oInfo->orders_status_id, $languages[$i]['id']);
 			}
 
-			$contents[] = array('text' => $orders_status_inputs_string);
+			$contents[] = array('text' => $ordersStatus_inputs_string);
 		}
 		break;
 }

@@ -732,7 +732,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   orders_date_finished T,
   estimated_ship_date T,
   estimated_arrival_date T,
-  orders_status I2,
+  orders_status_id I4,
   currency C(3),
   currency_value N(14,6),
   order_total N(14,2),
@@ -821,7 +821,6 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_status' => "
   language_id I4 NOTNULL default '1',
   orders_status_name C(32)
 ",
-//  'orders_status_name_zen_idx' => array( 'table' => BITCOMMERCE_DB_PREFIX.'com_orders_status', 'cols' => 'orders_status_name', 'opts' => NULL)
 
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_payments' => "
   orders_payments_id I4 PRIMARY AUTO,
@@ -1215,8 +1214,8 @@ $indices = array (
   'm2p_product_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_media_to_products', 'cols' => 'product_id ', 'opts' => NULL),
   'm2p_medai_product_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_media_to_products', 'cols' => 'media_id, product_id', 'opts' => array('UNIQUE')),
   'orders_cust_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders', 'cols' => 'customers_id', 'opts' => NULL),
-  'orders_status_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders', 'cols' => 'orders_status', 'opts' => NULL),
-  'orders_status_ods_cust_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders', 'cols' => ' orders_status, orders_id, customers_id ', 'opts' => NULL),
+  'orders_status_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders', 'cols' => 'orders_status_id', 'opts' => NULL),
+  'orders_status_ods_cust_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders', 'cols' => ' orders_status_id, orders_id, customers_id ', 'opts' => NULL),
   'orders_prod_orders_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_products', 'cols' => 'orders_id', 'opts' => NULL),
   'orders_prod_prod_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_products', 'cols' => 'products_id', 'opts' => NULL),
   'orders_prod_att_orders_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att', 'cols' => 'orders_id', 'opts' => NULL),
@@ -3838,7 +3837,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'GR','Graubnden')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'JU','Jura')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'LU','Luzern')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'NE','Neuch�el')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'NE','Neuchâtel')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'NW','Nidwalden')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'OW','Obwalden')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'SG','Sankt Gallen')",
@@ -3852,6 +3851,8 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'VS','Valais')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'VD','Vaud')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'ZG','Zug')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (204,'ZH','Zürich')",
+
 
 //Thailand
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (209,'AC','Amnat Charoen')",

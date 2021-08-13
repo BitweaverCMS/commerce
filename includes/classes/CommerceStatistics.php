@@ -84,7 +84,7 @@ class CommerceStatistics extends BitSingleton {
 		$sql = "SELECT uu.`user_id`,uu.`real_name`, uu.`login`,SUM(order_total) AS `revenue`, COUNT(orders_id) AS `orders`, MIN(`date_purchased`) AS `first_purchase`, MIN(`orders_id`) AS `first_orders_id`, MAX(date_purchased) AS `last_purchase`, MAX(`orders_id`) AS `last_orders_id`, MAX(date_purchased) - MIN(date_purchased) AS `age`
 				FROM com_orders co 
 					INNER JOIN users_users uu ON(co.customers_id=uu.user_id) 
-				WHERE NOW() - uu.registration_date::int::abstime::timestamptz > ? 
+				WHERE NOW() - " . $this->mDb->SqlIntToTimestamp( 'uu.registration_date' ) . " > ? 
 				GROUP BY  uu.`user_id`,uu.`real_name`, uu.`login`
 				HAVING NOW() - MIN(co.date_purchased) > ? AND NOW() - MAX(co.date_purchased) ".$comparison." ? ORDER BY $sortMode";
 		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {
@@ -126,7 +126,7 @@ class CommerceStatistics extends BitSingleton {
 		$ret = array();
 
 		$sql = "SELECT ".$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' )." AS `hash_key`, ROUND( SUM( `order_total` ), 2 )  AS `gross_revenue`, COUNT( `orders_id` ) AS `order_count`, ROUND( SUM( `order_total` ) / COUNT( `orders_id` ), 2) AS `avg_order_size` 
-				FROM " . TABLE_ORDERS . " co WHERE `orders_status` > 0 $whereSql
+				FROM " . TABLE_ORDERS . " co WHERE co.`orders_status_id` > 0 $whereSql
 				GROUP BY `hash_key` 
 				ORDER BY `hash_key` DESC";
 		if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
@@ -154,7 +154,7 @@ class CommerceStatistics extends BitSingleton {
 		$bindVars['customers_id'] = $pParamHash['customers_id'];
 		$sql = "SELECT SUM( co.`order_total` ) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
 				FROM " . TABLE_ORDERS . " co
-				WHERE co.`orders_status`>0 AND co.`customers_id`=?";
+				WHERE co.`orders_status_id`>0 AND co.`customers_id`=?";
 		return $gBitDb->getRow( $sql, $bindVars );
 	}
 
@@ -192,7 +192,7 @@ class CommerceStatistics extends BitSingleton {
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa ON(cop.`orders_products_id`=copa.`orders_products_id`)
 					INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
-				WHERE co.`orders_status` > 0 $whereSql
+				WHERE co.`orders_status_id` > 0 $whereSql
 				GROUP BY copa.`products_options_values_id`, copa.`products_options`, copa.`products_options_values`, copa.`products_options_id`
 				ORDER BY copa.`products_options`, SUM(cop.`products_quantity`) DESC, copa.`products_options_values`";
 
@@ -222,7 +222,7 @@ class CommerceStatistics extends BitSingleton {
 		
 		$sql = "SELECT $selectSql ci.`interests_id`, ci.`interests_name`, SUM( co.`order_total` ) AS `total_revenue`, COUNT( co.`orders_id` ) AS `total_orders`
 				FROM " . TABLE_CUSTOMERS_INTERESTS . " ci , " . TABLE_ORDERS . " co, " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim 
-				WHERE co.`orders_status`>0 
+				WHERE co.`orders_status_id`>0 
 					AND cim.`customers_id`=co.`customers_id` 
 					AND cim.`interests_id`=ci.`interests_id` 
 					AND ci.`interests_id` = (SELECT cim2.`interests_id` FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " cim2 WHERE cim2.`customers_id`=co.`customers_id` AND cim2.`customers_id`=co.`customers_id` LIMIT 1)
@@ -268,7 +268,7 @@ class CommerceStatistics extends BitSingleton {
 				FROM " . TABLE_ORDERS . " co 
 					INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (co.`customers_id`=uu.`user_id`)
 					$joinSql
-				WHERE co.`orders_status`>0 $whereSql 
+				WHERE co.`orders_status_id`>0 $whereSql 
 				GROUP BY co.`customers_id`, uu.`registration_date` $groupSql
 				ORDER BY SUM( co.`order_total`) DESC";
 		if( $rs = $this->mDb->query( $sql, $bindVars, $pParamHash['max_records'] ) ) {
@@ -368,7 +368,7 @@ class CommerceStatistics extends BitSingleton {
 					INNER JOIN " . TABLE_PRODUCTS . " cp ON(lc.`content_id`=cp.`content_id`)
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(cp.`products_id`=cop.`products_id`)
 					INNER JOIN " . TABLE_ORDERS . " co ON(co.`orders_id`=cop.`orders_id`)
-				WHERE `content_type_guid`=? AND co.`orders_status` > 0 $whereSql";
+				WHERE `content_type_guid`=? AND co.`orders_status_id` > 0 $whereSql";
 		$ret = array_merge_recursive( $ret, $this->mDb->$sqlFunc( $sql, $bindVars ) );
 
 		// #### New Product Purchased By New Customers
@@ -393,7 +393,7 @@ class CommerceStatistics extends BitSingleton {
 					INNER JOIN " . TABLE_PRODUCTS . " cp ON(lc.`content_id`=cp.`content_id`)
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(cp.`products_id`=cop.`products_id`)
 					INNER JOIN " . TABLE_ORDERS . " co ON(co.`orders_id`=cop.`orders_id`)
-				WHERE `content_type_guid`=? AND co.`orders_status` > 0 $whereSql";
+				WHERE `content_type_guid`=? AND co.`orders_status_id` > 0 $whereSql";
 		$ret = array_merge_recursive( $ret, $this->mDb->$sqlFunc( $sql, $bindVars ) );
 
 		// #### Unique Totals
@@ -412,7 +412,7 @@ class CommerceStatistics extends BitSingleton {
 		$sql = "SELECT $selectSql COUNT( DISTINCT( `products_id` ) ) AS `unique_products_ordered`, COUNT( co.`orders_id` ) AS `total_orders`
 				FROM " . TABLE_ORDERS_PRODUCTS . " cop 
 					INNER JOIN " . TABLE_ORDERS . " co ON (co.`orders_id`=cop.`orders_id`) 
-				WHERE co.`orders_status`>0 $whereSql";
+				WHERE co.`orders_status_id`>0 $whereSql";
 		$ret = array_merge_recursive( $ret, $this->mDb->$sqlFunc( $sql, $bindVars ) );
 
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
@@ -474,7 +474,7 @@ class CommerceStatistics extends BitSingleton {
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
 					INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 					INNER JOIN " . TABLE_PRODUCT_TYPES . " cpt ON(cpt.`type_id`=cp.`products_type`)
-				WHERE co.`orders_status` > 0 $whereSql
+				WHERE co.`orders_status_id` > 0 $whereSql
 				GROUP BY cpt.`type_id`, cpt.`type_name`, cpt.`type_class`, `co_products_model`
 				ORDER BY SUM(cop.`products_quantity` * cop.`products_price`) DESC";
 
@@ -555,7 +555,7 @@ class CommerceStatistics extends BitSingleton {
 					INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=co.`customers_id`) 
 					INNER JOIN `".BIT_DB_PREFIX."stats_referer_users_map` srum ON (srum.`user_id`=co.`customers_id`) 
 					INNER JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) 
-				WHERE co.`orders_status` > 0 $whereSql
+				WHERE co.`orders_status_id` > 0 $whereSql
 				GROUP BY sru.`referer_url`, co.`customers_id`
 				ORDER BY SUM(cop.`products_quantity` * cop.`products_price`)";
 
@@ -617,7 +617,7 @@ class CommerceStatistics extends BitSingleton {
 				FROM `".BIT_DB_PREFIX."com_orders` co 
 					LEFT JOIN `".BIT_DB_PREFIX."com_orders_total` cotcp ON (co.`orders_id`=cotcp.`orders_id` AND cotcp.`class`='ot_coupon')
 					LEFT JOIN `".BIT_DB_PREFIX."com_orders_total` cotgc ON (co.`orders_id`=cotgc.`orders_id` AND cotgc.`class`='ot_gv')
-				WHERE co.`orders_status` > 0
+				WHERE co.`orders_status_id` > 0
 				ORDER BY co.`orders_id` DESC";
 
 		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {

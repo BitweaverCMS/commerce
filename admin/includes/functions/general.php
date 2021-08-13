@@ -325,13 +325,11 @@
 	function zen_get_orders_status_name($orders_status_id, $language_id = '') {
 		global $gBitDb;
 
-		if (!$language_id) $language_id = $_SESSION['languages_id'];
-		$orders_status = $gBitDb->Execute("SELECT `orders_status_name`
-																	 FROM " . TABLE_ORDERS_STATUS . "
-																	 WHERE `orders_status_id` = '" . (int)$orders_status_id . "'
-																	 and `language_id` = '" . (int)$language_id . "'");
+		if( empty( $language_id ) ) {
+			$language_id = $_SESSION['languages_id'];
+		}
 
-		return $orders_status->fields['orders_status_name'];
+		return $gBitDb->GetOne("SELECT `orders_status_name` FROM " . TABLE_ORDERS_STATUS . " WHERE `orders_status_id` = ? AND `language_id` = ?", array( (int)$orders_status_id, (int)$language_id ),FALSE, FALSE, BIT_QUERY_CACHE_TIME );
 	}
 
 
@@ -364,7 +362,7 @@
 					FROM " . TABLE_ORDERS . " co
 						LEFT JOIN " . TABLE_ORDERS_TOTAL . " cotgv ON (cotgv.`orders_id`=co.`orders_id` AND cotgv.`class`='ot_gv')
 						LEFT JOIN " . TABLE_COUPON_GV_CUSTOMER . " cgvc ON (cgvc.`customer_id`=co.`customers_id`)
-					WHERE `orders_status` > 0 AND `customers_id`=?";
+					WHERE co.`orders_status_id` > 0 AND `customers_id`=?";
 			if( $ret = $gBitDb->getRow( $sql, array( $pCustomersId ) ) ) {
 				// get the natural log of the total divided by the natural log of the 10th root of the tier cieling.
 				// This gives an exponentail number from 1 to 10, akin to Google PageRank for customers
@@ -377,8 +375,8 @@
 			}
 			$sql = "SELECT `orders_status_name`, COUNT(`orders_id`) 
 					FROM  " . TABLE_ORDERS . " co 
-						INNER JOIN " . TABLE_ORDERS_STATUS . " cos ON (co.`orders_status`=cos.`orders_status_id`)
-					WHERE `orders_status_id` < -10 AND `customers_id`=?
+						INNER JOIN " . TABLE_ORDERS_STATUS . " cos ON (co.`orders_status_id`=cos.`orders_status_id`)
+					WHERE co.`orders_status_id` < -10 AND `customers_id`=?
 					GROUP BY `orders_status_name`";
 			$ret['negative_orders'] = $gBitDb->getAssoc( $sql, array( $pCustomersId ) );
 		}

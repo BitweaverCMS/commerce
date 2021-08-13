@@ -30,26 +30,26 @@
 			<div class="form-group">
 				{formlabel label='Email'}
 				{forminput}
-					<input type="text" name="customers_email_address" value="{$cInfo->customers_email_address|escape}"/>
+					<input type="text" class="form-control" name="customers_email_address" value="{$cInfo->customers_email_address|escape}"/>
 				{/forminput}
 			</div>
 			<div class="form-group">
 				{formlabel label='First Name'}
 				{forminput}
-					<input type="text" name="customers_firstname" value="{$cInfo->customers_firstname|escape}"/>
+					<input type="text" class="form-control" name="customers_firstname" value="{$cInfo->customers_firstname|escape}"/>
 				{/forminput}
 			</div>
 			<div class="form-group">
 				{formlabel label='Last Name'}
 				{forminput}
-					<input type="text" name="customers_lastname" value="{$cInfo->customers_lastname|escape}"/>
+					<input type="text" class="form-control" name="customers_lastname" value="{$cInfo->customers_lastname|escape}"/>
 				{/forminput}
 			</div>
 		{if $gCommerceSystem->isConfigActive('ACCOUNT_DOB')}
 			<div class="form-group">
 				{formlabel label='Date of Birth'}
 				{forminput}
-					<input type="text" class="input-small" name="customers_dob" value="{$cInfo->customers_dob|zen_date_short}"/>
+					<input type="text" class="form-control" class="input-small" name="customers_dob" value="{$cInfo->customers_dob|zen_date_short}"/>
 				{/forminput}
 			</div>
 		{/if}

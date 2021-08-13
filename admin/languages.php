@@ -138,18 +138,16 @@ if (zen_not_null($action)) {
 				}
 
 
-// create additional orders_status records
-				$orders_status = $gBitDb->Execute("select `orders_status_id`, `orders_status_name`
-																	 from " . TABLE_ORDERS_STATUS . "
-						 where `language_id` = '" . (int)$_SESSION['languages_id'] . "'");
+// create additional orders status records
+				$ordersStatus = $gBitDb->Execute("select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `language_id` = ?", array( (int)$_SESSION['languages_id'] ) );
 
-				while (!$orders_status->EOF) {
+				while (!$ordersStatus->EOF) {
 					$gBitDb->Execute("insert into " . TABLE_ORDERS_STATUS . "
 													(`orders_status_id`, `language_id`, `orders_status_name`)
-													values ('" . (int)$orders_status->fields['orders_status_id'] . "',
+													values ('" . (int)$ordersStatus->fields['orders_status_id'] . "',
 																	'" . (int)$insert_id . "',
-																	'" . zen_db_input($orders_status->fields['orders_status_name']) . "')");
-					$orders_status->MoveNext();
+																	'" . zen_db_input($ordersStatus->fields['orders_status_name']) . "')");
+					$ordersStatus->MoveNext();
 				}
 				if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
 					$gBitDb->Execute("update " . TABLE_CONFIGURATION . "
