@@ -2064,6 +2064,9 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` (countries_id, countries_name, countries_iso_code_2, countries_iso_code_3, countries_iso_code_num, address_format_id, geo_region_id) VALUES ('237','Democratic Republic of the Congo','CD','COD',180, 1, 2)", // formerly Zaire
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` (countries_id, countries_name, countries_iso_code_2, countries_iso_code_3, countries_iso_code_num, address_format_id, geo_region_id) VALUES ('238','Zambia','ZM','ZMB',894, 1, 2)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` (countries_id, countries_name, countries_iso_code_2, countries_iso_code_3, countries_iso_code_num, address_format_id, geo_region_id) VALUES ('239','Zimbabwe','ZW','ZWE',716, 1, 2)",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` (countries_id, countries_name, countries_iso_code_2, countries_iso_code_3, countries_iso_code_num, address_format_id, geo_region_id) VALUES ('240','Bosnia and Herzegovina','BA','BIH',70,1,4)",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` (countries_id, countries_name, countries_iso_code_2, countries_iso_code_3, countries_iso_code_num, address_format_id, geo_region_id) VALUES ('241','Montenegro','ME','MNE',499,1,4)",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_countries` (countries_id, countries_name, countries_iso_code_2, countries_iso_code_3, countries_iso_code_num, address_format_id, geo_region_id) VALUES ('242','Serbia','RS','SRB',688,1,4)",
 
 //Afghanistan
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (1,'BA','Badakhshan')",
@@ -4305,10 +4308,10 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (235,'TA','Ta''izz')",
 
 //Yugoslavia
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (236,'KO','Kosovo')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (236,'MO','Montenegro')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (236,'SE','Serbia')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (236,'VO','Vojvodina')",
+//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (236,'KO','Kosovo')",
+//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (236,'MO','Montenegro')",
+//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (236,'SE','Serbia')",
+//"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (236,'VO','Vojvodina')",
 
 //Zambia
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_zones` (`zone_country_id`, `zone_code`, `zone_name`) VALUES (238,'CE','Central')",
