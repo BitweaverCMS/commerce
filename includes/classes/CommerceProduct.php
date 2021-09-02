@@ -1121,7 +1121,7 @@ If a special exist * 10+9
 
 	function getImageUrl( $pSize='small' ) {
 		if( !empty( $this ) ) {
-			return static::getImageUrlFromHash( $this->mProductsId, $pSize );
+			return static::getImageUrlFromHash( $this->mInfo, $pSize );
 		}
 	}
 
@@ -1156,11 +1156,11 @@ If a special exist * 10+9
 		return $ret;
 	}
 
-	protected static function getImageBasePath( $pMixed ) {
+	protected static function getImageBasePath( &$pMixed ) {
 		return STORAGE_PKG_PATH.static::getImageBranch( $pMixed );
 	}
 
-	protected static function getImageBranch( $pMixed ) {
+	protected static function getImageBranch( &$pMixed ) {
 		$ret = NULL;
 		if( $productsId = BitBase::getParameter( $pMixed, 'products_id' ) ) {
 			$ret = BITCOMMERCE_PKG_NAME.'/'.($productsId % 1000).'/'.$productsId.'/';
@@ -1694,11 +1694,9 @@ If a special exist * 10+9
 			if( !empty( $pParamHash['products_image'] ) && is_readable( $pParamHash['products_image'] ) ) {
 				$fileHash['source_file']	= $pParamHash['products_image'];
 				$fileHash['name']			= basename( $fileHash['source_file'] );
-				$fileHash['source_name']	= $fileHash['source_file'];
 			} elseif( !empty( $pParamHash['products_image_upload']['size'] ) ) {
 				$fileHash['source_file']	= $pParamHash['products_image_upload']['tmp_name'];
 				$fileHash['name']			= basename( $pParamHash['products_image_upload']['name'] );
-				$fileHash['source_name']	= $pParamHash['products_image_upload']['name'];
 			}
 
 			if( !empty( $fileHash ) ) {
