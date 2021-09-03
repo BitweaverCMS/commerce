@@ -26,10 +26,10 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$ret = $this->delivery;
 		} elseif( $ret = BitBase::getParameter( $_SESSION, 'sendtohash' ) ) {
 			
-		} elseif( $selAddress = $gBitCustomer->getAddress( BitBase::getParameter( $_SESSION, 'sendto', $gBitCustomer->getDefaultAddressId() ) ) ) {
+		} elseif( ($selAddress = $gBitCustomer->getAddress( BitBase::getParameter( $_SESSION, 'sendto', $gBitCustomer->getDefaultAddressId() ) ))
+			   || ($selAddress = $gBitCustomer->getAddress( $gBitCustomer->getDefaultAddressId() )) ) {
 			foreach( $selAddress as $key => $value ) {
 				$ret[str_replace( 'entry_', '', $key)] = $value;
-			
 			}
 			if( !empty( $_SESSION['cart_zone_id'] ) ) {
 				$ret['zone_id'] = (int)$selAddress['entry_zone_id'];
@@ -54,7 +54,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		} elseif( $selAddress = $gBitCustomer->getAddress( BitBase::getParameter( $_SESSION, 'billto', $gBitCustomer->getDefaultAddressId() ) ) ) {
 			foreach( $selAddress as $key => $value ) {
 				$ret[str_replace( 'entry_', '', $key)] = $value;
-			
 			}
 			if( !empty( $_SESSION['cart_zone_id'] ) ) {
 				$ret['zone_id'] = (int)$selAddress['entry_zone_id'];

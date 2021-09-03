@@ -461,8 +461,7 @@ class CommerceCustomer extends CommerceBase {
 						INNER JOIN " . TABLE_COUNTRIES . " ccou ON (ccou.`countries_id`=cab.`entry_country_id`)
 						INNER JOIN " . TABLE_CUSTOMERS . " cu ON( cab.`customers_id`=cu.`customers_id` )
 					  WHERE `address_book_id`=? $whereSql";
-			if( $rs = $this->mDb->query( $query, $bindVars ) ) {
-				$ret = $rs->fields;
+			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
 				$ret['country_id'] = $ret['entry_country_id'];
 			}
 		}
