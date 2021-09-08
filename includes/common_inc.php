@@ -1,5 +1,7 @@
 <?php
 
+// {{{ -=-=-=-=-=-=-=-=-= OUTPUT FUNCITONS
+
 /**
  * Returns a string with conversions for security.
  *
@@ -359,9 +361,8 @@
     }
   }
 
-
-
-// -=-=-=-=-=-=-=-=-= DATABASE FUNCTIONS
+// }}}
+// {{{ -=-=-=-=-=-=-=-=-= DATABASE FUNCTIONS
 
 
 
@@ -408,11 +409,8 @@
   }
 
 
-
-
-
-
-// -=-=-=-=-=-=-=-=-= LANGUAGES FUNCTIONS
+// }}}
+// {{{ -=-=-=-=-=-=-=-=-= LANGUAGES FUNCTIONS
 
 
 function zen_get_languages() {
@@ -420,10 +418,8 @@ function zen_get_languages() {
 	return $gBitDb->getAll( "SELECT `languages_id` AS `id`, `name`, `code`, `image`, `directory` FROM " . TABLE_LANGUAGES . " ORDER BY `sort_order`", FALSE, 3600 );
 }
 
-
-
-
-// -=-=-=-=-=-=-=-=-= CUSTOMER FUNCITONS
+// }}}
+// {{{ -=-=-=-=-=-=-=-=-= CUSTOMER FUNCITONS
 
 
 
@@ -508,11 +504,8 @@ function zen_get_languages() {
   }
 
 
-
-
-
-
-// -=-=-=-=-=-=-=-=-= PRICING FUNCITONS
+// }}}
+// {{{ -=-=-=-=-=-=-=-=-= PRICING FUNCITONS
 
 
 
@@ -931,7 +924,8 @@ function zen_update_lowest_purchase_price($product_id) {
   }
 
 
-
+// }}}
+// {{{ -=-=-=-=-=-=-=-=-= STOREFRONT FUNCITONS
 
 
 
@@ -1004,6 +998,27 @@ function reset_bitcommerce_layout() {
 		$i = 1;
 	}
 }
+
+////
+// find template or default file
+	function zen_get_file_directory($check_directory, $check_file, $dir_only = 'false') {
+		global $gCommerceSystem;
+
+		$zv_filename = $check_file;
+		if (!strstr($zv_filename, '.php')) $zv_filename .= '.php';
+
+		if (file_exists($check_directory . $gCommerceSystem->mTemplateDir . '/' . $zv_filename)) {
+			$zv_directory = $check_directory . $gCommerceSystem->mTemplateDir . '/';
+		} else {
+			$zv_directory = $check_directory;
+		}
+
+		if ($dir_only == 'true') {
+			return $zv_directory;
+		} else {
+			return $zv_directory . $zv_filename;
+		}
+	}
 
 
 /**

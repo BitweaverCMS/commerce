@@ -830,27 +830,6 @@ function zen_get_module_path($check_file, $dir_only = 'false') {
   }
 
 
-////
-// find template or default file
-  function zen_get_file_directory($check_directory, $check_file, $dir_only = 'false') {
-    global $template_dir;
-
-    $zv_filename = $check_file;
-    if (!strstr($zv_filename, '.php')) $zv_filename .= '.php';
-
-    if (file_exists($check_directory . $template_dir . '/' . $zv_filename)) {
-      $zv_directory = $check_directory . $template_dir . '/';
-    } else {
-      $zv_directory = $check_directory;
-    }
-
-    if ($dir_only == 'true') {
-      return $zv_directory;
-    } else {
-      return $zv_directory . $zv_filename;
-    }
-  }
-
 // check to see if database stored GET terms are in the URL as $_GET parameters
   function zen_check_url_get_terms() {
     global $gBitDb;
