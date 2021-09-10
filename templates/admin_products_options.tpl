@@ -36,6 +36,7 @@
 					{foreach from=$option.values key=optionValueId item=optionValue}
 					<li class="item {cycle values="odd,even"}">
 						<div class="floaticon">
+							<span class="small">#{$optionValue.products_options_values_id}</span>
 							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=edit">{booticon iname="icon-edit" ipackage="icons" iexplain="Edit Option Value" iforce="icon"}</a>
 							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=delete">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete Option Attribute" iforce="icon"}</a>
 						</div>
