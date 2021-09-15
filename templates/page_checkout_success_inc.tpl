@@ -1,4 +1,4 @@
-{if $gBitSystem->isTracking() && $newOrder}
+{if $newOrder}
 	{if $gBitSystem->getConfig('google_merchant_id') && $gBitSystem->getConfig('google_merchant_reviews')}
 	<!-- START Google Trusted Stores Order -->
 		{assign var=shipEpoch value=$smarty.now+(86400 * 10)}
@@ -15,7 +15,7 @@
           "email": "{$gBitUser->getField('email')}",
           "delivery_country": "{$newOrder->delivery.country.countries_iso_code_2}",
           "estimated_delivery_date": "{$shipEpoch|date_format:'Y-m-d'}",
-          "products": [ {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.options_id==1} {ldelim}"id":"{$attr.options_values_id}"{rdelim}, {/if}{/foreach}{/foreach}{literal} ],
+          "products": [ {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.products_options_id==1} {ldelim}"id":"{$attr.products_options_values_id}"{rdelim}, {/if}{/foreach}{/foreach}{literal} ],
         });
     });
   }
@@ -25,7 +25,7 @@
 	{if $gBitSystem->getConfig('shopperapproved_site_id')}
 <script type="text/javascript">{literal}
 	/* Include all products in the following object using the key value pairs: 'product id':'Product Name' */ 
-	var sa_products = { {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.options_id==1} '{$attr.options_values_id}':'{$attr.value}', {/if}{/foreach}{/foreach}{literal} };
+	var sa_products = { {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.products_options_id==1} '{$attr.products_options_values_id}':'{$attr.products_options_values}', {/if}{/foreach}{/foreach}{literal} };
 	var sa_values = { {/literal}
 		"site":{$gBitSystem->getConfig('shopperapproved_site_id')}, 
 		"token":"{$gBitSystem->getConfig('shopperapproved_token')}", 
