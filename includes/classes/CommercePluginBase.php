@@ -124,6 +124,14 @@ abstract class CommercePluginBase extends CommerceBase {
 		return $this->getCommerceConfig( $this->getModuleKeyTrunk().$pConfigKeyBranch, $pDefaultValue );
 	}
 
+	protected function isModuleConfigActive( $pConfigKeyBranch ) {
+		$ret = FALSE;
+		if( $configValue = $this->getModuleConfigValue( $pConfigKeyBranch ) ) {
+			$ret = ($configValue == 'true');
+		}
+		return $ret;
+	}
+
 	protected function storeModuleConfigValue( $pConfigKeyBranch, $pConfigValue ) {
 		$this->storeCommerceConfig( $this->getModuleKeyTrunk().$pConfigKeyBranch, $pConfigValue );
 	}
