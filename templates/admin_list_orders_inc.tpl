@@ -34,6 +34,7 @@
 	{/if}
 	{if $order.products}
 	{foreach from=$order.products item=product key=ordersProductsId name="orderproducts"}
+	{assign var=orderProduct value=CommerceProduct::getCommerceObject($product.products_id)}
 	<tr>
 		<td colspan="4">
 			<div class="row">
@@ -41,10 +42,10 @@
 					<img src="{CommerceProduct::getImageUrlFromHash($product)}" class="img-responsive"/>
 				</div>
 				<div class="col-xs-8">		
-					#{$smarty.foreach.orderproducts.iteration} - 
-					<a href="{$gBitProduct->getDisplayUrlFromHash($product)}">{$product.products_name}</a>
+					#{$smarty.foreach.orderproducts.iteration} - <a href="{$orderProduct->getDisplayUrl()}">{$product.products_name}</a>
+					<span class="small">{$orderProduct->getProductsModel()}</span>
 					{if $product.attributes}
-						<ul>
+						<ul class="small">
 							{foreach from=$product.attributes item=attrName key=optionId}
 								<li>{$attrName}</li>
 							{/foreach}
