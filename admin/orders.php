@@ -288,6 +288,13 @@ if( $order_exists ) {
 		}
 	}
 
+	if( $gCommerceSystem->getConfig( 'DEFAULT_ORDERS_STATUS_ID' ) == $order->getStatus() ) {
+		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderManager.php' );
+		$orderManager = new CommerceOrderManager();
+		$siblingOrderIds = $orderManager->getOrdersToAddress( $order->delivery, $order->getStatus() );
+		$gBitSmarty->assign( 'siblingOrderIds', $siblingOrderIds );
+	}
+
 	$gBitSmarty->assign( 'isForeignCurrency', !empty( $order->info['currency'] ) && $order->info['currency'] != DEFAULT_CURRENCY );
 	$gBitSmarty->assign( 'orderStatuses', commerce_get_statuses( TRUE ) );
 	$gBitSmarty->assign( 'customersInterests', CommerceCustomer::getCustomerInterests( $order->customer['customers_id'] ) );

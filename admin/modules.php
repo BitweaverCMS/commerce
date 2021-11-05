@@ -165,14 +165,15 @@ if( is_object( $activeModule ) ) {
 		case 'edit':
 			$keys = '';
 			foreach( $activeModule->keys() as $configKey ) {
-				$value = BitBase::getParameter( $activeConfig, $configKey );
-				$keys .= '<b>' . BitBase::getParameter( $value, 'configuration_title', $configKey ) . '</b><br>' . $value['configuration_description'] . '<br>';
-				if( !empty( $value['set_function'] ) ) {
-					eval('$keys .= ' . $value['set_function'] . "'" . $value['configuration_value'] . "', '" . $configKey . "');");
-				} else {
-					$keys .= zen_draw_input_field('configuration[' . $configKey . ']', $value['configuration_value']);
+				if( $value = BitBase::getParameter( $activeConfig, $configKey ) ) {
+					$keys .= '<b>' . BitBase::getParameter( $value, 'configuration_title', $configKey ) . '</b><br>' . $value['configuration_description'] . '<br>';
+					if( !empty( $value['set_function'] ) ) {
+						eval('$keys .= ' . $value['set_function'] . "'" . $value['configuration_value'] . "', '" . $configKey . "');");
+					} else {
+						$keys .= zen_draw_input_field('configuration[' . $configKey . ']', $value['configuration_value']);
+					}
+					$keys .= '<br><br>';
 				}
-				$keys .= '<br><br>';
 			}
 			$keys = substr($keys, 0, strrpos($keys, '<br><br>'));
 			$contents = array('form' => zen_draw_form_admin('modules', FILENAME_MODULES, 'set=' . $moduleType . (!empty($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=save', 'post', '', true));
