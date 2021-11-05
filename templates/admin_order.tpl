@@ -55,7 +55,7 @@ function getShippingQuotes( pOrderId ) {
 	{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}
 		{if $order->info.estimated_ship_date} &bull; {tr}Est Ship{/tr}: {$order->info.estimated_ship_date|substr:0:10} {/if}
 		{if $order->info.estimated_arrival_date} &bull; {tr}Est Arrival{/tr}: {$order->info.estimated_arrival_date|substr:0:10} {/if}
-{if $siblingOrderIds}
+{if count($siblingOrderIds) > 1}
 <div class="alert alert-warning">
 	{tr}Additional orders to this address:{/tr}
 	{foreach from=$siblingOrderIds item=$sibOrderId}{if $sibOrderId != $order->mOrdersId} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$sibOrderId}">{$sibOrderId}</a> {/if}{/foreach}
