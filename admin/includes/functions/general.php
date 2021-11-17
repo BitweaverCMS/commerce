@@ -977,15 +977,12 @@ bt(); die;
 
 	function zen_get_tax_class_title($tax_class_id) {
 		global $gBitDb;
-		if ($tax_class_id == '0') {
-			return TEXT_NONE;
-		} else {
-			$classes = $gBitDb->Execute("SELECT `tax_class_title`
-															 FROM " . TABLE_TAX_CLASS . "
-															 WHERE `tax_class_id` = '" . (int)$tax_class_id . "'");
+		$ret = TEXT_NONE;
 
-			return $classes->fields['tax_class_title'];
+		if( BitBase::verifyId( $tax_class_id ) && ($taxClassId = $gBitDb->getOne("SELECT `tax_class_title` FROM " . TABLE_TAX_CLASS . " WHERE `tax_class_id` = ?", array( (int)$tax_class_id ) )) ) {
+			$ret = $taxClassId;
 		}
+		return $ret;
 	}
 
 	function zen_banner_image_extension() {
@@ -1087,15 +1084,12 @@ bt(); die;
 
 	function zen_get_zone_class_title($zone_class_id) {
 		global $gBitDb;
-		if ($zone_class_id == '0') {
-			return TEXT_NONE;
-		} else {
-			$classes = $gBitDb->Execute("SELECT `geo_zone_name`
-															 FROM " . TABLE_GEO_ZONES . "
-															 WHERE `geo_zone_id` = '" . (int)$zone_class_id . "'");
+		$ret = TEXT_NONE;
 
-			return $classes->fields['geo_zone_name'];
+		if( BitBase::verifyId( $zone_class_id ) && ($zone = $gBitDb->getOne("SELECT `geo_zone_name` FROM " . TABLE_GEO_ZONES . " WHERE `geo_zone_id` = ?", array( (int)$zone_class_id ))) ) {
+			$ret = $zone;
 		}
+		return $ret;
 	}
 
 ////

@@ -35,14 +35,33 @@ class supersaver extends CommercePluginShippingBase {
 			} else {
 				if( $this->isInternationOrder( $pShipHash ) ) {
 					if( $this->isEnabled( 'MODULE_SHIPPING_SUPERSAVER_INTL' ) ) {
-						$desc = tra( MODULE_SHIPPING_SUPERSAVER_DESC ).' '.tra( MODULE_SHIPPING_SUPERSAVER_INTL_DESC );
-						$quotes['methods'][] = array(
-													'id' => $this->code,
-													'title' => trim( $desc ),
-													'code' => 'supersaverintl',
-													'transit_time' => MODULE_SHIPPING_SUPERSAVER_INTL_TRANSIT_TIME,
-													'cost' => (float)MODULE_SHIPPING_SUPERSAVER_INTL_COST + (float)MODULE_SHIPPING_SUPERSAVER_HANDLING
-												);
+						$isExcluded = FALSE;
+						$intlCost = (float)MODULE_SHIPPING_SUPERSAVER_INTL_COST + (float)MODULE_SHIPPING_SUPERSAVER_HANDLING;
+						if( $intlExclude = $this->getModuleConfigValue( '_INTL_OVERRIDE' ) ) {
+							$intlOverrideHash = array();
+							foreach( $overrideHash = (array_map( 'trim', explode( ',', strtoupper( $intlExclude ) ) ) ) as $overrideString ) {
+								list($key, $val) = array_map( 'trim', explode( '=', strtoupper( $overrideString ) ) );
+								$intlOverrideHash[$key] = $val;
+							}
+							if( $overrideAmount = BitBase::getParameter( $intlOverrideHash, $pShipHash['destination']['countries_iso_code_2'] ) ) {
+								if( is_numeric( $overrideAmount ) ) {
+									$intlCost = (float)$overrideAmount;
+								} elseif( $overrideAmount == 'NONE' ) {
+									$isExcluded = TRUE;
+								}
+							}
+						}
+
+						if( !$isExcluded ) {
+							$desc = tra( MODULE_SHIPPING_SUPERSAVER_DESC ).' '.tra( MODULE_SHIPPING_SUPERSAVER_INTL_DESC );
+							$quotes['methods'][] = array(
+														'id' => $this->code,
+														'title' => trim( $desc ),
+														'code' => 'supersaverintl',
+														'transit_time' => MODULE_SHIPPING_SUPERSAVER_INTL_TRANSIT_TIME,
+														'cost' => $intlCost
+													);
+						}
 					}
 				} elseif( $this->isEnabled( 'MODULE_SHIPPING_SUPERSAVER_DOMESTIC' ) ) {
 					$desc = tra( MODULE_SHIPPING_SUPERSAVER_DESC ).' '.tra( MODULE_SHIPPING_SUPERSAVER_DOMESTIC_DESC );
@@ -143,6 +162,13 @@ class supersaver extends CommercePluginShippingBase {
 				'configuration_title' => 'SuperSaver Shipping Cost',
 				'configuration_value' => '14.99',
 				'configuration_description' => 'What is the SuperSaver Shipping International cost?',
+				'configuration_group_id' => '6',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_INTL_OVERRIDE' => array(
+				'configuration_title' => 'International SuperSaver country override',
+				'configuration_value' => '',
+				'configuration_description' => 'Countries with specific costs or disabling ( NONE ). Use comma separated list in ISO-2 format, like: jp=29.99,au=NONE,nz=25.99',
 				'configuration_group_id' => '6',
 				'sort_order' => $i++,
 			),
