@@ -70,7 +70,7 @@ function currency_exchangeratesapi_quote( $pSymbols, $base = DEFAULT_CURRENCY ) 
 
 	$searchPairs = implode( ',', $pSymbols );
 	
-	$exUrl = 'http://api.exchangeratesapi.io/v1/latest?access_key='.$gCommerceSystem->getConfig('CURRENCY_EXCHANGERATESAPI_KEY').'&symbols='.$searchPairs;
+	$exUrl = 'http://api.exchangeratesapi.io/v1/latest?access_key='.$gCommerceSystem->getConfig('CURRENCY_EXCHANGERATESAPI_KEY').'&base='.$base.'&symbols='.$searchPairs;
 	if( $jsonQuotes = file_get_contents( $exUrl ) ) {
 		if( $quoteHash = json_decode( $jsonQuotes, true ) ) {
 			if( !empty( $quoteHash['rates'] ) ) {
