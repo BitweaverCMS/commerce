@@ -421,10 +421,10 @@ class CommerceCustomer extends CommerceBase {
 				$this->mDb->associateUpdate(TABLE_ADDRESS_BOOK, $pParamHash['address_store'], array( 'address_book_id' =>$pParamHash['address_book_id'] ) );
 			} else {
 				$this->mDb->associateInsert(TABLE_ADDRESS_BOOK, $pParamHash['address_store']);
-				$pParamHash['address'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
+				$pParamHash['address_book_id'] = zen_db_insert_id( TABLE_ADDRESS_BOOK, 'address_book_id' );
 			}
 			if( !$this->getDefaultAddressId() || !empty( $pParamHash['primary'] ) ) {
-				$this->setDefaultAddress( $pParamHash['address'] );
+				$this->setDefaultAddress( $pParamHash['address_book_id'] );
 			}
 		}
 		return( count( $this->mErrors ) == 0 );
