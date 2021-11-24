@@ -27,7 +27,7 @@ function zen_get_address_format_id($country_id) {
 	global $gBitDb;
 	$address_format_query = "SELECT `address_format_id` as `format_id` FROM " . TABLE_COUNTRIES . " WHERE `countries_id` = ?";
 
-	if( !($ret = $gBitDb->getONe($address_format_query, array( (int)$country_id ) )) ) {
+	if( !($ret = $gBitDb->getOne($address_format_query, array( (int)$country_id ) )) ) {
 		$ret = '1';
 	}
 	return $ret;

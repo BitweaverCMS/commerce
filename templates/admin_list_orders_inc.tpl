@@ -93,17 +93,18 @@
 	{/if}
 {/foreach}
 <tr>
+	<th class="item text-left"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/export_orders.php?{$smarty.server.QUERY_STRING}" class="btn btn-xs btn-default">{tr}Export{/tr}</a></th>
 	{if $wholesaleProfitTotal}
-	<th class="item text-right" colspan="3"></th>
+	<th class="item text-right" colspan="2"></th>
 	<th class="item text-right">{tr}Total{/tr}: {$quantityTotal}</th>
 	<th class="item text-right">${$finalTotal|round:2}</th>
 	<th class="item text-right">${$wholesaleProfitTotal|round:2}</th>
 	<th class="item text-right">{if $gBitUser->hasPermission('p_admin')}${$distributorIncomeTotal|round:2}{/if}</th>
 	<th class="item text-right">{if $gBitUser->hasPermission('p_admin')}${$cogsTotal|round:2}{/if}</th>
 	{else}
-	<th class="item text-right" colspan="8">{tr}Total{/tr}: ${$grossTotal|round:2}</th>
+	<th class="item text-right" colspan="7">{tr}Total{/tr}: ${$grossTotal|round:2}</th>
 	{/if}
 </tr>
 
 </table>
-
+{$smarty.server|vd}

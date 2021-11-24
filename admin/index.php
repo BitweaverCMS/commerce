@@ -89,13 +89,14 @@ if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
 	$listHash['orders_status_id'] = $_SESSION['orders_status_id'];
 }
 
+$orders = order::getList( $listHash );
+$gBitSmarty->assign_by_ref( 'listOrders', $orders );
+
 ?>
 <div class="row">
 	<div class="col-md-8" id="colone">
 <?php
 
-$orders = order::getList( $listHash );
-$gBitSmarty->assign_by_ref( 'listOrders', $orders );
 $statuses = commerce_get_statuses( TRUE );
 $statuses['all'] = 'All';
 $gBitSmarty->assign( 'commerceStatuses', $statuses );
