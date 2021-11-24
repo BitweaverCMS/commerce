@@ -107,4 +107,3 @@
 </tr>
 
 </table>
-{$smarty.server|vd}
