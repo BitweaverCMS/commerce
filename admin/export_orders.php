@@ -22,11 +22,15 @@ $headerHash = array(
 				'Zipcode'	=> 'delivery_postcode',
 				'Country'	=> 'delivery_country',
 //				'Order Items',
-//				'Pounds',
+				'Pounds'	=> FALSE,
 				'Length'	=> FALSE,
 				'Width'		=> FALSE,
 				'Height'	=> FALSE 
 			);
+
+if( empty( $_REQUEST['orders_status_id'] ) && !empty( $_SESSION['orders_status_id'] ) ) {
+	 $_REQUEST['orders_status_id'] = $_SESSION['orders_status_id'];
+}
 
 if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
 	$listHash['orders_status_id'] = $_REQUEST['orders_status_id'];
