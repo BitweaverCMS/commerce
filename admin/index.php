@@ -58,26 +58,28 @@ $salemaker_act = $gBitDb->getOne("SELECT COUNT(*) FROM " . TABLE_SALEMAKER_SALES
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
 
 $listHash = array( 'max_records' => '1000', 'recent_comment' => TRUE );
-if( !empty( $_REQUEST['orders_status_comparison'] ) ) {
-	$listHash['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
-	$_SESSION['orders_status_comparison'] = $_REQUEST['orders_status_comparison'];
-} elseif( !empty( $_SESSION['orders_status_comparison'] ) && !empty( $_REQUEST['list_filter'] ) ) {
+
+foreach( array( 'orders_status_comparison', 'search_scope', 'search', 'orders_products' ) as $requestKey ) {
+	if( !empty( $_REQUEST[$requestKey] ) ) {
+		$listHash[$requestKey] = $_REQUEST[$requestKey];
+		$_SESSION[$requestKey] = $_REQUEST[$requestKey];
+	} elseif( !empty( $_POST ) && empty( $_REQUEST[$requestKey] ) ) {
+		unset( $listHash[$requestKey] );
+		unset( $_SESSION[$requestKey] );
+	} elseif( !empty( $_SESSION[$requestKey] ) ) {
+		$listHash[$requestKey] = $_SESSION[$requestKey];
+	}
+}
+
+if( !empty( $_SESSION['orders_status_comparison'] ) && !empty( $_REQUEST['list_filter'] ) ) {
 	unset( $_SESSION['orders_status_comparison'] );
-} elseif( !empty( $_SESSION['orders_status_comparison'] ) ) {
-	$listHash['orders_status_comparison'] = $_SESSION['orders_status_comparison'];
 } 
 
-if( !empty( $_REQUEST['search_scope'] ) ) {
-	$listHash['search_scope'] = $_REQUEST['search_scope'];
-	$_SESSION['search_scope'] = $_REQUEST['search_scope'];
-}
-if( !empty( $_REQUEST['search'] ) ) {
-	$listHash['search'] = $_REQUEST['search'];
-	$_SESSION['search'] = $_REQUEST['search'];
-} elseif( !empty( $_REQUEST['list_filter'] ) ) {
+if( !empty( $_REQUEST['list_filter'] ) ) {
 	// searching with empty search field
 	$_SESSION['search'] = NULL;
 }
+
 $gBitSmarty->assign( 'searchScopes', array( "all" => 'Search Orders', "history" => 'Search History' ) );
 
 if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {

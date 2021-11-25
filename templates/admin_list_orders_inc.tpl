@@ -1,5 +1,5 @@
 {if $searchScopes}
-{form class="form-inline" }
+{form class="form-inline"}
 {html_options class="form-control" name="search_scope" options=$searchScopes selected=$smarty.session.search_scope|default:'all'}
 : <input type="text" class="form-control" name="search" value="{$smarty.session.search|default:$smarty.request.search}"/>
 <select class="form-control" name="orders_status_comparison" class="input-small" >
@@ -9,6 +9,8 @@
 </select>
 
 {html_options class="form-control" name="orders_status_id" options=$commerceStatuses selected=$smarty.session.orders_status_id|default:'all'}
+
+<label class="checkbox"><input type="checkbox" name="orders_products" value="1" {if $smarty.session.orders_products}checked{/if}> <i class="icon-list"></i></label>
 
 <input class="btn btn-default btn-sm" type="submit" value="Go" name="list_filter"/>
 {/form}
