@@ -424,45 +424,43 @@ function zen_get_languages() {
 
 
 
-
-
-
-
 ////
 // Return a formatted address
 // TABLES: address_format
-  function zen_address_format($address_format_id, $address, $html, $boln, $eoln) {
+  function zen_address_format($address_format_id, $address, $html, $boln, $eoln, $pAddressPrefix='') {
     global $gBitDb;
     $address_format_query = "SELECT `address_format` AS `format` FROM " . TABLE_ADDRESS_FORMAT . " WHERE `address_format_id` = ?";
     $address_format = $gBitDb->query($address_format_query, array( (int)$address_format_id ) );
-    $company = zen_output_string_protected($address['company']);
-    if ( !empty( $address['firstname'] ) ) {
-      $firstname = zen_output_string_protected($address['firstname']);
-      $lastname = zen_output_string_protected($address['lastname']);
-    } elseif( !empty( $address['name'] ) ) {
-      $firstname = zen_output_string_protected($address['name']);
+    $company = zen_output_string_protected($address[$pAddressPrefix.'company']);
+    if ( !empty( $address[$pAddressPrefix.'firstname'] ) ) {
+      $firstname = zen_output_string_protected($address[$pAddressPrefix.'firstname']);
+      $lastname = zen_output_string_protected($address[$pAddressPrefix.'lastname']);
+    } elseif( !empty( $address[$pAddressPrefix.'name'] ) ) {
+      $firstname = zen_output_string_protected($address[$pAddressPrefix.'name']);
       $lastname = '';
     } else {
       $firstname = '';
       $lastname = '';
     }
-    $street = zen_output_string_protected($address['street_address']);
-    $suburb = zen_output_string_protected($address['suburb']);
-    $city = zen_output_string_protected($address['city']);
-    $state = zen_output_string_protected($address['state']);
-    $telephone = (isset( $address['telephone'] ) ? zen_output_string_protected($address['telephone']) : NULL);
-    if ( !empty( $address['country_id'] ) ) {
-      $country = zen_get_country_name($address['country_id']);
+    $street = zen_output_string_protected($address[$pAddressPrefix.'street_address']);
+    $suburb = zen_output_string_protected($address[$pAddressPrefix.'suburb']);
+    $city = zen_output_string_protected($address[$pAddressPrefix.'city']);
+    $state = zen_output_string_protected($address[$pAddressPrefix.'state']);
+    $telephone = (isset( $address[$pAddressPrefix.'telephone'] ) ? zen_output_string_protected($address[$pAddressPrefix.'telephone']) : NULL);
+    if ( !empty( $address[$pAddressPrefix.'country_id'] ) ) {
+      $country = zen_get_country_name($address[$pAddressPrefix.'country_id']);
 
-      if ( !empty( $address['zone_id'] ) ) {
-        $state = zen_get_zone_code($address['country_id'], $address['zone_id'], $state);
+      if ( !empty( $address[$pAddressPrefix.'zone_id'] ) ) {
+        $state = zen_get_zone_code($address[$pAddressPrefix.'country_id'], $address[$pAddressPrefix.'zone_id'], $state);
       }
-    } elseif( !empty( $address['countries_name'])) {
-      $country = zen_output_string_protected($address['countries_name']);
+    } elseif( !empty( $address[$pAddressPrefix.'countries_name'])) {
+      $country = zen_output_string_protected($address[$pAddressPrefix.'countries_name']);
+    } elseif( !empty( $address[$pAddressPrefix.'country'])) {
+      $country = zen_output_string_protected($address[$pAddressPrefix.'country']);
     } else {
       $country = '';
     }
-    $postcode = zen_output_string_protected($address['postcode']);
+    $postcode = zen_output_string_protected($address[$pAddressPrefix.'postcode']);
     $zip = $postcode;
 
     if ($html) {
