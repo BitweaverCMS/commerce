@@ -781,9 +781,6 @@ class order extends CommerceOrderBase {
 		}
 
 		$this->mOrdersId =  (!empty( $pPaymentParams['orders_id'] ) ? $pPaymentParams['orders_id'] : $this->getNextOrderId());
-if( empty(  $this->billing['firstname'] ) ) {
-	eb( $this->billing );
-}
 		$sql_data_array = array('orders_id' => $this->mOrdersId,
 							'customers_id' => $_SESSION['customer_id'],
 /* TOODO 2016-DEC-15 - spiderr - data is unpopulated
