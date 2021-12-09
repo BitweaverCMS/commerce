@@ -12,22 +12,22 @@
 	{forminput label="checkbox"}
 		<input type="checkbox" name="additional_charge" value="y" onclick="$('#additional-charge').toggle()"/>{booticon iname="icon-money"} {tr}Make Additional Charge{/tr}
 	{/forminput}
-		<div id="additional-charge" style="display:none">
-			{forminput}
-				{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol( $gBitOrder->getField('currency') )}
-				{assign var=rightSymbol value=$gCommerceCurrencies->getRightSymbol( $gBitOrder->getField('currency') )}
-				{if $gBitOrder->getField('currency') && $gBitOrder->getField('currency') != $smarty.const.DEFAULT_CURRENCY}
-				<input type="hidden" name="charge_currency" value="{$gBitOrder->getField('currency')}"/>
-				<input type="hidden" name="currency_value" value="{$gBitOrder->getField('currency_value')}"/>
-				{/if}
-				<div class="input-group">
-					{if $leftSymbol}<span class="input-group-addon">{$leftSymbol}</span>{/if}
-					<input class="form-control input-sm text-right" type="text" name="charge_amount" value="{$smarty.request.charge_amount}"/>
-					{if $rightSymbol}<span class="input-group-addon">{$rightSymbol}</span>{/if}
-				</div>
-				{formhelp note="Enter a negative number for a credit"}
-			{/forminput}
-		</div>
+	<div id="additional-charge" style="display:none">
+		{forminput}
+			{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol( $gBitOrder->getField('currency') )}
+			{assign var=rightSymbol value=$gCommerceCurrencies->getRightSymbol( $gBitOrder->getField('currency') )}
+			{if $gBitOrder->getField('currency') && $gBitOrder->getField('currency') != $smarty.const.DEFAULT_CURRENCY}
+			<input type="hidden" name="charge_currency" value="{$gBitOrder->getField('currency')}"/>
+			<input type="hidden" name="currency_value" value="{$gBitOrder->getField('currency_value')}"/>
+			{/if}
+			<div class="input-group">
+				{if $leftSymbol}<span class="input-group-addon">{$leftSymbol}</span>{/if}
+				<input class="form-control input-sm text-right" type="text" name="charge_amount" value="{$smarty.request.charge_amount}"/>
+				{if $rightSymbol}<span class="input-group-addon">{$rightSymbol}</span>{/if}
+			</div>
+			{formhelp note="Enter a negative number for a credit"}
+		{/forminput}
+	</div>
 	<input type="hidden" value="{$gBitOrder->mHistory.$lastStatus.orders_status_history_id}" name="last_status_id"/>
 			
 	<input type="submit" class="btn btn-default" value="{tr}Update{/tr}" name="{tr}Update{/tr}"/>
