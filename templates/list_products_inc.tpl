@@ -39,7 +39,7 @@
 			<ul class="products clear data">
 			{foreach from=$listProducts key=productsId item=prod}
 				<li class="item {$prod.content_type_guid} {if !$prod.products_status}unavailable{else}{cycle values='odd,even'}{/if}">
-					<div class="image floatleft">
+					<div class="img-responsive pull-left">
 					{if $prod.display_url}
 						<a href="{$prod.display_url}">
 							<img class="thumb" src="{$prod.products_image_url}" alt="{$prod.title}" title="{$prod.title}" />
@@ -49,7 +49,7 @@
 
 					<div class="floaticon">
 						{if $smarty.const.PRODUCT_LISTING_MULTIPLE_ADD_TO_CART && $prod.products_qty_box_status != '0' && $prod.products_quantity_order_max != '1'}
-							{tr}Purchase Multiple:{/tr} <input type="text" name="products_id[{$prod.products_id}]" value=0 size="4"><br/>
+							{tr}Purchase Multiple:{/tr} <input type="text" class="form-control" name="products_id[{$prod.products_id}]" value=0 size="4"><br/>
 						{/if}
 
 						{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='list_sort' serviceHash=$prod}

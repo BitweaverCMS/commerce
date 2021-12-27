@@ -42,10 +42,15 @@ if( empty( $_REQUEST['main_page'] ) ) {
 	$_GET['main_page'] = $_REQUEST['main_page'];
 }
 
+if( !file_exists(  DIR_FS_PAGES . $_REQUEST['main_page'] ) ) {
+	$_REQUEST['main_page'] = 'index';
+}
+
 $current_page = $_REQUEST['main_page'];
 $current_page_base = $current_page;
 $code_page_directory = DIR_FS_PAGES . $current_page_base;
 $page_directory = $code_page_directory;
+
 $gBitSmarty->assign_by_ref( 'current_page_base', $current_page_base );
 
 
@@ -134,7 +139,8 @@ if( !empty( $gCommercePopupTemplate ) ) {
 		// Display the template
 		$gBitSystem->display( 'bitpackage:kernel/dynamic.tpl', $pageTitle, array( 'display_mode' => 'display' ));
 	} else {
-		$gBitSystem->display( 'bitpackage:bitcommerce/view_bitcommerce.tpl', constant( 'HEADING_TITLE' ), array( 'display_mode' => 'display' ));
+		$pageTitle = defined( 'HEADING_TITLE' ) ? constant( 'HEADING_TITLE' ) : '';
+		$gBitSystem->display( 'bitpackage:bitcommerce/view_bitcommerce.tpl', $pageTitle, array( 'display_mode' => 'display' ));
 	}
 }
 
