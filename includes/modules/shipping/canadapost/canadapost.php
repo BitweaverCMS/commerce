@@ -289,7 +289,7 @@ class canadapost extends CommercePluginShippingBase {
 			),
 			$this->getModuleKeyTrunk().'_TYPES' => array(
 				'configuration_title' => 'Shipping Methods',
-				'configuration_value' => implode( array_keys( $this->mServiceCodes ), ',' ),
+				'configuration_value' => implode( ',', array_keys( $this->mServiceCodes ) ),
 				'configuration_description' => 'Select the Services to be offered.',
 				'set_function' => "zen_cfg_select_multioption(array('".implode( "','", array_keys( $this->mServiceCodes ) )."'), ",
 			),
