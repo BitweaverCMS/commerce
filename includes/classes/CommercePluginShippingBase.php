@@ -140,8 +140,15 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		}
 */
 		$quoteBase = array();
+		$explodeArray = array();
 		$shipperOrigin = $this->getModuleConfigValue( '_ORIGIN_COUNTRY_CODE' );
-		if( $shipperOrigin && $pShipHash['origin']['countries_iso_code_2'] != $shipperOrigin ) {
+		if( $excludeList = $this->getModuleConfigValue( '_EXCLUDE_COUNTRIES_ISO2' ) ) {
+			$explodeArray =  array_map('trim', explode( ',', $excludeList ));
+		}
+
+		if( in_array( $pShipHash['destination']['countries_iso_code_2'], $explodeArray ) ) {
+			// country is in module EXCLUDE list
+		} elseif( $shipperOrigin && $pShipHash['origin']['countries_iso_code_2'] != $shipperOrigin ) {
 
 		} elseif( $this->isEnabled() && !empty( $pShipHash['shipping_weight_total'] ) ) {
 			$pass = TRUE;
@@ -294,6 +301,12 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 				'configuration_title' => 'Shipping Cut-off Time',
 				'configuration_description' => 'Time of day when shipments must be sent to make current day shipping. Enter a 4 digit number 24HR number like "1430" = 14:30 = 2:30pm ---- must be HHMM without punctuation. Default is 1600, ie 4pm local store time.',
 				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_EXCLUDE_COUNTRIES_ISO2' => array(
+				'configuration_title' => 'Excluded Countries',
+				'configuration_description' => 'Comma separated list of ISO-2 country codes not to quote for this method, even if the shipper has viable options. For example: CA,MX,NZ,AU',
+				'sort_order' => $i++,
+				'configuration_value' => '',
 			),
 			$this->getModuleKeyTrunk().'_QUOTE_SORT' => array(
 				'configuration_title' => 'Quote Sort Order',

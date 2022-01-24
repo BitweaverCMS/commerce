@@ -1274,7 +1274,6 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 					$emailVars['EMAIL_TEXT_STATUS_PLEASE_REPLY'] = tra( 'Please reply to this email if you have any questions.' );
 
 					$emailVars['order'] = $this;
-
 					zen_mail( $this->customer['name'], $this->customer['email_address'], STORE_NAME . ' ' . tra( 'Order Update' ) . ' #' . $this->mOrdersId, $textMessage, STORE_NAME, EMAIL_FROM, $emailVars, 'order_status');
 
 					$customer_notified = '1';

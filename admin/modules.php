@@ -136,9 +136,9 @@ if( is_object( $activeModule ) ) {
 	if( $activeModule->isInstalled() ) {
 		if( $diffConfig = array_diff( $activeModule->keys(), array_keys( $activeConfig ) ) ) {
 			foreach( $diffConfig as $configKey ) {
-				if( !empty( $defaultConfig[$configKey]['configuration_value'] ) ) {
+//				if( !empty( $defaultConfig[$configKey]['configuration_value'] ) ) {
 					$missingConfig[] = $configKey;
-				}
+//				}
 			}
 			if( !empty( $missingConfig ) ) {
 				$contents[] = array( 'text' => 'Module is missing the following configurations: <ol><li>'.implode( '</li><li>', $missingConfig ).'</li></ol>' );

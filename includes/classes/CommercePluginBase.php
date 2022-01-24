@@ -181,7 +181,7 @@ abstract class CommercePluginBase extends CommerceBase {
 
 			if( $missingConfigKeys = array_flip( array_diff( $defaultKeys, $activeKeys ) ) ) {
 				foreach( $defaultConfig as $configKey => $configHash ) {
-					if( !empty( $missingConfigKeys[$configKey] ) && !is_null( $configHash['configuration_value'] ) ) {
+					if( !empty( $missingConfigKeys[$configKey] ) ) {
 						$this->storeModuleConfigHash( $configKey, $configHash );
 					}
 				}
