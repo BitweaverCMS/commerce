@@ -582,7 +582,7 @@ class CommerceCustomer extends CommerceBase {
 		if( $this->isCommerceConfigActive( 'ACCOUNT_STATE' ) ) {
 			if ( !empty( $selectedCountry ) ) {
 				if( !($stateInput = zen_get_country_zone_list('state', $selectedCountry, (!empty( $pAddressHash['entry_zone_id'] ) ? $pAddressHash['entry_zone_id'] : ''), 'autocomplete="region"' )) ) { 
-					$stateInput = zen_draw_input_field('state', zen_get_zone_name($selectedCountry, $pAddressHash['entry_zone_id'], $pAddressHash['entry_state']));
+					$stateInput = zen_draw_input_field('state', zen_get_zone_name($selectedCountry, BitBase::getParameter( $pAddressHash, 'entry_zone_id' ), $pAddressHash['entry_state']));
 				}
 			} else {
 				$stateInput = zen_draw_input_field( 'state', NULL, 'autocomplete="'.$pSection.' region"' );
