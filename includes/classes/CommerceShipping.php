@@ -109,6 +109,7 @@ class CommerceShipping extends BitSingleton {
 								}
 								$quotes['origin'] = $shipHash['origin'];
 							}
+							$quotes['methods'] = array_values( $quotes['methods'] ); // reindex $quotes['methods'] in case any were unset above
 							$ret[] = $quotes;
 						}
 					}
