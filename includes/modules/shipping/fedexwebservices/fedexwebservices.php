@@ -267,7 +267,7 @@ eb( "MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP Not fixed for bitcommerce");
 						foreach ($response->Notifications as $notification) {					 
 							$message .= tra( $notification->Severity ).': '.tra( $notification->Message );
 						}
-					} elseif( is_object( $response->Notifications ) ) {
+					} elseif( is_object( $response->Notifications ) && !empty( $quotes['methods'] ) ) {
 						$message .= tra( $response->Notifications->Severity ).': '.tra( $response->Notifications->Message );
 					}
 				}
@@ -276,10 +276,10 @@ eb( "MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP Not fixed for bitcommerce");
 			}
 
 			if( !empty( $message ) ) {
-				$quotes = array('module' => $this->title, 'error'	=> $message);
+				$quotes = array('module' => $this->title, 'error' => $message);
 			}
 
-			if ( !empty( $this->icon ) ) {
+			if ( !empty( $this->icon ) && !empty( $quotes ) ) {
 				$quotes['icon'] = $this->icon;
 			}
 		}
