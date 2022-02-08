@@ -54,14 +54,11 @@ class CommerceShipping extends BitSingleton {
 		$ret = array();
 
 		if( !empty( $this->mShipModules ) ) {
+			$shipHash = $pOrderBase->getBoxDimesions();
 			$shipHash['method'] = $method;
 			$orderTotalWeight = $pOrderBase->getWeight();
 			$shipHash['is_fragile'] = FALSE; // needs implementation
 			$shipHash['is_ground_only'] = FALSE; // needs implementation
-			$shipHash['box_width'] = NULL;
-			$shipHash['box_length'] = NULL;
-			$shipHash['box_height'] = NULL;
-			$shipHash['box_girth'] = NULL;
 			$shipHash['weight_unit'] = $gCommerceSystem->getConfig( 'STORE_WEIGHT_UNIT' );
 
 //				"('Shipping Delay', 'SHIPPING_DAYS_DELAY', '1', 'How many days from when an order is placed to when you ship it (Decimals are allowed). Arrival date estimations are based on this value.', 6, 7, NULL, NULL, now())",
@@ -108,8 +105,8 @@ class CommerceShipping extends BitSingleton {
 									}
 								}
 								$quotes['origin'] = $shipHash['origin'];
+								$quotes['methods'] = array_values( $quotes['methods'] ); // reindex $quotes['methods'] in case any were unset above
 							}
-							$quotes['methods'] = array_values( $quotes['methods'] ); // reindex $quotes['methods'] in case any were unset above
 							$ret[] = $quotes;
 						}
 					}

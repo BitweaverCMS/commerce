@@ -433,7 +433,10 @@ If a special exist * 10+9
 		}
 	}
 
-
+	function getDimensions( $pQuantity=1, $pAttributes=array() ) {
+		// Should be overridden
+		return array( 'width' => 0, 'length' => 0, 'height' => 0 );
+	}
 
 	function getWeight( $pQuantity=1, $pAttributes=array() ) {
 		$ret = 0;

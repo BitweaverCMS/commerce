@@ -42,6 +42,30 @@ abstract class CommerceOrderBase extends BitBase {
 		return $this->mProductObjects[$productsId];
 	}
 
+	public function getBoxDimesions() {
+		$ret = array( 'box_width' => 0, 'box_length' => 0, 'box_height' => 0 );
+
+		foreach( array_keys( $this->contents ) as $productsKey ) {
+			if( $prod = $this->getProductObject( $this->contents[$productsKey]['products_id'] ) ) {
+				if( $productDimensions = $prod->getDimensions( $this->contents[$productsKey]['products_quantity'], $this->contents[$productsKey]['attributes'] ) ) {
+					if( !empty( $productDimensions['width'] ) && !empty( $productDimensions['length'] ) ) {
+						if( $productDimensions['width'] > $ret['box_width'] ) {
+							$ret['box_width'] = $productDimensions['width'];
+						}
+						if( $productDimensions['length'] > $ret['box_length'] ) {
+							$ret['box_length'] = $productDimensions['length'];
+						}
+						$ret['box_height'] += $productDimensions['height'];
+					}
+				}
+			}
+		}
+
+		$ret['box_girth'] = 2 * ($ret['box_width'] + $ret['box_height']);
+
+		return $ret;
+	}
+
 	function getWeight() {
 		if( empty( $this->weight ) ) {
 			$this->calculate();
