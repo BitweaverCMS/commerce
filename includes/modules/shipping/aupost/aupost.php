@@ -38,38 +38,8 @@ class aupost extends CommercePluginShippingBase {
 		parent::__construct();
 		$this->title			= tra( 'Australia Post' );
 		$this->description		= tra( 'Australia Post Parcel Service <p>You will need to register at the <a href="https://developers.auspost.com.au/" target="_new">Developer Program</a></p>' );
-		$this->mTypesDomestic	= explode(', ', $this->getModuleConfigValue( '_TYPES_DOMESTIC' ));
 		$this->icon				= 'shipping_aupost';
 	}
-/*
-function __construct()
-{
-    global $order, $db, $template ;
-
-    // disable only when entire cart is free shipping
-    if (zen_get_shipping_enabled($this->code))  $this->enabled = ((MODULE_SHIPPING_AUPOST_STATUS == 'True') ? true : false);
-
-
-    $this->code = 'aupost';
-    $this->title = MODULE_SHIPPING_AUPOST_TEXT_TITLE ;
-    $this->description = MODULE_SHIPPING_AUPOST_TEXT_DESCRIPTION;
-    $this->sort_order = MODULE_SHIPPING_AUPOST_SORT_ORDER;
-    $this->icon = $template->get_template_dir('aupost.jpg', '' ,'','images/icons'). '/aupost.jpg';
-    if (zen_not_null($this->icon)) $this->quotes['icon'] = zen_image($this->icon, $this->title);
-    $this->logo = $template->get_template_dir('aupost_logo.jpg', '','' ,'images/icons'). '/aupost_logo.jpg';
-    $this->tax_class = MODULE_SHIPPING_AUPOST_TAX_CLASS;
-    $this->tax_basis = 'Shipping' ;    // It'll always work this way, regardless of any global settings
-
-     if (MODULE_SHIPPING_AUPOST_ICONS != "No" )
-	 {
-        if (zen_not_null($this->logo)) $this->title = zen_image($this->logo, $this->title) ;
-    }
-
-    $this->allowed_methods = explode(", ", MODULE_SHIPPING_AUPOST_TYPES1) ;
-}
-*/
-// class methods
-//////////////////////////////////////////////////////////////
 
 	/**
 	 * Get quote from shipping provider's API:
@@ -89,7 +59,13 @@ function __construct()
 				$unitConversion = 2.54;
 			}
 
-			$auPostUri = "https://digitalapi.auspost.com.au/postage/parcel/domestic/service.json"; 
+			if( $tare = $this->getModuleConfigValue( '_TARE' ) ) {
+			    $parcelWeight = $parcelWeight + (($parcelWeight*$tare)/100) ;
+			}
+
+			$apiDestination = (BitBase::getParameter( $pShipHash['destination'], 'countries_iso_code_2' ) == 'AU' ? 'domestic' : 'international');
+
+			$auPostUri = "https://digitalapi.auspost.com.au/postage/parcel/$apiDestination/service.json"; 
 
 			$queryParams = array (
 			  "from_postcode" => $pShipHash['origin']['postcode'],
@@ -97,57 +73,61 @@ function __construct()
 			  "length" => (BitBase::getParameter( $pShipHash, 'box_length', 22 ) * $unitConversion),
 			  "width" => (BitBase::getParameter( $pShipHash, 'box_width', 16 ) * $unitConversion),
 			  "height" => (BitBase::getParameter( $pShipHash, 'box_height', 7.7 ) * $unitConversion),
-			  "weight" => $parcelWeight,
-			  "service_code" => 'AUS_PARCEL_REGULAR'
+			  "weight" => $parcelWeight
 			);
 
-			$this->quotes = array('id' => $this->code, 'module' => $this->title);
+			if( $apiDestination == 'international' ) {
+				$queryParams['country_code'] = $pShipHash['destination']['countries_iso_code_2'];
+			}
+
+			$allowedTypes = $this->getAllowedServiceTypes();
 			$methods = array() ;
 
 			// Server query string //
-			if( $jsonHash = $this->get_auspost_api( $auPostUri, $queryParams ) ) {
-				foreach( $jsonHash['services']['service'] as $service ) {
+			if( $aupostQuote = $this->get_auspost_api( $auPostUri, $queryParams ) ) {
+				foreach( $aupostQuote['services']['service'] as $service ) {
 					global $currencies;
 
-					$costAud = (float)$service['price'];
-					$costStore = $currencies->convert( $costAud, DEFAULT_CURRENCY, 'CAD' ) + (float)$this->getShipperHandling();
-					if( in_array( $service['code'], $this->mTypesDomestic ) ) {
-							$methods[] = array( 'id' => $service['code'],
-												'title' => $service['name'],
-												'cost' => $costStore,
-												'code' => $service['code'],
-												);
+					if( ($serviceCode = BitBase::getParameter( $service, 'code' )) && empty( $allowedTypes ) || in_array( $serviceCode, $allowedTypes ) || (!empty( $pShipHash['method'] ) && ($pShipHash['method'] == $serviceCode)) ) {
+						$costAud = (float)$service['price'];
+						$costStore = $currencies->convert( $costAud, DEFAULT_CURRENCY, 'CAD' ) + (float)$this->getShipperHandling();
+						if( in_array( $service['code'], $allowedTypes ) ) {
+								$methods[] = array( 'id' => $serviceCode,
+													'title' => $service['name'],
+													'cost' => $costStore,
+													'code' => $serviceCode
+													);
+						}
 					}
 				}
+				if( !empty( $methods ) ) {
+					$this->sortQuoteMethods( $methods );
+					$quotes['methods'] = $methods;
+				}
+			} else {
+				if ($aupostQuote != false) {
+					$errmsg = tra( 'No shipping options are available for this delivery address using this shipping service.' );
+				} else {
+					$errmsg = tra( 'An unknown error occured with the Australia Post shipping calculations.' );
+				}
+				$quotes['error'] = $errmsg;
 			}
-		 // print_r($xml) ; exit ;
-			/////  Initialise our quote array(s)
-			
-			$this->sortQuoteMethods( $methods );
-
-			$quotes['methods'] = $methods;
 		}
 
 		return $quotes;
 	}
 
-	function _get_error_cost($dest_country) {
-		
-		$x = explode(',', MODULE_SHIPPING_AUPOST_COST_ON_ERROR) ;
+	private function getAllowedServiceTypes() {
+		$ret = array();
 
-		unset($_SESSION['aupostParcel']) ;  // don't cache errors.
-
-		$cost = $dest_country == "AU" ?  $x[0]:$x[1] ;
-
-		if ($cost == 0) {
-			$this->enabled = FALSE ;
-			unset($_SESSION['aupostQuotes']) ;
-		} else {  
-			$this->quotes = array('id' => $this->code, 'module' => 'Flat Rate'); 
+		global $gCommerceSystem;
+		if( $allowedTypes = $gCommerceSystem->getConfig( $this->getModuleKeyTrunk().'_TYPES' ) ) {
+			$ret = array_map('trim', explode(',', $allowedTypes));
 		}
 
-		return $cost;
-    }
+		return $ret;
+	}
+				
 
 	/**
 	* rows for com_configuration table as associative array of column => value
@@ -198,21 +178,10 @@ function __construct()
 				'configuration_value' => '10,10,2',
 				'configuration_description' => 'Default Parcel dimensions (in cm). Three comma seperated values (eg 10,10,2 = 10cm x 10cm x 2cm). These are used if the dimensions of individual products are not set',
 			),
-			$this->getModuleKeyTrunk().'_COST_ON_ERROR' => array(
-				'configuration_title' => 'Cost on Error',
-				'configuration_value' => '25',
-				'configuration_description' => 'If an error occurs this Flat Rate fee will be used.</br> A value of zero will disable this module on error.',
-			),
 			$this->getModuleKeyTrunk().'_TARE' => array(
 				'configuration_title' => 'Tare percent.',
 				'configuration_value' => '10',
 				'configuration_description' => 'Add this percentage of the items total weight as the tare weight. (This module ignores the global settings that seems to confuse many users. 10% seems to work pretty well.).',
-			),
-			$this->getModuleKeyTrunk().'_HIDE_HANDLING' => array(
-				'configuration_title' => 'Hide Handling Fees?',
-				'configuration_value' => 'Yes',
-				'configuration_description' => 'The handling fees are still in the total shipping cost but the Handling Fee is not itemised on the invoice.',
-				'set_function' => 'zen_cfg_select_option(array(\'Yes\', \'No\'), ',
 			),
 			$this->getModuleKeyTrunk().'_WEIGHT_FORMAT' => array(
 				'configuration_title' => 'Parcel Weight format',
@@ -220,23 +189,19 @@ function __construct()
 				'configuration_description' => 'Are your store items weighted by grams or Kilos? (required so that we can pass the correct weight to the server).',
 				'set_function' => 'zen_cfg_select_option(array(\'gms\', \'kgs\'), ',
 			),
-			$this->getModuleKeyTrunk().'_DEBUG' => array(
-				'configuration_title' => 'Enable Debug?',
-				'configuration_value' => 'No',
-				'configuration_description' => 'See how parcels are created from individual items.</br>Shows all methods returned by the server, including possible errors. <strong>Do not enable in a production environment</strong>',
-				'set_function' => 'zen_cfg_select_option(array(\'No\', \'Yes\'), ',
-			),
-			$this->getModuleKeyTrunk().'_TYPES_DOMESTIC' => array(
-				'configuration_title' => 'Shipping Methods for Australia',
+			$this->getModuleKeyTrunk().'_TYPES' => array(
+				'configuration_title' => 'Shipping Methods for Australia Post',
 				'configuration_value' => 'AUS_PARCEL_EXPRESS,AUS_PARCEL_REGULAR',
 				'configuration_description' => 'Select the methods you wish to allow',
-				'set_function' => 'zen_cfg_select_multioption(array(\'AUS_PARCEL_EXPRESS\',\'AUS_PARCEL_EXPRESS_SATCHEL_MEDIUM\',\'AUS_PARCEL_EXPRESS_PACKAGE_MEDIUM\',\'AUS_PARCEL_EXPRESS_SATCHEL_1KG\',\'AUS_PARCEL_REGULAR\',\'AUS_PARCEL_REGULAR_SATCHEL_MEDIUM\',\'AUS_PARCEL_REGULAR_PACKAGE_MEDIUM\',\'AUS_PARCEL_REGULAR_SATCHEL_1KG\'), ',
+				'set_function' => 'zen_cfg_select_multioption(array(\'AUS_PARCEL_EXPRESS\',\'AUS_PARCEL_EXPRESS_SATCHEL_MEDIUM\',\'AUS_PARCEL_EXPRESS_PACKAGE_MEDIUM\',\'AUS_PARCEL_EXPRESS_SATCHEL_1KG\',\'AUS_PARCEL_REGULAR\',\'AUS_PARCEL_REGULAR_SATCHEL_MEDIUM\',\'AUS_PARCEL_REGULAR_PACKAGE_MEDIUM\',\'AUS_PARCEL_REGULAR_SATCHEL_1KG\',\'INT_PARCEL_COR_OWN_PACKAGING\',\'INT_PARCEL_EXP_OWN_PACKAGING\',\'INT_PARCEL_STD_OWN_PACKAGING\',\'INT_PARCEL_AIR_OWN_PACKAGING\'), ',
 			)
 		) );
 		// set some default values
 		$ret[$this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE']['configuration_value'] = 'AU';
 		return $ret;
 	}
+
+
 
 	function get_auspost_api( $pUrl, $pQueryParams ) {
 		$ret = array();
