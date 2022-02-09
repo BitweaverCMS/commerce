@@ -2,6 +2,8 @@
 .subtotal .currency	{ text-align:right; font-weight:bold; font-size:125%; padding-top:10px; padding-bottom:10px; }
 .clickable { cursor:pointer; text-decoration:underline; }
 
+sup.currency-symbol { font-size: .5em; top: -.7em; }
+
 .shopping-cart .subtotal 		{ font-size:16px; font-weight:900; }
 .shopping-cart .subtotal td	{ vertical-align: middle; text-align:right; }
 
