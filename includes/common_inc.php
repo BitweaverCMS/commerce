@@ -495,7 +495,7 @@ function zen_get_languages() {
     }
 
     if ( (ACCOUNT_COMPANY == 'true') && (zen_not_null($company)) ) {
-		$address_out = preg_replace( "/$cr/", "$cr$company$cr", $address_out, 1 );
+		$address_out = preg_replace( "`$cr`", "$cr$company$cr", $address_out, 1 );
     }
 
     return $address_out;
