@@ -40,6 +40,88 @@ class CommerceCustomer extends CommerceBase {
 		return( count( $this->mInfo ) );
 	}
 
+	function expunge() {
+		if( $this->isValid() && !($this->getOrdersHistory()) ) {
+			$this->mDb->query( "DELETE FROM " . TABLE_ADDRESS_BOOK . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `customers_basket_id` IN (SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `customers_id`=?)", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BATCH_ORDERS. " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_WISHLIST . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_FILES_UPLOADED . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_REVIEWS . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_WHOS_ONLINE . " WHERE `customer_id` = ?", array( $this->mCustomerId ) );
+		}
+	}
+
+	public function storeReview( &$pReviewHash ) {
+		$ret = FALSE;
+		if( $this->verifyReview( $pReviewHash ) ) {
+			$pReviewHash['reviews_store']['last_modified'] = $this->mDb->NOW();
+			if( empty( $pReviewHash['reviews_id'] ) ) {
+				$pReviewHash['reviews_store']['reviews_id'] = $this->mDb->GenID( 'com_reviews_reviews_id_seq' );
+				$this->mDb->associateInsert( TABLE_REVIEWS, $pReviewHash['reviews_store'] );
+			} else {
+				$this->mDb->associateUpdate( TABLE_REVIEWS, $pReviewHash['reviews_store'], array( 'reviews_id' => $pReviewHash['reviews_id'] ) );
+			}
+		}
+		return $ret;
+	}
+
+	protected function verifyReview( &$pReviewHash ) {
+		$ret = TRUE;
+		$cols = array( 'products_id', 'orders_id', 'customers_id', 'customers_name', 'reviews_rating', 'date_added', 'last_modified', 'reviews_read', 'status', 'reviews_source', 'reviews_source_url', 'reviews_text', 'lang_code', 'format_guid', 'admin_note' );
+		foreach( $cols as $col ) {
+			$pReviewHash['reviews_store'][$col] = (isset( $pReviewHash[$col] ) ? $pReviewHash[$col] : NULL);
+		}
+
+		if( empty( $pReviewHash['reviews_store']['format_guid'] ) ) {
+			$pReviewHash['reviews_store']['format_guid'] = 'text/plain';
+		}
+
+		if( empty( $pReviewHash['reviews_store']['status'] ) ) {
+			$pReviewHash['reviews_store']['status'] = 1;
+		}
+
+		$pReviewHash['reviews_id'] = $this->mDb->getOne( "SELECT `reviews_id` FROM " . TABLE_REVIEWS . " WHERE `customers_id`=? AND `date_added`=?", array( $pReviewHash['customers_id'], $pReviewHash['date_added'] ) );
+
+		return $ret;
+	}
+
+	protected function getReviews() {
+		$ret = array();
+		if( $this->isValid() ) {
+			$ret['stats']['count'] = 0;
+
+			$query = "SELECT `reviews_id` AS `hash_key`, * 
+					FROM " . TABLE_REVIEWS . " cr 
+					WHERE `customers_id`=?";
+
+			if( $ret['reviews'] = $this->mDb->getAssoc( $query, array( $this->mCustomerId ), FALSE, FALSE, BIT_QUERY_CACHE_TIME ) ) {
+				$ratingSum = 0;
+				$firstReviewEpoch = PHP_INT_MAX;
+				$lastReviewEpoch = 0;
+				foreach( $ret['reviews'] as &$reviewHash ) {
+					$reviewEpoch = strtotime( $reviewDate['date_added'] );
+					if( $reviewEpoch < $firstReviewEpoch ) {
+						$firstReviewEpoch = $reviewEpoch;
+					}
+					if( $reviewEpoch > $lastReviewEpoch ) {
+						$lastReviewEpoch = $reviewEpoch;
+					}
+					$ret['stats']['count']++;
+					$ratingSum += $reviewHash['reviews_rating'];
+				}
+				$ret['stats']['first_review_timestamp'] = $firstReviewEpoch;
+				$ret['stats']['last_review_timestamp'] = $lastReviewEpoch;
+				$ret['stats']['rating_avg'] = $ratingSum / $ret['stats']['count'];
+			}
+		}
+
+		return $ret;
+	}
+
 	function getBatchOrder() {
 		$ret = array();
 		if( $this->isValid() && ($batchArray = $this->getBatchHash()) ) {
@@ -180,21 +262,6 @@ class CommerceCustomer extends CommerceBase {
 			} else {
 				$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BATCH_ORDERS. " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
 			}
-		}
-	}
-
-	function expunge() {
-		if( $this->isValid() && !($this->getOrdersHistory()) ) {
-			$this->mDb->query( "DELETE FROM " . TABLE_ADDRESS_BOOK . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `customers_basket_id` IN (SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `customers_id`=?)", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BATCH_ORDERS. " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_WISHLIST . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_FILES_UPLOADED . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_REVIEWS . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_WHOS_ONLINE . " WHERE `customer_id` = ?", array( $this->mCustomerId ) );
 		}
 	}
 

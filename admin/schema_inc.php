@@ -557,10 +557,10 @@ BITCOMMERCE_INSTALL_PREFIX.'com_featured' => "
   products_id I4,
   featured_date_added T,
   featured_last_modified T,
-  expires_date date NOTNULL default '0001-01-01',
+  expires_date date NOTNULL default '2020-01-01',
   date_status_change T,
   status I1 NOTNULL default '1',
-  featured_date_available date NOTNULL default '0001-01-01'
+  featured_date_available date NOTNULL default '2020-01-01'
   CONSTRAINT ', CONSTRAINT `featured_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
@@ -888,19 +888,19 @@ BITCOMMERCE_INSTALL_PREFIX.'com_reviews' => "
   customers_id I4,
   customers_name C(64),
   reviews_rating I1,
-  date_added T,
+  date_added T DEFTIMESTAMP NOTNULL,
   last_modified T,
   reviews_read I2,
+  lang_code C(32) NOTNULL,
+  format_guid C(32) NOTNULL,
+  reviews_source C(256),
+  reviews_source_url C(4096),
+  reviews_local_url C(4096),
+  reviews_text X,
+  reviews_admin_note X
   status I1 NOTNULL default '1'
   CONSTRAINT ', CONSTRAINT `reviews_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
               , CONSTRAINT `reviews_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
-",
-
-BITCOMMERCE_INSTALL_PREFIX.'com_reviews_description' => "
-  reviews_id I4,
-  languages_id I4,
-  reviews_text X
-  CONSTRAINT ', CONSTRAINT `reviews_desc_reviews_ref` FOREIGN KEY ( `reviews_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_reviews`( `reviews_id` )'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_salemaker_sales' => "
@@ -914,11 +914,11 @@ BITCOMMERCE_INSTALL_PREFIX.'com_salemaker_sales' => "
   sale_specials_condition I2,
   sale_categories_selected X,
   sale_categories_all X,
-  sale_date_start date NOTNULL default '0001-01-01',
-  sale_date_end date NOTNULL default '0001-01-01',
-  sale_date_added date NOTNULL default '0001-01-01',
-  sale_date_last_modified date NOTNULL default '0001-01-01',
-  sale_date_status_change date NOTNULL default '0001-01-01'
+  sale_date_start date NOTNULL default '2020-01-01',
+  sale_date_end date NOTNULL default '2020-01-01',
+  sale_date_added date NOTNULL default '2020-01-01',
+  sale_date_last_modified date NOTNULL default '2020-01-01',
+  sale_date_status_change date NOTNULL default '2020-01-01'
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_sessions' => "
@@ -933,10 +933,10 @@ BITCOMMERCE_INSTALL_PREFIX.'com_specials' => "
   specials_new_products_price N(15,4),
   specials_date_added T,
   specials_last_modified T,
-  expires_date date NOTNULL default '0001-01-01',
+  expires_date date NOTNULL default '2020-01-01',
   date_status_change T,
   status I1 NOTNULL default '1',
-  specials_date_available date NOTNULL default '0001-01-01'
+  specials_date_available date NOTNULL default '2020-01-01'
   CONSTRAINT ', CONSTRAINT `specials_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
@@ -1316,8 +1316,8 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `last_modified`, `date_added`, `use_function`, `set_function`) VALUES ('Admin Set max_execution_time for processes', 'GLOBAL_SET_TIME_LIMIT', '300', 'Enter the time in seconds for how long the max_execution_time of processes should be. Default=300<br />Example: 60= 1 minute<br /><br />Note: Changing the time limit is only needed if you are having problems with the execution time of a process', 1, 42, NULL, 'NOW', NULL, NULL)",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Show if version update available', 'SHOW_VERSION_UPDATE_IN_HEADER', 'true', 'Automatically check to see if a new version of Zen-Cart is available. Enabling this can sometimes slow down the loading of Admin pages. (Displayed on main Index page after login, and Server Info page.)', 1, 44, 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Store Status', 'STORE_STATUS', '0', 'What is your Store Status<br />0= Normal Store<br />1= Showcase no prices<br />2= Showcase with prices', '1', '25', 'zen_cfg_select_option(array(''0'', ''1'', ''2''), ', 'NOW')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `last_modified`, `date_added`, `use_function`, `set_function`) VALUES ('Server Uptime', 'DISPLAY_SERVER_UPTIME', 'true', 'Displaying Server uptime can cause entries in error logs on some servers. (true = Display, false = don''t display)', 1, 46, '2003-11-08 20:24:47', '0001-01-01 00:00:00', '', 'zen_cfg_select_option(array(''true'', ''false''),')",
-"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `last_modified`, `date_added`, `use_function`, `set_function`) VALUES ('Missing Page Check', 'MISSING_PAGE_CHECK', 'true', 'Zen-Cart can check for missing pages in the URL and redirect to Index page. For debugging you may want to turn this off. (true = Check for missing pages, false = Don''t check for missing pages)', 1, 48, '2003-11-08 20:24:47', '0001-01-01 00:00:00', '', 'zen_cfg_select_option(array(''true'', ''false''),')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `last_modified`, `date_added`, `use_function`, `set_function`) VALUES ('Server Uptime', 'DISPLAY_SERVER_UPTIME', 'true', 'Displaying Server uptime can cause entries in error logs on some servers. (true = Display, false = don''t display)', 1, 46, '2003-11-08 20:24:47', '2020-01-01 00:00:00', '', 'zen_cfg_select_option(array(''true'', ''false''),')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `last_modified`, `date_added`, `use_function`, `set_function`) VALUES ('Missing Page Check', 'MISSING_PAGE_CHECK', 'true', 'Zen-Cart can check for missing pages in the URL and redirect to Index page. For debugging you may want to turn this off. (true = Check for missing pages, false = Don''t check for missing pages)', 1, 48, '2003-11-08 20:24:47', '2020-01-01 00:00:00', '', 'zen_cfg_select_option(array(''true'', ''false''),')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('HTML Editor', 'HTML_EDITOR_PREFERENCE', 'NONE', 'Please select the HTML/Rich-Text editor you wish to use for composing Admin-related emails, newsletters, and product descriptions', '1', '110', 'zen_cfg_select_option(array(''HTMLAREA'', ''NONE''),', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Enable phpBB linkage?', 'PHPBB_LINKS_ENABLED', 'false', 'Should Zen Cart synchronize new account information to your (already-installed) phpBB forum?', '1', '120', 'zen_cfg_select_option(array(''true'', ''false''),', 'NOW')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_configuration` (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) VALUES ('Show Category Counts - Admin', 'SHOW_COUNTS_ADMIN', 'true', 'Show Category Counts in Admin?', '1', '130', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')",

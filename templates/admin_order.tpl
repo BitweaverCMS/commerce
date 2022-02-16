@@ -51,7 +51,7 @@ function getShippingQuotes( pOrderId ) {
 		<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
 		<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
 	</div>
-	<h1>{$smarty.const.HEADING_TITLE}</h1>
+	<h1>{$smarty.const.HEADING_TITLE} {if $orderReviews}<span onclick="BitBase.toggleElementDisplay('order-review-{$order->mOrdersId}')" class="badge">{booticon iname="icon-star"} {foreach name=orderReviews from=$orderReviews item=$reviewHash}{$reviewHash.reviews_rating}{if !$smarty.foreach.orderReviews.last}, {/if}{/foreach}</span>{/if}</h1>
 	{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}
 		{if $order->info.estimated_ship_date} &bull; {tr}Est Ship{/tr}: {$order->info.estimated_ship_date|substr:0:10} {/if}
 		{if $order->info.estimated_arrival_date} &bull; {tr}Est Arrival{/tr}: {$order->info.estimated_arrival_date|substr:0:10} {/if}
@@ -62,7 +62,15 @@ function getShippingQuotes( pOrderId ) {
 </div>
 {/if}
 </header>
-
+{if $orderReviews}
+<ol class="box" style="display:none;overflow:hidden;" id="order-review-{$order->mOrdersId}">
+{foreach from=$orderReviews item=reviewHash}
+<li><strong>{$reviewHash.reviews_source}</strong>
+{$reviewHash.reviews_text}
+</li>
+{/foreach}
+</ol>
+{/if}
 {include file="bitpackage:bitcommerce/admin_order_header_inc.tpl"}
 
 <table class="table data order-items">

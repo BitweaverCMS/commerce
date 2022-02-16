@@ -82,6 +82,8 @@ require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 // Put this after header.php because we have a custom <header> when viewing an order
 define('HEADING_TITLE', ( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : tra( 'Orders' )));
 
+$gBitSmarty->assign( 'orderReviews', $order->getReviews() );
+
 if( !empty( $order ) ) {
 	require( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
 	$productManager = new CommerceProductManager();
@@ -312,20 +314,9 @@ if( $order_exists ) {
 	if ($gv_check->RecordCount() > 0) {
 		echo '<a class="btn btn-default btn-sm" href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $_REQUEST['oID']) . '">' . tra( 'Gift Queue' ) . '</a>';
 	}
-	?>
-	</td>
-</tr>
-</table>
-<?php
-
 }
 
-require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
-<!-- footer_eof //-->
-<br />
-</body>
-</html>
-<?php 
+require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 
 require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); 
+
 $gBitSystem->mConfig['layout-body'] = $tempBodyLayout; // Caching might save here. Save value and reset
-?>
