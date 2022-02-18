@@ -161,8 +161,8 @@ class CommerceSystem extends BitSingleton {
 	function getConfig( $pConfigName, $pDefault=NULL ) {
 		global $gBitSystem;
 		$ret = $pDefault;
-		if( defined( strtoupper( $pConfigName ) ) ) {
-			$ret = constant( strtoupper( $pConfigName ) );
+		if( defined( strtoupper( $pConfigName ) ) && (($val = constant( strtoupper( $pConfigName ) )) !== '') ) {
+			$ret = $val;
 		} elseif( $pDefault === NULL && strpos( 'MAX_DISPLAY', $pConfigName ) !== FALSE ) {
 			$ret = $gBitSystem->getConfig( 'max_records', 20 );
 		} else {
