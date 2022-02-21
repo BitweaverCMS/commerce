@@ -83,7 +83,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		if( $delay ) {
 			$weekEndCount = (int)(($delay + $dayOfWeek) / 7);
 			$shipDay = $delay + ($weekEndCount * 2);
-			$shipDayOfWeek = (int)date( 'w', (time() + (86400 * $shipDay)) );
+			$shipDayOfWeek = (int)date( 'w', (strtotime( $shipDate ) + (86400 * $shipDay)) );
 			if( $shipDayOfWeek === 0 )  {
 				$shipDay += 1;
 			} elseif( $shipDayOfWeek === 6 )  {
@@ -92,7 +92,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 			$holidays = BitDate::getHolidays();
 			$count = 1;
 			while( $count <= $shipDay ) {
-				$countTime = strtotime( '+'.$count.'days' );
+				$countTime = strtotime( $shipDate ) + strtotime( '+'.$count.'days' );
 				$dateStr = date( 'Y-m-d', $countTime );
 				$countDow = date( 'w', $countTime );
 				if( isset( $holidays[$dateStr] ) ) { // && ($countDow == 0 || $countDow == 6) ) {
