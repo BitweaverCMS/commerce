@@ -379,7 +379,7 @@ class usps extends CommercePluginShippingBase {
 					// set module-specific handling fee
 					if ($pShipHash['destination']['countries_iso_code_2'] == 'US') {
 						// domestic/national
-						$usps_handling_fee = MODULE_SHIPPING_USPS_HANDLING;
+						$usps_handling_fee = $this->getModuleConfigValue( '_HANDLING' );
 					} else {
 						// international
 						$usps_handling_fee = MODULE_SHIPPING_USPS_HANDLING_INT;
