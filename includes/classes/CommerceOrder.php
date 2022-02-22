@@ -707,7 +707,7 @@ class order extends CommerceOrderBase {
 			$this->info['tax'] = zen_round($this->info['tax'],2);
 		}
 
-		$this->info['total'] = (int)$this->subtotal + $this->getField( 'shipping_cost', 0.0 );
+		$this->info['total'] = (double)$this->subtotal + $this->getField( 'shipping_cost', 0.0 );
 
 		if (DISPLAY_PRICE_WITH_TAX != 'true') {
 			$this->info['total'] += $this->info['tax'];
