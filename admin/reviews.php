@@ -11,6 +11,34 @@
 //
 
 require('includes/application_top.php');
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceReview.php' );
+
+$mid = 'bitpackage:bitcommerce/admin_reviews_list.tpl';
+
+$getAction = !empty( $_REQUEST['action'] ) ? $_REQUEST['action'] : '';
+
+switch ($getAction) {
+	default:
+		if( $reviewsList = CommerceReview::getList( $_REQUEST ) ) {
+			$gBitSmarty->assign_by_ref( 'reviewsList', $reviewsList );
+		}
+			if( isset( $_REQUEST['listInfo'] ) ) {
+				$_REQUEST['listInfo']['block_pages'] = 3;
+				$_REQUEST['listInfo']['item_name'] = 'coupons';
+				$gBitSmarty->assign_by_ref( 'listInfo', $_REQUEST['listInfo'] );
+			}
+
+		$title = HEADING_TITLE;
+		$mid = 'bitpackage:bitcommerce/admin_reviews_list.tpl';
+		break;
+}
+
+$gBitSmarty->display( $mid, tra( 'Customer Reviews' ) );
+
+require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 
+require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); 
+
+exit;
 
 $action = (isset($_GET['action']) ? $_GET['action'] : '');
 $status_filter = (isset($_GET['status']) ? $_GET['status'] : '');
@@ -69,7 +97,7 @@ if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
 <?php
 if ($action == 'edit') {
 
-	$reviews = $gBitDb->Execute("select r.`reviews_id`, r.`products_id`, r.customers_name, r.`date_added`,
+	$reviews = $gBitDb->Execute("select r.`reviews_id`, r.`products_id`, r.reviewer_name, r.`date_reviewed`,
 											r.`last_modified`, r.reviews_read, r.reviews_text, r.reviews_rating
 									 from " . TABLE_REVIEWS . " r
 									 where r.`reviews_id` = '" . (int)$rID . "'");
@@ -87,7 +115,7 @@ if ($action == 'edit') {
 	$rInfo = new objectInfo($rInfo_array);
 ?>
 		<div><?php echo zen_draw_form_admin('review', FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $rID . '&action=preview'); ?>
-			<b><?php echo ENTRY_PRODUCT; ?></b> <?php echo $reviewHash['products_name']; ?><br><b><?php echo ENTRY_FROM; ?></b> <?php echo $reviewHash['customers_name']; ?><br><br><b><?php echo ENTRY_DATE; ?></b> <?php echo zen_date_short($reviewHash['date_added']); ?></td>
+			<b><?php echo ENTRY_PRODUCT; ?></b> <?php echo $reviewHash['products_name']; ?><br><b><?php echo ENTRY_FROM; ?></b> <?php echo $reviewHash['reviewer_name']; ?><br><br><b><?php echo ENTRY_DATE; ?></b> <?php echo zen_date_short($reviewHash['date_reviewed']); ?></td>
 					<?php echo zen_image(DIR_WS_CATALOG_IMAGES . $reviewHash['products_image'], $reviewHash['products_name'], SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, 'hspace="5" vspace="5"'); ?>
 		</div>
 		<div><?php echo ENTRY_REVIEW; ?></b><br><br><?php echo zen_draw_textarea_field('reviews_text', 'soft', '70', '15', stripslashes($reviewHash['reviews_text'])); ?></div>
@@ -101,7 +129,7 @@ if ($action == 'edit') {
 			<td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
 		</tr>
 		<tr>
-			<td align="right" class="main"><?php echo zen_draw_hidden_field('reviews_id', $reviewHash['reviews_id']) . zen_draw_hidden_field('products_id', $reviewHash['products_id']) . zen_draw_hidden_field('customers_name', $reviewHash['customers_name']) . zen_draw_hidden_field('products_name', $reviewHash['products_name']) . zen_draw_hidden_field('products_image', $reviewHash['products_image']) . zen_draw_hidden_field('date_added', $reviewHash['date_added']) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . ' <a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $rID) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
+			<td align="right" class="main"><?php echo zen_draw_hidden_field('reviews_id', $reviewHash['reviews_id']) . zen_draw_hidden_field('products_id', $reviewHash['products_id']) . zen_draw_hidden_field('reviewer_name', $reviewHash['reviewer_name']) . zen_draw_hidden_field('products_name', $reviewHash['products_name']) . zen_draw_hidden_field('products_image', $reviewHash['products_image']) . zen_draw_hidden_field('date_reviewed', $reviewHash['date_reviewed']) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . ' <a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $rID) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
 		</form></tr>
 <?php
 } elseif ($action == 'preview') {
@@ -119,7 +147,7 @@ if ($action == 'edit') {
 		<tr><?php echo zen_draw_form_admin('update', FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $reviewHash['reviews_id'] . '&action=update', 'post', 'enctype="multipart/form-data"'); ?>
 			<td><table border="0" width="100%" cellspacing="0" cellpadding="0">
 				<tr>
-					<td class="main" valign="top"><b><?php echo ENTRY_PRODUCT; ?></b> <?php if( is_object( $reviewProduct ) ) { echo $reviewProduct->getTitle(); } ?><br><b><?php echo ENTRY_FROM; ?></b> <?php echo $reviewHash['customers_name']; ?><br><br><b><?php echo ENTRY_DATE; ?></b> <?php echo zen_date_short($reviewHash['date_added']); ?></td>
+					<td class="main" valign="top"><b><?php echo ENTRY_PRODUCT; ?></b> <?php if( is_object( $reviewProduct ) ) { echo $reviewProduct->getTitle(); } ?><br><b><?php echo ENTRY_FROM; ?></b> <?php echo $reviewHash['reviewer_name']; ?><br><br><b><?php echo ENTRY_DATE; ?></b> <?php echo zen_date_short($reviewHash['date_reviewed']); ?></td>
 					<td class="main" align="right" valign="top"><?php if( is_object( $reviewProduct ) && $productImageUrl = $reviewProduct->getThumbnailUrl() ) { echo '<img class="img-responsive" href="'. $productImageUrl . '">'; }?> </td>
 				</tr>
 			</table>
@@ -159,7 +187,7 @@ if ($action == 'edit') {
 
 	if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
 		$keywords = zen_db_input(zen_db_prepare_input($_GET['search']));
-		$search = " and r.`customers_name` like '%" . $keywords . "%' or r.`reviews_text` like '%" . $keywords . "%' or pd.`products_name` like '%" . $keywords . "%' or pd.`products_description` like '%" . $keywords . "%' or p.`products_model` like '%" . $keywords . "%'";
+		$search = " and r.`reviewer_name` like '%" . $keywords . "%' or r.`reviews_text` like '%" . $keywords . "%' or pd.`products_name` like '%" . $keywords . "%' or pd.`products_description` like '%" . $keywords . "%' or p.`products_model` like '%" . $keywords . "%'";
 	}
 
 	if ($status_filter !='' && $status_filter >0) {
@@ -171,7 +199,7 @@ if ($action == 'edit') {
 
 	$reviews_query_raw = (  "select r.*, pd.*, p.* from " . TABLE_REVIEWS . " r LEFT JOIN " . TABLE_PRODUCTS . " p on (p.`products_id`= r.`products_id`) LEFT JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON (r.`products_id` = pd.`products_id` AND pd.`language_id` ='" . (int)$_SESSION['languages_id'] . "') WHERE r.`products_id` = p.`products_id` " . $search . $order_by ." LIMIT 20 ");
 
-	$reviews_query_raw = "select `reviews_id` as `hash_key`, r.*, length(r.`reviews_text`) as `reviews_text_size` from " . TABLE_REVIEWS . " r order by `date_added` DESC";
+	$reviews_query_raw = "select `reviews_id` as `hash_key`, r.*, length(r.`reviews_text`) as `reviews_text_size` from " . TABLE_REVIEWS . " r order by `date_reviewed` DESC";
 	$reviews = $gBitDb->query($reviews_query_raw, $bindVars, MAX_DISPLAY_SEARCH_RESULTS, $pageOffset );
 	while (!$reviews->EOF) {
 		$reviewHash = $reviews->fields;
@@ -186,8 +214,8 @@ if ($action == 'edit') {
 			echo '			  <tr id="defaultSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $reviewHash['reviews_id'] . '&action=preview') . '\'">' . "\n";
 ?>
 						<td><?php echo '<a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $reviews->fields['reviews_id'] . '&action=preview') . '">' . zen_image(DIR_WS_ICONS . 'preview.gif', ICON_PREVIEW) . '</a>&nbsp;' . zen_get_products_name($reviews->fields['products_id']); ?></td>
-						<td><span class="badge"><?php echo $reviews->fields['reviews_rating']; ?> <i class="icon-star"></i></span> <?php echo $reviews->fields['customers_name']; ?></td>
-						<td align="right"><?php echo zen_date_short($reviews->fields['date_added']); ?></td>
+						<td><span class="badge"><?php echo $reviews->fields['reviews_rating']; ?> <i class="icon-star"></i></span> <?php echo $reviews->fields['reviewer_name']; ?></td>
+						<td align="right"><?php echo zen_date_short($reviews->fields['date_reviewed']); ?></td>
 						<td align="center">
 <?php
 		if ($reviews->fields['status'] == '1') {
@@ -225,10 +253,10 @@ eb( $action, "NOT IMPLEMENTED" );
 			$heading[] = array('text' => '<b>' . $rInfo->products_name . '</b>');
 
 			$contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $rInfo->reviews_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $rInfo->reviews_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
-			$contents[] = array('text' => '<br>' . TEXT_INFO_DATE_ADDED . ' ' . zen_date_short($rInfo->date_added));
+			$contents[] = array('text' => '<br>' . TEXT_INFO_DATE_ADDED . ' ' . zen_date_short($rInfo->date_reviewed));
 			if (zen_not_null($rInfo->last_modified)) $contents[] = array('text' => TEXT_INFO_LAST_MODIFIED . ' ' . zen_date_short($rInfo->last_modified));
 			$contents[] = array('text' => '<br>' . zen_info_image($rInfo->products_image, $rInfo->products_name, SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT));
-			$contents[] = array('text' => '<br>' . TEXT_INFO_REVIEW_AUTHOR . ' ' . $rInfo->customers_name);
+			$contents[] = array('text' => '<br>' . TEXT_INFO_REVIEW_AUTHOR . ' ' . $rInfo->reviewer_name);
 			$contents[] = array('text' => TEXT_INFO_REVIEW_RATING . ' ' . zen_image(DIR_WS_TEMPLATE_IMAGES . 'stars_' . $rInfo->reviews_rating . '.gif'));
 			$contents[] = array('text' => TEXT_INFO_REVIEW_READ . ' ' . $rInfo->reviews_read);
 			$contents[] = array('text' => '<br>' . TEXT_INFO_REVIEW_SIZE . ' ' . $rInfo->reviews_text_size . ' bytes');

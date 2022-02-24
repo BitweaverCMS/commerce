@@ -1175,16 +1175,6 @@ class order extends CommerceOrderBase {
 		return $ret;
 	}
 
-	public function getReviews() {
-		$ret = array();
-
-		if( $this->isValid() ) {
-			$ret = $this->mDb->getAssoc( "SELECT `reviews_id` AS `hash_key`, * FROM " . TABLE_REVIEWS . " WHERE `orders_id`=?", array( $this->mOrdersId ) );
-		}
-
-		return $ret;
-	}
-
 	function getDownloads() {
 		$ret = array();
 		if( $this->isValid() ) {

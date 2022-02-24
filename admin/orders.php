@@ -82,9 +82,11 @@ require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 // Put this after header.php because we have a custom <header> when viewing an order
 define('HEADING_TITLE', ( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] : tra( 'Orders' )));
 
-$gBitSmarty->assign( 'orderReviews', $order->getReviews() );
-
 if( !empty( $order ) ) {
+	require( BITCOMMERCE_PKG_CLASS_PATH.'CommerceReview.php' );
+	$reviewListHash = array( 'orders_id' => $order->mOrdersId );
+	$gBitSmarty->assign( 'orderReviews', CommerceReview::getList( $reviewListHash ) );
+
 	require( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
 	$productManager = new CommerceProductManager();
 	$optionsList = $productManager->getOptions();

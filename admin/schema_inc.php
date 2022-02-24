@@ -885,10 +885,11 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_total' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_reviews' => "
   reviews_id I4 PRIMARY AUTO,
   products_id I4,
+  orders_id I4,
   customers_id I4,
-  customers_name C(64),
+  reviewer_name C(64),
   reviews_rating I1,
-  date_added T DEFTIMESTAMP NOTNULL,
+  date_reviewed T DEFTIMESTAMP NOTNULL,
   last_modified T,
   reviews_read I2,
   lang_code C(32) NOTNULL,
@@ -900,6 +901,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_reviews' => "
   reviews_admin_note X
   status I1 NOTNULL default '1'
   CONSTRAINT ', CONSTRAINT `reviews_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )
+              , CONSTRAINT `reviews_orders_id_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
               , CONSTRAINT `reviews_products_id_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )'
 ",
 
