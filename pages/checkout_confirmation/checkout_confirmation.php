@@ -38,7 +38,7 @@ if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
 }
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
-$order = new order;
+$order = new order();
 
 $order->otCollectPosts( $_POST );
 

@@ -76,7 +76,7 @@ $gBitSmarty->assign( 'commerceStatuses', $statuses );
 $types[''] = 'All';
 $productTypes = CommerceProduct::getTypes();
 foreach( $productTypes as $typeId=>$typeHash ) {
-	$types[$typeId] = $typeHash['type_name'];
+	$types[$typeId] = $typeHash['type_name'].' &raquo; '.$typeHash['type_class'];
 }
 $gBitSmarty->assign_by_ref( 'commerceProductTypes', $types );
 

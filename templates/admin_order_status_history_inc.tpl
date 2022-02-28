@@ -1,7 +1,7 @@
 {assign var=hasHistory value=$gBitOrder->loadHistory()}
 {assign var=lastStatus value=$gBitOrder->mHistory|count-1}
 {formfeedback error=$gBitOrder->mErrors.status}
-<form class="status" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;origin=index&amp;action=update_order" method="post"><div style="display:inline">
+<form class="status" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;action=update_order" method="post"><div style="display:inline">
 {legend legend="Order History"}
 	<label>{tr}Change Status{/tr}</label> {html_options class="form-control" name='status' options=$orderStatuses selected=$gBitOrder->getStatus()}
 	<label>{tr}Comments{/tr}</label>

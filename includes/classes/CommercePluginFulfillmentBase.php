@@ -69,7 +69,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 	Determine if this fulfiller can deliver to the order delivery address
 	*/
 	protected function canDeliver( $pDeliveryHash ) {
-		$allowedDestCodes = $this->getModuleConfigValue( '_DESTINATION_COUNTRY_CODES' );
+		$allowedDestCodes = $this->getModuleConfigValue( '_DESTINATION_COUNTRY_CODES', 'ALL' );
 		$ret = ($allowedDestCodes == 'ALL');
 		if( !$ret && !empty( $pDeliveryHash['countries_iso_code_2'] ) ) {
 			// if we can't go to ALL countries, see if our delivery code matches or origin

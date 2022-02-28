@@ -40,6 +40,21 @@ class CommerceCustomer extends CommerceBase {
 		return( count( $this->mInfo ) );
 	}
 
+	function expunge() {
+		if( $this->isValid() && !($this->getOrdersHistory()) ) {
+			$this->mDb->query( "DELETE FROM " . TABLE_ADDRESS_BOOK . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `customers_basket_id` IN (SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `customers_id`=?)", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BATCH_ORDERS. " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_WISHLIST . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_FILES_UPLOADED . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_REVIEWS . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
+			$this->mDb->query( "DELETE FROM " . TABLE_WHOS_ONLINE . " WHERE `customer_id` = ?", array( $this->mCustomerId ) );
+		}
+	}
+
 	function getBatchOrder() {
 		$ret = array();
 		if( $this->isValid() && ($batchArray = $this->getBatchHash()) ) {
@@ -180,21 +195,6 @@ class CommerceCustomer extends CommerceBase {
 			} else {
 				$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BATCH_ORDERS. " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
 			}
-		}
-	}
-
-	function expunge() {
-		if( $this->isValid() && !($this->getOrdersHistory()) ) {
-			$this->mDb->query( "DELETE FROM " . TABLE_ADDRESS_BOOK . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " WHERE `customers_basket_id` IN (SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `customers_id`=?)", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_BATCH_ORDERS. " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_CUSTOMERS_INTERESTS_MAP . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_WISHLIST . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_FILES_UPLOADED . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_NOTIFICATIONS . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_REVIEWS . " WHERE `customers_id` = ?", array( $this->mCustomerId ) );
-			$this->mDb->query( "DELETE FROM " . TABLE_WHOS_ONLINE . " WHERE `customer_id` = ?", array( $this->mCustomerId ) );
 		}
 	}
 

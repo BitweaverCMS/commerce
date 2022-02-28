@@ -24,7 +24,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
- $Id: aupost.php,v2.2.1  Nov 2016
+ $Id: auspost.php,v2.2.1  Nov 2016
 
 */
 
@@ -32,13 +32,13 @@
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingBase.php' );
 
-class aupost extends CommercePluginShippingBase {
+class auspost extends CommercePluginShippingBase {
 
 	public function __construct() {
 		parent::__construct();
 		$this->title			= tra( 'Australia Post' );
 		$this->description		= tra( 'Australia Post Parcel Service <p>You will need to register at the <a href="https://developers.auspost.com.au/" target="_new">Developer Program</a></p>' );
-		$this->icon				= 'shipping_aupost';
+		$this->icon				= 'shipping_auspost';
 	}
 
 	/**
@@ -84,13 +84,13 @@ class aupost extends CommercePluginShippingBase {
 			$methods = array() ;
 
 			// Server query string //
-			if( $aupostQuote = $this->get_auspost_api( $auPostUri, $queryParams ) ) {
-				foreach( $aupostQuote['services']['service'] as $service ) {
+			if( $auspostQuote = $this->get_auspost_api( $auPostUri, $queryParams ) ) {
+				foreach( $auspostQuote['services']['service'] as $service ) {
 					global $currencies;
 
 					if( ($serviceCode = BitBase::getParameter( $service, 'code' )) && empty( $allowedTypes ) || in_array( $serviceCode, $allowedTypes ) || (!empty( $pShipHash['method'] ) && ($pShipHash['method'] == $serviceCode)) ) {
 						$costAud = (float)$service['price'];
-						$costStore = $currencies->convert( $costAud, DEFAULT_CURRENCY, 'CAD' ) + (float)$this->getShipperHandling();
+						$costStore = $currencies->convert( $costAud, DEFAULT_CURRENCY, 'AUD' ) + (float)$this->getShipperHandling();
 						if( in_array( $service['code'], $allowedTypes ) ) {
 								$methods[] = array( 'id' => $serviceCode,
 													'title' => $service['name'],
@@ -105,7 +105,7 @@ class aupost extends CommercePluginShippingBase {
 					$quotes['methods'] = $methods;
 				}
 			} else {
-				if ($aupostQuote != false) {
+				if ($auspostQuote != false) {
 					$errmsg = tra( 'No shipping options are available for this delivery address using this shipping service.' );
 				} else {
 					$errmsg = tra( 'An unknown error occured with the Australia Post shipping calculations.' );
@@ -142,36 +142,6 @@ class aupost extends CommercePluginShippingBase {
 				'configuration_title' => 'Dispatch Postcode',
 				'configuration_value' => '2000',
 				'configuration_description' => 'Dispatch Postcode?',
-			),
-			$this->getModuleKeyTrunk().'_RPP_HANDLING' => array(
-				'configuration_title' => 'Handling Fee - Regular parcels',
-				'configuration_value' => '0.00',
-				'configuration_description' => 'Handling Fee Regular parcels',
-			),
-			$this->getModuleKeyTrunk().'_PPS_HANDLING' => array(
-				'configuration_title' => 'Handling Fee - Prepaid Satchels',
-				'configuration_value' => '0.00',
-				'configuration_description' => 'Handling Fee for Prepaid Satchels.',
-			),
-			$this->getModuleKeyTrunk().'_PPSE_HANDLING' => array(
-				'configuration_title' => 'Handling Fee - Prepaid Satchels - Express',
-				'configuration_value' => '0.00',
-				'configuration_description' => 'Handling Fee for Prepaid Express Satchels.',
-			),
-			$this->getModuleKeyTrunk().'_EXP_HANDLING' => array(
-				'configuration_title' => 'Handling Fee - Express parcels',
-				'configuration_value' => '0.00',
-				'configuration_description' => 'Handling Fee for Express parcels.',
-			),
-			$this->getModuleKeyTrunk().'_PLAT_HANDLING' => array(
-				'configuration_title' => 'Handling Fee - Platinum parcels',
-				'configuration_value' => '0.00',
-				'configuration_description' => 'Handling Fee for Platinum parcels.',
-			),
-			$this->getModuleKeyTrunk().'_PLATSATCH_HANDLING' => array(
-				'configuration_title' => 'Handling Fee - Platinum Satchels',
-				'configuration_value' => '0.00',
-				'configuration_description' => 'Handling Fee for Platinum Satchels.',
 			),
 			$this->getModuleKeyTrunk().'_DIMS' => array(
 				'configuration_title' => 'Default Parcel Dimensions',

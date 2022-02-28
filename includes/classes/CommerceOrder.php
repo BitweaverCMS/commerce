@@ -225,160 +225,161 @@ class order extends CommerceOrderBase {
 								LEFT JOIN " . TABLE_ORDERS_PAYMENTS . " cpccl ON(cpccl.`orders_id`=co.`orders_id` AND `is_success`='y')
 							WHERE co.`orders_id` = ?";
 			$order = $this->mDb->query( $order_query, array( $this->mOrdersId ) );
+			if( $order->RecordCount() ) {
+				$totals_query = "SELECT `title`, `text`, `class`, `orders_value` FROM " . TABLE_ORDERS_TOTAL . " where `orders_id`=? ORDER BY `sort_order`";
+				$totals = $this->mDb->query($totals_query, array( $this->mOrdersId ) );
 
-			$totals_query = "SELECT `title`, `text`, `class`, `orders_value` FROM " . TABLE_ORDERS_TOTAL . " where `orders_id`=? ORDER BY `sort_order`";
-			$totals = $this->mDb->query($totals_query, array( $this->mOrdersId ) );
+				while (!$totals->EOF) {
+					$this->totals[] = array('title' => $totals->fields['title'],
+											'text' => $totals->fields['text'],
+											'class' => $totals->fields['class'],
+											'orders_value' => $totals->fields['orders_value']);
+					$totals->MoveNext();
+				}
 
-			while (!$totals->EOF) {
-				$this->totals[] = array('title' => $totals->fields['title'],
-										'text' => $totals->fields['text'],
-										'class' => $totals->fields['class'],
-										'orders_value' => $totals->fields['orders_value']);
-				$totals->MoveNext();
-			}
+				$this->info = array('currency' => $order->fields['currency'],
+									'currency_value' => $order->fields['currency_value'],
+									'payment_method' => $order->fields['payment_method'],
+									'payment_module_code' => $order->fields['payment_module_code'],
+									'shipping_method' => $order->fields['shipping_method'],
+									'shipping_method_code' => $order->fields['shipping_method_code'],
+									'shipping_module_code' => $order->fields['shipping_module_code'],
+									'shipping_tracking_number' => $order->fields['shipping_tracking_number'],
+									'estimated_ship_date' => $order->fields['estimated_ship_date'],
+									'estimated_arrival_date' => $order->fields['estimated_arrival_date'],
+									'coupon_code' => $order->fields['coupon_code'],
+									'payment_type' => $order->fields['payment_type'],
+									'payment_owner' => $order->fields['payment_owner'],
+									'payment_number' => $order->fields['payment_number'],
+									'payment_expires' => $order->fields['payment_expires'],
+									'trans_ref_id' => $order->fields['trans_ref_id'],
+									'date_purchased' => $order->fields['date_purchased'],
+									'orders_status_id' => $order->fields['orders_status_id'],
+									'orders_status_name' => zen_get_order_status_name( $order->fields['orders_status_id'] ),
+									'last_modified' => $order->fields['last_modified'],
+									'total' => $order->fields['order_total'],
+									'tax' => $order->fields['order_tax'],
+									'ip_address' => $order->fields['ip_address']
+									);
 
-			$this->info = array('currency' => $order->fields['currency'],
-								'currency_value' => $order->fields['currency_value'],
-								'payment_method' => $order->fields['payment_method'],
-								'payment_module_code' => $order->fields['payment_module_code'],
-								'shipping_method' => $order->fields['shipping_method'],
-								'shipping_method_code' => $order->fields['shipping_method_code'],
-								'shipping_module_code' => $order->fields['shipping_module_code'],
-								'shipping_tracking_number' => $order->fields['shipping_tracking_number'],
-								'estimated_ship_date' => $order->fields['estimated_ship_date'],
-								'estimated_arrival_date' => $order->fields['estimated_arrival_date'],
-								'coupon_code' => $order->fields['coupon_code'],
-								'payment_type' => $order->fields['payment_type'],
-								'payment_owner' => $order->fields['payment_owner'],
-								'payment_number' => $order->fields['payment_number'],
-								'payment_expires' => $order->fields['payment_expires'],
-								'trans_ref_id' => $order->fields['trans_ref_id'],
-								'date_purchased' => $order->fields['date_purchased'],
-								'orders_status_id' => $order->fields['orders_status_id'],
-								'orders_status_name' => zen_get_order_status_name( $order->fields['orders_status_id'] ),
-								'last_modified' => $order->fields['last_modified'],
-								'total' => $order->fields['order_total'],
-								'tax' => $order->fields['order_tax'],
-								'ip_address' => $order->fields['ip_address']
+				$this->info['shipping_cost'] =	$this->mDb->getOne( "SELECT `orders_value` AS `shipping_cost` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( $this->mOrdersId ) );
+
+				$this->customer = array('customers_id' => $order->fields['customers_id'],
+										'user_id' => $order->fields['user_id'],
+										'name' => $order->fields['customers_name'],
+										'real_name' => $order->fields['real_name'],
+										'login' => $order->fields['login'],
+										'company' => $order->fields['customers_company'],
+										'street_address' => $order->fields['customers_street_address'],
+										'suburb' => $order->fields['customers_suburb'],
+										'city' => $order->fields['customers_city'],
+										'postcode' => $order->fields['customers_postcode'],
+										'state' => $order->fields['customers_state'],
+										'countries_name' => $order->fields['customers_country'],
+										'format_id' => $order->fields['customers_address_format_id'],
+										'telephone' => $order->fields['customers_telephone'],
+										'email_address' => $order->fields['email']); // 'email' comes from users_users, which is always most current
+
+				if( !empty( $order->fields['referer_url'] ) ) {
+					$this->customer['referer_url'] = $order->fields['referer_url'];
+				}
+
+				$this->delivery = array_merge(
+									array ( 'name' => $order->fields['delivery_name'],
+											'company' => $order->fields['delivery_company'],
+											'street_address' => $order->fields['delivery_street_address'],
+											'suburb' => $order->fields['delivery_suburb'],
+											'city' => $order->fields['delivery_city'],
+											'postcode' => $order->fields['delivery_postcode'],
+											'state' => $order->fields['delivery_state'],
+											'zone_id' => zen_get_zone_id( $order->fields['delivery_country'], $order->fields['delivery_state'] ),
+											'telephone' => $order->fields['delivery_telephone'],
+											'format_id' => $order->fields['delivery_address_format_id'] ),
+									zen_get_countries( $order->fields['delivery_country'] )
+								  );
+
+				if (empty($this->delivery['name']) && empty($this->delivery['street_address'])) {
+					$this->delivery = false;
+				}
+
+				$this->billing = array_merge( 
+									array ( 'name' => $order->fields['billing_name'],
+											'company' => $order->fields['billing_company'],
+											'street_address' => $order->fields['billing_street_address'],
+											'suburb' => $order->fields['billing_suburb'],
+											'city' => $order->fields['billing_city'],
+											'postcode' => $order->fields['billing_postcode'],
+											'state' => $order->fields['billing_state'],
+											'telephone' => $order->fields['billing_telephone'],
+											'format_id' => $order->fields['billing_address_format_id'] ),
+									zen_get_countries( $order->fields['billing_country'] )
 								);
 
-			$this->info['shipping_cost'] =	$this->mDb->getOne( "SELECT `orders_value` AS `shipping_cost` FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ? AND class = 'ot_shipping'", array( $this->mOrdersId ) );
 
-			$this->customer = array('customers_id' => $order->fields['customers_id'],
-									'user_id' => $order->fields['user_id'],
-									'name' => $order->fields['customers_name'],
-									'real_name' => $order->fields['real_name'],
-									'login' => $order->fields['login'],
-									'company' => $order->fields['customers_company'],
-									'street_address' => $order->fields['customers_street_address'],
-									'suburb' => $order->fields['customers_suburb'],
-									'city' => $order->fields['customers_city'],
-									'postcode' => $order->fields['customers_postcode'],
-									'state' => $order->fields['customers_state'],
-									'countries_name' => $order->fields['customers_country'],
-									'format_id' => $order->fields['customers_address_format_id'],
-									'telephone' => $order->fields['customers_telephone'],
-									'email_address' => $order->fields['email']); // 'email' comes from users_users, which is always most current
+				$orders_products_query = 	"SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
+											FROM " . TABLE_ORDERS_PRODUCTS . " op
+												LEFT OUTER JOIN	" . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
+												LEFT OUTER JOIN	" . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
+												LEFT OUTER JOIN	`" . BIT_DB_PREFIX . "liberty_content` lc ON ( lc.`content_id`=p.`content_id` )
+											WHERE `orders_id` = ?
+											ORDER BY op.`orders_products_id`";
+				$orders_products = $this->mDb->query( $orders_products_query, array( $this->mOrdersId ) );
 
-			if( !empty( $order->fields['referer_url'] ) ) {
-				$this->customer['referer_url'] = $order->fields['referer_url'];
-			}
-
-			$this->delivery = array_merge(
-								array ( 'name' => $order->fields['delivery_name'],
-										'company' => $order->fields['delivery_company'],
-										'street_address' => $order->fields['delivery_street_address'],
-										'suburb' => $order->fields['delivery_suburb'],
-										'city' => $order->fields['delivery_city'],
-										'postcode' => $order->fields['delivery_postcode'],
-										'state' => $order->fields['delivery_state'],
-										'zone_id' => zen_get_zone_id( $order->fields['delivery_country'], $order->fields['delivery_state'] ),
-										'telephone' => $order->fields['delivery_telephone'],
-										'format_id' => $order->fields['delivery_address_format_id'] ),
-								zen_get_countries( $order->fields['delivery_country'] )
-							  );
-
-			if (empty($this->delivery['name']) && empty($this->delivery['street_address'])) {
-				$this->delivery = false;
-			}
-
-			$this->billing = array_merge( 
-								array ( 'name' => $order->fields['billing_name'],
-										'company' => $order->fields['billing_company'],
-										'street_address' => $order->fields['billing_street_address'],
-										'suburb' => $order->fields['billing_suburb'],
-										'city' => $order->fields['billing_city'],
-										'postcode' => $order->fields['billing_postcode'],
-										'state' => $order->fields['billing_state'],
-										'telephone' => $order->fields['billing_telephone'],
-										'format_id' => $order->fields['billing_address_format_id'] ),
-								zen_get_countries( $order->fields['billing_country'] )
-							);
-
-
-			$orders_products_query = 	"SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
-										FROM " . TABLE_ORDERS_PRODUCTS . " op
-											LEFT OUTER JOIN	" . TABLE_PRODUCTS . " p ON ( op.`products_id`=p.`products_id` )
-											LEFT OUTER JOIN	" . TABLE_PRODUCT_TYPES . " pt ON ( p.`products_type`=pt.`type_id` )
-											LEFT OUTER JOIN	`" . BIT_DB_PREFIX . "liberty_content` lc ON ( lc.`content_id`=p.`content_id` )
-										WHERE `orders_id` = ?
-										ORDER BY op.`orders_products_id`";
-			$orders_products = $this->mDb->query( $orders_products_query, array( $this->mOrdersId ) );
-
-			while (!$orders_products->EOF) {
-				// convert quantity to proper decimals - account history
-				if (QUANTITY_DECIMALS != 0) {
-					$fix_qty = $orders_products->fields['products_quantity'];
-					switch (true) {
-					case (!strstr($fix_qty, '.')):
-						$new_qty = $fix_qty;
-						break;
-					default:
-						$new_qty = preg_replace('/[0]+$/', '', $orders_products->fields['products_quantity']);
-						break;
+				while (!$orders_products->EOF) {
+					// convert quantity to proper decimals - account history
+					if (QUANTITY_DECIMALS != 0) {
+						$fix_qty = $orders_products->fields['products_quantity'];
+						switch (true) {
+						case (!strstr($fix_qty, '.')):
+							$new_qty = $fix_qty;
+							break;
+						default:
+							$new_qty = preg_replace('/[0]+$/', '', $orders_products->fields['products_quantity']);
+							break;
+						}
+					} else {
+						$new_qty = $orders_products->fields['products_quantity'];
 					}
-				} else {
-					$new_qty = $orders_products->fields['products_quantity'];
-				}
 
-				$new_qty = round($new_qty, QUANTITY_DECIMALS);
+					$new_qty = round($new_qty, QUANTITY_DECIMALS);
 
-				if ($new_qty == (int)$new_qty) {
-					$new_qty = (int)$new_qty;
-				}
-
-				$productsKey = $orders_products->fields['orders_products_id'];
-				$this->contents[$productsKey] = $orders_products->fields;
-				$this->contents[$productsKey]['products_quantity'] = $new_qty;
-				$this->contents[$productsKey]['id'] = $orders_products->fields['products_id'];
-				$this->contents[$productsKey]['name'] = $orders_products->fields['products_name'];
-				$this->contents[$productsKey]['model'] = $orders_products->fields['products_model'];
-				$this->contents[$productsKey]['tax'] = (!empty( $orders_products->fields['tax_rate'] ) ? $orders_products->fields['tax_rate'] : NULL);
-				$this->contents[$productsKey]['price'] = $orders_products->fields['products_price'];
-
-				$attributes_query = "SELECT opa.*, `orders_products_attributes_id` AS `products_attributes_id`
-									 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
-									 WHERE `orders_id` = ? AND `orders_products_id` = ?
-									 ORDER BY `orders_products_id`";
-				if( $attributes = $this->mDb->getArray( $attributes_query, array( $this->mOrdersId, $orders_products->fields['orders_products_id'] ) ) ) {
-					foreach( $attributes as $attribute ) {
-						$this->contents[$productsKey]['attributes'][] = array( 'products_options_id' => $attribute['products_options_id'],
-																				'products_options_values_id' => $attribute['products_options_values_id'],
-																				'products_options' => $attribute['products_options'],
-																				'products_options_values' => $attribute['products_options_values'],
-																				'price_prefix' => $attribute['price_prefix'],
-																				'final_price' => $this->getOrderAttributePrice( $attribute, $this->contents[$productsKey] ),
-																				'price' => $attribute['options_values_price'],
-																				'orders_products_attributes_id' => $attribute['orders_products_attributes_id'] );
-
+					if ($new_qty == (int)$new_qty) {
+						$new_qty = (int)$new_qty;
 					}
+
+					$productsKey = $orders_products->fields['orders_products_id'];
+					$this->contents[$productsKey] = $orders_products->fields;
+					$this->contents[$productsKey]['products_quantity'] = $new_qty;
+					$this->contents[$productsKey]['id'] = $orders_products->fields['products_id'];
+					$this->contents[$productsKey]['name'] = $orders_products->fields['products_name'];
+					$this->contents[$productsKey]['model'] = $orders_products->fields['products_model'];
+					$this->contents[$productsKey]['tax'] = (!empty( $orders_products->fields['tax_rate'] ) ? $orders_products->fields['tax_rate'] : NULL);
+					$this->contents[$productsKey]['price'] = $orders_products->fields['products_price'];
+
+					$attributes_query = "SELECT opa.*, `orders_products_attributes_id` AS `products_attributes_id`
+										 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
+										 WHERE `orders_id` = ? AND `orders_products_id` = ?
+										 ORDER BY `orders_products_id`";
+					if( $attributes = $this->mDb->getArray( $attributes_query, array( $this->mOrdersId, $orders_products->fields['orders_products_id'] ) ) ) {
+						foreach( $attributes as $attribute ) {
+							$this->contents[$productsKey]['attributes'][] = array( 'products_options_id' => $attribute['products_options_id'],
+																					'products_options_values_id' => $attribute['products_options_values_id'],
+																					'products_options' => $attribute['products_options'],
+																					'products_options_values' => $attribute['products_options_values'],
+																					'price_prefix' => $attribute['price_prefix'],
+																					'final_price' => $this->getOrderAttributePrice( $attribute, $this->contents[$productsKey] ),
+																					'price' => $attribute['options_values_price'],
+																					'orders_products_attributes_id' => $attribute['orders_products_attributes_id'] );
+
+						}
+					}
+
+					$this->info['tax_groups']["{$this->contents[$productsKey]['tax']}"] = '1';
+
+					$orders_products->MoveNext();
 				}
-
-				$this->info['tax_groups']["{$this->contents[$productsKey]['tax']}"] = '1';
-
-				$orders_products->MoveNext();
+				$ret = TRUE;
 			}
-			$ret = TRUE;
 		}
 		return $ret;
 	}
