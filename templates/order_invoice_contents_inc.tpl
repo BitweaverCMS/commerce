@@ -21,25 +21,26 @@
 		{if !empty( $ordersProduct.attributes )}
 		<ul class="">
 		{section loop=$ordersProduct.attributes name=a}
-				<li class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
-					<small>{$ordersProduct.attributes[a].products_options}: {$ordersProduct.attributes[a].products_options_values}
-						{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
-						{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$gCommerceCurrencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
-						{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert alert-warning">{tr}FREE{/tr}</span>{/if}
-					</small> 
-				</li>
+			<li class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
+				<small>{$ordersProduct.attributes[a].products_options}: {$ordersProduct.attributes[a].products_options_values}
+					{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
+					{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$gCommerceCurrencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
+					{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert alert-warning">{tr}FREE{/tr}</span>{/if}
+				</small> 
+			</li>
 		{/section}
 		</ul>
 		{/if}
+		<a class="btn btn-xs btn-primary" href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">Order Again</a>
 		{$order->displayOrderProductData($opid)}
 	</td>
 
     {if sizeof($order->getField('tax_groups')) > 1}
-    <td style="text-align:right;" class="text-right">{$ordersProduct.tax|zen_display_tax_value}%</td>
+    <td class="text-right">{$ordersProduct.tax|zen_display_tax_value}%</td>
     {/if}
 
 	{if $showPricing}
-    <td style="text-align:right;" class="text-right">
+    <td class="text-right">
 		{$gCommerceCurrencies->display_price( $ordersProduct.final_price, $ordersProduct.tax, $ordersProduct.products_quantity, $order->getField('currency'), $order->getField('currency_value'))} 
 		{if $ordersProduct.onetime_charges}<br />{$gCommerceCurrencies->format(zen_add_tax($ordersProduct.onetime_charges, $ordersProduct.tax), true, $order->getField('currency'), $order->getField('currency_value'))}{/if}
 	</td>
