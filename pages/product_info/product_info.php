@@ -18,7 +18,7 @@ if ( $gBitProduct->isAvailable() ) {
 		$gBitSmarty->assign_by_ref( 'productOptions', $productOptions );
 	}
 
-	$gCommerceSystem->setHeadingTitle( 'HEADING_TITLE', $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );
+	$gCommerceSystem->setHeadingTitle( $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );
 
 	$mid = $gBitProduct->getPreference( 'products_custom_tpl', 'bitpackage:bitcommerce/page_product_info.tpl' );
 
