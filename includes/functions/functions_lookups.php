@@ -62,7 +62,7 @@ function zen_get_country_zones( $pCountryId ) {
 	if( BitBase::verifyId( $pCountryId ) ) {
 		$sql = "SELECT `zone_id` AS `hash_key`, `zone_id`, `zone_name` FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ?  ORDER BY `zone_name`";
 		$bindVars = array( $pCountryId );
-		$ret = $gBitDb->getAssoc( $sql, $bindVars );
+		$ret = $gBitDb->getAssoc( $sql, $bindVars, FALSE, FALSE, BIT_QUERY_CACHE_TIME );
 	}
 	return $ret;
 }
@@ -153,13 +153,14 @@ function zen_get_country_name($country_id) {
 function zen_get_zone_by_id( $pCountryId, $pZoneId ) {
 	global $gBitDb;
 	$sql = "SELECT * FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? `zone_id` = ?)";
-	return( $gBitDb->getRow( $sql, array( $pCountryId, $pZoneId ) ) );
+	return( $gBitDb->getRow( $sql, array( $pCountryId, $pZoneId ), BIT_QUERY_CACHE_TIME ) );
 }
 
 function zen_get_zone_by_name( $pCountryId, $pName ) {
 	global $gBitDb;
-	$sql = "SELECT * FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? AND (`zone_name` LIKE ? OR `zone_code` LIKE ?)";
-	return( $gBitDb->getRow( $sql, array( $pCountryId, $pName.'%', '%'.$pName.'%' ) ) );
+	$pName = strtoupper( $pName );
+	$sql = "SELECT * FROM " . TABLE_ZONES . " WHERE `zone_country_id` = ? AND (UPPER(`zone_name`) LIKE ? OR `zone_code` LIKE ?)";
+	return( $gBitDb->getRow( $sql, array( $pCountryId, $pName.'%', '%'.$pName.'%'), BIT_QUERY_CACHE_TIME ) );
 }
 
 
@@ -169,7 +170,7 @@ function zen_get_zone_by_name( $pCountryId, $pName ) {
 function zen_get_zone_name_by_code( $pCountryId, $pZoneCode ) {
 	global $gBitDb;
 	$ret = $pZoneCode;
-	if( $zoneName = $gBitDb->getOne( "select `zone_name` from " . TABLE_ZONES . " where `zone_country_id` = ? and `zone_code` = ?", array( $pCountryId, $pZoneCode ) ) ) {
+	if( $zoneName = $gBitDb->getOne( "select `zone_name` from " . TABLE_ZONES . " where `zone_country_id` = ? and `zone_code` = ?", array( $pCountryId, $pZoneCode ), FALSE, FALSE, BIT_QUERY_CACHE_TIME ) ) {
 		$ret = $zoneName;
 	}
 	return $ret;
