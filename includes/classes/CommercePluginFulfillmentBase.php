@@ -40,7 +40,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 	}
 
 	protected function getDefaultPriority() {
-		return $this->getModuleConfigValue( '_DEFAULT_PRIORITY', 0.0 );
+		return $this->getModuleConfigValue( '_DEFAULT_PRIORITY', 0 );
 	}
 
 	protected function getFulfillmentDays( &$pOrder ) {
@@ -55,14 +55,15 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 
 	// Intended to be overridden
 	// Generic priority is the lowest of 0. Higher the more preferred, no upper limit
-	function getPriority( $pOrderBase, $pCompletionHash ) {
+	public function getPriority( $pOrderBase, $pCompletionHash ) {
 		$ret = (int)$this->getDefaultPriority();
+
 		if( $this->isIntraCountry( $pOrderBase ) ) {
 			$ret++;
 		}
 
 		$ret += count( $pCompletionHash );
-		return $ret;
+		return (int)$ret;
 	}
 
 	/**
@@ -82,7 +83,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		$ret = array();
 		$delivery = $pOrderBase->getDelivery();
 
-		if( $this->canDeliver( $delivery ) && $completion = $this->getOrderCompletion( $pOrderBase ) ) {
+		if( $this->canDeliver( $delivery ) && ($completion = $this->getOrderCompletion( $pOrderBase )) ) {
 			$ret = $this->getShippingOrigin();
 			$ret['code'] = $this->code;
 			$ret['products'] = $completion;
