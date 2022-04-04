@@ -341,10 +341,12 @@ class CommerceCustomer extends CommerceBase {
 			$pParamHash['address_store']['entry_street_address'] = $pParamHash['street_address'];
 		}
 
-		if( empty( $pParamHash['postcode'] ) || strlen( $pParamHash['postcode'] ) < ENTRY_POSTCODE_MIN_LENGTH ) {
-			$errorHash['postcode'] = tra( 'Your Post Code must contain a minimum of ' . ENTRY_POSTCODE_MIN_LENGTH . ' characters.' );
-		} else {
-			$pParamHash['address_store']['entry_postcode'] = $pParamHash['postcode'];
+		if( !empty( $pParamHash['postcode'] ) ) {
+			if( strlen( $pParamHash['postcode'] ) < ENTRY_POSTCODE_MIN_LENGTH ) {
+				$errorHash['postcode'] = tra( 'Your Post Code must contain a minimum of ' . ENTRY_POSTCODE_MIN_LENGTH . ' characters.' );
+			} else {
+				$pParamHash['address_store']['entry_postcode'] = trim( preg_replace( '/\s+/', ' ', preg_replace( "/[^-A-Z0-9 ]/", " ", strtoupper( $pParamHash['postcode'] ) ) ) );
+			}
 		}
 
 		if( empty( $pParamHash['city'] ) || strlen( $pParamHash['city'] ) < ENTRY_CITY_MIN_LENGTH ) {
