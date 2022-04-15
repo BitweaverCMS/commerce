@@ -27,16 +27,32 @@ class purchase_order extends CommercePluginPaymentBase {
 	}
 
 	function selection() {
-		$selection = array(	'id' => $this->code,
-							'module' => $this->title,
-							'fields' => array(	
-											array( 'title' => 'Purchaser Name', 'field' => zen_draw_input_field('po_contact') ),
-											array( 'title' => 'Purchaser Organization', 'field' => zen_draw_input_field('po_org') ),
-											array( 'title' => 'PO Number', 'field' => zen_draw_input_field('po_number')),
-										),
-							);
+		$ret = array();
+		if( $this->isUserPermitted() ) {
+			$ret = array(	'id' => $this->code,
+								'module' => $this->title,
+								'fields' => array(	
+												array( 'title' => 'Purchaser Name', 'field' => zen_draw_input_field('po_contact') ),
+												array( 'title' => 'Purchaser Organization', 'field' => zen_draw_input_field('po_org') ),
+												array( 'title' => 'PO Number', 'field' => zen_draw_input_field('po_number')),
+											),
+								);
+		}
+		return $ret;
+	}
 
-		return $selection;
+	private function isUserPermitted( $pUserId=NULL ) {
+		if( $ret = parent::isEnabled() ) {
+			if( $poPerm = $this->getModuleConfigValue( '_PERMISSION' ) ) {
+				global $gBitUser;
+				if( BitBase::verifyId( $pUserId ) && $checkUser = BitUser::getUserObject( $uid ) ) {
+				} else {
+					$checkUser = &$gBitUser;
+				}
+				$ret = $checkUser->hasPermission( $poPerm );
+			}
+		}
+		return $ret;
 	}
 
 	function verifyPayment( &$pPaymentParams, &$pOrder ) {
@@ -96,4 +112,15 @@ class purchase_order extends CommercePluginPaymentBase {
 		return $ret;
 	}
 
+	protected function config() {
+		$i = 20;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_PERMISSION' => array(
+				'configuration_title' => 'Purchase Order Permission',
+				'configuration_description' => '<strong>Ex: p_bitcommerce_purchase_order</strong> This permission is required to show and accept Purchase Order. Leave empty to give access to all customers. Make sure you have a <a href="/users/admin/edit_group.php">Group configured</a> with that permission, and desired users are also in that group.',
+				'configuration_value' => 'p_bitcommerce_purchase_order',
+				'sort_order' => $i++,
+			)
+		) );
+	}
 }
