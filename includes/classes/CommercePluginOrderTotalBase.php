@@ -1,12 +1,12 @@
 <?php
 // +----------------------------------------------------------------------+
-// | bitcommerce                                                          |
+// | bitcommerce														  |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2013 bitcommerce.org                                   |
-// |                                                                      |
-// | http://www.bitcommerce.org                                           |
+// | Copyright (c) 2013 bitcommerce.org								   |
+// |																	  |
+// | http://www.bitcommerce.org										   |
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license        |
+// | This source file is subject to version 2.0 of the GPL license		|
 // +----------------------------------------------------------------------+
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginBase.php' );
@@ -14,10 +14,16 @@ require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginBase.php' );
 abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
 	protected $output, $mOrder, $mProcessingOutput;
 
-	public function __construct( $pOrder ) {
+	public function __construct( &$pOrder = NULL ) {
 		parent::__construct();
-		$this->mOrder = &$pOrder;
 		$this->mProcessingOutput = array();
+		if( $pOrder ) {
+			$this->setOrder( $pOrder );
+		}
+	}
+
+	public function setOrder( &$pOrder ) {
+		$this->mOrder = &$pOrder;
 	}
 
 	protected function getConfigKey() {
@@ -28,13 +34,14 @@ abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
 		return 'order_total';
 	}
 
-    function process() {
+	function process() {
 		$this->mProcessingOutput = array();
 	}
-    function credit_selection() {}
-    function update_credit_account( $i ) {}
-    function collect_posts( $pRequestParams ) {}
-    function apply_credit() {}
+
+	function credit_selection() {}
+	function update_credit_account( $i ) {}
+	function collect_posts( $pRequestParams ) {}
+	function apply_credit() {}
 	function getOrderDeduction( $pOrder ) {}
 
 	function getOutput() {

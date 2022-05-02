@@ -86,9 +86,7 @@ $breadcrumb->add(NAVBAR_TITLE_2);
 
 $gBitSmarty->assign( 'order', $order );
 
-if ( $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_INSTALLED' ) ) {
-	$order->otProcess();
-}
+$order->otProcess();
 
 $gBitSmarty->assign( 'formActionUrl', $paymentManager->get_form_action_url() );
 $gBitSmarty->assign( 'paymentModules', $paymentManager );

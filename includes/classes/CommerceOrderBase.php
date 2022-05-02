@@ -214,6 +214,14 @@ abstract class CommerceOrderBase extends BitBase {
 
 	private function scanOtModules( $pRefresh = FALSE ) {
 		if( empty( $this->mOtClasses ) || $pRefresh ) {
+			global $gCommerceSystem;
+			if( $this->mOtClasses = $gCommerceSystem->scanModules( 'order_total', $pRefresh ) ) {
+				foreach( array_keys( $this->mOtClasses ) as $moduleKey ) {
+					$this->mOtClasses[$moduleKey]->setOrder( $this );
+				}
+			}
+/*
+			// OLD module scanning code
 			global $gBitCustomer;
 
 			if( defined( 'MODULE_ORDER_TOTAL_INSTALLED' ) && MODULE_ORDER_TOTAL_INSTALLED ) {
@@ -229,6 +237,7 @@ abstract class CommerceOrderBase extends BitBase {
 					$this->mOtClasses[$otClass] = new $otClass( $this );
 				}
 			}
+*/
 		}
 	}
 
@@ -249,16 +258,18 @@ abstract class CommerceOrderBase extends BitBase {
 		$ret = array();
 
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
-			$otObject->process();
-			if( $otOutput = $otObject->getOutput() ) {
-				$outHash = array( 'code' => $otObject->code, 'sort_order' => $otObject->getSortOrder() );
-				foreach( array( 'title', 'text', 'value' ) as $key ) {
-					if( isset( $otOutput[$key] ) && !is_null( $otOutput[$key] ) ) {
-						$outHash[$key] = $otOutput[$key];
+			if( $otObject->isEnabled() ) {
+				$otObject->process();
+				if( $otOutput = $otObject->getOutput() ) {
+					$outHash = array( 'code' => $otObject->code, 'sort_order' => $otObject->getSortOrder() );
+					foreach( array( 'title', 'text', 'value' ) as $key ) {
+						if( isset( $otOutput[$key] ) && !is_null( $otOutput[$key] ) ) {
+							$outHash[$key] = $otOutput[$key];
+						}
 					}
-				}
 
-				$ret[] = $outHash;
+					$ret[] = $outHash;
+				}
 			}
 		}
 		$this->sortModules( $ret );
