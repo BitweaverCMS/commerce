@@ -59,8 +59,8 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 
 	function getGroupDiscount( $pCustomersId ) {
 		$sql = "SELECT `customers_group_pricing`, `group_name`, `group_percentage` 
-				FROM " . TABLE_CUSTOMERS . " 
-					INNER JOIN " . TABLE_GROUP_PRICING . " ON (cc.`customers_group_pricing`=cgp.`group_id` 
+				FROM " . TABLE_CUSTOMERS . " cc
+					INNER JOIN " . TABLE_GROUP_PRICING . " cgp ON (cc.`customers_group_pricing`=cgp.`group_id`)
 				WHERE `customers_id` = ?";
 		return $this->mDb->GetRow( $sql, array( $pCustomersId ) );
 	}
