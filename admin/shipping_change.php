@@ -14,7 +14,7 @@ $order->calculate();
 
 // get all available shipping quotes
 if( !empty( $_REQUEST['change_shipping'] ) && !empty( $_REQUEST['shipping'] ) ) {
-	list($module, $method) = explode('_', $_REQUEST['shipping']);
+	list($module, $method) = explode('_', $_REQUEST['shipping'], 2);
 	$fulfillmentModules = $gCommerceSystem->scanModules( 'fulfillment' );
 	global $gCommerceShipping;
 	if( $shipModule = $gCommerceShipping->getShippingModule( $module ) ) {
