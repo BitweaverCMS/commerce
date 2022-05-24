@@ -73,7 +73,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 	}
 
 
-	function credit_selection() {
+	public function credit_selection( $pOrder ) {
 		$selection = array(	'id' => $this->code,
 							 'module' => $this->title,
 							 'fields' => array(array('title' => 'Coupon Code',

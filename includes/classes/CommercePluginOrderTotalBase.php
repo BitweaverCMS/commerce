@@ -38,13 +38,13 @@ abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
 		$this->mProcessingOutput = array();
 	}
 
-	function credit_selection() {}
-	function update_credit_account( $i ) {}
-	function collect_posts( $pRequestParams ) {}
-	function apply_credit() {}
-	function getOrderDeduction( $pOrder ) {}
+	public function credit_selection( $pOrder ) {}
+	public function update_credit_account( $i ) {}
+	public function collect_posts( $pRequestParams ) {}
+	public function apply_credit() {}
+	public function getOrderDeduction( $pOrder ) {}
 
-	function getOutput() {
+	public function getOutput() {
 		return $this->mProcessingOutput;
 	}
 

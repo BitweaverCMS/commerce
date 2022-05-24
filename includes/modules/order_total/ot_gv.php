@@ -1,4 +1,4 @@
-<?php
+ <?php
 // +----------------------------------------------------------------------+
 // | bitcommerce,	http://www.bitcommerce.org                            |
 // +----------------------------------------------------------------------+
@@ -14,11 +14,13 @@ class ot_gv extends CommercePluginOrderTotalBase {
 
 	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
+
 		$this->title = MODULE_ORDER_TOTAL_GV_TITLE;
 		$this->header = MODULE_ORDER_TOTAL_GV_HEADER;
 		$this->description = MODULE_ORDER_TOTAL_GV_DESCRIPTION;
+		$this->userGvBalance = 0.0;
 		if( $this->isEnabled() ) {
-			global $currencies, $gBitUser, $gCommerceSystem;
+			global $gBitUser, $gCommerceSystem;
 			$this->user_prompt = tra( 'Apply Balance' );
 			$this->include_shipping = $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_INC_SHIPPING' );
 			$this->include_tax = $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_INC_TAX' );
@@ -27,25 +29,9 @@ class ot_gv extends CommercePluginOrderTotalBase {
 			$this->tax_class	= $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_TAX_CLASS' );
 			$this->credit_class = true;
 			$this->userGvBalance = $this->getGvBalance( $gBitUser->mUserId );
-			$this->checkbox = '';
 			if( empty( $this->userGvBalance ) ) {
 				if( isset( $_SESSION['cot_gv'] ) ) {
 					unset( $_SESSION['cot_gv'] );
-				}
-			} else {
-				if( $pOrder && $this->userGvBalance ) {
-					$formDeduction = BitBase::getParameter( $_SESSION, 'cot_gv', ($pOrder->getField( 'total' ) < $this->userGvBalance ? $pOrder->getField( 'total' ) : $this->userGvBalance) );
-					$this->checkbox = '
-						<div class="form-group">
-							<label class="control-label" for="cot_gv">'.tra('Apply Balance').'</label>
-							<div class="row">
-								<div class="col-xs-6"><div class="input-group">';
-					if( $currencies->getLeftSymbol() ) { $this->checkbox .= '<div class="input-group-addon">'.$currencies->getLeftSymbol().'</div>'; }
-					$this->checkbox .= '<input type="number" class="form-control" step="'.$currencies->getInputStep().'" name="cot_gv" value="' . number_format( $formDeduction, $currencies->get_decimal_places() ) . '"/>';
-					if( $currencies->getRightSymbol() ) { $this->checkbox .= '<div class="input-group-addon">'.$currencies->getRightSymbol().'</div>'; }
-					$this->checkbox .= '</div></div><div class="col-xs-6">' . tra( 'of' ) . ' ' . $currencies->format( $this->userGvBalance ) . '</div>
-							</div>
-						</div>';
 				}
 			}
 		}
@@ -129,10 +115,6 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	function selection_test() {
-		return( $this->userGvBalance );
-	}
-
 	public function getOrderDeduction( $pOrder ) {
 		$ret = null;
 		if( !empty( $_SESSION['cot_gv'] ) ) {
@@ -146,13 +128,6 @@ class ot_gv extends CommercePluginOrderTotalBase {
 			}
 		}
 		return $ret;
-	}
-
-	function use_credit_amount() {
-//			$_SESSION['cot_gv'] = false;
-		if ($this->selection_test()) {
-			return $this->checkbox;
-		}
 	}
 
 	function update_credit_account( $pOpid ) {
@@ -188,15 +163,28 @@ class ot_gv extends CommercePluginOrderTotalBase {
 	}
 
 
-	function credit_selection() {
-		global $gBitUser;
+	public function credit_selection( $pOrder ) {
+		global $currencies, $gBitUser;
 		$selection = array();
-
 		$couponId = $this->mDb->getOne("SELECT coupon_id FROM " . TABLE_COUPONS . " where coupon_type = 'G' and coupon_active='Y'");
-		if ($couponId || $this->use_credit_amount()) {
+		if ($couponId || !empty( $this->userGvBalance ) ) {
+			if( $this->userGvBalance ) {
+				$formDeduction = BitBase::getParameter( $_SESSION, 'cot_gv', ($pOrder->getField( 'total' ) < $this->userGvBalance ? $pOrder->getField( 'total' ) : $this->userGvBalance) );
+				$this->checkbox = '
+					<div class="form-group">
+						<label class="control-label" for="cot_gv">'.tra('Apply Balance').'</label>
+						<div class="row">
+							<div class="col-xs-6"><div class="input-group">';
+				if( $currencies->getLeftSymbol() ) { $this->checkbox .= '<div class="input-group-addon">'.$currencies->getLeftSymbol().'</div>'; }
+				$this->checkbox .= '<input type="number" class="form-control" step="'.$currencies->getInputStep().'" name="cot_gv" value="' . number_format( $formDeduction, $currencies->get_decimal_places() ) . '"/>';
+				if( $currencies->getRightSymbol() ) { $this->checkbox .= '<div class="input-group-addon">'.$currencies->getRightSymbol().'</div>'; }
+				$this->checkbox .= '</div></div><div class="col-xs-6">' . tra( 'of' ) . ' ' . $currencies->format( $this->userGvBalance ) . '</div>
+						</div>
+					</div>';
+			}
 			$selection = array(	'id' => $this->code,
 								'module' => $this->title,
-								'checkbox' => $this->use_credit_amount(),
+								'checkbox' => $this->checkbox,
 								'fields' => array(array('title' => tra( 'Gift Certificate Code' ),
 								'field' => zen_draw_input_field('gv_redeem_code'))));
 		}
