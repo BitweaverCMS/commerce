@@ -122,6 +122,10 @@ class CommerceProduct extends LibertyMime {
 //						LEFT OUTER JOIN ".TABLE_TAX_CLASS." txc ON ( p.`products_tax_class_id`=txc.`tax_class_id` )
 //						LEFT OUTER JOIN ".TABLE_TAX_RATES." txr ON ( txr.`tax_class_id`=txc.`tax_class_id` )
 			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
+				$ret['options'] = array();
+				if( !empty( $ret['options_json'] ) ) {
+					$ret['options'] = json_decode( $ret['options_json'], TRUE );
+				}
 				if( !empty( $ret['products_image'] ) ) {
 					$ret['products_image_url'] = $ret['type_class']::getImageUrlFromHash( $ret );
 				} else {
@@ -2623,7 +2627,6 @@ Skip deleting of images for now
 	static function newCommerceObject( $pLookupHash ) {
 		$ret = NULL;
 		$productTypes = static::getTypes();
-
 		$key = key( $pLookupHash );
 		$value = current( $pLookupHash );
 		foreach( array_keys( $productTypes ) as $typeId ) {
