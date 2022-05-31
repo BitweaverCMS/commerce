@@ -1319,8 +1319,8 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 				if( $this->totals[$k]['class'] == 'ot_shipping' ) {
 					$initialShipping = $this->totals[$k];
 					$this->totals[$k]['title'] = $pQuote['module'].' '.$newMethod['title'];
-					$this->totals[$k]['text'] = $newMethod['format_add_tax'];
-					$this->totals[$k]['orders_value'] = $newMethod['cost_add_tax'];
+					$this->totals[$k]['text'] = BitBase::getParameter( $newMethod, 'format_add_tax' );
+					$this->totals[$k]['orders_value'] = BitBase::getParameter( $newMethod, 'cost_add_tax', 0 );
 					$finalShipping = $this->totals[$k];
 				}
 				if( $this->totals[$k]['class'] == 'ot_total' ) {
