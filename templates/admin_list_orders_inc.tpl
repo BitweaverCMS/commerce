@@ -16,7 +16,7 @@
 {/form}
 {/if}
 
-<table class="table data" style="table-layout:fixed">
+<table class="table data order-list" style="table-layout:fixed">
 {assign var=grossTotal value=0}
 {assign var=wholesaleProfitTotal value=0}
 {assign var=distributorIncomeTotal value=0}
