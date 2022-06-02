@@ -729,7 +729,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   coupon_code C(32),
   last_modified T,
   date_purchased T,
-  orders_date_finished T,
+  deadline_date T,
   estimated_ship_date T,
   estimated_arrival_date T,
   orders_status_id I4,

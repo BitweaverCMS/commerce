@@ -412,7 +412,7 @@ abstract class CommerceOrderBase extends BitBase {
 		if( $totalDue = $this->getField( 'total' ) ) {
 			$totalDeductions = 0;
 			foreach( $this->mOtClasses as $class=>&$otObject ) {
-				if( $orderCredit = $otObject->getOrderDeduction( $this ) ) {
+				if( $otObject->isEnabled() && ($orderCredit = $otObject->getOrderDeduction( $this )) ) {
 					$totalDeductions += $orderCredit;
 					$totalDue -= $orderCredit;
 				}

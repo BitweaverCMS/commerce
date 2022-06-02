@@ -15,9 +15,9 @@
 
 			{if $addresses}
 			<div class="col-md-6">
-				{legend legend="Choose Shipping Address"}
+				{fieldset legend="Choose Shipping Address"}
 					{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
-				{/legend}
+				{/fieldset}
 				<div class="form-group clear mv-1">
 					<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn btn-default  pr-1" name="" value="Cancel" /> <a class="btn btn-default pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
 				</div>
@@ -25,9 +25,9 @@
 			{/if}
 			
 			<div class="col-md-6">
-				{legend legend="Enter a New Address"}
+				{fieldset legend="Enter a New Address"}
 					{include file="bitpackage:bitcommerce/address_edit_inc.tpl" sectionName="shipping"}
-				{/legend}
+				{/fieldset}
 				<div class="form-group clear pull-right">
 					 <input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn btn-default pr-1" name="" value="Cancel" />
 				</div>
@@ -49,16 +49,16 @@
 				<div class="pull-right"><button class="btn btn-default btn-sm" name="change_address"><i class="icon-truck"></i> {tr}Change{/tr}</button></div>
 				{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$cartDelivery}
 			</fieldset>
+			{include file="bitpackage:bitcommerce/page_checkout_deadline_inc.tpl" deadline=$smarty.session.deadline_date}
 		</div>
 		<div class="col-md-6">
-			{legend legend="Order Comments"}
+			{fieldset legend="Order Comments"}
 				<div class="form-group">
 					{forminput}
-						<textarea name="comments" wrap="soft" class="form-control special-instructions" rows="5" placeholder="Have a DEADLINE? Please let us know here when your order must be delivered.">{$smarty.session.comments}</textarea>
-						{formhelp note="Please include any special instructions or deadlines you may have."}
+						<textarea name="comments" wrap="soft" class="form-control special-instructions" rows="5" placeholder="Please include any special instructions, or information on your DEADLINE if you entered one above.">{$smarty.session.comments}</textarea>
 					{/forminput}
 				</div>
-			{/legend}
+			{/fieldset}
 		</div>
 	</div>
 	<div class="row">

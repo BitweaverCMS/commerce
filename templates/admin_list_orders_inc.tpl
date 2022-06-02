@@ -25,14 +25,14 @@
 {foreach from=$listOrders key=orderId item=order}
 	{assign var=grossTotal value=$grossTotal+$order.order_total}
 	<tr>
-		<td style="width:10em;text-align:left">{$order.purchase_time}</td>
+		<td style="width:10em;text-align:left">{$order.purchase_time}{if $order.deadline_date}<span class="badge alert-danger">{$order.deadline_date|cal_date_format}</span>{/if}</td>
 		<td colspan="5"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink">{$orderId} - {BitUser::getDisplayNameFromHash($order)}</a><div class="date pull-right text-right">{$order.delivery_city}, {$order.delivery_state}{if $order.delivery_country != $storeCountryName} {$order.delivery_country}{/if}{if $order.shipping_method_code}<br><span class="small">{$order.shipping_method_code}</span>{/if}</div></td>
 		<td class="text-right">{$order.orders_status_name}</td>
 		<td class="text-right">{$gCommerceCurrencies->format($order.order_total, TRUE, $order.currency|default:DEFAULT_CURRENCY, $order.currency_value|default:1)}</td>
 	</tr>
 	{if $order.comments && $order.comments!='Credit Card processed'}
 	<tr class="comments">
-		<td colspan="8"><span class="badge">{$order.comments_time}</span> {$order.comments}</td>
+		<td colspan="8"><code class="date inline-block mr-1">{$order.comments_time}</code> {$order.comments}</td>
 	</tr>
 	{/if}
 	{if $order.products}

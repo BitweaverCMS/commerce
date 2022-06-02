@@ -22,6 +22,9 @@
 
 require('includes/application_top.php');
 
+global $gBitThemes;
+$gBitThemes->loadJavascript( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/js/bootstrap-datepicker.js');
+$gBitThemes->loadCss( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/css/bootstrap-datepicker3.css');
 $gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
 $gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE);
 
@@ -163,6 +166,13 @@ if( !empty( $order ) ) {
 			$gBitDb->CompleteTrans();
 			bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
 			exit;
+			break;
+		case 'update_deadline':
+			if( empty( $dateTime = BitBase::getParameter( $_REQUEST, 'deadline_date', NULL ) ) ) {
+				$dateTime = NULL;
+			}
+			$order->updateOrder( array( 'deadline_date' => $dateTime ) );
+			zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')), 'SSL'));
 			break;
 		case 'update_order':
 			if( !empty( $_REQUEST['charge_amount'] ) && !empty( $_REQUEST['additional_charge'] ) ) {
@@ -306,7 +316,7 @@ if( $order_exists ) {
 
 	print '<div class="row">';
 	print '<div class="col-md-8">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' ).'</div>';
-	print '<div class="col-md-4">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' ).'</div>';
+	print '<div class="col-md-4 pt-1">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' ).'</div>';
 	print '</div>';
 
 	// check if order has open gv

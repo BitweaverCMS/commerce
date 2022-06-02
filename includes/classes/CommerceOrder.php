@@ -245,6 +245,7 @@ class order extends CommerceOrderBase {
 									'shipping_method_code' => $order->fields['shipping_method_code'],
 									'shipping_module_code' => $order->fields['shipping_module_code'],
 									'shipping_tracking_number' => $order->fields['shipping_tracking_number'],
+									'deadline_date' => $order->fields['deadline_date'],
 									'estimated_ship_date' => $order->fields['estimated_ship_date'],
 									'estimated_arrival_date' => $order->fields['estimated_arrival_date'],
 									'coupon_code' => $order->fields['coupon_code'],
@@ -784,6 +785,7 @@ class order extends CommerceOrderBase {
 		$this->mOrdersId =  (!empty( $pPaymentParams['orders_id'] ) ? $pPaymentParams['orders_id'] : $this->getNextOrderId());
 		$sql_data_array = array('orders_id' => $this->mOrdersId,
 							'customers_id' => $_SESSION['customer_id'],
+							'deadline_date' => BitBase::getParameter( $_SESSION, 'deadline_date', NULL ),
 /* TOODO 2016-DEC-15 - spiderr - data is unpopulated
 							'customers_company' => $this->customer['company'],
 							'customers_street_address' => $this->customer['street_address'],

@@ -24,9 +24,7 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
-if( !empty( $_POST['comments'] ) ) {
-	$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
-}
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'page_checkout_parameters_inc.php' );
 
 require(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 $order = new order();

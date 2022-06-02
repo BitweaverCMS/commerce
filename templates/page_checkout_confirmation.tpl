@@ -4,7 +4,7 @@
 {form action=$formActionUrl onsubmit="paymentSubmit(this)"}
 <div class="row shopping-cart">
 	<div class="col-md-8 col-sm-12">
-	{legend legend="Shopping Cart Contents"}
+	{fieldset legend="Shopping Cart Contents"}
 		{if sizeof($order->info.tax_groups) > 1}
 			{assign var=colspan value=3}
 		{else}
@@ -56,28 +56,31 @@
 			<div class="col-xs-3 col-sm-2 text-right"><strong>{$otOutput.text}</strong></div>
 		</div>
 		{/foreach}
-	{/legend}
-	{legend legend="Order Comments" class="width100p"}
+	{/fieldset}
+	{fieldset legend="Order Comments" class="width100p"}
 		<textarea name="comments" rows="3" class="form-control special-instructions">{$order->info.comments|escape}</textarea>
-	{/legend}
+	{/fieldset}
 	</div>
 	
 	<div class="col-md-4">
 		<div class="row">
 			<div class="col-md-12 col-sm-4 col-xs-12">
-				{legend legend="Shipping Address"}
+				{fieldset legend="Shipping Address"}
 					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1"><i class="icon-truck"></i> {tr}Change{/tr}</a></div>
 					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->getDelivery()}
-				{/legend}
+				{/fieldset}
 			</div>
 			<div class="col-md-12 col-sm-4 col-xs-12">
-				{legend legend="Billing Address"}
+				{include file="bitpackage:bitcommerce/page_checkout_deadline_inc.tpl" deadline=$smarty.session.deadline_date}
+			</div>
+			<div class="col-md-12 col-sm-4 col-xs-12">
+				{fieldset legend="Billing Address"}
 					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment&amp;change_address=1"><i class="icon-home"></i> {tr}Change{/tr}</a></div>
 					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->getBilling()}
-				{/legend}
+				{/fieldset}
 			</div>
 			<div class="col-md-12  col-sm-4 col-xs-12">
-				{legend legend="Payment Method"}
+				{fieldset legend="Payment Method"}
 					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment"><i class="icon-credit-card"></i> {tr}Change{/tr}</a></div>
 					{if $paymentConfirmation}
 						<h4 class="no-margin">{$paymentConfirmation.title|escape}</h4>
@@ -89,7 +92,7 @@
 					{elseif $smarty.session.payment}
 						{$smarty.session.payment->title}
 					{/if}
-				{/legend}
+				{/fieldset}
 			</div>
 		</div>
 	</div>

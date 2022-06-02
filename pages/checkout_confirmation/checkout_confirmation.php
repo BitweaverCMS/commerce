@@ -27,15 +27,8 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 if( isset( $_POST['payment'] ) ) {
 	$_SESSION['payment'] = $_POST['payment'];
 }
-if( !empty( $_POST['comments'] ) ) {
-	$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
-}
 
-if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
-	if (!isset($_POST['conditions']) || ($_POST['conditions'] != '1')) {
-		$messageStack->add_session('checkout_payment', ERROR_CONDITIONS_NOT_ACCEPTED, 'error');
-	}
-}
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'page_checkout_parameters_inc.php' );
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
 $order = new order();

@@ -55,6 +55,16 @@ function getShippingQuotes( pOrderId ) {
 	{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}
 		{if $order->info.estimated_ship_date} &bull; {tr}Est Ship{/tr}: {$order->info.estimated_ship_date|substr:0:10} {/if}
 		{if $order->info.estimated_arrival_date} &bull; {tr}Est Arrival{/tr}: {$order->info.estimated_arrival_date|substr:0:10} {/if}
+		&bull; <span class="link" onclick="$('#new-deadline-block').toggle()">{if $order->info.deadline_date} <span class="badge alert-danger" >{tr}DEADLINE{/tr}: {$order->info.deadline_date|substr:0:10}</span> {else} <span class="btn btn-xs btn-default">{booticon iname="icon-plus"} Deadline</span> {/if}</span>
+
+<div id="new-deadline-block" class="form-inline" style="display:none">
+<form class="status" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;action=update_deadline" method="post"><div style="display:inline">
+	{include file="bitpackage:bitcommerce/page_checkout_deadline_inc.tpl" deadline=$gBitOrder->info.deadline_date}
+<input class="btn btn-sm btn-default" type="submit" name="update_deadline" value="Update Deadline">
+</form>
+</div>
+
+
 {if count($siblingOrderIds) > 1}
 <div class="alert alert-warning">
 	{tr}Additional orders to this address:{/tr}

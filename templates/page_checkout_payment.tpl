@@ -17,9 +17,9 @@
 
 			{if count( $addresses )}
 			<div class="col-md-6">
-				{legend legend="Choose Billing Address"}
+				{fieldset legend="Choose Billing Address"}
 					{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
-				{/legend}
+				{/fieldset}
 				<div class="form-group clear">
 					<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
 					<a class="btn pull-right" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book">{tr}Address Book{/tr}</a>
@@ -28,9 +28,9 @@
 			{/if}
 			
 			<div class="col-md-6">
-				{legend legend="Enter a New Address"}
+				{fieldset legend="Enter a New Address"}
 					{include file="bitpackage:bitcommerce/address_edit_inc.tpl" sectionName="billing"}
-				{/legend}
+				{/fieldset}
 				<div class="form-group clear">
 					<input type="submit" class="btn btn-primary" name="save_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
 				</div>
@@ -119,19 +119,21 @@
 
 		</div>
 		<div class="col-md-6">
-			{legend legend="Billing Address"}
+			{fieldset legend="Billing Address"}
 						{zen_address_label($smarty.session.customer_id, $smarty.session.billto, 1, ' ', '<br />')}
 						{formhelp note="The billing address should match the address on your credit card statement."}
 						<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_payment&amp;change_address=1">{tr}Change Billing Address{/tr}</a>
-			{/legend}
+			{/fieldset}
 		
-			{legend legend="Order Comments"}	
+			{include file="bitpackage:bitcommerce/page_checkout_deadline_inc.tpl" deadline=$smarty.session.deadline_date}
+
+			{fieldset legend="Order Comments"}	
 				<div class="form-group">
 					{forminput}
 						<textarea name="comments" wrap="soft" class="form-control special-instructions" rows="4">{$smarty.session.comments}</textarea>
 					{/forminput}
 				</div>
-			{/legend}
+			{/fieldset}
 			<div class="mt-2">
 		{foreach from=$order->otOutput() item=otOutput}
 		<div class="row {$otOutput.code}">

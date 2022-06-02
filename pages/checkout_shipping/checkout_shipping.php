@@ -46,6 +46,8 @@ if( !$gBitCustomer->mCart->count_contents() ) {
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
+require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'page_checkout_parameters_inc.php' );
+
 // if the order contains only virtual products, forward the customer to the delivery page as a shipping address is not needed
 if( $gBitCustomer->mCart->get_content_type() == 'virtual') {
 	$_SESSION['shipping'] = false;
@@ -109,9 +111,6 @@ if( isset( $_REQUEST['change_address'] ) ) {
 	}
 
 	if( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
-		if (zen_not_null($_POST['comments'])) {
-			$_SESSION['comments'] = zen_db_prepare_input($_POST['comments']);
-		}
 
 		if ( ($gCommerceShipping->isShippingAvailable() > 0) || ($free_shipping == true) ) {
 			if ( (isset($_POST['shipping'])) && (strpos($_POST['shipping'], '_')) ) {
