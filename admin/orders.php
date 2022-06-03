@@ -170,8 +170,12 @@ if( !empty( $order ) ) {
 		case 'update_deadline':
 			if( empty( $dateTime = BitBase::getParameter( $_REQUEST, 'deadline_date', NULL ) ) ) {
 				$dateTime = NULL;
+				$statusMsg = 'Removed order deadline of '.$order->getField( 'deadline_date' );
+			} else {
+				$statusMsg = 'Set order deadline of '.$dateTime;
 			}
 			$order->updateOrder( array( 'deadline_date' => $dateTime ) );
+			$order->updateStatus( array( 'comments' => $statusMsg ) );
 			zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')), 'SSL'));
 			break;
 		case 'update_order':
