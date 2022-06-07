@@ -1100,6 +1100,10 @@ If a special exist * 10+9
 		return $ret;
 	}
 
+	public function getThumbnailUrlFromOrder( $pAttributes, $pSize='small' ) {
+		return $this->getThumbnailUrl( $pSize );
+	}
+
 	public function getThumbnailFile( $pSize='small' ) {
 		if( $this->isValid() ) {
 			return static::getThumbnailFileFromHash( $this->mInfo, $pSize );
