@@ -107,9 +107,9 @@ class currencies extends BitBase {
 		return $this->currencies[$pToCurrency]['symbol_left'] . number_format( $convertValue, $this->currencies[$pToCurrency]['decimal_places'], $this->currencies[$pToCurrency]['decimal_point'], $this->currencies[$pToCurrency]['thousands_point']) . $this->currencies[$pToCurrency]['symbol_right'];
 	}
 
-	function format($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '') {
+	function format($number, $calculate_currency_value = true, $currency_type = '', $currency_value = '', $pHtml = true) {
 		$currency_type = $this->verifyCurrency( $currency_type );
-		$format_string = '<span class="formatted-price"><sup class="currency-symbol symbol-left">' . $this->currencies[$currency_type]['symbol_left'] . '</sup>';
+		$format_string = ($pHtml ? '<span class="formatted-price"><sup class="currency-symbol symbol-left">' : '') . $this->currencies[$currency_type]['symbol_left'] . ($pHtml ? '</sup>' : '');
 		if ($calculate_currency_value == true) {
 			$rate = (float)(zen_not_null($currency_value)) ? $currency_value : $this->currencies[$currency_type]['currency_value'];
 		} else {
@@ -119,14 +119,14 @@ class currencies extends BitBase {
 		$format_string .= number_format(round($number * $rate, $this->currencies[$currency_type]['decimal_places']), $this->currencies[$currency_type]['decimal_places'], $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['thousands_point']);
 
 		if( $this->currencies[$currency_type]['decimal_places'] ) {
-			$format_string = str_replace( $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['decimal_point'].'<span class="fraction">', $format_string).'</span>';
+			$format_string = str_replace( $this->currencies[$currency_type]['decimal_point'], $this->currencies[$currency_type]['decimal_point'].($pHtml?'<span class="fraction">':''), $format_string).($pHtml?'</span>':'');
 		}
 
 		if( !empty( $this->currencies[$currency_type]['symbol_right'] ) ) {
-			$format_string .= '<sup class="currency-symbol symbol-right">' . $this->currencies[$currency_type]['symbol_right'] . '</sup>';
+			$format_string .= ($pHtml ? '<sup class="currency-symbol symbol-right">' : '') . $this->currencies[$currency_type]['symbol_right'] . ($pHtml ? '</sup>' : '');
 		}
 
-		$format_string .= '</span>';
+		$format_string .= ($pHtml?'</span>':'');
 
 		return $format_string;
 	}

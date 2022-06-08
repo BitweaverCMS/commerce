@@ -130,7 +130,7 @@
 			{fieldset legend="Order Comments"}	
 				<div class="form-group">
 					{forminput}
-						<textarea name="comments" wrap="soft" class="form-control special-instructions" rows="4">{$smarty.session.comments}</textarea>
+						<textarea name="comments" wrap="soft" class="form-control special-instructions" rows="4" placeholder="{tr}Leave any special instructions or questions here.{/tr}">{$smarty.session.comments}</textarea>
 					{/forminput}
 				</div>
 			{/fieldset}
