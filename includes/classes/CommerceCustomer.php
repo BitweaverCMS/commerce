@@ -30,6 +30,20 @@ class CommerceCustomer extends CommerceBase {
 		return $this->verifyId( $this->mCustomerId );
 	}
 
+	function loadReviews() {
+		if( !isset( $this->mReviews ) ) {
+			require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceReview.php' );
+			$this->mReviews = array();
+			$listHash = array( 'customers_id' => $this->mCustomerId );
+			if( $this->mReviews['reviews'] = CommerceReview::getList( $listHash ) ) {
+				foreach( $this->mReviews['reviews'] as $reviewHash ) {
+					@$this->mReviews['stats'][$reviewHash['reviews_source']]++;
+				}
+			}
+		}
+		return !empty( $this->mReviews );
+	}
+
 	function load() {
 		$this->mInfo = array();
 		if( $this->isValid() ) {

@@ -47,8 +47,50 @@ class CommerceReview extends CommerceBase {
 		return $ret;
 	}
 
-	public static function getList( &$pListHash ) {
+	public static function getReviewStats( &$pListHash ) {
+		global $gCommerceSystem;
+		$ret = array();
 
+		$groupKey = 'reviews_source';
+
+		$whereSql = '';
+		$bindVars = array();
+		$ret = array();
+
+		if( !empty( $pListHash['orders_id'] ) ) {
+			$whereSql .= ' AND cr.`orders_id`=? ';
+			$bindVars = $pListHash['orders_id'];
+		}
+
+		if( !empty( $pListHash['customers_id'] ) ) {
+			$whereSql .= ' AND cr.`customers_id`=? ';
+			$bindVars = $pListHash['customers_id'];
+		}
+
+		$pListHash['cant'] = 0;
+
+		if( empty ( $pListHash['sort_mode'] ) ) {
+			$pListHash['sort_mode'] = 'date_reviewed_desc';
+		}
+
+		BitBase::prepGetList( $pListHash );
+
+		if( !empty( $whereSql ) ) {
+			$whereSql = preg_replace('/^ AND /',' WHERE ', $whereSql);
+		}
+
+		$query = "SELECT $groupKey AS `hash_key`, COUNT(`reviews_id`) FROM " . TABLE_REVIEWS . " cr
+					LEFT JOIN " . TABLE_CUSTOMERS . " cc ON (cc.customers_id=cr.customers_id)
+					LEFT JOIN `users_users` uu ON (uu.user_id=cr.customers_id)
+					LEFT JOIN `com_orders` co ON (co.orders_id=cr.orders_id)
+				$whereSql GROUP BY $groupKey";
+				
+		if( ($rs = $gCommerceSystem->mDb->query( $query." ORDER BY ".$gCommerceSystem->mDb->convertSortmode( $pListHash['sort_mode'] ), $bindVars, $pListHash['max_records'], $pListHash['offset'], BIT_QUERY_CACHE_TIME )) && $rs->RecordCount() ) {
+		}
+		return $ret;
+	}
+
+	public static function getList( &$pListHash ) {
 		global $gCommerceSystem;
 		$ret = array();
 
@@ -86,14 +128,14 @@ class CommerceReview extends CommerceBase {
 				
 		if( ($rs = $gCommerceSystem->mDb->query( $query." ORDER BY ".$gCommerceSystem->mDb->convertSortmode( $pListHash['sort_mode'] ), $bindVars, $pListHash['max_records'], $pListHash['offset'], BIT_QUERY_CACHE_TIME )) && $rs->RecordCount() ) {
 			while (!$rs->EOF) {
-				$ret['results'][$rs->fields['reviews_id']] = $rs->fields;
+				$ret[$rs->fields['reviews_id']] = $rs->fields;
 
 				$pListHash['page_records'] = 0;
 
 				$ratingSum = 0;
 				$firstReviewEpoch = PHP_INT_MAX;
 				$lastReviewEpoch = 0;
-				foreach( $ret['results'] as &$reviewHash ) {
+				foreach( $ret as &$reviewHash ) {
 					$reviewEpoch = strtotime( $reviewHash['date_reviewed'] );
 					if( $reviewEpoch < $firstReviewEpoch ) {
 						$firstReviewEpoch = $reviewEpoch;
