@@ -74,63 +74,72 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 	}
 
 	function calculate_tax_deduction($amount, $od_amount, $method, $finalise = false) {
-		$tax_address = zen_get_tax_locations();
-		switch ($method) {
-			case 'Standard':
-				if ($amount == 0) {
-					$ratio1 = 0;
-				} else {
-					$ratio1 = zen_round($od_amount / $amount,2);
-				}
-				$tod_amount = 0;
-				reset($this->mOrder->info['tax_groups']);
-				while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
-					$tax_rate = zen_get_tax_rate_from_desc($key, $tax_address['country_id'], $tax_address['zone_id']);
-					$total_net += $tax_rate * $value;
-				}
-				if ($od_amount > $total_net) $od_amount = $total_net;
-				reset($this->mOrder->info['tax_groups']);
-				while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
-					$tax_rate = zen_get_tax_rate_from_desc($key, $tax_address['country_id'], $tax_address['zone_id']);
-					$net = $tax_rate * $value;
-					if ($net > 0) {
-						$god_amount = $value * $ratio1;
-						$tod_amount += $god_amount;
-						if ($finalise) $this->mOrder->info['tax_groups'][$key] = $this->mOrder->info['tax_groups'][$key] - $god_amount;
+		$ret = 0;
+		if( $this->isEnabled() ) {
+			$tax_address = zen_get_tax_locations();
+			switch ($method) {
+				case 'Standard':
+					if ($amount == 0) {
+						$ratio1 = 0;
+					} else {
+						$ratio1 = zen_round($od_amount / $amount,2);
 					}
-				}
-				if ($finalise) {
-					$this->mOrder->info['tax'] -= $tod_amount;
-					$this->setOrderDeduction( $tod_amount );
-				}
-				break;
-			case 'Credit Note':
-				$tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
-				$tax_desc = zen_get_tax_description($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
-				$tod_amount = $this->deduction / (100 + $tax_rate)* $tax_rate;
-				if ($finalise) {
-					$this->mOrder->info['tax_groups'][$tax_desc] -= $tod_amount;
-					$this->mOrder->info['tax'] -= $tod_amount;
-					$this->setOrderDeduction( $tod_amount );
-				}
-				break;
+					$tod_amount = 0;
+					reset($this->mOrder->info['tax_groups']);
+					while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
+						$tax_rate = zen_get_tax_rate_from_desc($key, $tax_address['country_id'], $tax_address['zone_id']);
+						$total_net += $tax_rate * $value;
+					}
+					if ($od_amount > $total_net) $od_amount = $total_net;
+					reset($this->mOrder->info['tax_groups']);
+					while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
+						$tax_rate = zen_get_tax_rate_from_desc($key, $tax_address['country_id'], $tax_address['zone_id']);
+						$net = $tax_rate * $value;
+						if ($net > 0) {
+							$god_amount = $value * $ratio1;
+							$tod_amount += $god_amount;
+							if ($finalise) $this->mOrder->info['tax_groups'][$key] = $this->mOrder->info['tax_groups'][$key] - $god_amount;
+						}
+					}
+					if ($finalise) {
+						$this->mOrder->info['tax'] -= $tod_amount;
+						$this->setOrderDeduction( $tod_amount );
+					}
+					break;
+				case 'Credit Note':
+					$tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
+					$tax_desc = zen_get_tax_description($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
+					$tod_amount = $this->deduction / (100 + $tax_rate)* $tax_rate;
+					if ($finalise) {
+						$this->mOrder->info['tax_groups'][$tax_desc] -= $tod_amount;
+						$this->mOrder->info['tax'] -= $tod_amount;
+						$this->setOrderDeduction( $tod_amount );
+					}
+					break;
+			}
+			$ret = zen_round($tod_amount, 2);
 		}
-		return zen_round($tod_amount, 2);
+		return $ret;
 	}
 
 	function getOrderDeduction( $pOrder ) {
-		$order_total = $pOrder->getField( 'total' );
-		if( $this->include_shipping == 'false') $order_total -= $this->mOrder->info['shipping_cost'];
-		if( $this->include_tax == 'false') $order_total -= $this->mOrder->info['tax'];
-		if( $groupDiscount = $this->getGroupDiscount( $_SESSION['customer_id'] ) ) {
-			$order_total = $this->get_order_total();
-			$discount = $order_total * $groupDiscount['group_percentage'] / 100;
-			$od_amount = zen_round($discount, 2);
-			if ($this->calculate_tax != "none") {
-				$tod_amount = $this->calculate_tax_deduction($order_total, $od_amount, $this->calculate_tax);
+		$ret = 0;
+		if( $this->isEnabled() ) {
+			$order_total = $pOrder->getField( 'total' );
+			$tod_amount = 0;
+			if( $this->include_shipping == 'false') $order_total -= $this->mOrder->info['shipping_cost'];
+			if( $this->include_tax == 'false') $order_total -= $this->mOrder->info['tax'];
+			if( $groupDiscount = $this->getGroupDiscount( $_SESSION['customer_id'] ) ) {
+				$order_total = $this->get_order_total();
+				$discount = $order_total * $groupDiscount['group_percentage'] / 100;
+				$od_amount = zen_round($discount, 2);
+				if ($this->calculate_tax != "none") {
+					$tod_amount = $this->calculate_tax_deduction($order_total, $od_amount, $this->calculate_tax);
+				}
 			}
+			$ret = $od_amount + $tod_amount;
 		}
-		return $od_amount + $tod_amount;
+		return $ret;
 	}
 
 	public function keys() {

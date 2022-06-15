@@ -214,8 +214,9 @@ abstract class CommerceOrderBase extends BitBase {
 
 	private function scanOtModules( $pRefresh = FALSE ) {
 		if( empty( $this->mOtClasses ) || $pRefresh ) {
+			$this->mOtClasses = array();
 			global $gCommerceSystem;
-			if( $this->mOtClasses = $gCommerceSystem->scanModules( 'order_total', $pRefresh ) ) {
+			if( $this->mOtClasses = $gCommerceSystem->scanModules( 'order_total', TRUE ) ) {
 				foreach( array_keys( $this->mOtClasses ) as $moduleKey ) {
 					$this->mOtClasses[$moduleKey]->setOrder( $this );
 				}

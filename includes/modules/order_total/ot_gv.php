@@ -181,6 +181,8 @@ class ot_gv extends CommercePluginOrderTotalBase {
 				$this->checkbox .= '</div></div><div class="col-xs-6">' . tra( 'of' ) . ' ' . $currencies->format( $this->userGvBalance ) . '</div>
 						</div>
 					</div>';
+			} else {
+				$this->checkbox = '';
 			}
 			$selection = array(	'id' => $this->code,
 								'module' => $this->title,
