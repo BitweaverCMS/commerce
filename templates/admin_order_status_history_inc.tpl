@@ -10,10 +10,13 @@
 		<input name="notify" type="checkbox"> {booticon iname="icon-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
 	{/forminput}
 	{forminput label="checkbox"}
-		<input type="checkbox" name="additional_charge" value="y" onclick="$('#additional-charge').toggle()"/>{booticon iname="icon-money"} {tr}Make Additional Charge{/tr}
+		<input type="checkbox" name="adjust_total" value="y" onclick="$('#additional-charge').toggle()" id="adjust_total"/>{booticon iname="icon-plus-sign-alt"} {tr}Adjust Order Total{/tr}
 	{/forminput}
 	<div id="additional-charge" style="display:none">
-		{forminput}
+		{forminput label="checkbox"}
+			<input type="checkbox" name="additional_charge" value="y" checked/>{booticon iname="icon-money"} {tr}Make Additional Charge{/tr}
+		{/forminput}
+		{forminput id="charge-amount"}
 			{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol( $gBitOrder->getField('currency') )}
 			{assign var=rightSymbol value=$gCommerceCurrencies->getRightSymbol( $gBitOrder->getField('currency') )}
 			{if $gBitOrder->getField('currency') && $gBitOrder->getField('currency') != $smarty.const.DEFAULT_CURRENCY}

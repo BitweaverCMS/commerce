@@ -884,6 +884,73 @@ class order extends CommerceOrderBase {
 		return( $this->mOrdersId );
 	}
 
+	public function addOrderAdjustment( $pRequest ) {
+
+		$ret = TRUE;
+		$adjustmentText = tra( 'Order Payment Adjustment' ).' - '.date('Y-m-d H:i');
+		$statusMsg = BitBase::getParameter( $pRequest, 'comments' );
+
+		global $currencies, $messageStack;
+		if( !empty( $pRequest['charge_amount'] ) ) {
+			$formatCharge = $currencies->format( $pRequest['charge_amount'], FALSE, BitBase::getParameter( $pRequest, 'charge_currency' ) );
+			$statusMsg = tra( 'A payment adjustment has been made to this order for the following amount:' )."\n".$formatCharge;
+
+			if( !empty( $pRequest['additional_charge'] ) ) { 
+				if( $paymentModule = $this->getPaymentModule() ) {
+					$pRequest['trans_ref_id'] = $this->info['trans_ref_id'];
+					if( $paymentModule->processPayment( $pRequest, $this ) ) {
+						$statusMsg .= "\n\n".tra( 'Transaction ID:' )."\n".$paymentModule->getTransactionReference();
+						$adjustmentText .= ' - '.tra( 'Transaction ID:' )."\n".$paymentModule->getTransactionReference();
+						$pRequest['comments'] = (!empty( $pRequest['comments'] ) ? $pRequest['comments']."\n\n" : '').$statusMsg;
+						
+					} else {
+						$statusMsg = tra( 'Additional charge could not be made:' ).' '.$formatCharge.'<br/>'.implode( '<br/>', $paymentModule->mErrors );
+						$ret = FALSE;
+						$messageStack->add_session( $statusMsg, 'error');
+						$this->updateStatus( array( 'comments' => $statusMsg ) );
+					}
+				} else {
+					$statusMsg = tra( 'Payment Module could not be loaded.' ).' ('.$this->info['payment_module_code'].')';
+					$ret = FALSE;
+					$messageStack->add_session( $statusMsg, 'error');
+				}
+			}
+		}
+
+		if( $statusMsg ) {
+			$pRequest['comments'] = $statusMsg;
+			$this->updateStatus( $pRequest );
+		}
+
+		if( $ret ) {
+			if( $adjustTotal = (BitBase::getParameter( $pRequest, 'adjust_total' ) == 'y') ) {
+				// discounting or credits affected final order_total
+				$newTotal = (float)BitBase::getParameter( $pRequest, 'charge_amount', 0 ) + (float)$this->getField( 'total' );
+				$maxSortOrder = $this->mDb->getOne( "SELECT MAX(sort_order) + 1 FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id`=? ", array( $this->mOrdersId ) );
+				$this->mDb->query( "UPDATE " . TABLE_ORDERS_TOTAL . " SET `class`=?, title=? WHERE `orders_id`=? AND class='ot_total'", array( 'ot_subtotal', 'Previous Total', $this->mOrdersId ) );
+				$sqlParams = array( 'orders_id' => $this->mOrdersId,
+									'title' => $adjustmentText, //$this->mOtClasses[$key]->title,
+									'text' => $adjustmentText,
+									'orders_value' => BitBase::getParameter( $pRequest, 'charge_amount', 0),
+									'class' => 'ot_subtotal',
+									'sort_order' => $maxSortOrder++,
+								  );
+				$this->mDb->associateInsert(TABLE_ORDERS_TOTAL, $sqlParams );
+				$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `order_total`=? WHERE `orders_id`=?", array( $newTotal, $this->mOrdersId ) );
+				$sqlParams = array( 'orders_id' => $this->mOrdersId,
+									'title' => 'Total',
+									'text' => $currencies->format( $newTotal, FALSE, BitBase::getParameter( $pRequest, 'charge_currency' ) ),
+									'orders_value' => $newTotal,
+									'class' => 'ot_total',
+									'sort_order' => $maxSortOrder++
+								  );
+				$this->mDb->associateInsert(TABLE_ORDERS_TOTAL, $sqlParams );
+			}
+		}
+//eb( $ret, $statusMsg, $pRequest, $this->info, $newTotal );
+		return $ret;
+	}
+
 	private function createAddProducts($pOrdersId) {
 		global $gBitUser, $currencies;
 
@@ -1222,7 +1289,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 	function updateStatus( $pParamHash ) {
 		global $gBitUser;
 
-		$orderUpdated = false;
+		$orderUpdated = FALSE;
 
 		// a semaphore can be passed in to prevent two different people from updating the same order behind each other's back
 		$statusCleared = TRUE;

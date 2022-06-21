@@ -179,35 +179,12 @@ if( !empty( $order ) ) {
 			zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')), 'SSL'));
 			break;
 		case 'update_order':
-			if( !empty( $_REQUEST['charge_amount'] ) && !empty( $_REQUEST['additional_charge'] ) ) {
-				$formatCharge = $currencies->format( $_REQUEST['charge_amount'], FALSE, BitBase::getParameter( $_REQUEST, 'charge_currency' ) );
-				$_REQUEST['trans_ref_id'] = $order->info['trans_ref_id'];
-				if( $paymentModule = $order->getPaymentModule() ) {
-					if( $paymentModule->processPayment( $_REQUEST, $order ) ) {
-						$statusMsg = tra( 'A payment adjustment has been made to this order for the following amount:' )."\n".$formatCharge.' '.tra( 'Transaction ID:' )."\n".$paymentModule->getTransactionReference();
-						$_REQUEST['comments'] = (!empty( $_REQUEST['comments'] ) ? $_REQUEST['comments']."\n\n" : '').$statusMsg;
-						
-					} else {
-						$statusMsg = tra( 'Additional charge could not be made:' ).' '.$formatCharge.'<br/>'.implode( '<br/>', $paymentModule->mErrors );
-						$hasError = TRUE;
-						$messageStack->add_session( $statusMsg, 'error');
-						$order->updateStatus( array( 'comments' => $statusMsg ) );
-					}
-				} else {
-					$statusMsg = tra( 'Payment Module could not be loaded.' ).' ('.$order->info['payment_module_code'].')';
-					$hasError = TRUE;
-					$messageStack->add_session( $statusMsg, 'error');
-				}
+			if( $order->addOrderAdjustment( $_REQUEST ) ) {
+				$messageStack->add_session( SUCCESS_ORDER_UPDATED, 'success' );
+			} else {
+				$messageStack->add_session( 'The order was not updated: '.BitBase::getParameter( $order->mErrors, 'status' ), 'error' );
 			}
-
-			if( empty( $hasError ) ) {
-				if( $order->updateStatus( $_REQUEST ) ) {
-					$messageStack->add_session(SUCCESS_ORDER_UPDATED, 'success');
-				} else {
-					$messageStack->add_session( 'The order was not updated: '.BitBase::getParameter( $order->mErrors, 'status' ), 'error');
-				}
-				zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')), 'SSL'));
-			}
+			zen_redirect( zen_href_link_admin( FILENAME_ORDERS, zen_get_all_get_params( array('action') ), 'SSL') );
 			break;
 		case 'email':
 			if( validate_email_syntax( $_REQUEST['email'] ) ) {

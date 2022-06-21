@@ -449,8 +449,10 @@ class braintree_api extends CommercePluginPaymentCardBase {
 					}
 				}
 
+				$pPaymentParams['result'] = array();
 				if( $result->success ) {
 					$pnref = $result->transaction->id;
+					$this->trans_ref_id = $pnref;
 					if( $transExchange = urldecode($result->transaction->disbursementDetails->settlementCurrencyExchangeRate) ) {
 						$logHash['exchange_rate'] = $transExchange;
 					}
@@ -516,6 +518,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 							// This is the default error msg but technically it shouldn't be able to get here, Braintree in the future may add codes making it possible to not be a 1, 2, or 3k class code though.
 							$this->mErrors['process_payment'] = 'We were unable to process your credit card. Please make sure that your billing information is accurate and entered properly.';
 						}
+						$pPaymentParams['result'] = $logHash;
 					}
 				} elseif( empty( $this->mErrors ) ) {
 					$this->mErrors['process_payment'] = $result->message;
