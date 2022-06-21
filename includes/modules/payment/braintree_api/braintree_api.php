@@ -442,7 +442,9 @@ class braintree_api extends CommercePluginPaymentCardBase {
 							}
 						} else {
 							$result = Braintree_Transaction::refund( $txnID, $creditAmount );
-							$transactionId = $result->transaction->refundId;
+							if( $result->success ) {
+								$transactionId = $result->transaction->refundId;
+							}
 						}
 					} else {
 						$this->mErrors['process_payment'] = 'Credit parent transaction ID not set.';
