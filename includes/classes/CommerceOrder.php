@@ -893,14 +893,14 @@ class order extends CommerceOrderBase {
 		global $currencies, $messageStack;
 		if( !empty( $pRequest['charge_amount'] ) ) {
 			$formatCharge = $currencies->format( $pRequest['charge_amount'], FALSE, BitBase::getParameter( $pRequest, 'charge_currency' ) );
-			$statusMsg = tra( 'A payment adjustment has been made to this order for the following amount:' )."\n".$formatCharge;
+			$statusMsg = trim( $statusMsg."\n\n".tra( 'A payment adjustment has been made to this order for the following amount:' )."\n".$formatCharge );
 
 			if( !empty( $pRequest['additional_charge'] ) ) { 
 				if( $paymentModule = $this->getPaymentModule() ) {
 					$pRequest['trans_ref_id'] = $this->info['trans_ref_id'];
 					if( $paymentModule->processPayment( $pRequest, $this ) ) {
-						$statusMsg .= "\n\n".tra( 'Transaction ID:' )."\n".$paymentModule->getTransactionReference();
-						$adjustmentText .= ' - '.tra( 'Transaction ID:' )."\n".$paymentModule->getTransactionReference();
+						$statusMsg .= "\n\n".tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
+						$adjustmentText .= ' - '.tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
 						$pRequest['comments'] = (!empty( $pRequest['comments'] ) ? $pRequest['comments']."\n\n" : '').$statusMsg;
 						
 					} else {
