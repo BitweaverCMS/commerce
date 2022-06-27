@@ -1,6 +1,5 @@
 {strip}{assign var=checkoutStep value=3}
 {include file="bitpackage:bitcommerce/page_checkout_header_inc.tpl" title="Order Confirmation" step=3}
-
 {form action=$formActionUrl onsubmit="paymentSubmit(this)"}
 <div class="row shopping-cart">
 	<div class="col-md-8 col-sm-12">

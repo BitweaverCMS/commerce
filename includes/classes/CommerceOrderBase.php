@@ -212,7 +212,7 @@ abstract class CommerceOrderBase extends BitBase {
 		return $ret;
 	}
 
-	private function scanOtModules( $pRefresh = FALSE ) {
+	protected function scanOtModules( $pRefresh = FALSE ) {
 		if( empty( $this->mOtClasses ) || $pRefresh ) {
 			$this->mOtClasses = array();
 			global $gCommerceSystem;
