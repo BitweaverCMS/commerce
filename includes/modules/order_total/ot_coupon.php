@@ -84,10 +84,10 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 
 	function collect_posts( $pRequestParams ) {
 		global $currencies;
-		if ( !empty( $pRequestParams['dc_redeem_code'] ) ) {
+		if ( $couponCode = trim( BitBase::getParameter( $pRequestParams, 'dc_redeem_code' ) ) ) {
 			$coupon = new CommerceVoucher();
-			if ( !$coupon->load( $pRequestParams['dc_redeem_code'] ) ) {
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_COUPON.'-'.$pRequestParams['dc_redeem_code'] ), 'SSL',true, false));
+			if ( !$coupon->load( $couponCode ) ) {
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_COUPON.'-'.$couponCode ), 'SSL',true, false));
 			} elseif ($coupon->getField('coupon_type') != 'G') {
 				// JTD - added missing code here to handle coupon product restrictions
 				// look through the items in the cart to see if this coupon is valid for any item in the cart
@@ -99,12 +99,12 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 					}
 				}
 				if (!$foundvalid) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_COUPON_PRODUCT.'-'.$pRequestParams['dc_redeem_code']), 'SSL',true, false));
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( TEXT_INVALID_COUPON_PRODUCT.' "'.$couponCode.'"' ), 'SSL',true, false));
 				}
 				// JTD - end of additions of missing code to handle coupon product restrictions
 
 				if( !$coupon->isRedeemable() ) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( $coupon->mErrors['redeem_error'].'-'.$pRequestParams['dc_redeem_code'] ), 'SSL',true, false));
+					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( $coupon->mErrors['redeem_error'].'-'.$couponCode ), 'SSL',true, false));
 				}
 
 				if ($coupon->getField('coupon_type')=='S') {
@@ -122,7 +122,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 				$_SESSION['cc_id'] = $coupon->mCouponId;
 			}
 			if( !empty( $pRequestParams['submit_redeem_coupon_x'] ) && !$pRequestParams['gv_redeem_code']) {
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEST_NO_REDEEM_CODE.'-'.$pRequestParams['dc_redeem_code']), 'SSL', true, false));
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEST_NO_REDEEM_CODE.'-'.$couponCode), 'SSL', true, false));
 			}
 		}
 	}
