@@ -179,7 +179,7 @@ if( !empty( $order ) ) {
 			zen_redirect(zen_href_link_admin(FILENAME_ORDERS, zen_get_all_get_params(array('action')), 'SSL'));
 			break;
 		case 'update_order':
-			if( $order->addOrderAdjustment( $_REQUEST ) ) {
+			if( $order->adjustOrder( $_REQUEST ) ) {
 				$messageStack->add_session( SUCCESS_ORDER_UPDATED, 'success' );
 			} else {
 				$messageStack->add_session( 'The order was not updated: '.BitBase::getParameter( $order->mErrors, 'status' ), 'error' );

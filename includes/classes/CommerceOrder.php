@@ -884,7 +884,7 @@ class order extends CommerceOrderBase {
 		return( $this->mOrdersId );
 	}
 
-	public function addOrderAdjustment( $pRequest ) {
+	public function adjustOrder( $pRequest ) {
 
 		$ret = TRUE;
 		$adjustmentText = tra( 'Order Payment Adjustment' ).' - '.date('Y-m-d H:i');
@@ -917,7 +917,7 @@ class order extends CommerceOrderBase {
 			}
 		}
 
-		if( $statusMsg ) {
+		if( $statusMsg || (BitBase::getParameter( $pRequest, 'status' ) != $this->getField( 'orders_status_id' )) ) {
 			$pRequest['comments'] = $statusMsg;
 			$this->updateStatus( $pRequest );
 		}
