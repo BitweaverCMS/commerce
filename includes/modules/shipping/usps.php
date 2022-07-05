@@ -314,7 +314,7 @@ class usps extends CommercePluginShippingBase {
 					// process weight/handling settings from admin checkboxes
 					foreach ($this->typeCheckboxesSelected as $key => $val) {
 						if (is_numeric($val) || $val == '') continue;
-vd( " $val / ".$Package['lookupRegex'] );
+
 						if ($val == $type || preg_match('#' . $Package['lookupRegex'] . '#i', $val) ) {
 							if (strpos($val, 'International') && !strpos($type, 'International')) continue;
 							if (strpos($val, 'GXG') && !strpos($type, 'GXG')) continue;
