@@ -287,7 +287,7 @@ class usps extends CommercePluginShippingBase {
 					$minweight = $maxweight = $handling = 0;
 
 					// Build a match pattern for regex compare later against selected allowed services
-					$Package['lookupRegex'] = preg_quote($type) . '(?:RM|TM)?$';
+					$Package['lookupRegex'] = preg_replace( '/[RT]M$/', '', preg_quote($type) ) . '(?:RM|TM)?$';
 					if( !empty( $Package['FirstClassMailType'] ) && $firstClassMailType = strtoupper( $Package['FirstClassMailType'] ) ) {
 						if (in_array( $firstClassMailType, array('LETTER'))) { 
 							$Package['lookupRegex'] = preg_replace('#Mail(?:RM|TM)?#', 'Mail(?:RM|TM)?(?: Stamped )?.*', preg_quote($type)) . ($destCountryCode != 'US' ? '(GXG|International)?.*' : '') . $Package['FirstClassMailType'];
@@ -314,7 +314,7 @@ class usps extends CommercePluginShippingBase {
 					// process weight/handling settings from admin checkboxes
 					foreach ($this->typeCheckboxesSelected as $key => $val) {
 						if (is_numeric($val) || $val == '') continue;
-
+vd( " $val / ".$Package['lookupRegex'] );
 						if ($val == $type || preg_match('#' . $Package['lookupRegex'] . '#i', $val) ) {
 							if (strpos($val, 'International') && !strpos($type, 'International')) continue;
 							if (strpos($val, 'GXG') && !strpos($type, 'GXG')) continue;
