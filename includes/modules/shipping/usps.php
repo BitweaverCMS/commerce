@@ -203,6 +203,10 @@ class usps extends CommercePluginShippingBase {
 
 				$methods = array();
 
+				if( $quoteMethod = BitBase::getParameter( $pShipHash, 'method' ) ) {
+					$quoteMethod = $this->clean_usps_marks( $quoteMethod );
+				}
+
 				for ($i=0; $i<$PackageSize; $i++) {
 					if( !empty( $uspsQuote['Package'][$i]['Error'] ) ) {
 						continue;
@@ -395,7 +399,7 @@ class usps extends CommercePluginShippingBase {
 					$cost += (MODULE_SHIPPING_USPS_HANDLING_METHOD == 'Box') ? $usps_handling_fee * $pShipHash['shipping_num_boxes'] : $usps_handling_fee;
 
 					// set the output title display name back to correct format
-					$title = str_replace(array('RM', 'TM', '**'), array('&reg;', '&trade;', ''), $type_rebuilt);
+					$title = str_replace(array('RM', 'TM', '**'), array('', '', ''), $type_rebuilt);
 
 					$transitTime = '';
 					$deliveryDate = '';
@@ -408,10 +412,10 @@ class usps extends CommercePluginShippingBase {
 					if( ($pShipHash['shipping_weight_box'] <= $maxweight) && ($pShipHash['shipping_weight_box'] > $minweight) ) {
 						$found = false;
 
-						if( !empty( $pShipHash['method'] ) && ($pShipHash['method'] == $type && $pShipHash['method'] == $type_rebuilt) ) {
+						if( !empty( $quoteMethod ) && ($quoteMethod == $type) ) {
 							$found = TRUE;
 						} else {
-							if( !empty( $pShipHash['method'] ) ) {
+							if( !empty( $quoteMethod ) ) {
 								continue;
 							}
 
@@ -1076,7 +1080,8 @@ class usps extends CommercePluginShippingBase {
 
 	function clean_usps_marks($string) {
 		// strip reg and trade symbols
-		$string = str_replace(array('&amp;lt;sup&amp;gt;&amp;#174;&amp;lt;/sup&amp;gt;', '&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;'), array('RM', 'TM'), htmlspecialchars($string));
+		$string = str_replace(array('&amp;lt;sup&amp;gt;&amp;#174;&amp;lt;/sup&amp;gt;', '&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;'), array('', ''), htmlspecialchars($string));
+		$string = str_replace(array('RM', 'TM', '**'), array('', '', ''), $string);
 
 		// shipdate info removed from names as it is contained in the shipping methods
 		// refers to this field for Domestic: <CommitmentName>  or International: <SvcCommitments>
