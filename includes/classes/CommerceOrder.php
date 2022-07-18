@@ -834,6 +834,22 @@ class order extends CommerceOrderBase {
 							'ip_address' => $_SERVER['REMOTE_ADDR']
 							);
 
+		if( !empty( $sql_data_array['deadline_date'] ) ) {	
+			list($yyyy,$mm,$dd) = explode( '-', $sql_data_array['deadline_date'] );
+			if( !checkdate( $mm,$dd,$yyyy ) ) {
+				$sql_data_array['deadline_date'] = NULL;
+			} else {
+				$date = strtotime( $sql_data_array['deadline_date'] );
+				// clear deadline if not between now and +2 years
+				if( ($date < time()) || ($date > (time() + 63072000)) ) {
+					$sql_data_array['deadline_date'] = NULL;
+				} else {
+					// Ensure database safe format
+					$sql_data_array['deadline_date'] = date( 'Y-m-d', $date );
+				}
+			}
+		}
+
 		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pPaymentParams, 'payment' ) ) ) {
 			$sql_data_array['payment_number'] = $paymentModule->getPaymentNumber( $pPaymentParams, TRUE );
 			$sql_data_array['payment_expires'] = $paymentModule->getPaymentExpires( $pPaymentParams );
