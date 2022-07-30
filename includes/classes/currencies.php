@@ -1,21 +1,21 @@
 <?php
 //
 // +----------------------------------------------------------------------+
-// |zen-cart Open Source E-commerce																			 |
+// |zen-cart Open Source E-commerce										|
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2003 The zen-cart developers													 |
-// |																																			|
-// | http://www.zen-cart.com/index.php																		|
-// |																																			|
-// | Portions Copyright (c) 2003 osCommerce															 |
+// | Copyright (c) 2003 The zen-cart developers							|
+// |																	|
+// | http://www.zen-cart.com/index.php									|
+// |																	|
+// | Portions Copyright (c) 2003 osCommerce								|
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the GPL license,			 |
-// | that is bundled with this package in the file LICENSE, and is				|
-// | available through the world-wide-web at the following url:					 |
-// | http://www.zen-cart.com/license/2_0.txt.														 |
+// | This source file is subject to version 2.0 of the GPL license,		|
+// | that is bundled with this package in the file LICENSE, and is		|
+// | available through the world-wide-web at the following url:			|
+// | http://www.zen-cart.com/license/2_0.txt.							|
 // | If you did not receive a copy of the zen-cart license and are unable |
-// | to obtain it through the world-wide-web, please send a note to			 |
-// | license@zen-cart.com so we can mail you a copy immediately.					|
+// | to obtain it through the world-wide-web, please send a note to		|
+// | license@zen-cart.com so we can mail you a copy immediately.		|
 // +----------------------------------------------------------------------+
 // $Id$
 //
@@ -86,7 +86,7 @@ class currencies extends BitBase {
 		return round( $pValue, $this->currencies[$pCurrency]['decimal_places']);
 	}
 
-	function convert( $pValue, $pToCurrency=NULL, $pFromCurrency=DEFAULT_CURRENCY ) {
+	function convert( $pValue, $pToCurrency=NULL, $pFromCurrency=DEFAULT_CURRENCY, $pCurrencyValue=NULL ) {
 		$convertValue = $pValue;
 		if( empty( $pToCurrency ) ) {
 			$pToCurrency = $this->getActiveCurrency();
@@ -94,7 +94,7 @@ class currencies extends BitBase {
 
 		if( !empty( $this->currencies[$pFromCurrency] ) && !empty( $this->currencies[$pToCurrency] ) ) {
 			// convert to DEFAULT VALUE
-			$convertValue = $pValue / $this->currencies[$pFromCurrency]['currency_value'];
+			$convertValue = $pValue / (!empty( $pCurrencyValue ) ? $pCurrencyValue : $this->currencies[$pFromCurrency]['currency_value']);
 			if( $pToCurrency != DEFAULT_CURRENCY ) {
 				$convertValue = $convertValue * $this->currencies[$pToCurrency]['currency_value'];
 			}

@@ -46,7 +46,7 @@
 				<input type="hidden" name="action" value="process" />
 				<input type="hidden" name="main_page" value="checkout_shipping" />
 				<p>{tr}Your order will be shipped to the following address:{/tr}</p>
-				<div class="pull-right"><button class="btn btn-default btn-sm" name="change_address"><i class="icon-truck"></i> {tr}Change{/tr}</button></div>
+				<div class="pull-right"><button class="btn btn-default btn-sm" name="change_address">{tr}Change{/tr} {booticon iname="fa-truck"}</button></div>
 				{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$cartDelivery}
 			</fieldset>
 			{include file="bitpackage:bitcommerce/page_checkout_deadline_inc.tpl" deadline=$smarty.session.deadline_date}
@@ -89,7 +89,7 @@
 		<h3>{tr}Continue to Step 2{/tr}</h3>
 		<!--<p>{tr}Payment Method{/tr}</p>-->
 		<div class="form-group submit">
-			<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=shopping_cart" class="btn btn-default"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a> <button class="btn btn-primary pull-right" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
+			<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=shopping_cart" class="btn btn-default"><i class="fa fal fa-arrow-left"></i> {tr}Back{/tr}</a> <button class="btn btn-primary pull-right" value="Continue"/>{tr}Continue{/tr} <i class='fa fal fa-arrow-right'></i></button>
 		</div>
 	</div>
 	{/form}

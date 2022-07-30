@@ -79,9 +79,9 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 				$expediteFormatted = $currencies->format($expediteCost, true,	$this->mOrder->info['currency'], $this->mOrder->info['currency_value']);
 				if( $this->hasExpedite() ) {
 					$this->mOrder->info['total'] += $expediteCost;
-					$expediteText = ' <a class="" href="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&amp;ot_expedite=0"><i class="icon-remove-sign"></i></a> '.$expediteFormatted;
+					$expediteText = ' <a class="" href="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&amp;ot_expedite=0"><i class="fa fal fa-remove-sign"></i></a> '.$expediteFormatted;
 				} else {
-					$expediteText = '<a class="btn btn-primary btn-xs" href="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&amp;ot_expedite=1"><i class="icon-plus-sign"></i> '.$expediteFormatted.'</a>';
+					$expediteText = '<a class="btn btn-primary btn-xs" href="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&amp;ot_expedite=1"><i class="fa fal fa-circle-plus"></i> '.$expediteFormatted.'</a>';
 				}
 			} else {
 				$expediteTitle = "Expedited order processing is not available for 1 or more items in your cart.";

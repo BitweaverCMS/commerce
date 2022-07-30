@@ -29,7 +29,7 @@
 		<th class="item">{tr}Purchased{/tr} (%)</th>
 		<th class="item">{tr}Created{/tr}</th>
 		<th class="item">{tr}Purchased{/tr} (%)</th>
-		<th {if !empty($smarty.request.tacked)}style="border:2px solid black" class="highlight"{/if}><a href="{$smarty.server.REQUEST_URI}&amp;tacked={if empty($smarty.request.tacked)}1{else}0{/if}">{booticon iname="icon-paper-clip" iexplain="Show Only Highlight Rows"}</a></th>
+		<th {if !empty($smarty.request.tacked)}style="border:2px solid black" class="highlight"{/if}><a href="{$smarty.server.REQUEST_URI}&amp;tacked={if empty($smarty.request.tacked)}1{else}0{/if}">{booticon iname="fa-paper-clip" iexplain="Show Only Highlight Rows"}</a></th>
 	</tr>
 	{foreach from=$stats key=statKey item=statHash}
 		{if $statKey != 'stats'}
@@ -48,7 +48,7 @@
 
 		<td class="item {$oddeven}" style=""><span style="background:#fde;display:inline-block;width:{math equation="round(100*(count/max))" count=$statsCustomers.$statKey.all_customers_that_created_products-$statsCustomers.$statKey.new_customers_that_created_products max=$statsCustomers.max_stats.all_customers_that_purchased_new_products}%">{$statsCustomers.$statKey.all_customers_that_created_products-$statsCustomers.$statKey.new_customers_that_created_products}</span></td>
 		<td class="item {$oddeven}" style="">{if $statsCustomers.$statKey.all_customers_that_created_products-$statsCustomers.$statKey.new_customers_that_created_products}<span style="background:#fde;display:inline-block;width:{math equation="round(100*(count/max))" count=$statsCustomers.$statKey.all_customers_that_purchased_new_products-$statsCustomers.$statKey.new_customers_that_purchased_new_products max=$statsCustomers.max_stats.all_customers_that_purchased_new_products}%">{$statsCustomers.$statKey.all_customers_that_purchased_new_products-$statsCustomers.$statKey.new_customers_that_purchased_new_products}</span><span class="floatright">({math equation="round(100*(pur/cre))" pur=$statsCustomers.$statKey.all_customers_that_purchased_new_products-$statsCustomers.$statKey.new_customers_that_purchased_new_products cre=$statsCustomers.$statKey.all_customers_that_created_products-$statsCustomers.$statKey.new_customers_that_created_products}%)</span>{/if}</td>
-		<td class="item {$oddeven}" style="">{if !isset($smarty.request.compare.$statKey)}<a href="{$smarty.server.REQUEST_URI}&amp;compare[]={$statKey|urlencode}">{booticon iname="icon-paper-clip" iexplain="Highlight"}</a>{/if}</td>
+		<td class="item {$oddeven}" style="">{if !isset($smarty.request.compare.$statKey)}<a href="{$smarty.server.REQUEST_URI}&amp;compare[]={$statKey|urlencode}">{booticon iname="fa-paper-clip" iexplain="Highlight"}</a>{/if}</td>
 	</tr>
 				{assign var=break value=true}
 			{else}

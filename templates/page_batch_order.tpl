@@ -27,7 +27,7 @@
 							</ul>
 						</div>
 					</div>
-{if !$batchRow.error}<button class="btn btn-primary btn-xs" name="action" value="checkout">{booticon iname="icon-shopping-cart"} {tr}Checkout{/tr}</button> {/if}<button class="btn btn-default btn-xs" name="action" value="remove">{booticon iname="icon-delete"} {tr}Remove{/tr}</button>
+{if !$batchRow.error}<button class="btn btn-primary btn-xs" name="action" value="checkout">{booticon iname="fa-shopping-cart"} {tr}Checkout{/tr}</button> {/if}<button class="btn btn-default btn-xs" name="action" value="remove">{booticon iname="fa-trash"} {tr}Remove{/tr}</button>
 				</fieldset>
 	{/form}
 			{/foreach}

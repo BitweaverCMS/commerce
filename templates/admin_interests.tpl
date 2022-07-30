@@ -24,8 +24,8 @@
 {foreach from=$interestsList key=interestsId item=interestsName}
 	<li class="item">
 		<div class="floaticon">
-			<a href="{$smarty.server.php_self}?action=edit&amp;interests_id={$interestsId}">{booticon iname="icon-edit"}</a>
-			<a href="{$smarty.server.php_self}?action=delete&amp;interests_id={$interestsId}">{booticon iname="icon-trash"}</a>
+			<a href="{$smarty.server.php_self}?action=edit&amp;interests_id={$interestsId}">{booticon iname="fa-pen-to-square"}</a>
+			<a href="{$smarty.server.php_self}?action=delete&amp;interests_id={$interestsId}">{booticon iname="fa-trash"}</a>
 		</div>
 		{$interestsName}
 	</li>

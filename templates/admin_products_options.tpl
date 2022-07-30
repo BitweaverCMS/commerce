@@ -27,8 +27,8 @@
 		<li class="item">
 			
 			<div class="floaticon">
-				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=edit">{booticon iname="icon-edit" ipackage="icons" iexplain="Edit Option" iforce="icon"}</a>
-				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=delete">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete Option Attribute" iforce="icon"}</a>
+				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=edit">{booticon iname="fa-pen-to-square" iexplain="Edit Option"}</a>
+				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=delete">{booticon iname="fa-trash" iexplain="Delete Option Attribute"}</a>
 			</div>
 			<strong>{$option.products_options_name}</strong> (ID {$optionId}, {$option.products_options_types_name}) 
 			<ul class="data">
@@ -37,8 +37,8 @@
 					<li class="item {cycle values="odd,even"}">
 						<div class="floaticon">
 							<span class="small">#{$optionValue.products_options_values_id}</span>
-							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=edit">{booticon iname="icon-edit" ipackage="icons" iexplain="Edit Option Value" iforce="icon"}</a>
-							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=delete">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete Option Attribute" iforce="icon"}</a>
+							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=edit">{booticon iname="fa-pen-to-square" iexplain="Edit Option Value"}</a>
+							<a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id={$optionValue.products_options_values_id}&amp;action=delete">{booticon iname="fa-trash" iexplain="Delete Option Attribute"}</a>
 						</div>
 						<span class="badge">{$optionValue.products_options_sort_order|default:'-'}</span> {$optionValue.products_options_values_name} {if $option.attributes_default}<em>{tr}Default{/tr}</em>{/if}
 					

@@ -52,7 +52,7 @@
 {foreach from=$order->getDownloads() item=download}
 <div class="col-sm-3 col-xs-6">
 	<div class="well">
-        <a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=download&amp;order={$order->mOrdersId}&amp;id={$downloads.orders_products_download_id}"><div>{booticon iname="icon-download" class="icon-3x"}</div>{$downloads.products_name}<div class="small">{"`$smarty.const.DIR_FS_DOWNLOAD``$downloads.orders_products_filename`"|filesize|display_bytes}</a>
+        <a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=download&amp;order={$order->mOrdersId}&amp;id={$downloads.orders_products_download_id}"><div>{booticon iname="fa-download" class="fa-3x"}</div>{$downloads.products_name}<div class="small">{"`$smarty.const.DIR_FS_DOWNLOAD``$downloads.orders_products_filename`"|filesize|display_bytes}</a>
 	</div>
 </div>
 {/foreach}

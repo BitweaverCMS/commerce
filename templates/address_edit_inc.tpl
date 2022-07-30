@@ -4,7 +4,7 @@
 {formfeedback error=$addressErrors.customers_id}
 <div class="row pv-1 display-block">
 	<div class="col-xs-12 form-group {if $addressErrors.country_id}has-error{/if}">
-	{formlabel label="<i class='icon-globe'></i> Country" for=""}
+	{formlabel label="<i class='fa fal fa-globe'></i> Country" for=""}
 		{forminput}
 			{$gBitCustomer->getCountryInputHtml($address, $sectionName)}
 			{formhelp note=$addressErrors.country_id}

@@ -16,7 +16,7 @@
 	{/if}
 {/foreach}
 <tr>
-	<td colspan="3">{tr}More...{/tr} <a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/revenue.php?period={$statPeriod|escape}">{booticon class="icon-list"} List</a> <a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/revenue.php?display=matrix&amp;period={$statPeriod|escape}">{booticon class="icon-table"} Matrix</a></td>
+	<td colspan="3">{tr}More...{/tr} <a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/revenue.php?period={$statPeriod|escape}">{booticon iname="fa-list"} List</a> <a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/revenue.php?display=matrix&amp;period={$statPeriod|escape}">{booticon iname="fa-table"} Matrix</a></td>
 </tr>
 </table>
 {/if}

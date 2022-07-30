@@ -51,11 +51,11 @@ function getShippingQuotes( pOrderId ) {
 		<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
 		<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
 	</div>
-	<h1>{$smarty.const.HEADING_TITLE} {if $orderReviews}<span onclick="BitBase.toggleElementDisplay('order-review-{$order->mOrdersId}')" class="badge">{booticon iname="icon-star"} {foreach name=orderReviews from=$orderReviews.results item=$reviewHash}{$reviewHash.reviews_rating}{if !$smarty.foreach.orderReviews.last}, {/if}{/foreach}</span>{/if}</h1>
+	<h1>{$smarty.const.HEADING_TITLE} {if $orderReviews}<span onclick="BitBase.toggleElementDisplay('order-review-{$order->mOrdersId}')" class="badge">{booticon iname="fa-star"} {foreach name=orderReviews from=$orderReviews.results item=$reviewHash}{$reviewHash.reviews_rating}{if !$smarty.foreach.orderReviews.last}, {/if}{/foreach}</span>{/if}</h1>
 	{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}
 		{if $order->info.estimated_ship_date} &bull; {tr}Est Ship{/tr}: {$order->info.estimated_ship_date|substr:0:10} {/if}
 		{if $order->info.estimated_arrival_date} &bull; {tr}Est Arrival{/tr}: {$order->info.estimated_arrival_date|substr:0:10} {/if}
-		&bull; <span class="link" onclick="$('#new-deadline-block').toggle()">{if $order->info.deadline_date} <span class="badge alert-danger" >{tr}DEADLINE{/tr}: {$order->info.deadline_date|substr:0:10}</span> {else} <span class="btn btn-xs btn-default">{booticon iname="icon-plus"} Deadline</span> {/if}</span>
+		&bull; <span class="link" onclick="$('#new-deadline-block').toggle()">{if $order->info.deadline_date} <span class="badge alert-danger" >{tr}DEADLINE{/tr}: {$order->info.deadline_date|substr:0:10}</span> {else} <span class="btn btn-xs btn-default">{booticon iname="fa-plus"} Deadline</span> {/if}</span>
 
 <div id="new-deadline-block" class="form-inline" style="display:none">
 <form class="status" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;action=update_deadline" method="post"><div style="display:inline">
@@ -96,7 +96,7 @@ function getShippingQuotes( pOrderId ) {
 {foreach from=$order->contents item=ordersProduct key=opid}
 <tr>
 <td class="text-right" valign="top">{$ordersProduct.products_quantity}&nbsp;x
-	<div>{booticon href="product_history.php?products_id=`$ordersProduct.products_id`" iname="icon-time" iexplain="Products History"}</div>
+	<div>{booticon href="product_history.php?products_id=`$ordersProduct.products_id`" iname="fa-clock" iexplain="Products History"}</div>
 </td>
 <td valign="top"><a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>
 	<br/>{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}{if $ordersProduct.products_commission}{if $ordersProduct.products_commission}, {$currencies->format($ordersProduct.products_commission)} {tr}Commission{/tr}{/if}{/if}</td>
@@ -133,7 +133,7 @@ function getShippingQuotes( pOrderId ) {
 		<ul class="list-unstyled">
 		{section loop=$ordersProduct.attributes name=a}
 				<li class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
-					<a class="icon" href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].products_options|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].products_options_values|escape:'quotes'|escape:'htmlall'}');"><i class="icon-trash"></i></a>
+					<a class="icon" href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].products_options|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].products_options_values|escape:'quotes'|escape:'htmlall'}');"><i class="fa fal fa-trash"></i></a>
 					<small>{$ordersProduct.attributes[a].products_options}: {$ordersProduct.attributes[a].products_options_values}
 						{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
 						{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
@@ -155,7 +155,7 @@ function getShippingQuotes( pOrderId ) {
 </tr>
 {/foreach}
 <tr>
-	<td colspan="5"><div><button class="btn btn-default btn-xs" onclick="BitBase.showById('new-product-form');$(this).hide();">{booticon iname="icon-plus-sign"} {tr}Add Product{/tr}</button></div>
+	<td colspan="5"><div><button class="btn btn-default btn-xs" onclick="BitBase.showById('new-product-form');$(this).hide();">{booticon iname="fa-circle-plus"} {tr}Add Product{/tr}</button></div>
 		<div id="new-product-form" class="display-none">
 			{form class="form-inline" action="`$smarty.server.REQUEST_URI`"}
 				<input type="hidden" name="action" value="save_new_product"/>
@@ -173,7 +173,7 @@ function getShippingQuotes( pOrderId ) {
 	<td colspan="3" class="text-right {'ot_'|str_replace:'':$order->totals[t].class} text">
 		{if $order->totals[t].class=='ot_shipping'}
 			{assign var=hasShipping value=true}
-			<a class="icon" onclick="getShippingQuotes({$smarty.request.oID});return false;"><i class="icon-edit"></i></a>
+			<a class="icon" onclick="getShippingQuotes({$smarty.request.oID});return false;"><i class="fa fal fa-edit"></i></a>
 		{/if}
 		{$order->totals[t].title}
 		{if $order->totals[t].class=='ot_shipping'}
@@ -188,7 +188,7 @@ function getShippingQuotes( pOrderId ) {
 {if !$hasShipping}
 <tr>
 	<td colspan="3" class="text-right shipping text">
-		Add shipping <a class="icon" onclick="getShippingQuotes({$smarty.request.oID});return false;"><i class="icon-edit"></i></a>
+		Add shipping <a class="icon" onclick="getShippingQuotes({$smarty.request.oID});return false;"><i class="fa fal fa-edit"></i></a>
 		<span id="shippingquote"></span>
 	</td>
 	<td colspan="2">

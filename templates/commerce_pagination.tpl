@@ -9,7 +9,7 @@
 		{assign var=pageUrl value="`$smarty.server.SCRIPT_NAME`?`$listInfo.query_string`"}
 		{if $listInfo.current_page > 1}
 			{assign var=blockStart value=1}
-			<li><a href="{$pageUrl}&amp;page={$listInfo.current_page-1}&amp;max_records={$listInfo.max_records}&amp;sort_mode={$listInfo.sort_mode}">{booticon iname="icon-chevron-sign-left"}</a></li>
+			<li><a href="{$pageUrl}&amp;page={$listInfo.current_page-1}&amp;max_records={$listInfo.max_records}&amp;sort_mode={$listInfo.sort_mode}">{booticon iname="fa-chevron-left"}</a></li>
 		{/if}
 		{if $listInfo.current_page-$listInfo.block_pages > 0}
 			{assign var=blockStart value=$listInfo.current_page-$listInfo.block_pages}
@@ -33,7 +33,7 @@
 		{/if}
 
 		{if $listInfo.current_page < $listInfo.total_pages}
-		<li><a href="{$pageUrl}&amp;page={$listInfo.current_page+1}&amp;max_records={$listInfo.max_records}&amp;sort_mode={$listInfo.sort_mode}">{booticon iname="icon-chevron-sign-right"}</a></li>
+		<li><a href="{$pageUrl}&amp;page={$listInfo.current_page+1}&amp;max_records={$listInfo.max_records}&amp;sort_mode={$listInfo.sort_mode}">{booticon iname="fa-chevron-right"}</a></li>
 		{/if}
 	</ul>
 	<div class="small">{tr}Displaying <strong>{$listInfo.offset+1}</strong> to <strong>{math equation="x + y" x=$listInfo.offset y=$listInfo.page_records}</strong> (of <strong>{$listInfo.total_records}</strong> {$listInfo.item_name|default:products}){/tr}</div>

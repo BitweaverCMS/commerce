@@ -17,12 +17,12 @@ function editAddress( pAddress ) {
 	<div class="col-xs-6">
 		<h4>{tr}Customer{/tr}</h4>
 		{displayname hash=$order->customer} (ID: {$order->customer.user_id})
-		<a href="list_orders.php?user_id={$order->customer.user_id}">{booticon iname="icon-time" iexplain="Customer Sales History"}</a>
-		{smartlink ipackage=liberty ifile="list_content.php" user_id=$order->customer.user_id ititle="User Content" booticon="icon-list" iforce="icon"}
-		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" booticon="icon-user-md" iforce=icon} 
-		{smartlink ipackage=users ifile="preferences.php" view_user=$order->customer.user_id ititle="Edit User" booticon="icon-pencil" iforce=icon} 
-		{smartlink ipackage=users ifile="admin/user_activity.php" user_id=$order->customer.user_id ititle="User Activity" booticon="icon-bolt" iforce="icon"}
-		{smartlink ipackage=users ifile="admin/assign_user.php" assign_user=$order->customer.user_id ititle="Assume User" booticon="icon-key" iforce="icon"}
+		<a href="list_orders.php?user_id={$order->customer.user_id}">{booticon iname="fa-clock" iexplain="Customer Sales History"}</a>
+		{smartlink ipackage=liberty ifile="list_content.php" user_id=$order->customer.user_id ititle="User Content" booticon="list"}
+		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" booticon="user-md"} 
+		{smartlink ipackage=users ifile="preferences.php" view_user=$order->customer.user_id ititle="Edit User" booticon="pen-to-square"} 
+		{smartlink ipackage=users ifile="admin/user_activity.php" user_id=$order->customer.user_id ititle="User Activity" booticon="bolt"}
+		{smartlink ipackage=users ifile="admin/assign_user.php" assign_user=$order->customer.user_id ititle="Assume User" booticon="key"}
 		<br/>
 {if $order->customer.telephone}
 	{$order->customer.telephone}<br/>
@@ -64,7 +64,7 @@ function editAddress( pAddress ) {
 		{/if}
 		<div class="clear">
 		{if empty( $order->info.trans_ref_id )}
-			<div class="alert alert-danger">{booticon iname="icon-warning-sign"} {$order->info.payment_module_code}: {tr}This payment has no Transaction ID. Verify funds were actually collected, or if this is a duplicate order.{/tr}</div>
+			<div class="alert alert-danger">{booticon iname="fa-triangle-exclamation"} {$order->info.payment_module_code}: {tr}This payment has no Transaction ID. Verify funds were actually collected, or if this is a duplicate order.{/tr}</div>
 		{else}
 			<div class="pull-left">{$order->info.payment_module_code} {tr}Ref ID{/tr}:</div>
 			<div class="pull-right">{$order->info.trans_ref_id}</div>
@@ -79,13 +79,13 @@ function editAddress( pAddress ) {
 
 <div class="row">
 	<div class="col-xs-6">
-		<h4><a class="icon" onclick="editAddress('delivery');return false;"><i class="icon-edit"></i></a> {tr}Shipping Address{/tr}</h4>
+		<h4><a class="icon" onclick="editAddress('delivery');return false;"><i class="fa fal fa-edit"></i></a> {tr}Shipping Address{/tr}</h4>
 		<div id="deliveryaddress">
 			{$order->getFormattedAddress('delivery')}
 		</div>
 	</div>
 	<div class="col-xs-6">
-		<h4><a class="icon" onclick="editAddress('billing');return false;"><i class="icon-edit"></i></a> {tr}Billing Address{/tr}</h4>
+		<h4><a class="icon" onclick="editAddress('billing');return false;"><i class="fa fal fa-edit"></i></a> {tr}Billing Address{/tr}</h4>
 		<div id="billingaddress">
 			{$order->getFormattedAddress('billing')}
 		</div>

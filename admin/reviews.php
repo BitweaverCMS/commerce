@@ -214,7 +214,7 @@ if ($action == 'edit') {
 			echo '			  <tr id="defaultSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $reviewHash['reviews_id'] . '&action=preview') . '\'">' . "\n";
 ?>
 						<td><?php echo '<a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $reviews->fields['reviews_id'] . '&action=preview') . '">' . zen_image(DIR_WS_ICONS . 'preview.gif', ICON_PREVIEW) . '</a>&nbsp;' . zen_get_products_name($reviews->fields['products_id']); ?></td>
-						<td><span class="badge"><?php echo $reviews->fields['reviews_rating']; ?> <i class="icon-star"></i></span> <?php echo $reviews->fields['reviewer_name']; ?></td>
+						<td><span class="badge"><?php echo $reviews->fields['reviews_rating']; ?> <i class="fa fal fa-star"></i></span> <?php echo $reviews->fields['reviewer_name']; ?></td>
 						<td align="right"><?php echo zen_date_short($reviews->fields['date_reviewed']); ?></td>
 						<td align="center">
 <?php

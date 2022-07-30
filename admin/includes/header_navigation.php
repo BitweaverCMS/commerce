@@ -1,7 +1,7 @@
 <nav class="navbar navbar-default" role="navigation">
 	<div class="navbar-header">
-		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#commerce-admin-menu"><i class="icon-reorder"></i></button>
-		<a class="navbar-brand" href="<?php echo DIR_WS_HTTPS_ADMIN;?>"><span class="hidden-sm hidden-md"><?php echo ucwords( BITCOMMERCE_PKG_DIR )?></span><span class="hidden-lg hidden-xl"><i class="icon-home"></i></span></a>
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#commerce-admin-menu"><i class="fa fal fa-bars"></i></button>
+		<a class="navbar-brand" href="<?php echo DIR_WS_HTTPS_ADMIN;?>"><span class="hidden-sm hidden-md"><?php echo ucwords( BITCOMMERCE_PKG_DIR )?></span><span class="hidden-lg hidden-xl"><i class="fa fal fa-home"></i></span></a>
 	</div>
 	<div class="collapse navbar-collapse" id="commerce-admin-menu">
 	<ul class="nav navbar-nav">
@@ -72,7 +72,7 @@ while( $file = readdir( $dir ) ) {
 			<div class="input-group input-group-sm">
 				<input type="text" name="lookup_order_id" class="form-control" placeholder="Order #" name="srch-term" id="srch-term">
 				<div class="input-group-btn input-group-sm">
-					<button class="btn btn-default" type="submit"><i class="icon-search"></i></button>
+					<button class="btn btn-default" type="submit"><i class="fa fal fa-search"></i></button>
 				</div>
 			</div>
 		</form>

@@ -17,7 +17,7 @@
 					{assign var=class value="row"}
 				{/if}
 				<div class="floaticon">
-					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book&edit={$addresses[ix].address_book_id}"><i class="icon-pencil"></i></a> <a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book&delete={$addresses[ix].address_book_id}"><i class="icon-trash"></i></a> 
+					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book&edit={$addresses[ix].address_book_id}"><i class="fa fal fa-pencil"></i></a> <a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=address_book&delete={$addresses[ix].address_book_id}"><i class="fa fal fa-trash"></i></a> 
 				</div>
 				{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$addresses[ix]}
 			</li>

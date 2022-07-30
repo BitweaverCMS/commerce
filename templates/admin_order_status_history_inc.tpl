@@ -7,14 +7,14 @@
 	<label>{tr}Comments{/tr}</label>
 	<textarea class="form-control" name="comments" wrap="soft">{$smarty.request.comments|escape}</textarea>
 	{forminput label="checkbox"}
-		<input name="notify" type="checkbox"> {booticon iname="icon-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
+		<input name="notify" type="checkbox"> {booticon iname="fa-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
 	{/forminput}
 	{forminput label="checkbox"}
-		<input type="checkbox" name="adjust_total" value="y" onclick="$('#additional-charge').toggle()" id="adjust_total"/>{booticon iname="icon-plus-sign-alt"} {tr}Adjust Order Total{/tr}
+		<input type="checkbox" name="adjust_total" value="y" onclick="$('#additional-charge').toggle()" id="adjust_total"/>{booticon iname="fa-square-plus"} {tr}Adjust Order Total{/tr}
 	{/forminput}
 	<div id="additional-charge" style="display:none">
 		{forminput label="checkbox"}
-			<input type="checkbox" name="additional_charge" value="y" checked/>{booticon iname="icon-money"} {tr}Make Additional Charge{/tr}
+			<input type="checkbox" name="additional_charge" value="y" checked/>{booticon iname="fa-money"} {tr}Make Additional Charge{/tr}
 		{/forminput}
 		{forminput id="charge-amount"}
 			{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol( $gBitOrder->getField('currency') )}
@@ -42,10 +42,10 @@
 	<li class="item {if $gBitOrder->mHistory[ix].customer_notified == '1'}alert alert-info{/if}" style="clear:both"> 
 		<small class="floatright">
 			{if $gBitOrder->mHistory[ix].customer_notified == '1'}
-				{booticon iname="icon-envelope" iexplain="Notified"}
+				{booticon iname="fa-envelope" iexplain="Notified"}
 			{/if}
 			{*if $gBitUser->isAdmin()}
-				<a href="{$smarty.server.REQUEST_URI}&delete_status={$gBitOrder->mHistory[ix].orders_status_history_id}">{booticon iname="icon-trash"}</a>
+				<a href="{$smarty.server.REQUEST_URI}&delete_status={$gBitOrder->mHistory[ix].orders_status_history_id}">{booticon iname="fa-trash"}</a>
 			{/if*}
 			{$gBitOrder->mHistory[ix].date_added|date_format:"%m-%d %H:%M"}
 		</small>

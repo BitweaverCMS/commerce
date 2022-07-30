@@ -83,7 +83,7 @@ if ($moduleType == 'payment' and !empty($module->order_status)) {
 <?php
 	}
 ?>
-							<td class="dataTableContent" align="right"><?php if (isset($moduleInfo) && is_object($moduleInfo) && ($class == $moduleInfo->code) ) { echo '<i class="icon-circle-arrow-right"></i>'; } else { echo '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $moduleType . '&module=' . $class, 'NONSSL') . '"><i class="icon-info-sign"></i></a>'; } ?>&nbsp;</td>
+							<td class="dataTableContent" align="right"><?php if (isset($moduleInfo) && is_object($moduleInfo) && ($class == $moduleInfo->code) ) { echo '<i class="fa fal fa-circle-arrow-right"></i>'; } else { echo '<a href="' . zen_href_link_admin(FILENAME_MODULES, 'set=' . $moduleType . '&module=' . $class, 'NONSSL') . '"><i class="fa fal fa-info-sign"></i></a>'; } ?>&nbsp;</td>
 						</tr>
 <?php
 	}

@@ -41,10 +41,10 @@
 			<td class="item">{$smarty.foreach.couponList.iteration+$listInfo.offset}</td>
 			<td class="item text-left">
 				<div class="floaticon text-left">
-					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=edit&amp;cid={$couponId}">{booticon iname="icon-edit"}</a>
-					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_restrict.php?cid={$couponId}">{if $coupon.restrictions_count}<span class="badge">{$coupon.restrictions_count} {booticon iname="icon-lock"}</span>{else}{booticon iname="icon-lock"}{/if}</a>
+					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=edit&amp;cid={$couponId}">{booticon iname="fa-pen-to-square"}</a>
+					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_restrict.php?cid={$couponId}">{if $coupon.restrictions_count}<span class="badge">{$coupon.restrictions_count} {booticon iname="fa-lock"}</span>{else}{booticon iname="fa-lock"}{/if}</a>
 				{if $coupon.redeemed_count == 0}
-					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=delete&amp;cid={$couponId}">{booticon iname="icon-trash"}</a>
+					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/coupon_admin.php?action=delete&amp;cid={$couponId}">{booticon iname="fa-trash"}</a>
 				{/if}
 				</div>
 				<strong>{$coupon.coupon_code}</strong> {if $coupon.coupon_code != $coupon.coupon_name}<em>{$coupon.coupon_name|escape}</em>{/if}

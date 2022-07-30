@@ -133,20 +133,20 @@ textarea.special-instructions:placeholder-shown {background-color: #fff;}
 .checkout-progressbar	{ counter-reset: step; padding-left: 0; margin-left: 0; color: #666666;}
 .checkout-progressbar li	{ list-style-type: none; float:left; width:33.3%; position: relative; text-align: center;font-size:1.25em;}
 .checkout-progressbar li:before	{ content: counter(step); counter-increment: step; width: 55px; height: 55px; line-height: 50px; border: 3px solid #cccccc; display:block; margin: 0 auto 0 auto; border-radius: 50%; background-color:#eeeeee;}
-.checkout-progressbar .icon-chevron-right	{display: block; cursor:default; position: absolute;top: 17px;left: -8%;font-size: 1.25em;}
-.checkout-progressbar li.active .icon-chevron-right	{color:#199DD6;}
+.checkout-progressbar .fa-chevron-right	{display: block; cursor:default; position: absolute;top: 17px;left: -8%;font-size: 1.25em;}
+.checkout-progressbar li.active .fa-chevron-right	{color:#199DD6;}
 .checkout-progressbar li:first-child:after	{content: none}
 .checkout-progressbar li.active	{color: #199DD6; font-weight: bold;}
 .checkout-progressbar li.active:before	{border-color: #199DD6; background-color: #CBECFA }
 .checkout-progressbar li.active + li:after	{background-color: #199DD6 }
 @media only screen and (min-width: 767px)	{
-.checkout-progressbar .icon-chevron-right	{top: 10px;left: 30px;font-size:2em;}
+.checkout-progressbar .fa-chevron-right	{top: 10px;left: 30px;font-size:2em;}
 .checkout-progressbar li.side-style-layout div	{display:inline-block;position: absolute;top: 15px;left: 68%;}
 .checkout-progressbar li	{width:29.5%;}
 }
 @media only screen and (min-width: 991px)	{
 .checkout-progressbar li.side-style-layout div	{left: 62%;}
-.checkout-progressbar .icon-chevron-right	{left: 18px;}
+.checkout-progressbar .fa-chevron-right	{left: 18px;}
 }
 
 .shopping-cart .cart-item {border-bottom:1px solid #eeeeee; }

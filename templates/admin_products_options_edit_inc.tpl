@@ -83,8 +83,8 @@
 			<li class="item {cycle values="odd,even"}" id="optval{$optionsValueId}" >
 				<div id="optval{$optionsValueId}display">
 					<div class="floaticon">
-						<a href="#" onclick="editOptionsValue('{$optionsValueId}')">{booticon iname="icon-edit" ipackage="icons" iexplain="edit" iforce="icon"}</a>
-						<a href="{$smarty.server.SCRIPT_NAME}?action=delete&amp;option_id={$optionId}">{booticon iname="icon-trash" ipackage="icons" iexplain="delete" iforce="icon"}</a>
+						<a href="#" onclick="editOptionsValue('{$optionsValueId}')">{booticon iname="fa-pen-to-square" iexplain="Edit"}</a>
+						<a href="{$smarty.server.SCRIPT_NAME}?action=delete&amp;option_id={$optionId}">{booticon iname="fa-trash" iexplain="Delete"}</a>
 					</div>
 					<span id="optval{$optionsValueId}title">{$optionsValue.products_options_values_name}</span>
 				</div>

@@ -47,7 +47,7 @@
 		</div>
 		{/foreach}
 		{if $order->content_type!='virtual' && $order->info.shipping_method}
-			<p class="text-right mt-2">{tr}Shipping Method{/tr}: {$order->info.shipping_method} <a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping"><i class="icon-truck"></i>&nbsp;{tr}Change{/tr}</a></p>
+			<p class="text-right mt-2">{tr}Shipping Method{/tr}: {$order->info.shipping_method} <a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping">{booticon iname="fa-truck"}&nbsp;{tr}Change{/tr}</a></p>
 		{/if}
 		{foreach from=$order->otOutput() item=otOutput}
 		<div class="row {$otOutput.code}">
@@ -65,7 +65,7 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-4 col-xs-12">
 				{fieldset legend="Shipping Address"}
-					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1"><i class="icon-truck"></i> {tr}Change{/tr}</a></div>
+					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1">{booticon iname="fa-truck"} {tr}Change{/tr}</a></div>
 					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->getDelivery()}
 				{/fieldset}
 			</div>
@@ -74,13 +74,13 @@
 			</div>
 			<div class="col-md-12 col-sm-4 col-xs-12">
 				{fieldset legend="Billing Address"}
-					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment&amp;change_address=1"><i class="icon-home"></i> {tr}Change{/tr}</a></div>
+					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment&amp;change_address=1">{booticon iname="fa-house"} {tr}Change{/tr}</a></div>
 					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->getBilling()}
 				{/fieldset}
 			</div>
 			<div class="col-md-12  col-sm-4 col-xs-12">
 				{fieldset legend="Payment Method"}
-					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment"><i class="icon-credit-card"></i> {tr}Change{/tr}</a></div>
+					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_payment">{booticon iname="fa-credit-card"} {tr}Change{/tr}</a></div>
 					{if $paymentConfirmation}
 						<h4 class="no-margin">{$paymentConfirmation.title|escape}</h4>
 						{foreach from=$paymentConfirmation.fields item=payFields}
@@ -108,7 +108,7 @@
 
 <script type="text/javascript">
 function paymentSubmit( pForm ) {ldelim}
-	$('#payment-submit-btn').html("<i class=\"icon-spinner icon-spin\"></i> {tr}Processsing Payment...{/tr}");
+	$('#payment-submit-btn').html("<i class=\"fa fal fa-spinner fa-spin\"></i> {tr}Processsing Payment...{/tr}");
 	$('#payment-submit-btn').prop("disabled",true);
 	return true;
 {rdelim}

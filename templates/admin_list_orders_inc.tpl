@@ -10,7 +10,7 @@
 
 {html_options class="form-control" name="orders_status_id" options=$commerceStatuses selected=$smarty.session.orders_status_id|default:'all'}
 
-<label class="checkbox"><input type="checkbox" name="orders_products" value="1" {if $smarty.session.orders_products}checked{/if}> <i class="icon-list"></i></label>
+<label class="checkbox"><input type="checkbox" name="orders_products" value="1" {if $smarty.session.orders_products}checked{/if}> <i class="fa fal fa-list"></i></label>
 
 <input class="btn btn-default btn-sm" type="submit" value="Go" name="list_filter"/>
 {/form}

@@ -153,8 +153,8 @@
 		<h3>{tr}Continue to Step 3{/tr}</h3>
 		<!--<p>{tr}Confirm your order{/tr} </p>-->
 		<div class="form-group submit">
-			<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn btn-default"><i class="icon-arrow-left"></i> {tr}Back{/tr}</a>
-			<button class="btn btn-primary pull-right" value="Continue"/>{tr}Continue{/tr} <i class='icon-arrow-right'></i></button>
+			<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn btn-default"><i class="fa fal fa-arrow-left"></i> {tr}Back{/tr}</a>
+			<button class="btn btn-primary pull-right" value="Continue"/>{tr}Continue{/tr} <i class='fa fal fa-arrow-right'></i></button>
 		</div>
 	</div>
 {/form}

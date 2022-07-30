@@ -97,8 +97,8 @@ require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 				<td><?php echo $curHash['title'] . ($curCode==DEFAULT_CURRENCY ?' (' . TEXT_DEFAULT . ')':'')?></td>
 				<td class="text-right"><?php echo $currencies->format($curHash['currency_value'], false, $curCode ); ?></td>
 				<td class="text-center">
-					<a href="<?php echo zen_href_link_admin(FILENAME_CURRENCIES, 'action=edit&code=' . $curCode)?>" class="icon"><i class="icon-pencil"></i></a>
-					<a href="<?php echo zen_href_link_admin(FILENAME_CURRENCIES, 'action=delete&code=' . $curCode)?>" class="icon"><i class="icon-trash"></i></a>
+					<a href="<?php echo zen_href_link_admin(FILENAME_CURRENCIES, 'action=edit&code=' . $curCode)?>" class="icon"><i class="fa fal fa-pencil"></i></a>
+					<a href="<?php echo zen_href_link_admin(FILENAME_CURRENCIES, 'action=delete&code=' . $curCode)?>" class="icon"><i class="fa fal fa-trash"></i></a>
 				</td>
 			</tr>
 <?php

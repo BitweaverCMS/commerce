@@ -48,7 +48,7 @@
 			<div class="col-xs-4 col-sm-1">
 				{forminput label="checkbox"}
 					<input type="checkbox" name="cart_delete[]" value="{$productsKey}">
-					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=shopping_cart&remove_product={$productsKey}">{booticon iname="icon-trash icon-large"  package="icons"  iexplain="Remove from cart"}</a>
+					<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=shopping_cart&remove_product={$productsKey}">{booticon iname="fa-trash" class="fa-large" iexplain="Remove from cart"}</a>
 				{/forminput}
 			</div>
 		</div>

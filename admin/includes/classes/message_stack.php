@@ -46,13 +46,13 @@
 
     function add($message, $type = 'error') {
       if ($type == 'error') {
-        $this->errors[] = array('params' => 'class="alert alert-danger"', 'text' => '<i class=" icon-minus-sign"></i> ' . $message);
+        $this->errors[] = array('params' => 'class="alert alert-danger"', 'text' => '<i class="fa fal fa-circle-minus"></i> ' . $message);
       } elseif ($type == 'warning') {
-        $this->errors[] = array('params' => 'class="alert alert-warning"', 'text' => '<i class=" icon-exclamation-sign"></i> ' . $message);
+        $this->errors[] = array('params' => 'class="alert alert-warning"', 'text' => '<i class="fa fal fa-exclamation-sign"></i> ' . $message);
       } elseif ($type == 'success') {
-        $this->errors[] = array('params' => 'class="alert alert-success"', 'text' => '<i class="icon-ok-sign"></i> ' . $message);
+        $this->errors[] = array('params' => 'class="alert alert-success"', 'text' => '<i class="fa fal fa-ok-sign"></i> ' . $message);
       } elseif ($type == 'caution') {
-        $this->errors[] = array('params' => 'class="alert alert-info"', 'text' => '<i class="icon-info-sign"></i> ' . $message);
+        $this->errors[] = array('params' => 'class="alert alert-info"', 'text' => '<i class="fa fal fa-info-sign"></i> ' . $message);
       } else {
         $this->errors[] = array('params' => 'class="alert alert-danger"', 'text' => $message);
       }
