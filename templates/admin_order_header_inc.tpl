@@ -18,11 +18,11 @@ function editAddress( pAddress ) {
 		<h4>{tr}Customer{/tr}</h4>
 		{displayname hash=$order->customer} (ID: {$order->customer.user_id})
 		<a href="list_orders.php?user_id={$order->customer.user_id}">{booticon iname="fa-clock" iexplain="Customer Sales History"}</a>
-		{smartlink ipackage=liberty ifile="list_content.php" user_id=$order->customer.user_id ititle="User Content" booticon="list"}
-		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" booticon="user-md"} 
-		{smartlink ipackage=users ifile="preferences.php" view_user=$order->customer.user_id ititle="Edit User" booticon="pen-to-square"} 
-		{smartlink ipackage=users ifile="admin/user_activity.php" user_id=$order->customer.user_id ititle="User Activity" booticon="bolt"}
-		{smartlink ipackage=users ifile="admin/assign_user.php" assign_user=$order->customer.user_id ititle="Assume User" booticon="key"}
+		{smartlink ipackage=liberty ifile="list_content.php" user_id=$order->customer.user_id ititle="User Content" booticon="fa-list"}
+		{smartlink ipackage=users ifile="admin/index.php" assume_user=$order->customer.user_id ititle="Assume User Identity" booticon="fa-user-doctor"} 
+		{smartlink ipackage=users ifile="preferences.php" view_user=$order->customer.user_id ititle="Edit User" booticon="fa-pen-to-square"} 
+		{smartlink ipackage=users ifile="admin/user_activity.php" user_id=$order->customer.user_id ititle="User Activity" booticon="fa-bolt"}
+		{smartlink ipackage=users ifile="admin/assign_user.php" assign_user=$order->customer.user_id ititle="Assume User" booticon="fa-key"}
 		<br/>
 {if $order->customer.telephone}
 	{$order->customer.telephone}<br/>
