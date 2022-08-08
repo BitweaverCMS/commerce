@@ -87,7 +87,7 @@ define('HEADING_TITLE', ( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] :
 
 if( !empty( $order ) ) {
 	require( BITCOMMERCE_PKG_CLASS_PATH.'CommerceReview.php' );
-	$reviewListHash = array( 'orders_id' => $order->mOrdersId );
+	$reviewListHash = array( 'customers_id' => $order->customer['customers_id'] );
 	$gBitSmarty->assign( 'orderReviews', CommerceReview::getList( $reviewListHash ) );
 
 	require( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );

@@ -10,7 +10,7 @@
 		<input name="notify" type="checkbox"> {booticon iname="fa-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
 	{/forminput}
 	{forminput label="checkbox"}
-		<input type="checkbox" name="adjust_total" value="y" onclick="$('#additional-charge').toggle()" id="adjust_total"/>{booticon iname="fa-square-plus"} {tr}Adjust Order Total{/tr}
+		<input type="checkbox" name="adjust_total" value="y" onclick="$('#additional-charge').toggle()" id="adjust_total"/>{booticon iname="fa-money-check-dollar-pen"} {tr}Adjust Order Total{/tr}
 	{/forminput}
 	<div id="additional-charge" style="display:none">
 		{forminput label="checkbox"}

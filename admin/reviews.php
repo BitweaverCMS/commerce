@@ -13,22 +13,27 @@
 require('includes/application_top.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceReview.php' );
 
+$title = HEADING_TITLE;
 $mid = 'bitpackage:bitcommerce/admin_reviews_list.tpl';
 
 $getAction = !empty( $_REQUEST['action'] ) ? $_REQUEST['action'] : '';
 
 switch ($getAction) {
+	case 'new':
+	case 'edit':
+		$mid = 'bitpackage:bitcommerce/admin_reviews_edit.tpl';
+		break;
 	default:
 		if( $reviewsList = CommerceReview::getList( $_REQUEST ) ) {
 			$gBitSmarty->assign_by_ref( 'reviewsList', $reviewsList );
 		}
-			if( isset( $_REQUEST['listInfo'] ) ) {
-				$_REQUEST['listInfo']['block_pages'] = 3;
-				$_REQUEST['listInfo']['item_name'] = 'coupons';
-				$gBitSmarty->assign_by_ref( 'listInfo', $_REQUEST['listInfo'] );
-			}
 
-		$title = HEADING_TITLE;
+		if( isset( $_REQUEST['listInfo'] ) ) {
+			$_REQUEST['listInfo']['block_pages'] = 3;
+			$_REQUEST['listInfo']['item_name'] = 'coupons';
+			$gBitSmarty->assign_by_ref( 'listInfo', $_REQUEST['listInfo'] );
+		}
+
 		$mid = 'bitpackage:bitcommerce/admin_reviews_list.tpl';
 		break;
 }
@@ -40,7 +45,6 @@ require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php');
 
 exit;
 
-$action = (isset($_GET['action']) ? $_GET['action'] : '');
 $status_filter = (isset($_GET['status']) ? $_GET['status'] : '');
 $status_list[] = array('id' => 1, 'text' => TEXT_PENDING_APPROVAL);
 $status_list[] = array('id' => 2, 'text' => TEXT_APPROVED);
@@ -48,33 +52,31 @@ $status_list[] = array('id' => 2, 'text' => TEXT_APPROVED);
 $rID = BitBase::getIdParameter( $_GET, 'rID' );
 $pageOffset = BitBase::getParameter( $_GET, 'page', 1 );
 
-if (zen_not_null($action)) {
-	switch ($action) {
-		case 'setflag':
-			zen_set_reviews_status($_GET['id'], $_GET['flag']);
+switch ($getAction) {
+	case 'setflag':
+		zen_set_reviews_status($_GET['id'], $_GET['flag']);
 
-			zen_redirect(zen_href_link_admin(FILENAME_REVIEWS, (isset($pageOffset) ? 'page=' . $pageOffset . '&' : '') . 'rID=' . $_GET['id'], 'NONSSL'));
-			break;
-		case 'update':
-			$reviews_rating = zen_db_prepare_input($_POST['reviews_rating']);
-			$reviews_text = zen_db_prepare_input($_POST['reviews_text']);
+		zen_redirect(zen_href_link_admin(FILENAME_REVIEWS, (isset($pageOffset) ? 'page=' . $pageOffset . '&' : '') . 'rID=' . $_GET['id'], 'NONSSL'));
+		break;
+	case 'update':
+		$reviews_rating = zen_db_prepare_input($_POST['reviews_rating']);
+		$reviews_text = zen_db_prepare_input($_POST['reviews_text']);
 
-			$gBitDb->Execute("update " . TABLE_REVIEWS . " set reviews_rating = '" . zen_db_input($reviews_rating) . "', `last_modified` = now() where reviews_id = '" . (int)$reviews_id . "'");
+		$gBitDb->Execute("update " . TABLE_REVIEWS . " set reviews_rating = '" . zen_db_input($reviews_rating) . "', `last_modified` = now() where reviews_id = '" . (int)$reviews_id . "'");
 
-			zen_redirect(zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $rID));
-			break;
-		case 'deleteconfirm':
-			// demo active test
-			if (zen_admin_demo()) {
-				$_GET['action']= '';
-				$messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-				zen_redirect(zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset));
-			}
-			$gBitDb->Execute("delete from " . TABLE_REVIEWS . " where reviews_id = ?", array( $rID ) );
-
+		zen_redirect(zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $rID));
+		break;
+	case 'deleteconfirm':
+		// demo active test
+		if (zen_admin_demo()) {
+			$_GET['action']= '';
+			$messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
 			zen_redirect(zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset));
-			break;
-	}
+		}
+		$gBitDb->Execute("delete from " . TABLE_REVIEWS . " where reviews_id = ?", array( $rID ) );
+
+		zen_redirect(zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset));
+		break;
 }
 
 require(DIR_FS_ADMIN_INCLUDES . 'header.php'); 
@@ -95,16 +97,14 @@ if (isset($_GET['search']) && zen_not_null($_GET['search'])) {
 ?>
 	</form>
 <?php
-if ($action == 'edit') {
+if ($getAction == 'edit') {
 
 	$reviews = $gBitDb->Execute("select r.`reviews_id`, r.`products_id`, r.reviewer_name, r.`date_reviewed`,
 											r.`last_modified`, r.reviews_read, r.reviews_text, r.reviews_rating
 									 from " . TABLE_REVIEWS . " r
 									 where r.`reviews_id` = '" . (int)$rID . "'");
 
-	$products = $gBitDb->Execute("select `products_image`
-									  from " . TABLE_PRODUCTS . "
-									  where `products_id` = '" . (int)$reviews->fields['products_id'] . "'");
+	$products = $gBitDb->Execute("SELECT `products_image` FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( (int)$reviews->fields['products_id'] ) );
 
 	$products_name = $gBitDb->Execute("select `products_name`
 										   from " . TABLE_PRODUCTS_DESCRIPTION . "
@@ -132,7 +132,7 @@ if ($action == 'edit') {
 			<td align="right" class="main"><?php echo zen_draw_hidden_field('reviews_id', $reviewHash['reviews_id']) . zen_draw_hidden_field('products_id', $reviewHash['products_id']) . zen_draw_hidden_field('reviewer_name', $reviewHash['reviewer_name']) . zen_draw_hidden_field('products_name', $reviewHash['products_name']) . zen_draw_hidden_field('products_image', $reviewHash['products_image']) . zen_draw_hidden_field('date_reviewed', $reviewHash['date_reviewed']) . zen_image_submit('button_preview.gif', IMAGE_PREVIEW) . ' <a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $rID) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>'; ?></td>
 		</form></tr>
 <?php
-} elseif ($action == 'preview') {
+} elseif ($getAction == 'preview') {
 	if (zen_not_null($_POST)) {
 		$reviewHash = $_POST;
 		$reviewHash['reviews_id'] = $_REQUEST['rID'];
@@ -236,8 +236,8 @@ if ($action == 'edit') {
 	$heading = array();
 	$contents = array();
 
-	if( !empty( $action ) ) {
-	switch ($action) {
+	if( !empty( $getAction ) ) {
+	switch ($getAction) {
 		case 'delete':
 			$heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_REVIEW . '</b>');
 eb( "NOT IMPLEMENTED" );
@@ -248,7 +248,7 @@ eb( "NOT IMPLEMENTED" );
 			$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_REVIEWS, 'page=' . $pageOffset . '&rID=' . $rInfo->reviews_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 			break;
 		default:
-eb( $action, "NOT IMPLEMENTED" );
+eb( $getAction, "NOT IMPLEMENTED" );
 		if (isset($rInfo) && is_object($rInfo)) {
 			$heading[] = array('text' => '<b>' . $rInfo->products_name . '</b>');
 
