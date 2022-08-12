@@ -284,11 +284,14 @@ if( $order_exists ) {
 	}
 
 	$siblingOrderIds = array();
+	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderManager.php' );
+	$orderManager = new CommerceOrderManager();
+/*
 	if( $gCommerceSystem->getConfig( 'DEFAULT_ORDERS_STATUS_ID' ) == $order->getStatus() ) {
-		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderManager.php' );
-		$orderManager = new CommerceOrderManager();
 		$siblingOrderIds = $orderManager->getOrdersToAddress( $order->delivery, $order->getStatus() );
 	}
+*/
+	$siblingOrderIds = $orderManager->getOrdersToAddress( $order->delivery, 39 ); // Crude hard code 
 	$gBitSmarty->assign( 'siblingOrderIds', $siblingOrderIds );
 
 	$gBitSmarty->assign( 'isForeignCurrency', !empty( $order->info['currency'] ) && $order->info['currency'] != DEFAULT_CURRENCY );
