@@ -63,7 +63,7 @@ function getShippingQuotes( pOrderId ) {
 <input class="btn btn-sm btn-default" type="submit" name="update_deadline" value="Update Deadline">
 </form>
 </div>
-
+</header>
 
 {if count($siblingOrderIds) > 1}
 <div class="alert alert-warning">
@@ -71,7 +71,7 @@ function getShippingQuotes( pOrderId ) {
 	{foreach from=$siblingOrderIds item=$sibOrderId}{if $sibOrderId != $order->mOrdersId} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$sibOrderId}">{$sibOrderId}</a> {/if}{/foreach}
 </div>
 {/if}
-</header>
+
 {if $orderReviews}
 <div class="box" style="display:none;overflow:hidden;" id="order-review-{$order->mOrdersId}">
 <ol>
