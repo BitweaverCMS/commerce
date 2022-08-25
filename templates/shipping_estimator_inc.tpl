@@ -9,7 +9,7 @@ function shippingQuoteAddressChange( pForm ) {
 	}
 }
 function shippingQuoteUpdate( pForm ) {
-	$('#shippingquotes').html('{/literal}<p class="alert alert-info">{booticon iclass="fa-spinner" class="fa-spin"} {tr}Getting Shipping Estimate{/tr}</p>{literal}');
+	$('#shippingquotes').html('{/literal}<p class="alert alert-info">{booticon iname="fa-spinner" class="fa-spin"} {tr}Getting Shipping Estimate{/tr}</p>{literal}');
 	jQuery.ajax({
 		data: $(pForm).serialize(),
 		url: "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}shipping_estimator.php{literal}",
