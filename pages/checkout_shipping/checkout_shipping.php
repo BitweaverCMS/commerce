@@ -18,7 +18,7 @@ if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empt
 			// process a new address
 			$process = true;
 			if( $gBitCustomer->storeAddress( $_REQUEST ) ) {
-				$_SESSION['sendto'] = $_REQUEST['address'];
+				$_SESSION['sendto'] = $_REQUEST['address_book_id'];
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING));
 			} else {
 				$gBitSmarty->assign( 'addressErrors', $gBitCustomer->mErrors );
