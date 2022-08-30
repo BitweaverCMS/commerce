@@ -119,6 +119,9 @@ if( isset( $_REQUEST['change_address'] ) ) {
 				if ($_SESSION['shipping'] == 'free_free') {
 					$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
 					$quote[0]['methods'][0]['cost'] = '0';
+					$quote[0]['methods'][0]['id'] = 'free';
+					$quote[0]['id'] = 'free';
+					$quote[0]['module'] = 'freeshipper';
 				} elseif( !empty( $_SESSION['shipping'] ) ) {
 					list($module, $method) = explode('_', $_SESSION['shipping'], 2);
 					$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
