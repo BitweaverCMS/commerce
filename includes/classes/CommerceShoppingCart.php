@@ -202,10 +202,10 @@ class CommerceShoppingCart extends CommerceOrderBase {
 	public static function getUniqueCartItemKey( $prid, $params ) {
 		if( (is_array($params)) && (!strstr($prid, ':')) ) {
 			$uprid = $prid;
-			while (list($option, $value) = each($params)) {
+			foreach( $params as $option=>$value ) {
 				if (is_array($value)) {
-					while (list($opt, $val) = each($value)) {
-					$uprid .= '{' . $option . '}' . trim($opt).':'.trim($val);
+					foreach( $value as $opt=>$val ) {
+						$uprid .= '{' . $option . '}' . trim($opt).':'.trim($val);
 					}
 				} else {
 					$uprid .= '{' . $option . '}' . trim($value);
@@ -337,8 +337,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$total_items = 0;
 		if (is_array($this->contents)) {
 			reset($this->contents);
-			while (list($cartItemKey, ) = each($this->contents)) {
-				$total_items += $this->get_quantity($cartItemKey);
+			foreach( array_keys( $this->contents ) AS $k ) {
+				$total_items += $this->contents[$k]['products_quantity'];
 			}
 		}
 
@@ -370,7 +370,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$product_id_list = '';
 		if (is_array($this->contents)) {
 			reset($this->contents);
-			while (list($cartItemKey, ) = each($this->contents)) {
+			foreach( array_keys( $this->contents ) AS $cartItemKey ) {
 				$product_id_list .= ', ' . zen_db_input($cartItemKey);
 			}
 		}
@@ -504,7 +504,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 					}
 					if (isset($this->contents[$cartItemKey]['attributes'])) {
 						reset($this->contents[$cartItemKey]['attributes']);
-						while (list(, $value) = each($this->contents[$cartItemKey]['attributes'])) {
+						foreach( $this->contents[$cartItemKey]['attributes'] as $value ) {
 							$virtual_check_query = "SELECT COUNT(*) as `total`
 													FROM " . TABLE_PRODUCTS_ATTRIBUTES . " pa
 														INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad ON(pa.`products_options_values_id` = pad.`products_options_values_id`)
@@ -643,7 +643,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 
 		// reset($this->contents); // breaks cart
 		$check_contents = $this->contents;
-		while (list($pProductsKey, ) = each($check_contents)) {
+		foreach( array_keys( $check_contents ) AS $pProductsKey ) {
 			$test_id = zen_get_prid($pProductsKey);
 			if ($test_id == $chk_products_id) {
 				$in_cart_mixed_qty += $check_contents[$pProductsKey]['products_quantity'];
@@ -689,7 +689,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$in_cart_check_qty=0;
 
 		reset($this->contents);
-		while (list($cartItemKey, ) = each($this->contents)) {
+		foreach( array_keys( $this->contents ) AS $cartItemKey ) {
 			$testing_id = zen_get_prid($cartItemKey);
 			// check if field it true
 			$product_check = $this->mDb->getOne("select " . $check_what . " as `check_it` from " . TABLE_PRODUCTS .  " where `products_id` = ?" , array( $testing_id ) );

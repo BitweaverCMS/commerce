@@ -119,7 +119,8 @@ class CommerceShipping extends BitSingleton {
 
 	function quoteToSession( $quote ) {
 		unset( $_SESSION['shipping'] );
-		if( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) ) {
+
+		if( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) && isset( $quote[0]['id'] ) ) {
 			$_SESSION['shipping'] = array(
 				'id' => $quote[0]['id'].'_'.$quote[0]['methods'][0]['id'],
 				'title' => (($quote[0]['module'] == $quote[0]['methods'][0]['title']) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),

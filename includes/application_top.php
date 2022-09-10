@@ -233,7 +233,7 @@ if (isset($_REQUEST['action'])) {
 
 			if( empty( $the_list ) ) {
 				// no errors
-				zen_redirect(zen_href_link($goto, zen_get_all_get_params($parameters)));
+				zen_redirect(zen_href_link($goto));
 			} else {
 				// errors - display popup message
 			}
