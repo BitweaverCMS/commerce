@@ -173,11 +173,10 @@ if (isset($_REQUEST['action'])) {
 		}
 	}
 
-
 	switch( $_REQUEST['action'] ) {
 		// customer adds a product FROM the products page
 		case 'add_product' :
-			if (isset($_POST['products_id']) && is_numeric($_POST['products_id'])) {
+			if( $productsId = BitBase::getIdParameter( $_REQUEST, 'products_id' ) ) {
 				// verify attributes and quantity first
 				$the_list = '';
 				if (isset($_REQUEST['id'])) {
@@ -185,9 +184,8 @@ if (isset($_REQUEST['action'])) {
 						if( is_array( $value ) ) {
 							$value = current( $value );
 						}
-						$check = zen_get_attributes_valid($_POST['products_id'], $key, $value);
+						$check = zen_get_attributes_valid($productsId, $key, $value);
 						if ($check == false) {
-							// zen_get_products_name($_POST['products_id']) .
 							$the_list .= '<div class="alert alert-danger">' . TEXT_ERROR_OPTION_FOR . TEXT_INVALID_SELECTION_LABELED . ' : ' . $key .' = '. $value . '</div>';
 						}
 					}
@@ -227,7 +225,7 @@ if (isset($_REQUEST['action'])) {
 							}
 						}
 					}
-					$gBitCustomer->mCart->addToCart( $_POST['products_id'], $_POST['cart_quantity'], $cartAttributes );
+					$gBitCustomer->mCart->addToCart( $productsId, $_REQUEST['cart_quantity'], $cartAttributes );
 				}
 			}
 
