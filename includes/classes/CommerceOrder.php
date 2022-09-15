@@ -1466,6 +1466,8 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 			$this->mErrors['combine'] = "Order $pParamHash[source_orders_id] does not have status " . zen_get_order_status_name( DEFAULT_ORDERS_STATUS_ID );
 		} elseif( $destHash['orders_status_id'] != DEFAULT_ORDERS_STATUS_ID ) {
 			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] does not have status " . zen_get_order_status_name( DEFAULT_ORDERS_STATUS_ID );
+		} elseif( $pParamHash['dest_orders_id'] == $pParamHash['source_orders_id'] ) {
+			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] cannot be combined into itself";
 		} elseif( ($sourceHash['delivery_street_address'] == $destHash['delivery_street_address']) &&
 			($sourceHash['delivery_suburb'] == $destHash['delivery_suburb']) &&
 			($sourceHash['delivery_city'] == $destHash['delivery_city']) &&
@@ -1480,6 +1482,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 			// Move products and attributes over to new order
 			$this->mDb->query( "UPDATE ". TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
 			$this->mDb->query( "UPDATE ". TABLE_ORDERS_PRODUCTS . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
+			$this->mDb->query( "UPDATE ". TABLE_REVIEWS . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
 
 			if( $rs = $this->mDb->query( "SELECT cot.`orders_total_id`, cot.* FROM " . TABLE_ORDERS_TOTAL . " cot WHERE `orders_id`=?", array( $pParamHash['source_orders_id'] ) ) ) {
 				while( $sourceTotal = $rs->fetchRow() ) {
