@@ -74,6 +74,12 @@ function editAddress( pAddress ) {
 			<div class="pull-left">{tr}IP{/tr}:</div>
 			<div class="pull-right"> {$order->info.ip_address}</div>
 		</div>
+		{if $order->info.currency != $smarty.const.DEFAULT_CURRENCY}
+		<div class="clear">
+			<div class="pull-left">{tr}Currency{/tr}:</div>
+			<div class="pull-right">{$currencies->format(1.0,true,$order->info.currency,$order->info.currency_value)} / {$currencies->format(1.0,true,$smarty.const.DEFAULT_CURRENCY)}</div>
+		</div>
+		{/if}
 	</div>
 </div>
 
