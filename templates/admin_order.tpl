@@ -84,58 +84,88 @@ function getShippingQuotes( pOrderId ) {
 {/if}
 {include file="bitpackage:bitcommerce/admin_order_header_inc.tpl"}
 
-<table class="table data order-items">
-	<tr>
-		<th></th>
-		<th class="text-left">{$smarty.const.TABLE_HEADING_PRODUCTS}, {$smarty.const.TABLE_HEADING_PRODUCTS_MODEL}</th>
-		<th class="text-right">{tr}Price{/tr}</th>
-		<th class="text-right">{tr}Total{/tr}</th>
-	</tr>
+<table class="table data order-items mt-2">
 {assign var=couponAmount value=0}
 {assign var=giftAmount value=0}
 
 {foreach from=$order->contents item=ordersProduct key=opid}
+	{assign var=product value=$ordersProduct.products_id|bc_get_commerce_product}
 <tr>
-<td class="text-right" valign="top">{$ordersProduct.products_quantity}&nbsp;x
-	<div>{booticon href="product_history.php?products_id=`$ordersProduct.products_id`" iname="fa-clock" iexplain="Products History"}</div>
+<td rowspan="2">
+	<a href="{$product->getDisplayUrl()}"><img src="{$product->getThumbnailUrl('avatar')}" class="img-responsive center-block" style="max-width:125px;max-height:125px;" alt="{$product->getTitle()|escape}"/>
 </td>
-<td valign="top"><a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a>
-	<br/>{$ordersProduct.model}{if $ordersProduct.products_version}, v{$ordersProduct.products_version}{/if}{if $ordersProduct.products_commission}{if $ordersProduct.products_commission}, {$currencies->format($ordersProduct.products_commission)} {tr}Commission{/tr}{/if}{/if}</td>
+<td valign="top" style="width:100%">
+	<span class="inline-block pull-right">{booticon href="product_history.php?products_id=`$ordersProduct.products_id`" iname="fa-clock" iexplain="Products History"}</span>
+<a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.name|default:"Product `$ordersProduct.products_id`"}</a> {if $ordersProduct.model}, <span class="small">{$ordersProduct.model}{/if}{if $ordersProduct.products_commission}{if $ordersProduct.products_commission}{if $ordersProduct.products_commission > 0}, {$currencies->format($ordersProduct.products_commission)} {tr}Commission{/tr}{/if}{/if}{/if}</span>{if $ordersProduct.products_version > 1} <span style="font-size:x-small" class="badge">v {$ordersProduct.products_version}</span>{/if}</td>
 <td class="text-right" valign="top">
-	{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($ordersProduct.final_price,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
-	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($ordersProduct.onetime_charges,true,$smarty.const.DEFAULT_CURRENCY)}{/if}{/if}
+ {$ordersProduct.products_quantity}&nbsp;x 
+</td>
+<td rowspan="2" class="text-right{if (float)$ordersProduct.final_price== 0} danger{/if}" valign="top">
+	{$currencies->format($ordersProduct.final_price,true,$order->info.currency, $order->info.currency_value)}
+	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
 	{assign var=finalPlusTax value=$ordersProduct.final_price|zen_add_tax:$ordersProduct.tax}
-{if $ordersProduct.tax}
-	{$ordersProduct.tax|zen_display_tax_value}%
-	( {$currencies->format($finalPlusTax, true, $order->info.currency, $order->info.currency_value)} )
-	{if $ordersProduct.onetime_charges}
-		{assign var=onetimePlusTax value=$ordersProduct.onetime_charges|zen_add_tax:$ordersProduct.tax}
-		{if $ordersProduct.onetime_charges != $onetimePlusTax}
-			<br /> {$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($onetimePlusTax,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+	{if $ordersProduct.tax}
+		{$ordersProduct.tax|zen_display_tax_value}%
+		( {$currencies->format($finalPlusTax, true, $order->info.currency, $order->info.currency_value)} )
+		{if $ordersProduct.onetime_charges}
+			{assign var=onetimePlusTax value=$ordersProduct.onetime_charges|zen_add_tax:$ordersProduct.tax}
+			{if $ordersProduct.onetime_charges != $onetimePlusTax}
+				<br /> {$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}
+			{/if}
 		{/if}
 	{/if}
+	{if $ordersProduct.products_quantity > 1}
+	<div class="small">
+		{assign var=finalQty value=$ordersProduct.final_price*$ordersProduct.products_quantity}
+		{$currencies->format($finalQty, true, $order->info.currency, $order->info.currency_value)}
+		{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{/if}
+		{assign var=finalQtyPlusTax value=$finalPlusTax*$ordersProduct.products_quantity} 
+		{if $ordersProduct.tax}
+			{$currencies->format($finalQtyPlusTax,true,$order->info.currency,$order->info.currency_value)}
+			{if $ordersProduct.onetime_charges}<br />{$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}{/if}
+		{/if}
+	</div>
 {/if}
 </td>
-<td class="text-right" valign="top">
-	{assign var=finalQty value=$ordersProduct.final_price*$ordersProduct.products_quantity}
-	{$currencies->format($finalQty, true, $order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($finalQty,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
-	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges, true, $order->info.currency, $order->info.currency_value)}{if $isForeignCurrency} /{$currencies->format($ordersProduct.onetime_charges,true,$smarty.const.DEFAULT_CURRENCY)}{/if}{/if}
-	{assign var=finalQtyPlusTax value=$finalPlusTax*$ordersProduct.products_quantity} 
+
+{if $isForeignCurrency}
+<td rowspan="2" class="text-right{if (float)$ordersProduct.final_price== 0} danger{/if}" valign="top">
+	{$currencies->format($ordersProduct.final_price,true,$smarty.const.DEFAULT_CURRENCY)}
+	{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+	{assign var=finalPlusTax value=$ordersProduct.final_price|zen_add_tax:$ordersProduct.tax}
 	{if $ordersProduct.tax}
-		{$currencies->format($finalQtyPlusTax,true,$order->info.currency,$order->info.currency_value)}
-		{if $ordersProduct.onetime_charges}<br />{$currencies->format($onetimePlusTax,true,$order->info.currency,$order->info.currency_value)}{/if}
-		{if $isForeignCurrency} ( {$currencies->format($finalQtyPlusTax,true,$smarty.const.DEFAULT_CURRENCY)} ){/if}
+		{$ordersProduct.tax|zen_display_tax_value}%
+		( {$currencies->format($finalPlusTax, true, $smarty.const.DEFAULT_CURRENCY)} )
+		{if $ordersProduct.onetime_charges}
+			{assign var=onetimePlusTax value=$ordersProduct.onetime_charges|zen_add_tax:$ordersProduct.tax}
+			{if $ordersProduct.onetime_charges != $onetimePlusTax}
+				<br />{$currencies->format($onetimePlusTax,true,$smarty.const.DEFAULT_CURRENCY)}
+			{/if}
+		{/if}
+	{/if}
+	{if $ordersProduct.products_quantity > 1}
+	<div class="small">
+		{assign var=finalQty value=$ordersProduct.final_price*$ordersProduct.products_quantity}
+		{$currencies->format($finalQty,true,$smarty.const.DEFAULT_CURRENCY)}
+		{if $ordersProduct.onetime_charges}<br />{$currencies->format($ordersProduct.onetime_charges,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+		{assign var=finalQtyPlusTax value=$finalPlusTax*$ordersProduct.products_quantity} 
+		{if $ordersProduct.tax}
+			{$currencies->format($finalQtyPlusTax,true,$smarty.const.DEFAULT_CURRENCY)}
+			{if $ordersProduct.onetime_charges}<br />{$currencies->format($onetimePlusTax,true,$smarty.const.DEFAULT_CURRENCY)}{/if}
+			
+		{/if}
+	</div>
 	{/if}
 </td>
+{/if}
 </tr>
 <tr>
-	<td class="supplemental" colspan="4">
+	<td class="supplemental" colspan="">
 		{if !empty( $ordersProduct.attributes )}
 		<ul class="list-unstyled">
 		{section loop=$ordersProduct.attributes name=a}
 				<li class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
-					<a class="icon" href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].products_options|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].products_options_values|escape:'quotes'|escape:'htmlall'}');"><i class="fa fal fa-trash"></i></a>
-					<small>{$ordersProduct.attributes[a].products_options}: {$ordersProduct.attributes[a].products_options_values}
+					<a class="icon" href="{$smarty.server.REQUEST_URI}&amp;del_ord_prod_att_id={$ordersProduct.attributes[a].orders_products_attributes_id}" onclick="return deleteOption({$ordersProduct.attributes[a].orders_products_attributes_id},'{$ordersProduct.attributes[a].products_options|escape:'quotes'|escape:'htmlall'}: {$ordersProduct.attributes[a].products_options_values|escape:'quotes'|escape:'htmlall'}');"><i class="fa fal fa-trash"></i></a> <small>{$ordersProduct.attributes[a].products_options}: {$ordersProduct.attributes[a].products_options_values}
 						{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
 						{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$currencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
 						{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert alert-warning">{tr}FREE{/tr}</span>{/if}
@@ -181,9 +211,14 @@ function getShippingQuotes( pOrderId ) {
 			<span id="shippingquote"></span>
 		{/if}
 	</td>
-	<td class="text-right {'ot_'|str_replace:'':$order->totals[t].class} value">
-		{if $isForeignCurrency}{$currencies->format($order->totals[t].orders_value,true,$order->info.currency,$order->info.currency_value)}{/if} {$currencies->format($order->totals[t].orders_value)} 
+	<td class="text-right {'ot_'|str_replace:'':$order->totals[t].class} value{if (float)$order->totals[t].orders_value == 0} danger{/if}">
+		{$currencies->format($order->totals[t].orders_value,true,$order->info.currency,$order->info.currency_value)}
 	</td>
+{if $isForeignCurrency}
+	<td class="text-right {'ot_'|str_replace:'':$order->totals[t].class} value{if (float)$order->totals[t].orders_value == 0} danger{/if}">
+		{$currencies->format($order->totals[t].orders_value,true,$smarty.const.DEFAULT_CURRENCY)} 
+	</td>
+{/if} 
 </tr>
 {/section}
 {if !$hasShipping}
