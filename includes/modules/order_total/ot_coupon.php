@@ -270,8 +270,8 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 	function is_product_valid( $pProductHash, $coupon_id) {
 		$ret = FALSE;
 
-		// gifts are not valid, so only check non-gifts
-		if( !preg_match( '/^GIFT/', $pProductHash['products_model'] ) ) {
+		// Should be a product/class/category config if gifts are not valid, so only check non-gifts
+//		if( !preg_match( '/^GIFT/', $pProductHash['products_model'] ) ) {
 			if( is_numeric( $coupon_id ) ) {
 				$ret = TRUE;
 				$query = "SELECT * FROM " . TABLE_COUPON_RESTRICT . " WHERE `coupon_id` = ?  ORDER BY ".$this->mDb->convertSortmode( 'coupon_restrict_asc' );
@@ -339,8 +339,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 				// no restrictions
 				$ret = TRUE;
 			}
-		} else {
-		}
+//		}
 		return $ret;
 	}
 
