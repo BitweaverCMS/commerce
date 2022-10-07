@@ -38,6 +38,7 @@
 	{if $order.products}
 	{foreach from=$order.products item=product key=ordersProductsId name="orderproducts"}
 	{assign var=orderProduct value=CommerceProduct::getCommerceObject($product.products_id)}
+		{if $orderProduct}
 	<tr>
 		<td colspan="4">
 			<div class="row">
@@ -92,6 +93,7 @@
 			{/if}
 		{/if}
 	</tr>
+		{/if}
 	{/foreach}
 	{/if}
 {/foreach}
