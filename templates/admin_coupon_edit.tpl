@@ -21,7 +21,7 @@
 			{forminput}
 				{foreach from=$languages key=i item=lang}
 					{assign var=langId value=$lang.id}
-					<div><input type="text" class="form-control" name="coupon_name[{$langId}]" value="{$smarty.post.coupon_name.$langId|escape}"/> {$lang.name|escape}</div>
+					<div><input type="text" class="form-control" name="coupon_name[{$langId}]" maxlength="32" value="{$smarty.post.coupon_name.$langId|escape}"/> {$lang.name|escape}</div>
 				{/foreach}
 				{formhelp note=$smarty.const.COUPON_NAME_HELP}
 			{/forminput}
@@ -34,7 +34,6 @@
 					{assign var=langId value=$lang.id}
 					<div><input type="text" class="form-control" name="coupon_description[{$langId}]" value="{$smarty.post.coupon_description.$langId|escape}"/> {$lang.name|escape}</div>
 				{/foreach}
-				{formhelp note=$smarty.const.COUPON_NAME_HELP}
 			{/forminput}
 		</div>
 
