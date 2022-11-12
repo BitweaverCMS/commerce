@@ -111,17 +111,19 @@ class cc extends CommercePluginPaymentCardBase {
 
 			$ret = TRUE;
 			$logHash['trans_result'] = '1';
+			$logHash['trans_ref_id'] = 'NONE';
+			$logHash['trans_currency'] = $pOrder->getField( 'currency', DEFAULT_CURRENCY );
 			$logHash['is_success'] = 'y';
 			$logHash['payment_status'] = 'Success';
-			$order->info['payment_expires'] = $p['payment_expires'];
-			$order->info['payment_type'] = $_POST['payment_type'];
-			$order->info['payment_owner'] = $_POST['payment_owner'];
-			$order->info['cc_cvv'] = $_POST['cc_cvv'];
+			$pOrder->info['payment_expires'] = $_POST['payment_expires'];
+			$pOrder->info['payment_type'] = $_POST['payment_type'];
+			$pOrder->info['payment_owner'] = $_POST['payment_owner'];
+			$pOrder->info['cc_cvv'] = $_POST['cc_cvv'];
 
 			if (MODULE_PAYMENT_CC_STORE_NUMBER == 'True') {
-				$order->info['payment_number'] = $_POST['payment_number'];
+				$pOrder->info['payment_number'] = $_POST['payment_number'];
 			} else {
-				$order->info['payment_number'] = $this->privatizePaymentNumber( $_POST['payment_number'] );
+				$pOrder->info['payment_number'] = $this->privatizePaymentNumber( $_POST['payment_number'] );
 			}
 
 			$this->logTransaction( $logHash );
