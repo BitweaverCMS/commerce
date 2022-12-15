@@ -34,7 +34,8 @@ function currency_update_quotes() {
 	$output = array();
 	$server_used = 'exchangeratesapi'; // CURRENCY_SERVER_PRIMARY;
 	$quote_function = 'currency_' . $server_used . '_quote';
-	if( $currencies = $gBitDb->getAssoc("SELECT `code`, `title` FROM " . TABLE_CURRENCIES . " WHERE `code` != ?", array( DEFAULT_CURRENCY ) ) ) {
+	$apiKey = $gCommerceSystem->getConfig('CURRENCY_EXCHANGERATESAPI_KEY');
+	if( $apiKey && $currencies = $gBitDb->getAssoc("SELECT `code`, `title` FROM " . TABLE_CURRENCIES . " WHERE `code` != ?", array( DEFAULT_CURRENCY ) ) ) {
 		$rates = $quote_function( array_keys( $currencies ), DEFAULT_CURRENCY );
 		if( empty( $rates ) ) {
 			if( $server_used = $gCommerceSystem->getConfig( 'CURRENCY_SERVER_BACKUP' ) ) {
@@ -69,13 +70,15 @@ function currency_exchangeratesapi_quote( $pSymbols, $base = DEFAULT_CURRENCY ) 
 	$rates = array();
 
 	$searchPairs = implode( ',', $pSymbols );
-	
-	$exUrl = 'http://api.exchangeratesapi.io/v1/latest?access_key='.$gCommerceSystem->getConfig('CURRENCY_EXCHANGERATESAPI_KEY').'&base='.$base.'&symbols='.$searchPairs;
-	if( $jsonQuotes = file_get_contents( $exUrl ) ) {
-		if( $quoteHash = json_decode( $jsonQuotes, true ) ) {
-			if( !empty( $quoteHash['rates'] ) ) {
-				foreach( $quoteHash['rates'] as $sym=>$quote ) {
-					$rates[$sym] = $quote;
+
+	if( $apiKey = $gCommerceSystem->getConfig('CURRENCY_EXCHANGERATESAPI_KEY') ) {	
+		$exUrl = 'http://api.exchangeratesapi.io/v1/latest?access_key='.$apiKey.'&base='.$base.'&symbols='.$searchPairs;
+		if( $jsonQuotes = file_get_contents( $exUrl ) ) {
+			if( $quoteHash = json_decode( $jsonQuotes, true ) ) {
+				if( !empty( $quoteHash['rates'] ) ) {
+					foreach( $quoteHash['rates'] as $sym=>$quote ) {
+						$rates[$sym] = $quote;
+					}
 				}
 			}
 		}
