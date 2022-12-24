@@ -115,10 +115,9 @@ if( isset( $_REQUEST['change_address'] ) ) {
 		if ( ($gCommerceShipping->isShippingAvailable() > 0) || ($free_shipping == true) ) {
 			if ( (isset($_POST['shipping'])) && (strpos($_POST['shipping'], '_')) ) {
 				$_SESSION['shipping'] = $_POST['shipping'];
-
-				if ($_SESSION['shipping'] == 'free_free') {
+				if ($_SESSION['shipping'] == 'freeshipper_free') {
 					$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
-					$quote[0]['methods'][0]['cost'] = '0';
+					$quote[0]['methods'][0]['cost'] = 0;
 					$quote[0]['methods'][0]['id'] = 'free';
 					$quote[0]['id'] = 'free';
 					$quote[0]['module'] = 'freeshipper';
@@ -139,7 +138,11 @@ if( isset( $_REQUEST['change_address'] ) ) {
 			}
 		} else {
 			// not virtual product, but no shipping cost.
-			$_SESSION['shipping'] = (!$free_shipping ? 'free_free' : false);
+			if( !$free_shipping ) {
+				$_SESSION['shipping'] = array( 'id' => 'freeshipper_free', 'title' => 'Free Shipping', 'cost' => 0, 'code' => 'FREESHIP' );
+			} else {
+				$_SESSION['shipping'] = false;
+			}
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT));
 		}
 	}

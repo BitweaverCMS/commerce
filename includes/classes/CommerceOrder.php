@@ -554,7 +554,7 @@ class order extends CommerceOrderBase {
 
 		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php' );
 		global $gCommerceShipping;
-		
+
 		if( !empty( $_SESSION['shipping'] ) ) {
 			list($module, $method) = explode('_', $_SESSION['shipping']['id'] );
 			$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
@@ -569,7 +569,7 @@ class order extends CommerceOrderBase {
 							'shipping_method' => !empty( $_SESSION['shipping']['title'] ) ? $_SESSION['shipping']['title'] : '',
 							'shipping_method_code' => !empty( $_SESSION['shipping']['code'] ) ? $_SESSION['shipping']['code'] : '',
 							'shipping_module_code' => !empty( $_SESSION['shipping']['id'] ) ? $_SESSION['shipping']['id'] : '',
-							'shipping_cost' => !empty( $_SESSION['shipping']['cost'] ) ? $_SESSION['shipping']['cost'] : '',
+							'shipping_cost' => !empty( $_SESSION['shipping']['cost'] ) ? $_SESSION['shipping']['cost'] : 0,
 							'estimated_ship_date' => !empty( $_SESSION['shipping']['ship_date'] ) ? $_SESSION['shipping']['ship_date'] : NULL,
 							'estimated_arrival_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL,
 							'subtotal' => 0,

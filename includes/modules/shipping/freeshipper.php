@@ -23,7 +23,7 @@ class freeshipper extends CommercePluginShippingBase {
 			$quotes['methods'][] = array(
 										'id' => $this->code,
 										'title' => tra( 'Free Shipping Only' ),
-										'cost' => MODULE_SHIPPING_FREESHIPPER_COST + MODULE_SHIPPING_FREESHIPPER_HANDLING
+										'cost' => (float)(MODULE_SHIPPING_FREESHIPPER_COST + MODULE_SHIPPING_FREESHIPPER_HANDLING)
 										);
 		}
 		return $quotes;
