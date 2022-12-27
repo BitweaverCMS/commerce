@@ -115,7 +115,7 @@ if( isset( $_REQUEST['change_address'] ) ) {
 		if ( ($gCommerceShipping->isShippingAvailable() > 0) || ($free_shipping == true) ) {
 			if ( (isset($_POST['shipping'])) && (strpos($_POST['shipping'], '_')) ) {
 				$_SESSION['shipping'] = $_POST['shipping'];
-				if ($_SESSION['shipping'] == 'freeshipper_free') {
+				if ($_SESSION['shipping'] == 'freeshipper_free' || ($free_shipping == true) ) {
 					$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
 					$quote[0]['methods'][0]['cost'] = 0;
 					$quote[0]['methods'][0]['id'] = 'free';
