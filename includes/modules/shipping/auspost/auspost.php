@@ -59,6 +59,12 @@ class auspost extends CommercePluginShippingBase {
 				$unitConversion = 2.54;
 			}
 
+			$parcelCount = 1;
+			if( $parcelWeight > 22 ) {
+				$parcelCount = ceil( $parcelWeight / 22 );
+				$parcelWeight = $parcelWeight / $parcelCount;
+			}
+
 			if( $tare = $this->getModuleConfigValue( '_TARE' ) ) {
 			    $parcelWeight = $parcelWeight + (($parcelWeight*$tare)/100) ;
 			}
@@ -84,13 +90,13 @@ class auspost extends CommercePluginShippingBase {
 			$methods = array() ;
 
 			// Server query string //
-			if( $auspostQuote = $this->get_auspost_api( $auPostUri, $queryParams ) ) {
+			if( ($auspostQuote = $this->get_auspost_api( $auPostUri, $queryParams )) && !empty( $auspostQuote['services']['service'] ) ) {
 				foreach( $auspostQuote['services']['service'] as $service ) {
 					global $currencies;
 
 					if( ($serviceCode = BitBase::getParameter( $service, 'code' )) && empty( $allowedTypes ) || in_array( $serviceCode, $allowedTypes ) || (!empty( $pShipHash['method'] ) && ($pShipHash['method'] == $serviceCode)) ) {
 						$costAud = (float)$service['price'];
-						$costStore = $currencies->convert( $costAud, DEFAULT_CURRENCY, 'AUD' ) + (float)$this->getShipperHandling();
+						$costStore = round( ($currencies->convert( $costAud, DEFAULT_CURRENCY, 'AUD' ) + (float)$this->getShipperHandling()) * $parcelCount, 2 );
 						if( in_array( $service['code'], $allowedTypes ) ) {
 								$methods[] = array( 'id' => $serviceCode,
 													'title' => $service['name'],
