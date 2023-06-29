@@ -152,6 +152,8 @@ if( !empty( $order ) ) {
 			break;
 		case 'save_address':
 			$addressType = $_REQUEST['address_type'];
+			$statusMsg = 'Updated '.$addressType." address. Previously:\n\n".$order->getFormattedAddress( $addressType, "\n" );
+			$order->updateStatus( array( 'comments' => $statusMsg ) );
 			$saveAddress[$addressType.'_name'] = $_REQUEST['name'];
 			$saveAddress[$addressType.'_company'] = $_REQUEST['company'];
 			$saveAddress[$addressType.'_street_address'] = $_REQUEST['street_address'];
