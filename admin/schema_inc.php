@@ -1280,6 +1280,7 @@ $gBitInstaller->registerUserPermissions( BITCOMMERCE_PKG_NAME, array(
 	array('p_bitcommerce_retailer', 'Can sell products for a profit', 'editors', 'bitcommerce'),
 	array('p_bitcommerce_tax_exempt', 'Can purchase products without paying tax', 'admin', 'bitcommerce'),
 	array('p_bitcommerce_purchase_order', 'Can complete transactions using the purchase order module', 'editors', 'bitcommerce'),
+	array('p_bitcommerce_bulk_ordering', 'Can upload spreadsheet of bulk orders', 'editors', 'bitcommerce'),
 ) );
 
 $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(

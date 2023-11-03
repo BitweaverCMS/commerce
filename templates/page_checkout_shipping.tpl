@@ -37,7 +37,7 @@
 	{/form}
 {else}
 	{include file="bitpackage:bitcommerce/page_checkout_message_top_inc.tpl" step=$checkoutStep}
-	{form name='checkout_address' }
+	{form name='checkout_address' enctype="multipart/form-data"}
 	{formfeedback error=$errors}
 			<div class="row">
 		<div class="col-md-6">	
@@ -45,9 +45,34 @@
 				<legend>{tr}Shipping Address{/tr}</legend>
 				<input type="hidden" name="action" value="process" />
 				<input type="hidden" name="main_page" value="checkout_shipping" />
-				<p>{tr}Your order will be shipped to the following address:{/tr}</p>
-				<div class="pull-right"><button class="btn btn-default btn-sm" name="change_address">{tr}Change{/tr} {booticon iname="fa-truck"}</button></div>
-				{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$cartDelivery}
+				<div class="pull-right text-right">
+					{if $gBitUser->hasPermission('p_bitcommerce_bulk_ordering')}
+					<div class="btn-group" data-toggle="buttons">
+						<label class="btn btn-default btn-xs" onclick="$('.ship-address-bulk').toggle();$('.ship-address-direct').toggle();"><input type="checkbox" name="options" id="option2">{tr}Bulk{/tr} {booticon iname="fa-boxes-stacked"}</label>
+					</div>
+					{/if}
+				</div>
+
+				<div class="ship-address-direct">
+					<p>{tr}Your order will be shipped to the following address:{/tr}</p>
+					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$cartDelivery}
+<button class="btn btn-default btn-sm" name="change_address">{tr}Change{/tr} {booticon iname="fa-truck"}</button> 
+				</div>
+				{if $gBitUser->hasPermission('p_bitcommerce_bulk_ordering')}
+				<div class="ship-address-bulk" style="display:none">
+					{formlabel label="Bulk Shipping" for="bulk"}
+
+					<p>If you have would like to have the same cart mailed to multiple recipients, upload a <a href="{$smarty.const.BITCOMMERCE_PKG_URL}pub/bulk_order.csv">bulk order CSV</a> file with your addresses. A unique order with unique shipping charges will be made for each entry in the CSV file.</p>
+					<div class="form-inline">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">{booticon iname="fa-address-book"}</div>
+								<input type="file" name="bulk_csv" class="form-control"></input>
+							</div>
+						</div>
+					</div>
+				</div>
+				{/if}
 			</fieldset>
 			{include file="bitpackage:bitcommerce/page_checkout_deadline_inc.tpl" deadline=$smarty.session.deadline_date}
 		</div>

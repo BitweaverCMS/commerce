@@ -111,6 +111,9 @@ if( isset( $_REQUEST['change_address'] ) ) {
 	}
 
 	if( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
+		if( !empty( $_FILES['bulk_csv']['size'] ) ) {
+eb( "BULK CSV not implemented", $_REQUEST, $_FILES );
+		}
 
 		if ( ($gCommerceShipping->isShippingAvailable() > 0) || ($free_shipping == true) ) {
 			if ( (isset($_POST['shipping'])) && (strpos($_POST['shipping'], '_')) ) {
