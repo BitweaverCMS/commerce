@@ -298,6 +298,9 @@ class order extends CommerceOrderBase {
 											'format_id' => $order->fields['delivery_address_format_id'] ),
 									zen_get_countries( $order->fields['delivery_country'] )
 								  );
+				if( strpos( $this->delivery['name'], ' ' ) ) {
+					list( $this->delivery['first_name'], $this->delivery['last_name'] ) = explode( ' ', $this->delivery['name'],  2 );
+				}
 
 				if (empty($this->delivery['name']) && empty($this->delivery['street_address'])) {
 					$this->delivery = false;
@@ -315,6 +318,9 @@ class order extends CommerceOrderBase {
 											'format_id' => $order->fields['billing_address_format_id'] ),
 									zen_get_countries( $order->fields['billing_country'] )
 								);
+				if( strpos( $this->billing['name'], ' ' ) ) {
+					list( $this->billing['first_name'], $this->billing['last_name'] ) = explode( ' ', $this->billing['name'],  2 );
+				}
 
 
 				$orders_products_query = 	"SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
