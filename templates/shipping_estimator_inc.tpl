@@ -1,5 +1,5 @@
 {literal}
-<script type="text/javascript">//<![CDATA[
+<script>//<![CDATA[
 function shippingQuoteAddressChange( pForm ) {
 	if( $('#addressid').val() == 'custom' ) {
 		$('#customaddress').show();

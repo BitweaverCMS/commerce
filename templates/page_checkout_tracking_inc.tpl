@@ -20,7 +20,7 @@
 			{assign var=eecEvent value='purchase'}
 		{/if}
 		{if $eecEvent}
-<script type="text/javascript">
+<script>
 gtag('event', '{$eecEvent}', {ldelim}
 	{if $eecStep} "checkout_step": {$eecStep},{/if}
 	{if $newOrder}

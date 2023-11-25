@@ -106,7 +106,7 @@
 </div>
 
 
-<script type="text/javascript">
+<script>
 function paymentSubmit( pForm ) {ldelim}
 	$('#payment-submit-btn').html("<i class=\"fa fal fa-spinner fa-spin\"></i> {tr}Processsing Payment...{/tr}");
 	$('#payment-submit-btn').prop("disabled",true);

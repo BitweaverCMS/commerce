@@ -1,5 +1,5 @@
 {literal}
-<script type="text/javascript">/* <![CDATA[ */
+<script>/* <![CDATA[ */
 function editAddress( pAddress ) {
 	jQuery.ajax({
 		data: 'address_type='+pAddress+'&oID='+{/literal}{$smarty.request.oID}{literal},

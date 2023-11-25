@@ -1,5 +1,5 @@
 {literal}
-<script language="javascript" type="text/javascript"><!--
+<script><!--
 var selected;
 
 function selectRowEffect(object, buttonSelect, groupName) {

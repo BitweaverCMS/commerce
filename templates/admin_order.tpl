@@ -1,11 +1,11 @@
-<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/CalendarPopup.js"></script>
-<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/PopupWindow.js"></script>
-<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/AnchorPosition.js"></script>
-<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/date.js"></script>
+<script src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/CalendarPopup.js"></script>
+<script src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/PopupWindow.js"></script>
+<script src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/AnchorPosition.js"></script>
+<script src="{$smarty.const.UTIL_PKG_URL}javascript/kruse/date.js"></script>
 <div id="caldiv" style="width:200px;position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
 
 {literal}
-<script type="text/javascript">/* <![CDATA[ */
+<script>/* <![CDATA[ */
 function editOption( pOrdPrdAttId ) {
 	alert( pOrdPrdAttId );
 	return false;

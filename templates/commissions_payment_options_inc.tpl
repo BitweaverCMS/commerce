@@ -1,5 +1,5 @@
 {form method="post" enctype="multipart/form-data" action=$smarty.server.REQUEST_URI}
-	<input type="hidden" name="tk" value="{$gBitUser->mTicket}" />
+	<input type="hidden" name="tk" value="{$gBitUser->mTicket}">
 	<div class="form-group">
 		{formlabel label="Payment Method"}
 		{forminput}
@@ -16,13 +16,13 @@
 	<div class="form-group" id="commissionpaypal"> 
 		{formlabel label="PayPal Email"}
 		{forminput}
-				<input type="text" class="form-control" name="commissions_paypal_address" value="{$gBitUser->getPreference('commissions_paypal_address',$gBitUser->getField('email'))}" />
+				<input type="text" class="form-control" name="commissions_paypal_address" value="{$gBitUser->getPreference('commissions_paypal_address',$gBitUser->getField('email'))}">
 		{/forminput}
 	</div>
 	<div class="form-group" id="commissionworldpay"> 
 		{formlabel label="WorldPay Email"}
 		{forminput}
-				<input type="text" class="form-control" name="commissions_worldpay_address" value="{$gBitUser->getPreference('commissions_worldpay_address',$gBitUser->getField('email'))}" />
+				<input type="text" class="form-control" name="commissions_worldpay_address" value="{$gBitUser->getPreference('commissions_worldpay_address',$gBitUser->getField('email'))}">
 		{/forminput}
 	</div>
 	<div class="form-group" id="commissioncheck"> 
@@ -35,14 +35,14 @@
 
 
 	<div class="form-group submit">
-		<input type="submit" class="btn btn-primary" name="save_commission_settings" value="Save" />
+		<input type="submit" class="btn btn-primary" name="save_commission_settings" value="Save">
 	</div>
 {/form}
 
 <div class="clear"></div>
 
 {literal}
-<script type="text/javascript">
+<script>
 function updatePaymentMethod() {
 	BitBase.hideById('commissionstorecredit');
 	BitBase.hideById('commissionpaypal');

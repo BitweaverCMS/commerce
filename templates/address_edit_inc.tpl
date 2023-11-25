@@ -99,7 +99,7 @@
 </div>
 
 {literal}
-<script type="text/javascript">//<![CDATA[
+<script>//<![CDATA[
 function updateStates( pCountryId ) {
 	var ajax = new BitBase.SimpleAjax();
 	var donefn = function (r){

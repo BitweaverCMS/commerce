@@ -97,7 +97,7 @@
 		{/foreach}
 		</ul>
 {literal}
-<script type="text/javascript">
+<script>
 function editOptionsValue( pOptValId ) {
 	BitBase.toggleElementDisplay( 'optval'+pOptValId+'edit', 'block' );
 	BitBase.toggleElementDisplay( 'optval'+pOptValId+'display', 'block' );

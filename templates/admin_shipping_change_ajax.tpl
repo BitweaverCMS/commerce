@@ -1,5 +1,5 @@
 {form action="shipping_change.php?oID=`$smarty.request.oID`"}	
-<input type="hidden" name="tk" value="{$gBitUser->mTicket}" />
+<input type="hidden" name="tk" value="{$gBitUser->mTicket}">
 {include file="bitpackage:bitcommerce/shipping_quotes_inc.tpl"}
 <div class="form-group">
 	{formlabel label="Comments"}
@@ -17,7 +17,7 @@
 </div>
 <div class="form-group submit">
 	{forminput}
-		<input class="btn btn-default" type="submit" name="change_shipping" value="{tr}Change Shipping{/tr}" />
+		<input class="btn btn-default" type="submit" name="change_shipping" value="{tr}Change Shipping{/tr}">
 	{/forminput}
 </div>
 {/form}

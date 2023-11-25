@@ -85,7 +85,7 @@
 {else}
 
 
-<script language="javascript" type="text/javascript"><!--
+<script><!--
 {literal}
 var form = "";
 var submitted = false;

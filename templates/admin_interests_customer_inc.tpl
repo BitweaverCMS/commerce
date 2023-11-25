@@ -5,7 +5,7 @@
 {/foreach}
 <div id="interestsfeedback"></div>
 {literal}
-<script type="text/javascript">/* <![CDATA[ */
+<script>/* <![CDATA[ */
 function storeCustomerInterest( pInterestsId, pChecked ) {
 	var action = pChecked ? 'savec2i' : 'deletec2i';
 	jQuery.ajax({

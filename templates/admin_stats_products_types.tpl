@@ -11,7 +11,7 @@
 	<h1>{tr}Product Sales Summary{/tr}</h1>
 </div>
 
-<script type="text/javascript">{literal}
+<script>{literal}
     $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd', todayBtn: true, minView:2, autoclose: true,});
 {/literal}</script>
 
