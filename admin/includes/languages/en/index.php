@@ -21,7 +21,7 @@
 //
 
 if( !defined( 'HEADING_TITLE' ) ) {
-	define('HEADING_TITLE', 'Choose an action..');
+	define('HEADING_TITLE', 'Order Listing');
 }
 
 define('BOX_TITLE_ORDERS', 'Orders');
