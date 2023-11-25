@@ -35,7 +35,7 @@ class CommerceProductManager extends BitBase {
 			$whereSql .= ' AND cpa.`products_options_values_id`=? ';
 			$bindVars[] = $pListHash['products_options_values_id'];
 		}
-		
+
 		$whereSql = preg_replace( '/^[\s]*AND\b/i', 'WHERE ', $whereSql );
 		// SElect order is important so LEFT JOIN'ed tables don't NULL out primary keys of INNER JOIN'ed tables
 	    $query = "SELECT cpo.`products_options_id` AS `hash_key` $selectSql , cpa.*, cpot.*, cpo.*, cpa.`products_options_sort_order`
@@ -50,7 +50,7 @@ class CommerceProductManager extends BitBase {
 				if( empty( $ret[$row['hash_key']] ) ) {
 					$ret[$row['hash_key']] = $row;
 				}
-				if( !empty( $row['hash_key'] ) && $rs->RecordCount() > 1 ) {
+				if( !empty( $row['hash_key'] ) && !empty( $row['products_options_values_id'] ) ) {
 					unset( $ret[$row['hash_key']]['products_options_values_name'] );
 					unset( $ret[$row['hash_key']]['products_ov_sort_order'] );
 					if( !empty( $row['products_options_values_id'] ) ) {
@@ -59,6 +59,7 @@ class CommerceProductManager extends BitBase {
 				}
 			}
 		}
+
 		return $ret;
 	}
 

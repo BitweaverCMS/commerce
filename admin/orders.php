@@ -39,19 +39,29 @@ if( $gBitThemes->isAjaxRequest() ) {
 
 	if( !empty( $_REQUEST['new_option_id'] ) ) {
 		if( $optionValues = $productManager->getOptionsList( array( 'products_options_id' => $_REQUEST['new_option_id'] ) ) ) {
+			$optionComment = '';
 			if( !empty( $optionValues[$_REQUEST['new_option_id']]['values'] ) ) {
 				foreach( $optionValues[$_REQUEST['new_option_id']]['values'] as $optValId=>$optVal ) {
 					$optionValuesList[$optValId] = $optVal['products_options_values_name'];
+					if( $optVal['products_options_values_comment'] ) {
+						$optionComment .= '<span class="help-block">'.$optVal['products_options_values_comment'].'</span>';
+					}
 				}
 			} else {
-				$optionValuesList[$optionValues[$_REQUEST['new_option_id']]['products_options_values_id']] = $optionValues[$_REQUEST['new_option_id']]['products_options_values_name'];
+//				$optionValuesList[$optionValues[$_REQUEST['new_option_id']]['products_options_values_id']] = $optionValues[$_REQUEST['new_option_id']]['products_options_values_name'];
 			}
-			$gBitSmarty->loadPlugin( 'smarty_function_html_options' );
-			print smarty_function_html_options(array( 'options'			=> $optionValuesList,
-														'name'			=> 'newOrderOptionValue',
-														'class'			=> 'form-control',
-														'print_result'	=> FALSE ), $gBitSmarty );
+			if( !empty( $optionValuesList ) ) {
+				$gBitSmarty->loadPlugin( 'smarty_function_html_options' );
+				print smarty_function_html_options(array( 'options'			=> $optionValuesList,
+															'name'			=> 'add_order_povid',
+															'class'			=> 'form-control',
+															'print_result'	=> FALSE ), $gBitSmarty );
+			}
+			if( $optionValues[$_REQUEST['new_option_id']]['products_options_types_id'] == PRODUCTS_OPTIONS_TYPE_TEXT ) {
+				print '<input type="text" class="form-control" name="add_order_povid_text">';
+			}
 			print '<input class="btn btn-sm btn-primary" type="submit" value="save" name="save_new_option">';
+			print $optionComment;
 		} else {
 			print "<span class='alert alert-danger'>Unkown Option</span>";
 		}
@@ -135,11 +145,15 @@ if( !empty( $order ) ) {
 			FROM " . TABLE_PRODUCTS_OPTIONS . " cpo 
 				INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON(cpa.products_options_id=cpo.products_options_id) 
 			WHERE cpa.`products_options_values_id`=?";
-			$newOption = $gBitDb->getRow( $query, array( $_REQUEST['newOrderOptionValue'] ) );
+			$newOption = $gBitDb->getRow( $query, array( $_REQUEST['add_order_povid'] ) );
 			$newOption['orders_id'] = $_REQUEST['oID'];
 			$newOption['orders_products_id'] = $_REQUEST['orders_products_id'];
+			if( !empty( trim( $_REQUEST['add_order_povid_text'] ) ) ) {
+				$newOption['products_options_values'] .= '~'.trim( $_REQUEST['add_order_povid_text'] );
+			}
+
 			$gBitDb->associateInsert( TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $newOption );
-			$order->updateStatus( array( 'comments' => 'Added Product Option: '.$newOption['products_options'].' => '.$newOption['products_options_values'].' ('.$_REQUEST['newOrderOptionValue'].')' ) );
+			$order->updateStatus( array( 'comments' => 'Added Product Option: '.$newOption['products_options'].' => '.$newOption['products_options_values'].' ('.$_REQUEST['add_order_povid'].')' ) );
 			bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
 			break;
 		case 'save_new_product':
