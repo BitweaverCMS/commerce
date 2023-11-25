@@ -21,7 +21,7 @@
 		{if !empty( $ordersProduct.attributes )}
 		<ul class="">
 		{section loop=$ordersProduct.attributes name=a}
-			<li class="orders products attributes" id="{$ordersProduct.attributes[a].products_attributes_id}att">
+			<li class="orders products attributes">
 				<small>{$ordersProduct.attributes[a].products_options}: {$ordersProduct.attributes[a].products_options_values}
 					{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
 					{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$gCommerceCurrencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
@@ -48,7 +48,8 @@
 </tr>
 {/foreach}
 
-<div class="row">
+{if $order->getDownloads()}
+<tr><td>
 {foreach from=$order->getDownloads() item=download}
 <div class="col-sm-3 col-xs-6">
 	<div class="well">
@@ -56,7 +57,8 @@
 	</div>
 </div>
 {/foreach}
-</div>
+</td></tr>
+{/if}
 
 {section loop=$order->totals name=t}
 {if $showPricing || $order->totals[t].class == 'ot_shipping'}
