@@ -2,16 +2,16 @@
 {* Google analytics setup *}
 {if $gBitSystem->isTracking()}
 	{* **** GOOGLE ANALYTICS **** *}
-	{if $gBitSystem->getConfig('google_analytics_ua')}
+	{if $gBitSystem->getConfig('google_tagmanager_id')}
 		{if $smarty.request.main_page == 'shopping_cart'}
 			{assign var=eecStep value=1}
 			{assign var=eecEvent value='begin_checkout'}
-		{elseif $smarty.request.main_page == 'checkout_shipping'}
+		{elseif $smarty.request.main_page == 'view_cart'}
 			{assign var=eecStep value=2}
-			{assign var=eecEvent value='checkout_progress'}
+			{assign var=eecEvent value='add_shipping_info'}
 		{elseif $smarty.request.main_page == 'checkout_payment'}
 			{assign var=eecStep value=3}
-			{assign var=eecEvent value='checkout_progress'}
+			{assign var=eecEvent value='add_payment_info'}
 		{elseif $smarty.request.main_page == 'checkout_confirmation'}
 			{assign var=eecStep value=4}
 			{assign var=eecEvent value='checkout_progress'}
