@@ -107,7 +107,7 @@ abstract class CommercePluginBase extends CommerceBase {
 
 			$this->mDb->CompleteTrans();
 		}
-		$this->mDb->Execute("DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` LIKE '".$this->getModuleKeyTrunk()."%'");
+		$this->mDb->Execute("DELETE FROM " . TABLE_CONFIGURATION . " WHERE `configuration_key` LIKE '".$this->getModuleKeyTrunk()."\_%'");
 	}
 
 	protected function storeModuleConfigHash( $pModuleConfigKey, $pModuleConfigHash ) {
@@ -141,7 +141,7 @@ abstract class CommercePluginBase extends CommerceBase {
 	}
 
 	public function getActiveConfig() {
-		return $this->mDb->getAssoc( 'SELECT `configuration_key`, * FROM ' . TABLE_CONFIGURATION . ' WHERE `configuration_key` LIKE ?', array( $this->getModuleKeyTrunk().'_%' ) );
+		return $this->mDb->getAssoc( 'SELECT `configuration_key`, * FROM ' . TABLE_CONFIGURATION . ' WHERE `configuration_key` LIKE ?', array( $this->getModuleKeyTrunk().'\_%' ) );
 	}
 
 	public function isEnabled() {
