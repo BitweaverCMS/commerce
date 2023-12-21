@@ -33,7 +33,7 @@ if( $gBitProduct->isValid() ) {
 	$editTpl = 'bitpackage:bitcommerce/admin_products_options_edit_inc.tpl';
 } elseif( empty( $_REQUEST['cancel'] ) && !empty( $_REQUEST['products_options_values_id'] ) ) {
 	if( BitBase::verifyId( $_REQUEST['products_options_values_id'] ) && $editOptionsValue = current( $productManager->getOptionsList( array( 'products_options_values_id' => $_REQUEST['products_options_values_id'] ) ) ) ) {
-		$gBitSmarty->assign_by_ref( 'editValue', $editOptionsValue );
+		$gBitSmarty->assign_by_ref( 'editValue', $editOptionsValue['values'][$_REQUEST['products_options_values_id']] );
 	}
 	$gBitSmarty->assign( 'optionsList', $productManager->getOptionsList() );
 	$editTpl = 'bitpackage:bitcommerce/admin_products_options_values_edit_inc.tpl';
