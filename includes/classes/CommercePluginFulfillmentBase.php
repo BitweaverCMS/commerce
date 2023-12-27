@@ -152,17 +152,18 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 				if( $ret['postcode'] = $this->getModuleConfigValue( '_ORIGIN_POSTAL_CODE' ) ) {
 				}
 			}
-		} elseif( $storeCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY' ) ) {
-			if( $ret = zen_get_countries( $storeCountryId ) ) {
+		} elseif( $fulfillmentCountryId = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_COUNTRY' ) ) {
+			if( $ret = zen_get_countries( $fulfillmentCountryId ) ) {
 				if( $ret['postcode'] = $gCommerceSystem->getConfig( 'SHIPPING_ORIGIN_ZIP' ) ) {
 				}
 			}
-		} elseif( $storeCountryId = $gCommerceSystem->getConfig( 'STORE_COUNTRY' ) ) {
-			if( $ret = zen_get_countries( $storeCountryId ) ) {
-				if( $ret['zone_id'] = $gCommerceSystem->getConfig( 'STORE_ZONE' ) ) {
-					if( $zone = zen_get_zone_by_id( $storeCountryId, $ret['zone_id'] ) ) {
-					}
-				}
+		} elseif( $fulfillmentCountryId = $gCommerceSystem->getConfig( 'STORE_COUNTRY' ) ) {
+			if( $ret = zen_get_countries( $fulfillmentCountryId ) ) {
+			}
+		}
+		if( !empty( $ret['countries_id'] ) && ($ret['zone_id'] = $gCommerceSystem->getConfig( 'STORE_ZONE' )) ) {
+			if( $zone = zen_get_zone_by_id( $ret['countries_id'], $ret['zone_id'] ) ) {
+				$ret = array_merge( $ret, $zone );
 			}
 		}
 		return $ret;
