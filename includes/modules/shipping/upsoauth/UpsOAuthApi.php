@@ -113,66 +113,69 @@ class UpsOAuthApi extends CommerceBase
 		$this->serviceCodes = [
 			// US Origin
 			'US Origin' => [
-				'01' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_01' ),
-				'02' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_02' ),
-				'03' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_03' ),
-				'07' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_07' ),
-				'08' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_08' ),
-				'11' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_11' ),
-				'12' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_12' ),
-				'13' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_13' ),
-				'14' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_14' ),
-				'54' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_54' ),
-				'59' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_59' ),
-				'65' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_US_ORIGIN_65' )
+				'01' => 'UPS Next Day Air',
+				'02' => 'UPS 2nd Day Air',
+				'03' => 'UPS Ground',
+				'07' => 'UPS Worldwide Express',
+				'08' => 'UPS Worldwide Expedited',
+				'11' => 'UPS Standard',
+				'12' => 'UPS 3 Day Select',
+				'13' => 'UPS Next Day Air Saver',
+				'14' => 'UPS Next Day Air Early',
+				'54' => 'UPS Worldwide Express Plus',
+				'59' => 'UPS 2nd Day Air A.M.',
+				'65' => 'UPS Worldwide Saver',
+				'75' => 'UPS Heavy Goods',    //- new to OAuth
 			],
 			// Canada Origin
 			'Canada Origin' => [
-				'01' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_CA_ORIGIN_01' ),
-				'02' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_CA_ORIGIN_02' ),
-				'07' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_CA_ORIGIN_07' ),
-				'08' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_CA_ORIGIN_08' ),
-				'11' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_CA_ORIGIN_11' ),
-				'12' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_CA_ORIGIN_12' ),
-				'13' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_CA_ORIGIN_13' ),
-				'14' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_CA_ORIGIN_14' ),
-				'54' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_CA_ORIGIN_54' ),
-				'65' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_CA_ORIGIN_65' )
+				'01' => 'UPS Express',
+				'02' => 'UPS Expedited',
+				'07' => 'UPS Worldwide Express',
+				'08' => 'UPS Worldwide Expedited',
+				'11' => 'UPS Standard',
+				'12' => 'UPS 3 Day Select',
+				'13' => 'UPS Express Saver',
+				'14' => 'UPS Express Early',
+				'54' => 'UPS Worldwide Express Plus',
+				'65' => 'UPS Express Saver',
+				'70' => 'UPS Access Point Economy',   //- new to OAuth
 			],
 			// European Union Origin
 			'European Union Origin' => [
-				'07' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_EU_ORIGIN_07' ),
-				'08' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_EU_ORIGIN_08' ),
-				'11' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_EU_ORIGIN_11' ),
-				'54' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_EU_ORIGIN_54' ),
-				'65' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_EU_ORIGIN_65' )
+				'07' => 'UPS Express',
+				'08' => 'UPS Expedited',
+				'11' => 'UPS Standard',
+				'54' => 'UPS Worldwide Express Plus',
+				'65' => 'UPS Worldwide Saver',
+				'70' => 'UPS Access Point Economy',   //- new to OAuth
 			],
 			// Puerto Rico Origin
 			'Puerto Rico Origin' => [
-				'01' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_PR_ORIGIN_01' ),
-				'02' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_PR_ORIGIN_02' ),
-				'03' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_PR_ORIGIN_03' ),
-				'07' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_PR_ORIGIN_07' ),
-				'08' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_PR_ORIGIN_08' ),
-				'14' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_PR_ORIGIN_14' ),
-				'54' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_PR_ORIGIN_54' ),
-				'65' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_PR_ORIGIN_65' )
+				'01' => 'UPS Next Day Air',
+				'02' => 'UPS 2nd Day Air',
+				'03' => 'UPS Ground',
+				'07' => 'UPS Worldwide Express',
+				'08' => 'UPS Worldwide Expedited',
+				'14' => 'UPS Next Day Air Early',
+				'54' => 'UPS Worldwide Express Plus',
+				'65' => 'UPS Worldwide Saver',
 			],
 			// Mexico Origin
 			'Mexico Origin' => [
-				'07' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_MX_ORIGIN_07' ),
-				'08' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_MX_ORIGIN_08' ),
-				'11' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_MX_ORIGIN_11' ),
-				'54' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_MX_ORIGIN_54' ),
-				'65' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_MX_ORIGIN_65' )
+				'07' => 'UPS Express',
+				'08' => 'UPS Expedited',
+				'11' => 'UPS Standard',
+				'54' => 'UPS Worldwide Express Plus',
+				'65' => 'UPS Worldwide Saver',
 			],
 			// All other origins
 			'All other origins' => [
-				'07' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_OTHER_ORIGIN_07' ),
-				'08' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_OTHER_ORIGIN_08' ),
-				'11' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_OTHER_ORIGIN_11' ),
-				'54' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_OTHER_ORIGIN_54' ),
-				'65' => $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_SC_OTHER_ORIGIN_65' )
+				'07' => 'UPS Worldwide Express',
+				'08' => 'UPS Worldwide Expedited',
+				'11' => 'UPS Standard',
+				'54' => 'UPS Worldwide Express Plus',
+				'65' => 'UPS Worldwide Saver',
 			],
 		];
 	}
@@ -227,6 +230,7 @@ class UpsOAuthApi extends CommerceBase
 	public function getAllUpsQuotes( $oauth_token, $pShipHash )
 	{
 		$ch = curl_init();
+		$rateRequest = $this->buildRateRequest( $pShipHash );
 		curl_setopt_array($ch, [
 			CURLOPT_HTTPHEADER => [
 				'Authorization: Bearer ' . $oauth_token,
@@ -234,7 +238,7 @@ class UpsOAuthApi extends CommerceBase
 				'transId: string',
 				'transactionSrc: testing',
 			],
-			CURLOPT_POSTFIELDS => $this->buildRateRequest( $pShipHash ),
+			CURLOPT_POSTFIELDS => $rateRequest,
 			//  CURLOPT_URL => "https://wwwcie.ups.com/api/rating/" . $version . "/" . $requestoption . "?" . http_build_query($query),
 			CURLOPT_URL => $this->endpoint . self::API_RATING,
 			CURLOPT_RETURNTRANSFER => true,
@@ -242,19 +246,16 @@ class UpsOAuthApi extends CommerceBase
 		]);
 
 		$response = curl_exec($ch);
-eb( $response );
+
+		$ret = false;
 		if ($response === false) {
 			$this->debugLog('CURL error requesting Rates (' . curl_errno($ch) . ', ' . curl_error($ch) . ')');
 		} else {
-			$response_details = json_decode($response);
-			$this->debugLog(json_encode($response_details, JSON_PRETTY_PRINT), true);
-			if (isset($response_details->response->errors) || !isset($response_details->RateResponse->RatedShipment) || !is_array($response_details->RateResponse->RatedShipment)) {
-				$response_details = false;
-			}
+			$ret = json_decode($response);
 		}
 		curl_close($ch);
 
-		return $response_details;
+		return $ret;
 	}
 
 	// -----
@@ -279,12 +280,26 @@ eb( $response );
 				],
 				'Shipment' => [
 					'Shipper' => [
-						'Address' => $this->getOriginShippingAddress(),
+						'Address' => [
+	//						'City' => (!empty($pShipHash['origin']['city'])) ? $pShipHash['origin']['city'] : '',
+							'StateProvinceCode' => zen_get_zone_code((int)$pShipHash['origin']['countries_id'], (int)$pShipHash['origin']['zone_id'], ''),
+							'PostalCode' => (!empty($pShipHash['origin']['postcode'])) ? $pShipHash['origin']['postcode'] : '',
+							'CountryCode' => $pShipHash['origin']['countries_iso_code_2'],
+						],
 					],
 					// -----
 					// When rates are requested from the shipping-estimator, the city isn't set and the postcode might not be.  Provide
 					// defaults for the request.
 					//
+					'ShipFrom' => [
+						'Name' => STORE_NAME,
+						'Address' => [
+	//						'City' => (!empty($pShipHash['origin']['city'])) ? $pShipHash['origin']['city'] : '',
+							'StateProvinceCode' => zen_get_zone_code((int)$pShipHash['origin']['countries_id'], (int)$pShipHash['origin']['zone_id'], ''),
+							'PostalCode' => (!empty($pShipHash['origin']['postcode'])) ? $pShipHash['origin']['postcode'] : '',
+							'CountryCode' => $pShipHash['origin']['countries_iso_code_2'],
+						]
+					],
 					'ShipTo' => [
 						'Address' => [
 							'City' => (!empty($pShipHash['destination']['city'])) ? $pShipHash['destination']['city'] : '',
@@ -307,8 +322,7 @@ eb( $response );
 			$rate_request['RateRequest']['Shipment']['ShipTo']['Address']['ResidentialAddressIndicator'] = 'Y';
 		}
 
-		$shipper_number = $this->getShipperNumber();
-		if ($shipper_number !== '') {
+		if( $shipper_number = $this->getShipperNumber() ) {
 			$rate_request['RateRequest']['Shipment']['Shipper']['ShipperNumber'] = $shipper_number;
 			$rate_request['RateRequest']['Shipment']['ShipmentRatingOptions']['NegotiatedRatesIndicator'] = 'Y';
 		}
@@ -339,7 +353,7 @@ eb( $response );
 			'PackageServiceOptions' => [
 				'DeclaredValue' => [
 					'CurrencyCode' => $this->currencyCode,
-					'MonetaryValue' => $pShipHash['shipping_value'],
+					'MonetaryValue' => (string)$pShipHash['shipping_value'],
 				],
 			],
 		];
@@ -352,6 +366,7 @@ eb( $response );
 			$rate_request['RateRequest']['Shipment']['Package'][] = $package_info;
 		}
 
+//eb( $pShipHash, $rate_request );
 		return json_encode($rate_request);
 	}
 	protected function isResidentialAddress()
@@ -393,7 +408,7 @@ eb( $response );
 	{
 		return $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_OPTIONS' );
 	}
-	public function getShippingMethodsFromQuotes($method, $ups_quotes)
+	public function getShippingMethodsFromQuotes($ups_quotes, $method='')
 	{
 		// -----
 		// Any handling-fee can be represented as either a fixed or a percentage.  Determine which
@@ -414,12 +429,16 @@ eb( $response );
 		// Create the array that maps the UPS service codes to their names.
 		//
 		$methods = [];
+
 		foreach ($ups_quotes as $service_code => $quote_info) {
 			$type = $quote_info['title'];
 			$cost = $quote_info['cost'];
-
 			if ($method === '' || $method === $type) {
-				$methods[] = $this->getCurrentMethodQuote($quote_info, $method, $type, $cost, $handling_fee_multiplier, $handling_fee_adder);
+				$methods[] = array(
+					'id' => $type,
+					'title' => $type,
+					'cost' => ($handling_fee_multiplier * $cost) + $handling_fee_adder,
+				);
 			}
 		}
 		return $methods;
@@ -432,10 +451,6 @@ eb( $response );
 	protected function getCurrentMethodQuote(array $quote_info, string $method, string $type, string $cost, $handling_fee_multiplier, $handling_fee_adder)
 	{
 		$title = $type;
-		if (strpos($this->getTransitWeightDisplayOptions(), 'transit') !== false && $quote_info['business_days_in_transit'] !== false) {
-			$title .= ' ' . sprintf($this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_ETA_TEXT' ), (int)$quote_info['business_days_in_transit']);
-		}
-
 		return [
 			'id' => $type,
 			'title' => $title,
@@ -534,3 +549,4 @@ eb( $response );
 		}
 	}
 }
+

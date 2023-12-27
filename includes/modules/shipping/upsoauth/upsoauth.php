@@ -76,46 +76,54 @@ class upsoauth extends CommercePluginShippingBase
 				// shipping methods not requested by the site via configuration.  If an error (either CURL or
 				// UPS) occurs in this retrieval, report that no quotes are available from this shipping module.
 				//
-				$all_ups_quotes = $this->upsApi->getAllUpsQuotes( $_SESSION['upsoauth_token'], $pShipHash );
-				if (empty($all_ups_quotes->RateResponse->RatedShipment)) {
-					return false;
-				}
-
-				// -----
-				// Determine which, if any, of the quotes returned are applicable for the current store.  If none are,
-				// report that no quotes are available from this shipping module.
-				//
-				$ups_quotes = $this->upsApi->getConfiguredUpsQuotes($all_ups_quotes);
-				if ($ups_quotes === false) {
-					return false;
-				}
-
-				$methods = $this->upsApi->getShippingMethodsFromQuotes($method, $ups_quotes);
-				if (count($methods) === 0) {
-					$quoteError .= "No available methods matching required '$method'; no UPS quotes available. ";
-					return false;
-				}
-
-				// -----
-				// Sort the shipping methods to be returned in ascending order of cost.
-				//
-				usort($methods, function($a, $b) {
-					if ($a['cost'] === $b['cost']) {
-						return 0;
+				if( $all_ups_quotes = $this->upsApi->getAllUpsQuotes( $_SESSION['upsoauth_token'], $pShipHash ) ) {
+					if( !empty( $all_ups_quotes->response->errors) ) {
+						$quoteError = '';
+						foreach( $all_ups_quotes->response->errors as $alertObject ) {
+							$quoteError .= $alertObject->code .' : ' . $alertObject->message."<br/>\n";
+						}
 					}
-					return ($a['cost'] < $b['cost']) ? -1 : 1;
-				});
+
+					if( !empty( $all_ups_quotes->RateResponse->Response->Alert ) ) {
+						$quoteError = '';
+						foreach( $all_ups_quotes->RateResponse->Response->Alert as $alertObject ) {
+							$quoteError .= $alertObject->Code .' : ' . $alertObject->Description."<br/>\n";
+						}
+					}
+
+					// -----
+					// Determine which, if any, of the quotes returned are applicable for the current store.  If none are,
+					// report that no quotes are available from this shipping module.
+					//
+
+					if( !empty( $all_ups_quotes->RateResponse->RatedShipment ) ) {
+						$ups_quotes = $this->upsApi->getConfiguredUpsQuotes($all_ups_quotes);
+						if ($ups_quotes === false) {
+							return false;
+						}
+
+						if( $methods = $this->upsApi->getShippingMethodsFromQuotes( $ups_quotes, $pShipHash['method'] ) ) {
+							// -----
+							// Sort the shipping methods to be returned in ascending order of cost.
+							//
+							usort($methods, function($a, $b) {
+								if ($a['cost'] === $b['cost']) {
+									return 0;
+								}
+								return ($a['cost'] < $b['cost']) ? -1 : 1;
+							});
+
+							$quotes['methods'] = $methods;
+						} else {
+							$quoteError .= "No available methods matching required '$pShipHash[method]'; no UPS quotes available. <br>";
+						}
+					}
+				}
 
 				if ((int)$this->getModuleConfigValue( '_TAX_CLASS' ) > 0) {
 					$quotes['tax'] = zen_get_tax_rate((int)$this->getModuleConfigValue( '_TAX_CLASS' ), $order->delivery['country']['id'], $order->delivery['zone_id']);
 				}
 
-				$this->icon = $template->get_template_dir('shipping_ups.gif', DIR_WS_TEMPLATE, $current_page_base, 'images/icons') . '/shipping_ups.gif';
-				if (!empty($this->icon)) {
-					$quotes['icon'] = zen_image($this->icon, $this->title);
-				}
-				$quotes['methods'] = $methods;
-				$this->debugLog('Returning quote:' . PHP_EOL . var_export($quotes, true));
 
 				if( !empty( $message ) ) {
 					$quotes = array('module' => $this->title, 'error' => $message);
@@ -128,8 +136,9 @@ class upsoauth extends CommercePluginShippingBase
 			if( $quoteError ) {
 				$quotes['error'] = $quoteError;
 			}
+			$quotes['icon'] = $this->icon;
 		}
-eb( $quotes );
+
 		return $quotes;
 	}
 
