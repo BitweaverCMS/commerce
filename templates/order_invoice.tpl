@@ -56,6 +56,8 @@
 		<div class="col-xs-12 col-sm-4 text-center">
 			<h1 class="page-heading">{tr}Order{/tr} #{$order->mOrdersId}</h1>
 			<div class="date">{tr}Purchased{/tr}: {$order->getField('date_purchased')|bit_long_datetime}</div>
+			{if $order->info.estimated_ship_date}<div class="date">{tr}Estimated Ship{/tr}: {$order->info.estimated_ship_date|bit_long_date}</div>{/if}
+			{if $order->info.estimated_arrival_date}<div class="date">{tr}Estimated Delivery{/tr}: {$order->info.estimated_arrival_date|bit_long_date}</div>{/if}
 		</div>
 
 		{if $order->delivery}
