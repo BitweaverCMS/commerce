@@ -22,6 +22,7 @@
 				</div>
 				<div class="col-md-2 col-sm-2 col-xs-3 text-right">
 					<strong>{tr}Qty.{/tr} {$orderItem.products_quantity}</strong>
+				<div class="small nowrap">{$gCommerceCurrencies->format($orderItem.final_price)}&nbsp;{tr}Each{/tr}</div>
 				</div>
 				<div class="col-sm-2 col-xs-3">
 				{if sizeof($order->info.tax_groups) > 1}
@@ -33,6 +34,9 @@
 					{if $orderItem.onetime_charges != 0}
 					<div>{$gCommerceCurrencies->display_price($orderItem.onetime_charges, $orderItem.tax, 1)}</div>
 					{/if}
+				{if $orderItem.quantity_discount}
+					<div class="text-right small nowrap">{$orderItem.quantity_discount}%&nbsp;{tr}Discount{/tr}</div>
+				{/if}
 				</div>
 			{if !empty( $orderItem.attributes )}
 				<div class="col-md-10 col-sm-9 col-xs-12">
