@@ -456,6 +456,14 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['commission'] = $product->getCommissionUserCharges();
 			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $productHash['attributes'] );
 			$productHash['price'] = $product->getPurchasePrice( $productHash['products_quantity'], $productHash['attributes'] );
+			$productHash['quantity_discount'] = 0;
+			if( $productHash['products_quantity'] > 1 ) {
+				$basePrice = $product->getPurchasePrice( 1, $productHash['attributes'] );
+				if( $basePrice > $productHash['price'] ) {
+					$productHash['quantity_discount'] = 100 - round( $productHash['price'] / $basePrice * 100 );
+				}
+			}
+
 			$productHash['tax_rate'] = zen_get_tax_rate( $product->getField( 'products_tax_class_id' ) );
 			$productHash['final_price'] = $productHash['price'];
 			$productHash['final_price_display'] = $currencies->display_price( $productHash['final_price'] , $productHash['tax_rate'], $productHash['products_quantity'] );

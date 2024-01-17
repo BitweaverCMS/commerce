@@ -44,7 +44,12 @@
 				<input type="number" class="form-control input-mini" name="cart_quantity[{$productsKey}]" value="{$basket.products_quantity}">
 			</div>
 			{assign var=productHash value=$gBitCustomer->mCart->getProductHash($productsKey)}
-			<div class="col-xs-4 col-sm-1 currency text-right"><strong>{$productHash.final_price_display}</strong>{if $productHash.onetime_charges}<br/>{$productHash.onetime_charges_display}{/if}</div>
+			<div class="col-xs-4 col-sm-1 currency text-right"><strong>{$productHash.final_price_display}</strong>{if $productHash.onetime_charges}<br/>{$productHash.onetime_charges_display}{/if}
+				<div class="small nowrap">{$gCommerceCurrencies->format($productHash.final_price)}&nbsp;{tr}Each{/tr}</div>
+			{if $productHash.quantity_discount}
+				<div class="small nowrap">{$productHash.quantity_discount}%&nbsp;{tr}Discount{/tr}</div>
+			{/if}
+			</div>
 			<div class="col-xs-4 col-sm-1">
 				{forminput label="checkbox"}
 					<input type="checkbox" name="cart_delete[]" value="{$productsKey}">
