@@ -233,9 +233,11 @@ die;
 
 	function expungeOptionsValue( $pOptionsValuesId ) {
 		if( BitBase::verifyId( $pOptionsValuesId ) ) {
+			$this->mDb->StartTrans();
 			// The products_id is redundant for safety purposes
 			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_OPTIONS_MAP . " WHERE `products_options_values_id` = ?", array( $pOptionsValuesId ));
 			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_options_values_id` = ?", array( $pOptionsValuesId ));
+			$this->mDb->CompleteTrans();
 		}
 		return( count( $this->mErrors ) == 0 );		
 	}

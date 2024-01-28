@@ -41,13 +41,13 @@ if( $gBitProduct->isValid() ) {
 	$gBitSmarty->assign( 'optionsList', $productManager->getOptionsList() );
 }
 
-if( !empty( $_REQUEST['delete_attribute'] ) && !empty( $editOptionValue ) ) {
+if( !empty( $_REQUEST['delete_attribute'] ) && $productManager->verifyIdParameter( $_REQUEST, 'products_options_values_id' ) ) {
 	if( empty( $_REQUEST['confirm'] ) ) {
 		$formHash['delete_attribute'] = TRUE;
-		$formHash['attributes_id'] = $_REQUEST['attributes_id'];
-		$gBitSystem->confirmDialog( $formHash, array( 'warning' => 'Are you sure you want to delete this option value (#'.$_REQUEST['attributes_id'].') and remove  assignments to products?', 'error' => 'This cannot be undone!' ) );
+		$formHash['products_options_values_id'] = $_REQUEST['products_options_values_id'];
+		$gBitSystem->confirmDialog( $formHash, array( 'confirm_item' => 'Are you sure you want to delete this option value (#'.$_REQUEST['products_options_values_id'].') and remove assignments to products?', 'warning' => 'This cannot be undone!' ) );
 	} else {
-		$tempProduct->expungeAttribute( $_REQUEST['attributes_id'] );
+		$productManager->expungeOptionsValue( $_REQUEST['products_options_values_id'] );
 		bit_redirect( BITCOMMERCE_PKG_URL.'admin/products_options.php' );
 	}
 } elseif( !empty( $_REQUEST['save_attribute'] ) ) {
