@@ -201,8 +201,9 @@ die;
 
 	function genOptionsValuesId() {
 		global $gBitDb;
-		$max = (int)$gBitDb->getOne( "SELECT MAX(`products_options_values_id`) FROM " . TABLE_PRODUCTS_ATTRIBUTES );
-		return( $max + 1 );
+		return $gBitDb->GenID( 'com_products_options_values_id_seq' );
+//		$max = (int)$gBitDb->getOne( "SELECT MAX(`products_options_values_id`) FROM " . TABLE_PRODUCTS_ATTRIBUTES );
+//		return( $max + 1 );
 	}
 
 
