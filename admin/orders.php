@@ -148,7 +148,7 @@ if( !empty( $order ) ) {
 			$newOption = $gBitDb->getRow( $query, array( $_REQUEST['add_order_povid'] ) );
 			$newOption['orders_id'] = $_REQUEST['oID'];
 			$newOption['orders_products_id'] = $_REQUEST['orders_products_id'];
-			if( !empty( trim( $_REQUEST['add_order_povid_text'] ) ) ) {
+			if( !empty( trim( BitBase::getParameter( $_REQUEST, 'add_order_povid_text', NULL ) ) ) ) {
 				$newOption['products_options_values'] .= '~'.trim( $_REQUEST['add_order_povid_text'] );
 			}
 
