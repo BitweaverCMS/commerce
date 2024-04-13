@@ -329,9 +329,6 @@ if (isset($_REQUEST['action'])) {
 	}
 }
 
-// include the password crypto functions
-require_once(DIR_FS_FUNCTIONS . 'password_funcs.php');
-
 // include validation functions (right now only email address)
 require_once(DIR_FS_FUNCTIONS . 'validations.php');
 
