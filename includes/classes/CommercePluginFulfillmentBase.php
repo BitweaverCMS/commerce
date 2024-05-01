@@ -178,7 +178,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 			$this->getModuleKeyTrunk().'_MODE' => array(
 				'configuration_title' => $this->title.' Activation Mode',
 				'configuration_value' => 'Test',
-				'configuration_description' => 'Select mode for ".$this->title." fulfillment.',
+				'configuration_description' => 'Select mode for '.$this->title.' fulfillment.',
 				'sort_order' => $i++,
 				'set_function' => "zen_cfg_select_option(array('Production', 'Test'), ",
 			),
