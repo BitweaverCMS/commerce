@@ -168,12 +168,23 @@ class CommerceProductManager extends BitBase {
 
 	function storeOptionsValue( $pParamHash, $pFiles = NULL ) {
 		$this->StartTrans();
+
 		$ret = FALSE;
 		if( $this->verifyOptionsValue( $pParamHash ) ) {
-			if( !empty( $pParamHash['products_options_values_id'] ) ) {
+		
+			$exists = FALSE;	
+			if( $povid = BitBase::getParameter( $pParamHash, 'products_options_values_id' ) ) {
+				$exists = (int)$this->mDb->getOne( "SELECT `products_options_values_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . ' WHERE `products_options_values_id`=?', array( $povid ) );
+			}
+
+			if( $exists ) {
 				$this->mDb->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['options_values_store'], array( 'products_options_values_id' => $pParamHash['products_options_values_id'] ) );
 			} else {
-				$pParamHash['options_values_store']['products_options_values_id'] = $this->genOptionsValuesId();
+				if( $povid ) {
+					$pParamHash['options_values_store']['products_options_values_id'] = $povid;
+				} else {
+					$pParamHash['options_values_store']['products_options_values_id'] = $this->genOptionsValuesId();
+				}
 				$this->mDb->associateInsert( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['options_values_store'] );
 			}
 			$ret = TRUE;
@@ -182,6 +193,7 @@ vd( $_FILES );
 die;
 			}
 		}
+
 		$this->CompleteTrans();
 		return $ret;
 	}
