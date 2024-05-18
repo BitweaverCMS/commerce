@@ -293,9 +293,6 @@ if (!$demo_check->EOF) {
 	}
 }
 
-// include the password crypto functions
-require_once(DIR_WS_FUNCTIONS . 'password_funcs.php');
-
 // audience functions are for newsletter and mass-email audience-selection queries
 require_once(DIR_WS_FUNCTIONS.'audience.php');
 

@@ -57,7 +57,6 @@
   case 'account_history_info':
   case 'account_newsletters':
   case 'account_notifications':
-  case 'account_password':
   case 'address_book':
     define('META_TAG_TITLE', HEADING_TITLE );
     define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . NAVBAR_TITLE_1 . SECONDARY_SECTION . KEYWORDS);

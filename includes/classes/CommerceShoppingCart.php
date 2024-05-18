@@ -15,7 +15,7 @@ require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderBase.php' );
 define( 'MAX_CART_QUANTITY', 9999999 );
 
 class CommerceShoppingCart extends CommerceOrderBase {
-	public $cartID, $content_type;
+	public $content_type;
 
 	// Abstract methods implementation
 	public function getDelivery() {
@@ -123,8 +123,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->mDb->query($sql, array( $selectValue ) );
 		$sql = "DELETE FROM " . TABLE_CUSTOMERS_BASKET . " where `$selectColumn` = ?";
 		$this->mDb->query($sql, array( $selectValue ) );
-
-		unset($this->cartID);
 	}
 
 	function addToCart($pProductsId, $pQty = '1', $attributes = array(), $notify = true) {
@@ -186,9 +184,6 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->cleanup();
 
 		$this->load();
-
-// assign a temporary unique ID to the order contents to prevent hack attempts during the checkout procedure
-		$this->cartID = $this->generate_cart_id();
 	}
 
 	function emptyCart() {

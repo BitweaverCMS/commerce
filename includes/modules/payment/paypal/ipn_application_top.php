@@ -227,9 +227,6 @@ if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IP
   require(DIR_FS_FUNCTIONS . 'whos_online.php');
   zen_update_whos_online();
 
-// include the password crypto functions
-  require(DIR_FS_FUNCTIONS . 'password_funcs.php');
-
 // include validation functions (right now only email address)
   require(DIR_FS_FUNCTIONS . 'validations.php');
 

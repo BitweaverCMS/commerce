@@ -140,6 +140,14 @@ class usps extends CommercePluginShippingBase {
 				} else {
 					$quotes['error'] = $uspsQuote['error'];
 				}
+			} else {
+				if( !empty( $uspsQuote['Package'] ) ) {
+					foreach( $uspsQuote['Package'] as $packageHash ) {
+						if( !empty( $packageHash['Error'] ) ) {
+							$quotes['error'] .= '&bull; '.$packageHash['Error']['Description'];
+						}
+					}
+				}
 			}
 
 			if( empty( $quotes['error'] ) ) {
@@ -587,7 +595,6 @@ class usps extends CommercePluginShippingBase {
 								'<Length>' . $length . '</Length>' .
 								'<Height>' . $height . '</Height>' .
 								'<Girth>' . $girth . '</Girth>';
-
 				$request .=  '<Package ID="' . $package_count . '">' .
 							 '<Service>' . $service . '</Service>' .
 							 ($FirstClassMailType != '' ? '<FirstClassMailType>' . $FirstClassMailType . '</FirstClassMailType>' : '') .
