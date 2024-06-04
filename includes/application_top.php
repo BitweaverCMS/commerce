@@ -111,7 +111,7 @@ switch (true) {
 	case (DOWN_FOR_MAINTENANCE == 'true'):
 		// if not down for maintenance check login status
 		break;
-	case ($_REQUEST['main_page'] == FILENAME_LOGOFF or $_REQUEST['main_page'] == FILENAME_PRIVACY or $_REQUEST['main_page'] == FILENAME_PASSWORD_FORGOTTEN or $_REQUEST['main_page'] == FILENAME_CONTACT_US or $_REQUEST['main_page'] == FILENAME_CONDITIONS or $_REQUEST['main_page'] == FILENAME_SHIPPING or $_REQUEST['main_page'] == FILENAME_UNSUBSCRIBE):
+	case ($_REQUEST['main_page'] == FILENAME_LOGOFF or $_REQUEST['main_page'] == FILENAME_PRIVACY or $_REQUEST['main_page'] == FILENAME_CONTACT_US or $_REQUEST['main_page'] == FILENAME_CONDITIONS or $_REQUEST['main_page'] == FILENAME_SHIPPING or $_REQUEST['main_page'] == FILENAME_UNSUBSCRIBE):
 		break;
 	case (CUSTOMERS_APPROVAL_AUTHORIZATION == '1' and $_SESSION['customer_id'] == ''):
 		// customer must be logged in to browse

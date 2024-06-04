@@ -2,11 +2,13 @@
 	<div class="form-group">
 		{formlabel label="Option Value Id"}
 		{forminput}
-{if $editValue.products_options_values_id}
-			<input type="hidden" name="products_options_values_id" value="{$editValue.products_options_values_id}">{$editValue.products_options_values_id}
-{else}
-			<em>{tr}New{/tr}</em>
-{/if}
+		{if $editValue.products_options_values_id}
+			{$editValue.products_options_values_id}
+		{else}
+			{booticon iname="fa-input-numeric" class="link" iexplain="Edit" onclick="$('.advanced-input').toggle()"} <em class="advanced-input">{tr}New{/tr}</em>
+		{/if}
+			<input style="display:none" class="advanced-input" type="number" min="0" step="0" id="products_options_values_id" name="products_options_values_id" value="{$editValue.products_options_values_id}">
+			{formhelp style="display:none" class="advanced-input" note="ADVANCED: Set Option Value Id manually. DO NOT USE this unless you know why it is necessary."}
 		{/forminput}
 	</div>
 

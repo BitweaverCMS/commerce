@@ -81,6 +81,7 @@ class CommerceShipping extends BitSingleton {
 							$shipHash['shipping_num_boxes'] = ceil( $shipHash['shipping_weight_total'] / $shipModule->maxShippingWeight() );
 							$shipHash['shipping_weight_total'] += ($shipHash['shipping_weight_total'] * ($paddingPercent/100)) + $paddingWeight;
 							$shipHash['shipping_weight_box'] = $shipHash['shipping_weight_total'] / $shipHash['shipping_num_boxes'];
+							
 							// large box add padding
 						} else {
 							$shipHash['shipping_num_boxes'] = 1;
@@ -111,6 +112,8 @@ class CommerceShipping extends BitSingleton {
 						}
 					}
 				}
+				// if package has been split, adjust height that was cumulatively added in ::getBoxDimensions()
+				$shipHash['box_height'] = round( $shipHash['box_height'] / $shipHash['shipping_num_boxes'], 2 );
 			}
 		}
 
