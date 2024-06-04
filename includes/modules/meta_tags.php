@@ -64,7 +64,6 @@
     break;
 
   case 'advanced_search_result':
-  case 'password_forgotten':
     define('META_TAG_TITLE', NAVBAR_TITLE_2 );
     define('META_TAG_DESCRIPTION', TITLE . PRIMARY_SECTION . NAVBAR_TITLE_2 . SECONDARY_SECTION . KEYWORDS);
     define('META_TAG_KEYWORDS', KEYWORDS . ' ' . NAVBAR_TITLE_2);

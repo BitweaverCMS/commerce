@@ -141,7 +141,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 			}
 
 			// Archive this message to storage log
-			if (EMAIL_ARCHIVE == 'true'  && $module != 'password_forgotten_admin' && $module != 'cc_middle_digs') {  // don't archive pwd-resets and CC numbers
+			if (EMAIL_ARCHIVE == 'true'  && $module != 'cc_middle_digs') {  // don't archive pwd-resets and CC numbers
 				zen_mail_archive_write($to_name, $to_email_address, $from_email_name, $from_email_address, $email_subject, $email_html, $text, $module );
 			} // endif archiving
 		} // end foreach loop thru possible multiple email addresses
@@ -178,8 +178,6 @@ define('EMAIL_SYSTEM_DEBUG','off');
 		$emodules_array[] = array('id' => 'gv_mail_extra', 'text' => 'Send-GV-Extra');
 		$emodules_array[] = array('id' => 'welcome', 'text' => 'New Customer Welcome');
 		$emodules_array[] = array('id' => 'welcome_extra', 'text' => 'New Customer Welcome-Extra');
-		$emodules_array[] = array('id' => 'password_forgotten', 'text' => 'Password Forgotten');
-		$emodules_array[] = array('id' => 'password_forgotten_admin', 'text' => 'Password Forgotten');
 		$emodules_array[] = array('id' => 'checkout', 'text' => 'Checkout');
 		$emodules_array[] = array('id' => 'checkout_extra', 'text' => 'Checkout-Extra');
 		$emodules_array[] = array('id' => 'order_status', 'text' => 'Order Status');
