@@ -44,11 +44,11 @@
 								{if empty($noradio) && ($smarty.section.ix.total > 1 || $smarty.section.jx.total > 1)}
 									<div class="radio mt-0">
 										<label>
-											<input type="radio" name="shipping" value="{$quoteMethodId}" {if $checked}checked="checked"{/if}/> {$quotes[ix].methods[jx].name} {$quotes[ix].methods[jx].title} 
+											<input type="radio" name="shipping_method" value="{$quoteMethodId}" {if $checked}checked="checked"{/if}/> {$quotes[ix].methods[jx].name} {$quotes[ix].methods[jx].title} 
 										</label>
 									</div>
 								{else}
-									<input type="hidden" name="shipping" value="{$quoteMethodId}" /> {$quotes[ix].methods[jx].title} 
+									<input type="hidden" name="shipping_method" value="{$quoteMethodId}" /> {$quotes[ix].methods[jx].title} 
 								{/if}
 									{if $quotes[ix].methods[jx].note}
 										{formhelp note=$quotes[ix].methods[jx].note}

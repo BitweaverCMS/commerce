@@ -15,7 +15,7 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 	// if the customer is not logged on, redirect them to the login page
 	$_SESSION['navigation']->set_snapshot(array('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_PAYMENT));
 	zen_redirect(FILENAME_LOGIN);
-} elseif( empty( $_SESSION['shipping'] )  && ($gBitCustomer->mCart->get_content_type() != 'virtual') ) {
+} elseif( empty( $_SESSION['shipping'] ) && ($gBitCustomer->mCart->get_content_type() != 'virtual') ) {
 	// if no shipping method has been selected, redirect the customer to the shipping method selection page
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 } elseif( !$gBitCustomer->mCart->verifyCheckout() ) {
@@ -24,8 +24,8 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 	zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
-if( isset( $_POST['payment'] ) ) {
-	$_SESSION['payment'] = $_POST['payment'];
+if( isset( $_POST['payment_method'] ) ) {
+	$_SESSION['payment_method'] = $_POST['payment_method'];
 }
 
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'page_checkout_parameters_inc.php' );
@@ -38,11 +38,11 @@ $order->otCollectPosts( $_POST );
 // load the selected payment module
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
 
-$paymentManager = new CommercePaymentManager($_SESSION['payment']);
+$paymentManager = new CommercePaymentManager($_SESSION['payment_method']);
 $paymentManager->update_status( $_REQUEST );
 
 if( $order->hasPaymentDue() ) {
-	if( (empty( $_SESSION['payment'] ) || !$paymentManager->isModuleActive( $_SESSION['payment'] ) ) ) {
+	if( (empty( $_SESSION['payment_method'] ) || !$paymentManager->isModuleActive( $_SESSION['payment_method'] ) ) ) {
 		$messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
 		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 	}
@@ -79,7 +79,7 @@ $breadcrumb->add(NAVBAR_TITLE_2);
 
 $gBitSmarty->assign( 'order', $order );
 
-$order->otProcess();
+$order->otProcess( array_merge( $_SESSION, $_REQUEST ) );
 
 $gBitSmarty->assign( 'formActionUrl', $paymentManager->get_form_action_url() );
 $gBitSmarty->assign( 'paymentModules', $paymentManager );

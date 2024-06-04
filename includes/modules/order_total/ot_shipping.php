@@ -25,8 +25,8 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 		return 'MODULE_ORDER_TOTAL_SHIPPING_STATUS';
 	}
 
-	function process() {
-		parent::process();
+	function process( $pSessionParams = array() ) {
+		parent::process( $pSessionParams );
 		global $currencies;
 
 		if (MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') {
@@ -47,9 +47,12 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 				$this->mOrder->info['shipping_cost'] = 0;
 			}
 		}
-		if( !empty( $_SESSION['shipping'] ) ) {
-			$module = substr($_SESSION['shipping']['id'], 0, strpos($_SESSION['shipping']['id'], '_'));
-			if( !empty( $this->mOrder->info['shipping_method'] ) ) {
+
+		if( !empty( $pSessionParams['shipping'] ) ) {
+			if( $module = substr($pSessionParams['shipping']['id'], 0, strpos($pSessionParams['shipping']['id'], '_')) ) {
+				$this->mOrder->info['shipping_method']  = BitBase::getParameter( $pSessionParams['shipping'], 'title' );
+				$this->mOrder->info['shipping_module_code'] = $module;
+				$this->mOrder->info['shipping_method_id'] = $pSessionParams['shipping']['id'];
 				if( !empty( $GLOBALS[$module]->tax_class ) ) {
 					if (!defined($GLOBALS[$module]->tax_basis)) {
 						$shipping_tax_basis = STORE_SHIPPING_TAX_BASIS;
@@ -81,7 +84,7 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 					if (DISPLAY_PRICE_WITH_TAX == 'true') $this->mOrder->info['shipping_cost'] += zen_calculate_tax($this->mOrder->info['shipping_cost'], $shipping_tax);
 				}
 
-				if ($_SESSION['shipping'] == 'free_free') {
+				if ($pSessionParams['shipping'] == 'free_free') {
 					$this->mOrder->info['shipping_method'] = FREE_SHIPPING_TITLE;
 				}
 
