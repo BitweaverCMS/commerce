@@ -30,7 +30,7 @@ $gApiHelp['Orders'] = array(
 'payment_owner' => 'Name on credit card',
 'payment_number' => 'Credit Card number',
 'payment_expires' => 'Expiration date in the form MMYY',
-'cc_cvv' => 'Card security code (3 or 4 digits)',
+'payment_cvv' => 'Card security code (3 or 4 digits)',
 'deadline_date' => 'If the order is needed by a certain date, enter it as YYYY-MM-DD, eg 2023-04-01',
 'comments' => 'Any comment you want included with the order. This will be reviewed by production prior to processing the order',
 		),

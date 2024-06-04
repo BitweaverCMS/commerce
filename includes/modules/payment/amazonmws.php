@@ -26,7 +26,7 @@ class amazonmws extends CommercePluginPaymentBase {
 		$this->description = tra( 'AmazonMWS Order Integration' );
 	}
 
-	function process() {
+	function process( $pPaymentParams = array() ) {
 		global $order, $currencies, $gBitDb;
 		$amazonFee = $this->getAmazonSellerFee( $order->info['total'] );
 		$order->info['total'] -= $amazonFee; 
@@ -36,6 +36,10 @@ class amazonmws extends CommercePluginPaymentBase {
 						'value' => -1 * $amazonFee,
 						'sort_order' => $this->sort_order );
 		return $ret;
+	}
+
+	protected function getSessionVars() {
+		return array( 'amazonmws' );
 	}
 
 	function getAmazonSellerFee( $pFee ) {

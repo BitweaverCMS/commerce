@@ -110,12 +110,11 @@ class authorizenet_aim extends CommercePluginPaymentCardBase {
 
 	// Evaluates the Credit Card Type for acceptance and the validity of the Credit Card Number & Expiration Date
 function verifyPayment( &$pPaymentParameters, &$pOrder ) {
-		global $_POST;
 
 		include(DIR_WS_CLASSES . 'cc_validation.php');
 
 		$cc_validation = new cc_validation();
-		$result = $cc_validation->validate($_POST['authorizenet_aim_cc_number'], $_POST['authorizenet_aim_cc_expires_month'], $_POST['authorizenet_aim_cc_expires_year'], $_POST['authorizenet_aim_cc_cvv']);
+		$result = $cc_validation->validate($pPaymentParams['authorizenet_aim_cc_number'], $pPaymentParams['authorizenet_aim_cc_expires_month'], $pPaymentParams['authorizenet_aim_cc_expires_year'], $pPaymentParams['authorizenet_aim_cc_cvv']);
 		$error = '';
 		switch ($result) {
 			case -1:
@@ -132,7 +131,7 @@ function verifyPayment( &$pPaymentParameters, &$pOrder ) {
 		}
 
 		if ( ($result == false) || ($result < 1) ) {
-			$payment_error_return = 'payment_error=' . $this->code . '&error=' . urlencode($error) . '&authorizenet_aim_cc_owner=' . urlencode($_POST['authorizenet_aim_cc_owner']) . '&authorizenet_aim_cc_expires_month=' . $_POST['authorizenet_aim_cc_expires_month'] . '&authorizenet_aim_cc_expires_year=' . $_POST['authorizenet_aim_cc_expires_year'];
+			$payment_error_return = 'payment_error=' . $this->code . '&error=' . urlencode($error) . '&authorizenet_aim_cc_owner=' . urlencode($pPaymentParams['authorizenet_aim_cc_owner']) . '&authorizenet_aim_cc_expires_month=' . $pPaymentParams['authorizenet_aim_cc_expires_month'] . '&authorizenet_aim_cc_expires_year=' . $pPaymentParams['authorizenet_aim_cc_expires_year'];
 
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, $payment_error_return, 'SSL', true, false));
 		}
@@ -145,16 +144,15 @@ function verifyPayment( &$pPaymentParameters, &$pOrder ) {
 
 	// Display Credit Card Information on the Checkout Confirmation Page
 	function confirmation( $pPaymentParameters ) {
-		global $_POST;
 
 		if (MODULE_PAYMENT_AUTHORIZENET_AIM_USE_CVV == 'True') {
 			$confirmation = array(	'title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CATALOG_TITLE, // Redundant
 									'fields' => array(
 										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_TYPE, 'field' => $this->cc_type),
-										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_OWNER, 'field' => $_POST['authorizenet_aim_cc_owner']),
+										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_OWNER, 'field' => $pPaymentParams['authorizenet_aim_cc_owner']),
 										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_NUMBER, 'field' => substr($this->cc_number, 0, 4) . str_repeat('X', (strlen($this->cc_number) - 8)) . substr($this->cc_number, -4)),
-										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_EXPIRES, 'field' => strftime('%B, %Y', mktime(0,0,0,$_POST['authorizenet_aim_cc_expires_month'], 1, '20' . $_POST['authorizenet_aim_cc_expires_year']))),
-										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CVV, 'field' => $_POST['authorizenet_aim_cc_cvv'])
+										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_EXPIRES, 'field' => strftime('%B, %Y', mktime(0,0,0,$pPaymentParams['authorizenet_aim_cc_expires_month'], 1, '20' . $pPaymentParams['authorizenet_aim_cc_expires_year']))),
+										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CVV, 'field' => $pPaymentParams['authorizenet_aim_cc_cvv'])
 									)
 							);
 		} else {
@@ -162,11 +160,11 @@ function verifyPayment( &$pPaymentParameters, &$pOrder ) {
 						'fields' => array(array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_TYPE,
 																									'field' => $this->cc_type),
 															array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_OWNER,
-																									'field' => $_POST['authorizenet_aim_cc_owner']),
+																									'field' => $pPaymentParams['authorizenet_aim_cc_owner']),
 																						array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_NUMBER,
 																									'field' => substr($this->cc_number, 0, 4) . str_repeat('X', (strlen($this->cc_number) - 8)) . substr($this->cc_number, -4)),
 																						array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_EXPIRES,
-																									'field' => strftime('%B, %Y', mktime(0,0,0,$_POST['authorizenet_aim_cc_expires_month'], 1, '20' . $_POST['authorizenet_aim_cc_expires_year'])))));
+																									'field' => strftime('%B, %Y', mktime(0,0,0,$pPaymentParams['authorizenet_aim_cc_expires_month'], 1, '20' . $pPaymentParams['authorizenet_aim_cc_expires_year'])))));
 		}
 
 		return $confirmation;
@@ -174,12 +172,12 @@ function verifyPayment( &$pPaymentParameters, &$pOrder ) {
 
 function process_button( $pPaymentParameters ) {
 		// These are hidden fields on the checkout confirmation page
-	$process_button_string = zen_draw_hidden_field('cc_owner', $_POST['authorizenet_aim_cc_owner']) .
+	$process_button_string = zen_draw_hidden_field('cc_owner', $pPaymentParams['authorizenet_aim_cc_owner']) .
 														 zen_draw_hidden_field('cc_expires', $this->cc_expires_month . substr($this->cc_expires_year, -2)) .
 														 zen_draw_hidden_field('cc_type', $this->cc_type) .
 														 zen_draw_hidden_field('cc_number', $this->cc_number);
 		if (MODULE_PAYMENT_AUTHORIZENET_AIM_USE_CVV == 'True') {
-			$process_button_string .= zen_draw_hidden_field('cc_cvv', $_POST['authorizenet_aim_cc_cvv']);
+			$process_button_string .= zen_draw_hidden_field('cc_cvv', $pPaymentParams['authorizenet_aim_cc_cvv']);
 		}
 
 		$process_button_string .= zen_draw_hidden_field(session_name(), session_id());
@@ -189,15 +187,15 @@ function process_button( $pPaymentParameters ) {
 	}
 
 function processPayment( &$pPaymentParameters, &$pOrder ) {
-	global $_POST, $response, $gBitDb, $order;
+	global $response, $gBitDb, $order;
 
 	if (MODULE_PAYMENT_AUTHORIZENET_AIM_STORE_NUMBER == 'True') {
-			$order->info['cc_number'] = $_POST['cc_number'];
+			$order->info['cc_number'] = $pPaymentParams['cc_number'];
 		}
-		$order->info['cc_expires'] = $_POST['cc_expires'];
-		$order->info['cc_type'] = $_POST['cc_type'];
-		$order->info['cc_owner'] = $_POST['cc_owner'];
-		$order->info['cc_cvv'] = $_POST['cc_cvv'];
+		$order->info['cc_expires'] = $pPaymentParams['cc_expires'];
+		$order->info['cc_type'] = $pPaymentParams['cc_type'];
+		$order->info['cc_owner'] = $pPaymentParams['cc_owner'];
+		$order->info['cc_cvv'] = $pPaymentParams['cc_cvv'];
 
 	// DATA PREPARATION SECTION
 		unset($submit_data);  // Cleans out any previous data stored in the variable
@@ -228,9 +226,9 @@ function processPayment( &$pPaymentParameters, &$pOrder ) {
 	x_type => MODULE_PAYMENT_AUTHORIZENET_AIM_AUTHORIZATION_TYPE == 'Authorize' ? 'AUTH_ONLY': 'AUTH_CAPTURE',
 	x_method => 'CC', //MODULE_PAYMENT_AUTHORIZENET_AIM_METHOD == 'Credit Card' ? 'CC' : 'ECHECK',
 	x_amount => number_format($order->info['total'], 2),
-	x_card_num => $_POST['cc_number'],
-	x_exp_date => $_POST['cc_expires'],
-	x_card_code => $_POST['cc_cvv'],
+	x_card_num => $pPaymentParams['cc_number'],
+	x_exp_date => $pPaymentParams['cc_expires'],
+	x_card_code => $pPaymentParams['cc_cvv'],
 	x_email_customer => MODULE_PAYMENT_AUTHORIZENET_AIM_EMAIL_CUSTOMER == 'True' ? 'TRUE': 'FALSE',
 	x_email_merchant => MODULE_PAYMENT_AUTHORIZENET_AIM_EMAIL_MERCHANT == 'True' ? 'TRUE': 'FALSE',
 	x_cust_id => $_SESSION['customer_id'],

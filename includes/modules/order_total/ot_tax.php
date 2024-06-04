@@ -18,8 +18,8 @@ class ot_tax extends CommercePluginOrderTotalBase {
 		$this->description = MODULE_ORDER_TOTAL_TAX_DESCRIPTION;
 	}
 
-	function process() {
-		parent::process();
+	function process( $pSessionParams = array() ) {
+		parent::process( $pSessionParams );
 		global $currencies;
 
 		reset($this->mOrder->info['tax_groups']);

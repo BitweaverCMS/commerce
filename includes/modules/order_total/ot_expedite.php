@@ -40,7 +40,7 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 	}
 
 	protected function setExpedite( $pExpedite ) {
-		$this->hasExpedite = $pExpedite;
+		$this->mExpediteFlag = $pExpedite;
 		$_SESSION['ot_expedite'] = $pExpedite;
 	}
 
@@ -54,11 +54,15 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 		return $ret;
 	}
 
-	function process() {
+	function process( $pSessionParams = array() ) {
+		parent::process( $pSessionParams );
 		global $gCommerceSystem, $currencies;
-		parent::process();
+
 		if( $this->isEnabled() ) {
 			if( $this->mOrder->isExpeditable() ) {
+				if( !empty( $pSessionParams['ot_expedite'] ) ) {
+					$this->setExpedite( $pSessionParams['ot_expedite'] == (int)1 );
+				}
 				if( strpos( MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE, '%' ) ) {
 					$expediteMultiplier = (float)MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE / 100;
 					$exepditeDisplay = MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE;
@@ -96,6 +100,7 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 													'text' => $expediteText,
 													'value' => $expediteCost);
 			}
+
 			if( BitBase::getParameter( $_REQUEST, 'main_page' ) == 'checkout_process' && $this->hasExpedite() ) {
 				$this->mOrder->info['comments'] = trim( "EXPEDITE ORDER\n\n".$this->mOrder->info['comments'] );
 			}

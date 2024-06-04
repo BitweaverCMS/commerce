@@ -129,6 +129,7 @@ class usps extends CommercePluginShippingBase {
 			$this->uspsQuote = $this->_getQuote( $pShipHash );
 			$uspsQuote = $this->uspsQuote;
 
+			$quotes['error'] = '';
 			// were errors encountered?
 			if( $uspsQuote === -1 || !is_array($uspsQuote) ) {
 				$quotes['error'] = tra( 'The USPS server had a lookup error.' );

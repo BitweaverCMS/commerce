@@ -13,26 +13,39 @@
 
 class CommercePaymentManager {
 	private $selected_module;
-	private $mPaymentObjects;
+	private $mPaymentObjects = array();
 
 	public $mErrors = array();
 
 	// class constructor
-	function __construct($module = '') {
+	function __construct($pPaymentModule = '') {
 		global $gCommerceSystem;
 
 		$this->mPaymentObjects = $gCommerceSystem->scanModules( 'payment', TRUE );
 		
 		// if there is only one payment method, select it as default because in
 		// checkout_confirmation.php the $payment variable is being assigned the
-		// $_POST['payment'] value which will be empty (no radio button selection possible)
+		// $_POST['payment_method'] value which will be empty (no radio button selection possible)
 		if( count( $this->mPaymentObjects ) == 1 ) {
 			$paymentModule = current( $this->mPaymentObjects );
-			$_SESSION['payment'] = $paymentModule->code;
+			$_SESSION['payment_method'] = $paymentModule->code;
 		}
 
-		if( !empty( $module ) && !empty( $this->mPaymentObjects[$module] ) ) {
-			$this->selected_module = $module;
+		if( !empty( $pPaymentModule ) ) {
+			if( !empty( $this->mPaymentObjects[$pPaymentModule] ) ) {
+				$this->selected_module = $pPaymentModule;
+			} else {
+				if( $pPaymentModule == 'card' ) {
+					// card, used in API, will select the first found CommercePluginPaymentCardBase plugin (should only ever be one activated anyway)
+					foreach( array_keys( $this->mPaymentObjects ) as $moduleKey ) {
+						if( is_a( $this->mPaymentObjects[$moduleKey], 'CommercePluginPaymentCardBase' ) ) {
+							$this->selected_module = $this->mPaymentObjects[$moduleKey]->code;
+							$_SESSION['payment_method'] = $this->selected_module;
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -140,7 +153,7 @@ class CommercePaymentManager {
 		}
 	}
 
-	function processPayment( $pPaymentParams, $pOrder ) {
+	function processPayment( &$pPaymentParams, $pOrder ) {
 		global $gBitProduct;
 		$ret = NULL;
 
@@ -150,18 +163,21 @@ class CommercePaymentManager {
 				if( isset( $_SESSION['orders_id'] ) ) {
 					unset( $_SESSION['orders_id'] );
 				}
+			} else {
+				$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
 			}
 		}
+
 		return $ret;
 	}
 
-	function after_order_create($zf_order_id) {
-		global $gBitUser, $gBitProduct, $gCommerceSystem, $order;
+	function after_order_create( $zf_order_id, $pOrder ) {
+		global $gBitUser, $gBitProduct, $gCommerceSystem;
 		$ret = NULL;
-		if( round( $order->getField( 'total', 2 ) ) > 0 && ($groupId = $gCommerceSystem->getConfig( 'CUSTOMERS_PURCHASE_GROUP' )) ) {
+		if( round( $pOrder->getField( 'total', 2 ) ) > 0 && ($groupId = $gCommerceSystem->getConfig( 'CUSTOMERS_PURCHASE_GROUP' )) ) {
 			$gBitUser->addUserToGroup( $gBitUser->mUserId, $groupId );
 		}
-		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $order );
+		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $pOrder );
 		if (!empty($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) && (method_exists($this->mPaymentObjects[$this->selected_module], 'after_order_create'))) {
 			return $this->mPaymentObjects[$this->selected_module]->after_order_create($zf_order_id);
 		}

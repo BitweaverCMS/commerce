@@ -32,8 +32,8 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 		return 'MODULE_ORDER_TOTAL_GROUP_PRICING_STATUS';
 	}
 
-	function process() {
-		parent::process();
+	function process( $pSessionParams = array() ) {
+		parent::process( $pSessionParams );
 		global $currencies;
 
 		if( $groupDiscount = $this->getGroupDiscount( $_SESSION['customer_id'] ) ) {

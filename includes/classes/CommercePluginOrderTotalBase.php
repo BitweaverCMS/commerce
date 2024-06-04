@@ -34,7 +34,7 @@ abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
 		return 'order_total';
 	}
 
-	function process() {
+	function process( $pPaymentParams = array() ) {
 		$this->mProcessingOutput = array();
 	}
 

@@ -102,7 +102,7 @@
 </div>
 <div class="row">
 	<div class="col-md-8 col-xs-12 mv-3 text-center">
-		{$paymentModules->process_button()}
+		{$paymentModules->process_button($smarty.session)}
 		<div class="form-group submit">
 			<button id="payment-submit-btn" onclick='paymentSubmit(this.form); this.form.submit();' type="submit" class="btn btn-primary btn-lg" />{tr}Submit Order{/tr}</button>
 		</div>

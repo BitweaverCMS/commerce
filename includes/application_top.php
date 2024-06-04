@@ -18,6 +18,10 @@
 // | license@zen-cart.com so we can mail you a copy immediately.
 // +----------------------------------------------------------------------+
 
+// If application_top is getting invoked to initialized the bitcommerce system from outside the commerce package, for example via API
+$initialPath = getcwd();
+chdir( BITCOMMERCE_PKG_PATH );
+
 //
 // start the timer for the page parse time log
 define('PAGE_PARSE_START_TIME', microtime());
@@ -35,6 +39,7 @@ if( empty( $_REQUEST['main_page'] ) ) {
 
 define( 'BITCOMMERCE_ADMIN', FALSE );
 
+global $request_type;
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_user_inc.php' );
 
@@ -389,3 +394,6 @@ define('WARN_SQL_CACHE_DIRECTORY_NOT_WRITEABLE', 'true');
 define('WARN_SESSION_AUTO_START', 'true');
 define('WARN_DOWNLOAD_DIRECTORY_NOT_READABLE', 'true');
 define('WARN_DATABASE_VERSION_PROBLEM','true');
+
+// Restore previous cwd if application_top was includes outside of bitcommerce
+chdir( $initialPath );

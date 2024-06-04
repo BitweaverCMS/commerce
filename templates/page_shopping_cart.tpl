@@ -45,7 +45,7 @@
 			</div>
 			{assign var=productHash value=$gBitCustomer->mCart->getProductHash($productsKey)}
 			<div class="col-xs-4 col-sm-1 currency text-right"><strong>{$productHash.final_price_display}</strong>{if $productHash.onetime_charges}<br/>{$productHash.onetime_charges_display}{/if}
-				<div class="small nowrap">{$gCommerceCurrencies->format($productHash.final_price)}&nbsp;{tr}Each{/tr}</div>
+				{if $basket.products_quantity > 1}<div class="small nowrap">{$gCommerceCurrencies->format($productHash.final_price)}&nbsp;{tr}Each{/tr}</div>{/if}
 			{if $productHash.quantity_discount}
 				<div class="small nowrap">{$productHash.quantity_discount}%&nbsp;{tr}Discount{/tr}</div>
 			{/if}

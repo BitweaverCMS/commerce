@@ -98,8 +98,8 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		return $od_amount + $tod_amount;
 	}
 
-	function process() {
-		parent::process();
+	function process( $pSessionParams = array() ) {
+		parent::process( $pSessionParams );
 		global $currencies;
 
 		if( !empty( $_SESSION['cot_gv'] ) ) {

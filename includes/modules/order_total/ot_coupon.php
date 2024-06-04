@@ -29,8 +29,8 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		}
 	}
 
-	function process() {
-		parent::process();
+	function process( $pSessionParams = array() ) {
+		parent::process( $pSessionParams );
 		global $currencies;
 
 		if( $od_amount = $this->getDiscountHash() ) {
@@ -47,7 +47,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 					$this->mOrder->info['shipping_cost'] = 0;
 				}
 				$sql = "select coupon_code from " . TABLE_COUPONS . " where coupon_id = ?";
-				if( $couponCode = $this->mDb->GetOne($sql, array( $_SESSION['cc_id'] ) ) ) {
+				if( $couponCode = $this->mDb->GetOne($sql, array( $pSessionParams['cc_id'] ) ) ) {
 					$this->coupon_code = $couponCode;
 					$this->setOrderDeduction( $od_amount['total'], $this->coupon_code );
 					$this->mProcessingOutput = array( 'code' => $this->code,

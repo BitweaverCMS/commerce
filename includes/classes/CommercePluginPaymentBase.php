@@ -70,6 +70,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 	}
 
 	protected function clearSessionDetails() {
+eb( $_SESSION );
 		foreach( $this->getSessionVars() as $var ) {
 			$_SESSION[$var] = $this->$var;
 		}	

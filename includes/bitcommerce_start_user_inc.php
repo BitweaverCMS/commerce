@@ -1,6 +1,8 @@
 <?php
-// We must include this file separately as admin/ has different ideas of templates and constants, etc.
+// globalize the major singletons
+global $gBitProduct, $gCommerceSystem, $gBitDb, $gBitSmarty, $gBitThemes, $gBitUser;
 
+// We must include this file separately as admin/ has different ideas of templates and constants, etc.
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/html_output.php');
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/functions_general.php');
 
@@ -9,7 +11,7 @@ require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/functions_general.php');
 require_once(DIR_FS_FUNCTIONS . 'functions_email.php');
 
 // load extra functions
-require_once(DIR_FS_MODULES . 'extra_functions.php');
+//require_once(DIR_FS_MODULES . 'extra_functions.php');
 
 // set host_address once per session to reduce load on server
 if( empty( $_SESSION['customers_host_address'] ) ) {

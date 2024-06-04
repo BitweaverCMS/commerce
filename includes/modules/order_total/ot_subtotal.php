@@ -25,8 +25,8 @@ class ot_subtotal extends CommercePluginOrderTotalBase {
 		return 'MODULE_ORDER_TOTAL_SUBTOTAL_STATUS';
 	}
 
-	function process() {
-		parent::process();
+	function process( $pSessionParams = array() ) {
+		parent::process( $pSessionParams );
 		global $currencies;
 
 		$this->mProcessingOutput = array( 'code' => $this->code,

@@ -122,9 +122,14 @@ class CommerceShipping extends BitSingleton {
 
 	function quoteToSession( $quote ) {
 		unset( $_SESSION['shipping'] );
+		$_SESSION['shipping'] = $this->quoteToHash( $quote );
+		return !empty( $_SESSION['shipping'] );	
+	}
 
+	function quoteToHash( $quote ) {
+		$ret = array();
 		if( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) && isset( $quote[0]['id'] ) ) {
-			$_SESSION['shipping'] = array(
+			$ret = array(
 				'id' => $quote[0]['id'].'_'.$quote[0]['methods'][0]['id'],
 				'title' => (($quote[0]['module'] == $quote[0]['methods'][0]['title']) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
 				'cost' => $quote[0]['methods'][0]['cost'],
@@ -132,7 +137,7 @@ class CommerceShipping extends BitSingleton {
 				'ship_date' => !empty( $quote[0]['methods'][0]['ship_date'] ) ? $quote[0]['origin']['ship_date'] : NULL
 				);
 		}
-		return !empty( $_SESSION['shipping'] );	
+		return $ret;
 	}
 
 }

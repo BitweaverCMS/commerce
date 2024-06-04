@@ -77,7 +77,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 								 zen_draw_hidden_field('payment_expires_year', $this->payment_expires_year ) .
 								 zen_draw_hidden_field('payment_type', $this->payment_type) .
 								 zen_draw_hidden_field('payment_number', $this->payment_number) .
-								 zen_draw_hidden_field('cc_cvv', $this->cc_cvv);
+								 zen_draw_hidden_field('payment_cvv', $this->payment_cvv);
 		return $process_button_string;
 	}
 
@@ -167,7 +167,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				$postFields['COMMENT2'] = 'Reference Trans for '.$postFields['ORIGID']; //	(Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
 			} else {
 				$postFields['ACCT'] = $this->getPaymentNumber( $pPaymentParams ); // (Required for credit cards) Credit card or purchase card number. For example, ACCT=5555555555554444. For the pinless debit TENDER type, ACCT can be the bank account number. 
-				$postFields['CVV2'] = $pOrder->getField( 'cc_cvv' ); // (Optional) A code printed (not imprinted) on the back of a credit card. Used as partial assurance that the card is in the buyer's possession.  Limitations: 3 or 4 digits
+				$postFields['CVV2'] = $pOrder->getField( 'payment_cvv' ); // (Optional) A code printed (not imprinted) on the back of a credit card. Used as partial assurance that the card is in the buyer's possession.  Limitations: 3 or 4 digits
 				$postFields['EXPDATE'] = $this->getPaymentExpires( $pPaymentParams ); // (Required) Expiration date of the credit card. For example, 1215 represents December 2015.
 				$postFields['INVNUM'] = $pOrder->mDb->mName.'-'.$pPaymentParams['orders_id']; // (Optional) Your own unique invoice or tracking number.
 

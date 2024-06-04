@@ -25,4 +25,8 @@ class cod extends CommercePluginPaymentBase {
 		$this->description = tra( 'Cash on Delivery' );
 	}
 
+	protected function getSessionVars() {
+		return array( 'payment_cod_name' );
+	}
+
 }

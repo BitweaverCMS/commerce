@@ -18,19 +18,8 @@ class braintree_api extends CommercePluginPaymentCardBase {
     var $enableDebugging = false;
     var $order_pending_status = 1;
     var $_logLevel = 0;
-	var $bt_cc_firstname, $bt_cc_lastname;
 
 	var $mCurrencySupport = array();
-
-	protected function setCcOwner( $pPaymentParams ) {
-		$bt_cc_firstname = trim( $this->getParameter( $pPaymentParams, 'bt_cc_firstname' ) );
-		$bt_cc_lastname = trim( $this->getParameter( $pPaymentParams, 'bt_cc_lastname' ) );
-		return !empty( $bt_cc_lastname ) && !empty( $bt_cc_firstname );
-	}
-
-	public function getPaymentOwner( $pPaymentParams ) {
-		return $this->getParameter( $pPaymentParams, 'bt_cc_firstname' ).' '.$this->getParameter( $pPaymentParams, 'bt_cc_lastname' );
-	}
 
     /**
      * this module collects card-info onsite
@@ -39,6 +28,22 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
 	var $cards = array();
 
+/*	var $bt_cc_firstname, $bt_cc_lastname;
+
+	protected function setCcOwner( $pPaymentParams ) {
+		$bt_cc_firstname = trim( $this->getParameter( $pPaymentParams, 'bt_cc_firstname' ) );
+		$bt_cc_lastname = trim( $this->getParameter( $pPaymentParams, 'bt_cc_lastname' ) );
+		return !empty( $bt_cc_lastname ) && !empty( $bt_cc_firstname );
+	}
+
+	public function getPaymentOwner( $pPaymentParams ) {
+		if( !empty( $pPaymentParams['bt_cc_firstname'] ) || !empty( $pPaymentParams['bt_cc_lastname'] ) ) {
+			return $this->getParameter( $pPaymentParams, 'bt_cc_firstname' ).' '.$this->getParameter( $pPaymentParams, 'bt_cc_lastname' );
+		} else {
+			return parent::getPaymentOwner( $pPaymentParams );
+		}
+	}
+/*
     /**
      * class constructor
      */
@@ -117,34 +122,27 @@ class braintree_api extends CommercePluginPaymentCardBase {
 		}
     }
 
-	protected function getSessionVars() {
-		return array( 'bt_cc_firstname', 'bt_cc_lastname', 'payment_number', 'cc_cvv', 'payment_expires_month', 'payment_expires_year' );
-	}
-
     /**
      *  Validate the credit card information via javascript (Number, Owner, and CVV Lengths)
      */
     function javascript_validation() {
         return '  if(payment_value == "' . $this->code . '") {' . "\n" .
-                '    var cc_firstname = document.checkout_payment.bt_cc_firstname.value;' . "\n" .
-                '    var cc_lastname = document.checkout_payment.bt_cc_lastname.value;' . "\n" .
+                '    var payment_owner = document.checkout_payment.payment_owner.value;' . "\n" .
                 '    var payment_number = document.checkout_payment.payment_number.value;' . "\n" .
-                '    var cc_checkcode = document.checkout_payment.cc_cvv.value;' . "\n" .
-                '    if(cc_firstname == "" || cc_lastname == "" || eval(cc_firstname.length) + eval(cc_lastname.length) < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
+                '    var cc_checkcode = document.checkout_payment.payment_cvv.value;' . "\n" .
+                '    if(payment_owner == "" || eval(payment_owner.length) < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
                 '      error = 1;' . "\n" .
-                '      jQuery(\'[name="bt_cc_firstname"]\').addClass("missing");' . "\n" .
-                '      jQuery(\'[name="bt_cc_firstname"]\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', $this->getModuleConfigValue( '_TEXT_JS_CC_OWNER' ))))) . '\' + \'</span>\');' . "\n" .
-                '      jQuery(\'[name="bt_cc_lastname"]\').addClass("missing");' . "\n" .
-                '      jQuery(\'[name="bt_cc_lastname"]\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', $this->getModuleConfigValue( '_TEXT_JS_CC_OWNER' ))))) . '\' + \'</span>\');' . "\n" .
+                '      jQuery(\'[name="payment_owner"]\').addClass("missing");' . "\n" .
+                '      jQuery(\'[name="payment_owner"]\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', $this->getModuleConfigValue( '_TEXT_JS_CC_OWNER' ))))) . '\' + \'</span>\');' . "\n" .
                 '    }' . "\n" .
                 '    if(payment_number == "" || payment_number.length < ' . CC_NUMBER_MIN_LENGTH . ') {' . "\n" .
                 '      error = 1;' . "\n" .
                 '      jQuery(\'[name="payment_number"]\').addClass("missing");' . "\n" .
                 '      jQuery(\'[name="payment_number"]\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', $this->getModuleConfigValue( '_TEXT_JS_CC_NUMBER' ))))) . '\' + \'</span>\');' . "\n" .
                 '    }' . "\n" .
-                '    if(document.checkout_payment.cc_cvv.disabled == false && (cc_checkcode == "" || cc_checkcode.length < 3 || cc_checkcode.length > 4)) {' . "\n" .
-                '      jQuery(\'[name="cc_cvv"]\').addClass("missing");' . "\n" .
-                '      jQuery(\'[name="cc_cvv"]\').siblings(\'small\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', $this->getModuleConfigValue( '_TEXT_JS_CC_CVV' ))))) . '\' + \'</span>\');' . "\n" .
+                '    if(document.checkout_payment.payment_cvv.disabled == false && (cc_checkcode == "" || cc_checkcode.length < 3 || cc_checkcode.length > 4)) {' . "\n" .
+                '      jQuery(\'[name="payment_cvv"]\').addClass("missing");' . "\n" .
+                '      jQuery(\'[name="payment_cvv"]\').siblings(\'small\').after(\' <span class="alert validation">\' + \'' . addslashes(nl2br(stripslashes(str_replace('\\n', '', $this->getModuleConfigValue( '_TEXT_JS_CC_CVV' ))))) . '\' + \'</span>\');' . "\n" .
                 '      error = 1;' . "\n" .
                 '    }' . "\n" .
                 '  }' . "\n";
@@ -160,13 +158,13 @@ class braintree_api extends CommercePluginPaymentCardBase {
                 'if(value == "Solo" || value == "Maestro" || value == "Switch") {' .
                 '    document.checkout_payment.bt_cc_issue_month.disabled = false;' .
                 '    document.checkout_payment.bt_cc_issue_year.disabled = false;' .
-                '    document.checkout_payment.cc_cvv.disabled = false;' .
+                '    document.checkout_payment.payment_cvv.disabled = false;' .
                 '    if(document.checkout_payment.bt_cc_issuenumber) document.checkout_payment.bt_cc_issuenumber.disabled = false;' .
                 '} else {' .
                 '    if(document.checkout_payment.bt_cc_issuenumber) document.checkout_payment.bt_cc_issuenumber.disabled = true;' .
                 '    if(document.checkout_payment.bt_cc_issue_month) document.checkout_payment.bt_cc_issue_month.disabled = true;' .
                 '    if(document.checkout_payment.bt_cc_issue_year) document.checkout_payment.bt_cc_issue_year.disabled = true;' .
-                '    document.checkout_payment.cc_cvv.disabled = false;' .
+                '    document.checkout_payment.payment_cvv.disabled = false;' .
                 '}';
         if (sizeof($this->cards) == 0)
             $this->payment_type_check = '';
@@ -210,16 +208,16 @@ class braintree_api extends CommercePluginPaymentCardBase {
             'field' => zen_draw_pull_down_menu('payment_expires_month', $expires_month, strftime('%m'), 'id="' . $this->code . '-cc-expires-month"' . $onFocus) . '&nbsp;' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, '', 'id="' . $this->code . '-cc-expires-year"' . $onFocus),
             'tag' => $this->code . '-cc-expires-month');
         $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_CHECKNUMBER' ),
-            'field' => zen_draw_input_field('cc_cvv', '', 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="off"', 'tel') . '&nbsp;<small>' . $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_CHECKNUMBER_LOCATION' ) . '</small><script type="text/javascript">bt_payment_type_check();</script>',
+            'field' => zen_draw_input_field('payment_cvv', '', 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="off"', 'tel') . '&nbsp;<small>' . $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_CHECKNUMBER_LOCATION' ) . '</small><script type="text/javascript">bt_payment_type_check();</script>',
             'tag' => $this->code . '-cc-cvv');
 */
 		$selection = array('id' => $this->code,
 						 'module' => $this->title,
 						 'fields' => array(
 							array(	'title' => tra( 'Name On Card' ),
-									'field' => '<div class="row"><div class="col-sm-6">' . zen_draw_input_field('bt_cc_firstname', BitBase::getParameter( $_SESSION, 'bt_cc_firstname', $order->billing['firstname'] ), 'id="' . $this->code . '-cc-ownerf"' . $onFocus . ' autocomplete="off"') . '</div><div class="col-sm-6">'  .zen_draw_input_field('bt_cc_lastname', BitBase::getParameter( $_SESSION, 'bt_cc_lastname', $order->billing['lastname'] ), 'id="' . $this->code . '-cc-ownerl"' . $onFocus . ' autocomplete="off"'). '</div></div>',
+									'field' => '<div class="row"><div class="col-sm-12">' . zen_draw_input_field('payment_owner', BitBase::getParameter( $_SESSION, 'payment_owner', $order->billing['firstname'].' '.$order->billing['lastname'] ), 'id="' . $this->code . '-payment-owner"' . $onFocus . ' autocomplete="off"') . '</div></div>',
 							),
-							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), 'id="' . $this->code . '-cc-number"' . $onFocus . ' autocomplete="off"', 'tel') . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="fa fal fa-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="off"', 'tel')  . '</div></div>',
+							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), 'id="' . $this->code . '-cc-number"' . $onFocus . ' autocomplete="off"', 'tel') . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="fa fal fa-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('payment_cvv', BitBase::getParameter( $_SESSION, 'payment_cvv' ), 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="off"', 'tel')  . '</div></div>',
 							),
 							array(	'title' => tra( 'Expiration Date' ),
 									'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('payment_expires_month', $expires_month, BitBase::getParameter( $_SESSION, 'payment_expires_month', strftime('%m') ), 'id="' . $this->code . '-cc-expires-month" class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, substr( BitBase::getParameter( $_SESSION, 'payment_expires_year', (date('Y') + 1) ), -2 ), 'id="' . $this->code . '-cc-expires-year" class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
@@ -250,11 +248,8 @@ class braintree_api extends CommercePluginPaymentCardBase {
         $confirmation = array('title' => '',
             'fields' => array());
 
-		if( isset( $pPaymentParams['bt_cc_firstname'] ) ) {
-			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_FIRSTNAME' ), 'field' => $pPaymentParams['bt_cc_firstname']);
-		}
-		if( isset( $pPaymentParams['bt_cc_lastname'] ) ) {
-			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_LASTNAME' ), 'field' => $pPaymentParams['bt_cc_lastname']);
+		if( isset( $pPaymentParams['payment_owner'] ) ) {
+			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_FIRSTNAME' ), 'field' => $pPaymentParams['payment_owner']);
 		}
 		if( isset( $pPaymentParams['payment_number'] ) ) {
 			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_NUMBER' ), 'field' => substr($pPaymentParams['payment_number'], 0, 4) . str_repeat('X', (strlen($pPaymentParams['payment_number']) - 8)) . substr($pPaymentParams['payment_number'], -4));
@@ -281,9 +276,9 @@ class braintree_api extends CommercePluginPaymentCardBase {
                 zen_draw_hidden_field('payment_expires_year', $this->getParameter( $pPaymentParams, 'payment_expires_year' )) . "\n" .
                 zen_draw_hidden_field('bt_cc_issue_month', $this->getParameter( $pPaymentParams, 'bt_cc_issue_month' )) . "\n" .
                 zen_draw_hidden_field('bt_cc_issue_year', $this->getParameter( $pPaymentParams, 'bt_cc_issue_year' )) . "\n" .
-                zen_draw_hidden_field('bt_cc_issuenumber', $this->getParameter( $pPaymentParams, 'bt_cc_issuenumber' )) . "\n" .
+                ZEN_draw_hidden_field('bt_cc_issuenumber', $this->getParameter( $pPaymentParams, 'bt_cc_issuenumber' )) . "\n" .
                 zen_draw_hidden_field('payment_number', $this->getParameter( $pPaymentParams, 'payment_number' )) . "\n" .
-                zen_draw_hidden_field('cc_cvv', $this->getParameter( $pPaymentParams, 'cc_cvv' )) . "\n" .
+                zen_draw_hidden_field('payment_cvv', $this->getParameter( $pPaymentParams, 'payment_cvv' )) . "\n" .
                 zen_draw_hidden_field('bt_payer_firstname', $this->getParameter( $pPaymentParams, 'bt_cc_firstname' )) . "\n" .
                 zen_draw_hidden_field('bt_payer_lastname', $this->getParameter( $pPaymentParams, 'bt_cc_lastname' )) . "\n";
         $process_button_string .= zen_draw_hidden_field(session_name(), session_id());
@@ -303,9 +298,8 @@ class braintree_api extends CommercePluginPaymentCardBase {
                 'bt_cc_issue_year' => 'bt_cc_issue_year',
                 'bt_cc_issuenumber' => 'bt_cc_issuenumber',
                 'payment_number' => 'payment_number',
-                'cc_cvv' => 'cc_cvv',
-                'bt_payer_firstname' => 'bt_cc_firstname',
-                'bt_payer_lastname' => 'bt_cc_lastname',
+                'payment_cvv' => 'payment_cvv',
+                'payment_owner' => 'payment_owner',
             ), 'extraFields' => array(session_name() => session_id()));
         return $processButton;
     }
@@ -367,12 +361,12 @@ class braintree_api extends CommercePluginPaymentCardBase {
 							'expirationMonth' => $this->getParameter( $pPaymentParams, 'payment_expires_month' ),
 							'expirationYear' => $this->getParameter( $pPaymentParams, 'payment_expires_year' ),
 							'cardholderName' => $this->getPaymentOwner( $pPaymentParams ),
-							'cvv' => $this->cc_cvv
+							'cvv' => $this->payment_cvv
 						);
 						$transHash['customer'] = array(
 							'firstName' => $pOrder->customer['firstname'],
 							'lastName' => $pOrder->customer['lastname'],
-							'phone' => $pOrder->customer['telephone'],
+							'phone' => BitBase::getParameter( $pOrder->customer, 'telephone' ),
 							'email' => $pPaymentParams['payment_email']
 						);
 						$transHash['billing'] = array(
@@ -531,6 +525,11 @@ class braintree_api extends CommercePluginPaymentCardBase {
 				}
 				$this->mErrors['process_payment'] = $e->getMessage();
 			}
+		} else {
+			$errorString = implode( $this->mErrors );
+			$this->mErrors = array( 'process_payment' => $errorString );
+			$result = new stdClass();
+			$result->errors = array();
 		}
 
 		if( !empty( $this->mErrors['process_payment'] ) ) {

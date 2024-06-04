@@ -25,40 +25,39 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 
 			if( $paymentZoneId = $this->getModuleConfigValue( '_ZONE' ) ) {
 				$this->enabled = ($paymentZoneId == $order->billing['zone_id']);
-/*
-			function update_status() {
-				global $order, $gBitDb;
-
-				if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE > 0) ) {
-					$check_flag = false;
-					$check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE . "' and `zone_country_id` = '" . $order->billing['countries_id'] . "' order by `zone_id`");
-					while (!$check->EOF) {
-						if ($check->fields['zone_id'] < 1) {
-							$check_flag = true;
-							break;
-						} elseif ($check->fields['zone_id'] == $order->billing['zone_id']) {
-							$check_flag = true;
-							break;
-						}
-						$check->MoveNext();
-					}
-
-					if ($check_flag == false) {
-						$this->enabled = false;
-					}
-				}
-			}
-*/
 			}
 		}
 	}
+
+/* function update_status() {
+		global $order, $gBitDb;
+
+		if ( ($this->enabled == true) && ((int)MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE > 0) ) {
+			$check_flag = false;
+			$check = $gBitDb->Execute("select `zone_id` from " . TABLE_ZONES_TO_GEO_ZONES . " where `geo_zone_id` = '" . MODULE_PAYMENT_AUTHORIZENET_AIM_ZONE . "' and `zone_country_id` = '" . $order->billing['countries_id'] . "' order by `zone_id`");
+			while (!$check->EOF) {
+				if ($check->fields['zone_id'] < 1) {
+					$check_flag = true;
+					break;
+				} elseif ($check->fields['zone_id'] == $order->billing['zone_id']) {
+					$check_flag = true;
+					break;
+				}
+				$check->MoveNext();
+			}
+
+			if ($check_flag == false) {
+				$this->enabled = false;
+			}
+		}
+	} */
 
 	public function getCustomerTitle() {
 		return 'Credit Card';
 	}
 
 	protected function getSessionVars() {
-		return array( 'payment_owner', 'payment_number', 'cc_cvv', 'payment_expires_month', 'payment_expires_year' );
+		return array( 'payment_owner', 'payment_number', 'payment_cvv', 'payment_expires_month', 'payment_expires_year' );
 	}
 
 	// Display Credit Card Information Submission Fields on the Checkout Payment Page
@@ -82,7 +81,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 							array(	'title' => tra( 'Name On Card' ),
 									'field' => zen_draw_input_field('payment_owner', BitBase::getParameter( $_SESSION, 'payment_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'] ), 'autocomplete="cc-name"' )
 							),
-							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), ' autocomplete="cc-number" ', 'number' ) . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="fa fal fa-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('cc_cvv', BitBase::getParameter( $_SESSION, 'cc_cvv' ), ' autocomplete="cc-csc" ', 'number')  . '</div></div>',
+							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), ' autocomplete="cc-number" ', 'number' ) . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="fa fal fa-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('payment_cvv', BitBase::getParameter( $_SESSION, 'payment_cvv' ), ' autocomplete="cc-csc" ', 'number')  . '</div></div>',
 							),
 							array(	'title' => tra( 'Expiration Date' ),
 									'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('payment_expires_month', $expireMonths, BitBase::getParameter( $_SESSION, 'payment_expires_month' ), ' class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('payment_expires_year', $expireYears, substr( BitBase::getParameter( $_SESSION, 'payment_expires_year', (date('Y') + 1) ), -2 ), ' class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
@@ -123,7 +122,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		} 
 
 		if( parent::verifyPayment( $pPaymentParams, $pOrder ) ) {
-			$pOrder->info['cc_cvv'] = $this->getParameter( $pPaymentParams, 'cc_cvv' );
+			$pOrder->info['payment_cvv'] = $this->getParameter( $pPaymentParams, 'payment_cvv' );
 			// payment is fully verified
 			if( $this->mErrors ) {
 				$_SESSION[$this->code.'_error'] = $this->mErrors;
@@ -187,20 +186,26 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 			if( $paymentType = $this->getCreditCardType( $validPaymentNumber ) ) {
 				$pPaymentParams['payment_type'] = $paymentType;
 			} else {
-				$this->mErrors['number'] = sprintf(TEXT_CCVAL_ERROR_UNKNOWN_CARD, substr($number, 0, 4));
+				$this->mErrors['number'] = sprintf(TEXT_CCVAL_ERROR_UNKNOWN_CARD, substr($pPaymentParams['payment_number'], 0, 4));
 			}
 		} else {
 			$this->mErrors['number'] = TEXT_CCVAL_ERROR_INVALID_NUMBER;
 		}
 
+		if( $expiresString = (string)$this->getParameter( $pPaymentParams, 'payment_expires' ) ) {
+			// Four digit experiation was passed in, extract month and year
+			$pPaymentParams['payment_expires_month'] = substr( $expiresString, 0, 2 );
+			$pPaymentParams['payment_expires_year'] = substr( $expiresString, 2, 2 );
+		}
+
 		if( ($paymentMonth = (int)$this->getParameter( $pPaymentParams, 'payment_expires_month' )) && ($paymentMonth > 0) && ($paymentMonth < 13)) {
-			$pPaymentParams['payment_expires_month'] = $paymentMonth;
+			$pPaymentParams['payment_expires_month'] = str_pad($paymentMonth, 2, "0", STR_PAD_LEFT);
 		} else {
 			$this->mErrors['date'] = TEXT_CCVAL_ERROR_INVALID_DATE;
 		}
 
 		if( !empty( $cvv ) ) {
-			$this->cc_cvv = $cvv;
+			$this->payment_cvv = $cvv;
 		}
 
 		$currentYear = date('Y');

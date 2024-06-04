@@ -61,7 +61,7 @@ abstract class CommerceOrderBase extends BitBase {
 			}
 		}
 
-		$ret['box_girth'] = 2 * ($ret['box_width'] + $ret['box_height']);
+		$ret['box_girth'] = 2 * ($ret['box_width'] + $ret['box_length']);
 
 		return $ret;
 	}
@@ -254,13 +254,13 @@ abstract class CommerceOrderBase extends BitBase {
 			});
 	}
 
-	function otProcess() {
+	function otProcess( $pPaymentParams = array() ) {
 		$this->scanOtModules();
 		$ret = array();
 
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
 			if( $otObject->isEnabled() ) {
-				$otObject->process();
+				$otObject->process( $pPaymentParams );
 				if( $otOutput = $otObject->getOutput() ) {
 					$outHash = array( 'code' => $otObject->code, 'sort_order' => $otObject->getSortOrder() );
 					foreach( array( 'title', 'text', 'value' ) as $key ) {

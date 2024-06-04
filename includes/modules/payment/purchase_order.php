@@ -32,9 +32,9 @@ class purchase_order extends CommercePluginPaymentBase {
 			$ret = array(	'id' => $this->code,
 								'module' => $this->title,
 								'fields' => array(	
-												array( 'title' => 'Purchaser Name', 'field' => zen_draw_input_field('po_contact') ),
-												array( 'title' => 'Purchaser Organization', 'field' => zen_draw_input_field('po_org') ),
-												array( 'title' => 'PO Number', 'field' => zen_draw_input_field('po_number')),
+												array( 'title' => 'Purchaser Name', 'field' => zen_draw_input_field('payment_po_contact') ),
+												array( 'title' => 'Purchaser Organization', 'field' => zen_draw_input_field('payment_po_org') ),
+												array( 'title' => 'PO Number', 'field' => zen_draw_input_field('payment_po_number')),
 											),
 								);
 		}
@@ -56,8 +56,10 @@ class purchase_order extends CommercePluginPaymentBase {
 	}
 
 	function verifyPayment( &$pPaymentParams, &$pOrder ) {
-		if( parent::verifyPayment( $pPaymentParams, $pOrder ) ) {
-			foreach( array( 'po_contact' => 'Purchaser Name',  'po_org' => 'Purchaser Organization', 'po_number' => 'PO Number' ) as $key=>$title ) {
+		if( !$this->isUserPermitted() ) {
+			 $this->mErrors['payment'] = 'Purchase order not allowed.';
+		} elseif( parent::verifyPayment( $pPaymentParams, $pOrder ) ) {
+			foreach( array( 'payment_po_contact' => 'Purchaser Name',  'payment_po_org' => 'Purchaser Organization', 'payment_po_number' => 'PO Number' ) as $key=>$title ) {
 				if( empty( $pPaymentParams[$key] ) ) {
 					$this->mErrors[$key] = $title.' was not set.';
 				}
@@ -66,28 +68,21 @@ class purchase_order extends CommercePluginPaymentBase {
 		return (count( $this->mErrors ) === 0);
 	}
 
+	protected function getSessionVars() {
+		return array( 'payment_po_contact', 'payment_po_org', 'payment_po_number' );
+	}
+
 	function confirmation( $pPaymentParams ) {
-		global $_POST;
 
 		$confirmation = array(	'title' => $this->title,
 								'fields' => array(
-									array( 'title' => 'Purchaser Name', 'field' => $_POST['po_contact'] ),
-									array( 'title' => 'Purchaser Organization', 'field' => $_POST['po_org'] ),
-									array( 'title' => 'PO Number', 'field' => $_POST['po_number'] ),
+									array( 'title' => 'Purchaser Name', 'field' => $this->getParameter( $pPaymentParams, 'payment_po_contact' ) ),
+									array( 'title' => 'Purchaser Organization', 'field' => $this->getParameter( $pPaymentParams, 'payment_po_org' ) ),
+									array( 'title' => 'PO Number', 'field' => $this->getParameter( $pPaymentParams, 'payment_po_number' ) ),
 								)
 							);
 
 		return $confirmation;
-	}
-
-	function process_button( $pPaymentParams ) {
-		global $_POST;
-
-		$ret =	zen_draw_hidden_field( 'po_contact', $_POST['po_contact'] ) .
-				zen_draw_hidden_field( 'po_org', $_POST['po_org'] ) .
-				zen_draw_hidden_field( 'po_number', $_POST['po_number'] );
-
-		return $ret;
 	}
 
 	function processPayment( &$pPaymentParams, &$pOrder ) {
@@ -96,17 +91,17 @@ class purchase_order extends CommercePluginPaymentBase {
 			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
 
 			$logHash['is_success'] = 'y';
-			$logHash['payment_status'] = 'Success';
-			$logHash['trans_ref_id'] = trim( $pPaymentParams['po_org'].' / '.$pPaymentParams['po_contact'] .' / '.$pPaymentParams['po_number'] );
+			$logHash['payment_status'] = 'pending';
+			$logHash['trans_ref_id'] = trim( $pPaymentParams['payment_po_org'].' / '.$pPaymentParams['payment_po_contact'] .' / '.$pPaymentParams['payment_po_number'] );
 			$logHash['trans_result'] = '1';
 			$logHash['trans_message'] = trim( 'Purchase Order Recevied' );
 
-			$pOrder->info['payment_number'] = $pPaymentParams['po_number'];
-			$pOrder->info['payment_type'] = 'Purchase Order';
-			$pOrder->info['payment_owner'] = trim( $pPaymentParams['po_org'].' '.$pPaymentParams['po_contact'] );
-			$pOrder->info['payment_expires'] = NULL;
+			$logHash['payment_number'] = $pPaymentParams['payment_po_number'];
+			$logHash['payment_type'] = 'Purchase Order';
+			$logHash['payment_owner'] = trim( $pPaymentParams['payment_po_org'].' '.$pPaymentParams['payment_po_contact'] );
+			$logHash['payment_expires'] = NULL;
 
-			$this->logTransaction( $logHash, $pOrder );
+			$this->logTransaction( $logHash );
 		}
 
 		return $ret;

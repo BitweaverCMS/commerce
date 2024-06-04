@@ -18,8 +18,8 @@ class ot_cod_fee extends CommercePluginOrderTotalBase {
 		$this->description = MODULE_ORDER_TOTAL_COD_DESCRIPTION;
 	}
 
-	function process() {
-		parent::process();
+	function process( $pSessionParams = array() ) {
+		parent::process( $pSessionParams );
 		global $currencies, $cod_cost, $cod_country;
 
 		if( $this->isEnabled() ) {

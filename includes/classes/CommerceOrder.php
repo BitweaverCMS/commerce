@@ -22,27 +22,39 @@
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderBase.php' );
 
-class order extends CommerceOrderBase {
-	public $mOrdersId;
-	public $info, $totals, $customer, $content_type, $email_low_stock, $products_ordered_attributes, $products_ordered_email;
-
-	private $mNextOrdersId;
+// maintained for backwards compatibility in the code. CommerceOrder should be invoked
+class order extends CommerceOrder {
 
 	function __construct( $pOrdersId=NULL ) {
 		parent::__construct();
-
-		$this->info = array();
-		$this->totals = array();
-		$this->subtotal = 0;
-		$this->contents = array();
-		$this->customer = array();
 
 		if( self::verifyId( $pOrdersId ) ) {
 			$this->mOrdersId = $pOrdersId;
 			$this->load();
 		} else {
-			$this->cart();
+			global $gBitCustomer;
+			$this->orderFromCart( $gBitCustomer->mCart, $_SESSION );
 		}
+	}
+}
+
+class CommerceOrder extends CommerceOrderBase {
+	public $mOrdersId;
+	public $info, $totals, $customer, $content_type, $email_low_stock, $products_ordered_attributes, $products_ordered_email;
+
+	private $mNextOrdersId;
+
+	function __construct() {
+		parent::__construct();
+		$this->init();
+	}
+
+	protected function init() {
+		$this->info = array();
+		$this->totals = array();
+		$this->subtotal = 0;
+		$this->contents = array();
+		$this->customer = array();
 	}
 
 	// Abstract methods implementation
@@ -202,6 +214,20 @@ class order extends CommerceOrderBase {
 		}
 
 		return( $ret );
+	}
+
+	/**
+	 * Create an export hash from the data
+	 *
+	 * @access public
+	 * @return export data
+	 */
+	function exportHash() {
+		$ret = array();
+		if( $this->isValid() ) {
+			$ret = array_merge( array( 'orders_id' => $this->mOrdersId, 'info' => $this->info), array( 'delivery' => $this->delivery ), array( 'billing' => $this->billing ) );
+		}
+		return $ret;
 	}
 
 	protected function load() {
@@ -543,46 +569,201 @@ class order extends CommerceOrderBase {
 		return( count( $this->mHistory ) );
 	}
 
-	function cart() {
+	function orderFromHash( &$pOrderHash ) {
 		global $currencies, $gBitUser, $gBitCustomer;
-		$this->content_type = $gBitCustomer->mCart->get_content_type();
 
-		$shippingAddress = $gBitCustomer->mCart->getDelivery();
-		$billingAddress = $gBitCustomer->mCart->getBilling();
+		$hashCart = new CommerceShoppingCart();
 
-		$taxAddress = zen_get_tax_locations();
+		if( $defaultAddress = $gBitCustomer->getAddress( $gBitCustomer->getDefaultAddressId() ) ) {
+			$this->customer = array('firstname' => $defaultAddress['entry_firstname'],
+									'lastname' => $defaultAddress['entry_lastname'],
+									'customers_id' => $defaultAddress['customers_id'],
+									'user_id' => $defaultAddress['customers_id'],
+									'company' => $defaultAddress['entry_company'],
+									'street_address' => $defaultAddress['entry_street_address'],
+									'suburb' => $defaultAddress['entry_suburb'],
+									'city' => $defaultAddress['entry_city'],
+									'postcode' => $defaultAddress['entry_postcode'],
+									'state' => (!empty( $defaultAddress['entry_state'] ) ? $defaultAddress['entry_state'] : NULL),
+									'zone_id' => $defaultAddress['entry_zone_id'],
+									'countries_name' => $defaultAddress['countries_name'],
+									'countries_id' => $defaultAddress['countries_id'],
+									'countries_iso_code_2' => $defaultAddress['countries_iso_code_2'],
+									'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
+									'address_format_id' => $defaultAddress['address_format_id'],
+									// Needed for orderFromCart
+									'address_format_id' => $defaultAddress['address_format_id'],
+									'telephone' => $defaultAddress['entry_telephone'],
+									'email_address' => $gBitUser->getField( 'email' )
+									 );
+		} else {
+			$this->customer = array('firstname' => $gBitCustomer->getField( 'customers_firstname' ),
+									'lastname' => $gBitCustomer->getField( 'customers_lastname' ),
+									'user_id' => $gBitCustomer->getField( 'customers_id' ),
+									'email_address' => $gBitCustomer->getField('customers_email_address' ),
+									'customers_id' => $gBitCustomer->mCustomerId
+									);
+		}
+		$hashCart->customer = $this->customer;
 
-		$coupon_code = NULL;
-		if( !empty( $_SESSION['cc_id'] ) ) {
-			$coupon_code_query = "SELECT `coupon_code` FROM " . TABLE_COUPONS . " WHERE `coupon_id` = ?";
-			$coupon_code = $this->mDb->GetOne($coupon_code_query, array( (int)$_SESSION['cc_id'] ) );
+		foreach( array( 'billing', 'delivery' ) as $addressType ) {
+			$addressHash = array();
+			foreach( array(
+				'city' => 'city',
+				'country_iso2' => 'countries_iso_code_2',
+				'name' => 'name',
+				'company' => 'company',
+				'postcode' => 'postcode',
+				'state' => 'state',
+				'street_address1' => 'street_address',
+				'street_address2' => 'suburb',
+				'telephone' => 'telephone',
+			) as $hashPostfix => $addressKey ) {
+				$hashKey = $addressType.'_'.$hashPostfix;
+				$hashValue = BitBase::getParameter( $pOrderHash, $hashKey, NULL );
+				switch( $hashPostfix ) {
+					case 'country_iso2':
+						if( $countryHash = zen_get_countries( $hashValue ) ) {
+							$addressHash['countries_id'] = $countryHash['countries_id'];
+							$addressHash['country_id'] = $countryHash['countries_id'];
+							$addressHash['countries_name'] = $countryHash['countries_name'];
+							$addressHash['countries_iso_code_2'] = $countryHash['countries_iso_code_2'];
+							$addressHash['countries_iso_code_3'] = $countryHash['countries_iso_code_3'];
+							$addressHash['address_format_id'] = $countryHash['address_format_id'];
+						}
+						break;
+					case 'state':
+						$addressHash['zone_id'] = zen_get_zone_id( $addressHash['countries_id'], $pOrderHash[$hashKey] );
+						$addressHash[$addressKey] = $hashValue;
+						break;
+
+					case 'name':
+						$firstSpace = strpos( $hashValue, ' ' );
+						$addressHash['firstname'] = substr( $hashValue, 0, $firstSpace );
+						$addressHash['lastname'] = substr( $hashValue, $firstSpace + 1 );
+						$addressHash[$addressKey] = $hashValue;
+//				$this->billing = array('firstname' => $billingAddress['firstname'],
+//										'lastname' => $billingAddress['lastname'],
+						break;
+					default:
+						$addressHash[$addressKey] = $hashValue;
+						break;
+				}	
+				$hashCart->$addressType = $addressHash;
+				$this->$addressType = $addressHash;
+			}
 		}
 
-		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php' );
-		global $gCommerceShipping;
-
-		if( !empty( $_SESSION['shipping'] ) ) {
-			list($module, $method) = explode('_', $_SESSION['shipping']['id'] );
-			$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
-		}
-
+/*
 		$this->info = array('orders_status_id' => DEFAULT_ORDERS_STATUS_ID,
-							'currency' => !empty( $_SESSION['currency'] ) ? $_SESSION['currency'] : NULL,
-							'currency_value' => !empty( $_SESSION['currency'] ) ? $currencies->currencies[$_SESSION['currency']]['currency_value'] : NULL,
+							'currency' => !empty( $pOrderHash['currency'] ) ? $pOrderHash['currency'] : NULL,
+							'currency_value' => !empty( $pOrderHash['currency'] ) ? $currencies->currencies[$pOrderHash['currency']]['currency_value'] : NULL,
 							'payment_method' => '',
 							'payment_module_code' => '',
 							'coupon_code' => $coupon_code,
-							'shipping_method' => !empty( $_SESSION['shipping']['title'] ) ? $_SESSION['shipping']['title'] : '',
-							'shipping_method_code' => !empty( $_SESSION['shipping']['code'] ) ? $_SESSION['shipping']['code'] : '',
-							'shipping_module_code' => !empty( $_SESSION['shipping']['id'] ) ? $_SESSION['shipping']['id'] : '',
-							'shipping_cost' => !empty( $_SESSION['shipping']['cost'] ) ? $_SESSION['shipping']['cost'] : 0,
-							'estimated_ship_date' => !empty( $_SESSION['shipping']['ship_date'] ) ? $_SESSION['shipping']['ship_date'] : NULL,
+							'shipping_method' => !empty( $pOrderHash['shipping']['title'] ) ? $pOrderHash['shipping']['title'] : '',
+							'shipping_method_code' => !empty( $pOrderHash['shipping']['code'] ) ? $pOrderHash['shipping']['code'] : '',
+							'shipping_module_code' => !empty( $pOrderHash['shipping']['id'] ) ? $pOrderHash['shipping']['id'] : '',
+							'shipping_cost' => !empty( $pOrderHash['shipping']['cost'] ) ? $pOrderHash['shipping']['cost'] : 0,
+							'estimated_ship_date' => !empty( $pOrderHash['shipping']['ship_date'] ) ? $pOrderHash['shipping']['ship_date'] : NULL,
 							'estimated_arrival_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL,
 							'subtotal' => 0,
 							'tax' => 0,
 							'total' => 0,
 							'tax_groups' => array(),
-							'comments' => $this->getParameter( $_SESSION, 'comments' ),
+							'comments' => $this->getParameter( $pOrderHash, 'comments' ),
+							'ip_address' => $_SERVER['REMOTE_ADDR']
+							);
+*/
+/*
+'cart_quantity' => '',
+'comments' => '',
+'deadline_date' => '',
+'payment' => '',
+'purchase_options_ids' => '',
+'shipping' => '',
+*/
+		if( !empty( $pOrderHash['cart'] ) ) {
+			$lineItemStrings = explode( ';', $pOrderHash['cart'] );
+			foreach( $lineItemStrings as $lineItemString ) {
+				list( $productId, $productString ) = explode( '@', $lineItemString );
+				list( $quantity, $optionString ) = explode( ':', $productString );
+				if( $apiProduct = CommerceProduct::getCommerceObject( $productId ) ) {
+					if( $apiProduct->isValid() ) {
+						$apiProduct->verifyViewPermission();
+					}
+					$povidHash = array();
+					if( $optionString ) {
+						if( $povidList = explode( ',', $optionString ) ) {
+							foreach( $povidList as $povid ) {
+								if( $optionId = $this->mDb->GetOne( "SELECT `products_options_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_options_values_id`=?", array( $povid ), FALSE, FALSE, BIT_QUERY_CACHE_TIME ) ) {
+									$povidHash[$optionId][$povid] = $povid;
+								}
+							}
+						}
+					}
+					$hashCart->addToCart( $apiProduct->mProductsId, $quantity, $povidHash );
+				} else {
+					$this->mErrors['product'] = 'Product ID does not exist: '.$productId;
+				}
+			}
+		}
+
+		if( empty( $this->mErrors ) ) {
+			$this->orderFromCart( $hashCart, $pOrderHash );
+		}
+
+		return empty( $this->mErrors );
+	}
+
+	protected function orderFromCart( $pCart, &$pSessionHash ) {
+		global $currencies, $gBitUser, $gBitCustomer;
+		$this->content_type = $pCart->get_content_type();
+
+		$shippingAddress = $pCart->getDelivery();
+		$billingAddress = $pCart->getBilling();
+
+		$taxAddress = zen_get_tax_locations();
+
+		$coupon_code = NULL;
+		if( !empty( $pSessionHash['cc_id'] ) ) {
+			$coupon_code_query = "SELECT `coupon_code` FROM " . TABLE_COUPONS . " WHERE `coupon_id` = ?";
+			$coupon_code = $this->mDb->GetOne($coupon_code_query, array( (int)$pSessionHash['cc_id'] ) );
+		}
+
+		if( !empty( $pSessionHash['shipping_method'] ) ) {
+			// load all enabled shipping modules
+			require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
+			global $gCommerceShipping;
+			list($module, $method) = explode('_', $pSessionHash['shipping_method'], 2);
+			$quote = $gCommerceShipping->quote( $pCart, $method, $module);
+
+			if( isset( $quote['error'] ) || !($quoteHash = $gCommerceShipping->quoteToHash( $quote )) ) {
+				$pSessionHash['shipping'] = '';
+				$this->mErrors['shipping'] = 'Could not quote shipping method: '.$pOrderHash['shipping'];
+			} else {
+				$pSessionHash['shipping'] = $quoteHash;
+			}
+		}
+
+
+		$this->info = array('orders_status_id' => DEFAULT_ORDERS_STATUS_ID,
+							'currency' => !empty( $pSessionHash['currency'] ) ? $pSessionHash['currency'] : NULL,
+							'currency_value' => !empty( $pSessionHash['currency'] ) ? $currencies->currencies[$pSessionHash['currency']]['currency_value'] : NULL,
+							'payment_method' => '',
+							'payment_module_code' => '',
+							'coupon_code' => $coupon_code,
+							'shipping_method' => !empty( $pSessionHash['shipping']['title'] ) ? $pSessionHash['shipping']['title'] : '',
+							'shipping_method_code' => !empty( $pSessionHash['shipping']['code'] ) ? $pSessionHash['shipping']['code'] : '',
+							'shipping_module_code' => !empty( $pSessionHash['shipping']['id'] ) ? $pSessionHash['shipping']['id'] : '',
+							'shipping_cost' => !empty( $pSessionHash['shipping']['cost'] ) ? $pSessionHash['shipping']['cost'] : 0,
+							'estimated_ship_date' => !empty( $pSessionHash['shipping']['ship_date'] ) ? $pSessionHash['shipping']['ship_date'] : NULL,
+							'estimated_arrival_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL,
+							'subtotal' => 0,
+							'tax' => 0,
+							'total' => 0,
+							'tax_groups' => array(),
+							'comments' => $this->getParameter( $pSessionHash, 'comments' ),
 							'ip_address' => $_SERVER['REMOTE_ADDR']
 							);
 
@@ -594,7 +775,7 @@ class order extends CommerceOrderBase {
 			}
 		}
 
-		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $_SESSION, 'payment' ) ) ) {
+		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pSessionHash, 'payment_method' ) ) ) {
 			$this->info['payment_method'] = $paymentModule->title;
 			$this->info['payment_module_code'] = $paymentModule->code;
 			if( !empty( $paymentModule->orders_status ) && is_numeric( $paymentModule->orders_status ) && $paymentModule->orders_status > 0 ) {
@@ -626,7 +807,9 @@ class order extends CommerceOrderBase {
 			$this->customer = array('firstname' => $gBitCustomer->getField( 'customers_firstname' ),
 									'lastname' => $gBitCustomer->getField( 'customers_lastname' ),
 									'user_id' => $gBitCustomer->getField( 'customers_id' ),
-									'email_address' => $gBitCustomer->getField('customers_email_address' ) );
+									'email_address' => $gBitCustomer->getField('customers_email_address' ),
+									'customers_id' => $gBitCustomer->mCustomerId
+									);
 		}
 
 		if( !empty( $shippingAddress ) ) {
@@ -663,12 +846,12 @@ class order extends CommerceOrderBase {
 									'countries_iso_code_2' => $billingAddress['countries_iso_code_2'],
 									'countries_iso_code_3' => $billingAddress['countries_iso_code_3'],
 									'country_id' => $billingAddress['country_id'],
-									'telephone' => $billingAddress['telephone'],
-									'format_id' => $billingAddress['address_format_id']);
+									'telephone' => $this->getParameter( $billingAddress, 'telephone' ),
+									'format_id' => $this->getParameter( $billingAddress, 'address_format_id' ));
 		}
 
-		foreach( array_keys( $gBitCustomer->mCart->contents ) as $cartItemKey ) {
-			$this->contents[$cartItemKey] = $gBitCustomer->mCart->getProductHash( $cartItemKey );
+		foreach( array_keys( $pCart->contents ) as $cartItemKey ) {
+			$this->contents[$cartItemKey] = $pCart->getProductHash( $cartItemKey );
 			if( !empty( $taxAddress ) ) {
 				$this->contents[$cartItemKey]['tax'] = zen_get_tax_rate( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['country_id'], $taxAddress['zone_id'] );
 				$this->contents[$cartItemKey]['tax_description'] = zen_get_tax_description( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['country_id'], $taxAddress['zone_id'] );
@@ -682,6 +865,7 @@ class order extends CommerceOrderBase {
 					list( $optionId, $keyValueId ) = explode( '=', $optionKey );
 					$this->contents[$cartItemKey]['attributes'][$subindex] = zen_get_option_value( $optionId, (int)$valueHash['products_options_values_id'] );
 					// Determine if attribute is a text attribute and change products array if it is.
+if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name'] ) ) { eb( 'EMTPY', $attributes,  $this->contents[$cartItemKey]['attributes']  ); }
 					$attrValue = $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name']; 
 					if( !empty( $this->contents[$cartItemKey]['attributes_values'][$optionKey]['products_options_value_text'] ) ) {
 						$attrValue .= ' <div class="alert alert-info">'. $this->contents[$cartItemKey]['attributes_values'][$optionKey] . '</div>';
@@ -739,28 +923,38 @@ class order extends CommerceOrderBase {
 		return CommerceSystem::loadModule( 'payment', $pModule );
 	}
 
-	function process( $pPaymentParams ) {
+	function process( $pSessionParams ) {
 		$ret = FALSE;
-
-		// load the selected shipping module
-		if( !empty( $pPaymentParams['shipping'] ) ) {
-			require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
-			$shipping_modules = new CommerceShipping($pPaymentParams['shipping']);
-		}
-
 		// load selected payment module
 		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
-		$paymentManager = new CommercePaymentManager( $pPaymentParams['payment'] );
-
+		$paymentManager = new CommercePaymentManager( BitBase::getParameter( $pSessionParams, 'payment_method') );
 		// group pricing or expedite will affect total
-		$this->otProcess( $pPaymentParams );
-		if( !$this->hasPaymentDue() || (!empty( $pPaymentParams['payment'] ) && $paymentManager->processPayment( $pPaymentParams, $this )) ) {
-			$newOrderId = $this->create( $pPaymentParams );
+		$this->otProcess( $pSessionParams );
+		if( !$this->hasPaymentDue() || (!empty( $pSessionParams['payment_method'] ) && $paymentManager->processPayment( $pSessionParams, $this )) ) {
+			$newOrderId = $this->create( $pSessionParams );
 
-			$paymentManager->after_order_create( $newOrderId );
+			$paymentManager->after_order_create( $newOrderId, $this );
 			$this->sendOrderEmail();
+/*
+				global $currencies;
+				$paymentModule = $this->getPaymentModule();
+				$adjustmentText = tra( 'Order Payment' ).' - '.date('Y-m-d H:i');
+				$formatCharge = $currencies->format( $pSessionParams['charge_amount'], FALSE, BitBase::getParameter( $pSessionParams, 'charge_currency' ) );
+//				$statusMsg = trim( $statusMsg."\n\n".tra( 'A payment has been made to this order for the following amount:' )."\n".$formatCharge );
+//				$statusMsg .= "\n\n".tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
+				$adjustmentText .= ' - '.tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
 
+				$otPayment['orders_id'] = $newOrderId;
+				$otPayment['class'] = 'ot_payment';
+				$otPayment['title'] = tra( 'Order Payment' );
+				$otPayment['text'] = $adjustmentText;
+				$otPayment['sort_order'] = $paymentModule->getSortOrder() + 1;
+				$otPayment['orders_value'] = $pSessionParams['charge_amount'];
+				$this->mDb->associateInsert( TABLE_ORDERS_TOTAL, $otPayment );
+*/
 			$ret = TRUE;
+		} else {
+			$this->mErrors = array_merge( $this->mErrors, $paymentManager->mErrors );
 		}
 
 		return $ret;
@@ -784,14 +978,13 @@ class order extends CommerceOrderBase {
 		global $gBitCustomer;
 
 		$this->mDb->StartTrans();
-		if( $_SESSION['shipping'] == 'free_free') {
+		if( !empty( $_SESSION['shipping'] ) && $_SESSION['shipping'] == 'free_free') {
 			$this->info['shipping_module_code'] = $_SESSION['shipping'];
 		}
 
 		$this->mOrdersId =  (!empty( $pPaymentParams['orders_id'] ) ? $pPaymentParams['orders_id'] : $this->getNextOrderId());
 		$sql_data_array = array('orders_id' => $this->mOrdersId,
-							'customers_id' => $_SESSION['customer_id'],
-							'deadline_date' => BitBase::getParameter( $_SESSION, 'deadline_date', NULL ),
+							'customers_id' => $gBitCustomer->mCustomerId,
 /* TOODO 2016-DEC-15 - spiderr - data is unpopulated
 							'customers_company' => $this->customer['company'],
 							'customers_street_address' => $this->customer['street_address'],
@@ -837,8 +1030,14 @@ class order extends CommerceOrderBase {
 							'order_tax' => $this->info['tax'],
 							'currency' => $this->info['currency'],
 							'currency_value' => $this->info['currency_value'],
+							'payment_method' => $this->info['payment_method'],
+							'payment_module_code' => $this->info['payment_module_code'],
 							'ip_address' => $_SERVER['REMOTE_ADDR']
 							);
+
+		if( $deadlineDate = BitBase::getParameter( $pPaymentParams, 'deadline_date', BitBase::getParameter( $_SESSION, 'deadline_date', NULL ) ) ) {
+			$sql_data_array['deadline_date'] = $deadlineDate;
+		}
 
 		if( !empty( $sql_data_array['deadline_date'] ) ) {	
 			list($yyyy,$mm,$dd) = explode( '-', $sql_data_array['deadline_date'] );
@@ -855,7 +1054,7 @@ class order extends CommerceOrderBase {
 				}
 			}
 		}
-
+/*
 		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pPaymentParams, 'payment' ) ) ) {
 			$sql_data_array['payment_number'] = $paymentModule->getPaymentNumber( $pPaymentParams, TRUE );
 			$sql_data_array['payment_expires'] = $paymentModule->getPaymentExpires( $pPaymentParams );
@@ -864,7 +1063,7 @@ class order extends CommerceOrderBase {
 			$sql_data_array['payment_method'] = $paymentModule->title;
 			$sql_data_array['payment_module_code'] = $paymentModule->code;
 		}
-
+*/
 		$this->mDb->associateInsert(TABLE_ORDERS, $sql_data_array);
 
 		$this->mDb->CompleteTrans();
@@ -894,7 +1093,7 @@ class order extends CommerceOrderBase {
 		$customer_notification = (SEND_EMAILS == 'true') ? '1' : '0';
 		$sqlParams = array( 'orders_id' => $this->mOrdersId,
 							'orders_status_id' => $this->info['orders_status_id'],
-							'user_id' => $_SESSION['customer_id'],
+							'user_id' => $gBitCustomer->mCustomerId,
 							'date_added' => $this->mDb->NOW(),
 							'customer_notified' => $customer_notification,
 							'comments' => $this->info['comments'] );
@@ -1128,6 +1327,7 @@ class order extends CommerceOrderBase {
 
 		$language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' ;
 		require_once( BITCOMMERCE_PKG_PATH . $language_page_directory . 'checkout_process.php' );
+		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'languages/en.php' );
 		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/functions_customers.php' );
 
 		if( empty( $pEmailRecipient ) ) {
@@ -1252,7 +1452,7 @@ class order extends CommerceOrderBase {
 
 		// send additional emails
 		if (SEND_EXTRA_ORDER_EMAILS_TO != '') {
-			$extra_info=email_collect_extra_info('','', $customerName, $this->customer['email_address'], $this->customer['telephone']);
+			$extra_info=email_collect_extra_info('','', $customerName, $this->customer['email_address'], BitBase::getParameter( $this->customer, 'telephone' ) );
 			$emailVars['EXTRA_INFO'] = $extra_info['HTML'];
 			zen_mail('', SEND_EXTRA_ORDER_EMAILS_TO, tra( '[NEW ORDER]' ) . ' ' . EMAIL_TEXT_SUBJECT . EMAIL_ORDER_NUMBER_SUBJECT . $this->mOrdersId, $email_order . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $emailVars, 'checkout_extra','',$pFormat);
 		}
