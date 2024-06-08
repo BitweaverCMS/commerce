@@ -46,34 +46,45 @@ function editAddress( pAddress ) {
 	</div>
 	<div class="col-xs-6">
 		<h4>{tr}Payment Info{/tr}</h4>
-		{if $order->info.payment_type || $order->info.payment_owner || $order->info.payment_number}
+		{if $order->info.amount_due}
+		<div class="alert alert-danger">{tr}Amount Due:{/tr} {$currencies->format($order->info.amount_due,true,$order->info.currency,$order->info.currency_value)}<span class="pull-right"><a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoices.php?oID={$smarty.request.oID}" class="btn btn-default btn-xs">{tr}Record Payment{/tr}</a></span></div>
+		{/if}
+<dd>
+{foreach from=$order->mPayments item=paymentHash}
+	<dt>{$paymentHash.payment_module}: {$paymentHash.payment_owner} / {$paymentHash.payment_number}</dt>
+		{if $paymentHash.payment_type || $paymentHash.payment_owner || $paymentHash.payment_number}
 		<div class="clear">
 			<div class="pull-left">{tr}Owner{/tr}:</div>
-			<div class="pull-right">{$order->info.payment_owner}</div>
+			<div class="pull-right">{$paymentHash.payment_owner}</div>
 		</div>
 		<div class="clear">
-			<div class="pull-left">{$order->info.payment_type}:</div>
-			<div class="pull-right">{$order->info.payment_number}</div>
+			<div class="pull-left">{$paymentHash.payment_type}:</div>
+			<div class="pull-right">{$paymentHash.payment_number}</div>
 		</div>
-		{if $order->info.payment_expires}
+		{if $paymentHash.payment_expires}
 		<div class="clear">
 			<div class="pull-left">{tr}Expires{/tr}: </div>
-			<div class="pull-right">{$order->info.payment_expires}</div>
+			<div class="pull-right">{$paymentHash.payment_expires}</div>
 		</div>
 		{/if}
-		{/if}
-		<div class="clear">
-		{if empty( $order->info.trans_ref_id )}
+		{if empty( $paymentHash.payment_ref_id)}
 			<div class="alert alert-danger">{booticon iname="fa-triangle-exclamation"} {$order->info.payment_module_code}: {tr}This payment has no Transaction ID. Verify funds were actually collected, or if this is a duplicate order.{/tr}</div>
 		{else}
-			<div class="pull-left">{$order->info.payment_module_code} {tr}Ref ID{/tr}:</div>
-			<div class="pull-right">{$order->info.trans_ref_id}</div>
-		{/if}
+		<div class="clear">
+			<div class="pull-left">{$paymentHash.payment_module|replace:'_':' '|ucwords} {tr}Ref ID{/tr}:</div>
+			<div class="pull-right">{$paymentHash.payment_ref_id}</div>
 		</div>
+		{/if}
 		<div class="clear">
 			<div class="pull-left">{tr}IP{/tr}:</div>
-			<div class="pull-right"> {$order->info.ip_address}</div>
+			<div class="pull-right"> {$paymentHash.ip_address}</div>
 		</div>
+		{/if}
+	<dd>
+{$paymentHash|vd}
+{/foreach}
+</dd>
+
 		{if $order->info.currency != $smarty.const.DEFAULT_CURRENCY}
 		<div class="clear">
 			<div class="pull-left">{tr}Currency{/tr}:</div>

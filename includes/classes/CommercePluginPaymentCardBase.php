@@ -107,9 +107,9 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		global $gCommerceSystem;
 		unset( $_SESSION[$this->code.'_error'] );
 
-		if( !empty( $pPaymentParams['trans_ref_id'] ) ) {
+		if( !empty( $pPaymentParams['payment_ref_id'] ) ) {
 			// reference transation
-			$this->trans_ref_id = $pPaymentParams['trans_ref_id'];
+			$this->payment_ref_id = $pPaymentParams['payment_ref_id'];
 		} elseif( empty( $pPaymentParams['payment_number'] ) ) {
 			$this->mErrors['number'] = tra( 'Please enter a credit card number.' );
 		} elseif( $this->verifyCreditCard( $pPaymentParams ) ) {
@@ -136,7 +136,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		if( !$ret = $this->getParameter( $pPaymentParams, 'payment_type' ) ) {
 			if( !empty( $pPaymentParams['payment_number'] ) ) {
 				$ret = $this->getCreditCardType( $pPaymentParams['payment_number'] );
-			} elseif( !empty( $pPaymentParams['trans_ref_id'] ) ) {
+			} elseif( !empty( $pPaymentParams['payment_ref_id'] ) ) {
 				$ret = 'Reference';
 			} else {
 			}
@@ -259,7 +259,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 	}
 
 	function getTransactionReference() {
-		return $this->trans_ref_id;
+		return $this->payment_ref_id;
 	}
 
 	function javascript_validation() {

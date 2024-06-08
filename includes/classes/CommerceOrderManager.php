@@ -42,6 +42,8 @@ class CommerceOrderManager extends BitBase {
 	}
 
 	function getOrdersToAddress( $pAddress, $pFromStatusId ) {
+		$ret = array();
+
 		$addressHash = array();
 		$bindVars = array( $pFromStatusId );
 		foreach( array( 'street_address'=>'street_address', 'suburb'=>'suburb', 'city'=>'city', 'postcode'=>'postcode', 'state'=>'state', 'countries_name' => 'country' ) as $key=>$col ) {
@@ -51,7 +53,11 @@ class CommerceOrderManager extends BitBase {
 			}
 		}
 
-		$sql = "SELECT orders_id FROM " . TABLE_ORDERS . " WHERE orders_status_id > 0 AND orders_status_id <= ? AND delivery_".implode( '=? AND delivery_', array_keys( $addressHash ) ).'=?';
-		return $this->mDb->getCol( $sql, $bindVars, -1, -1, -1 );
+		if( !empty( $addressHash ) ) {
+			$sql = "SELECT orders_id FROM " . TABLE_ORDERS . " WHERE orders_status_id > 0 AND orders_status_id <= ? AND delivery_".implode( '=? AND delivery_', array_keys( $addressHash ) ).'=?';
+			$ret = $this->mDb->getCol( $sql, $bindVars, -1, -1, -1 );
+		}
+
+		return $ret;
 	}
 }

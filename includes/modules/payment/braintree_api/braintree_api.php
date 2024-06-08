@@ -28,22 +28,6 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
 	var $cards = array();
 
-/*	var $bt_cc_firstname, $bt_cc_lastname;
-
-	protected function setCcOwner( $pPaymentParams ) {
-		$bt_cc_firstname = trim( $this->getParameter( $pPaymentParams, 'bt_cc_firstname' ) );
-		$bt_cc_lastname = trim( $this->getParameter( $pPaymentParams, 'bt_cc_lastname' ) );
-		return !empty( $bt_cc_lastname ) && !empty( $bt_cc_firstname );
-	}
-
-	public function getPaymentOwner( $pPaymentParams ) {
-		if( !empty( $pPaymentParams['bt_cc_firstname'] ) || !empty( $pPaymentParams['bt_cc_lastname'] ) ) {
-			return $this->getParameter( $pPaymentParams, 'bt_cc_firstname' ).' '.$this->getParameter( $pPaymentParams, 'bt_cc_lastname' );
-		} else {
-			return parent::getPaymentOwner( $pPaymentParams );
-		}
-	}
-/*
     /**
      * class constructor
      */
@@ -330,10 +314,10 @@ class braintree_api extends CommercePluginPaymentCardBase {
 				
 				$transHash = array();
 
-				if( $pPaymentParams['trans_amount'] > 0 ) {
+				if( $pPaymentParams['payment_amount'] > 0 ) {
 					$transHash = array(
-						'merchantAccountId' => $this->getParameter( $this->mCurrencySupport, $pPaymentParams['trans_currency'] ),
-						'amount' => $pPaymentParams['trans_amount'],
+						'merchantAccountId' => $this->getParameter( $this->mCurrencySupport, $pPaymentParams['payment_currency'] ),
+						'amount' => $pPaymentParams['payment_amount'],
 						'options' => array(
 							'storeInVaultOnSuccess' => true,
 							'submitForSettlement' => $this->getModuleConfigValue( '_SETTLEMENT' )
@@ -344,18 +328,18 @@ class braintree_api extends CommercePluginPaymentCardBase {
 							'url' => $this->getModuleConfigValue( '_DESCRIPTOR_URL' )
 						),
 					);
-					if( $refId = $this->getParameter( $pPaymentParams, 'trans_ref_id' ) ) {
+					if( $refId = $this->getParameter( $pPaymentParams, 'payment_ref_id' ) ) {
 						// Process a reference transaction
-						$payment = $this->mDb->getRow( "SELECT * FROM " . TABLE_ORDERS_PAYMENTS . " WHERE `trans_ref_id`=?", array( $refId ) );
-						if( !empty( $payment['trans_auth_code'] ) ) {
-							$transHash['paymentMethodToken'] = $payment['trans_auth_code'];
+						$payment = $this->mDb->getRow( "SELECT * FROM " . TABLE_ORDERS_PAYMENTS . " WHERE `payment_ref_id`=?", array( $refId ) );
+						if( !empty( $payment['payment_auth_code'] ) ) {
+							$transHash['paymentMethodToken'] = $payment['payment_auth_code'];
 						} else {
-							$this->mErrors['process_payment'] = 'No trans_auth_code is available for '.$refId;
+							$this->mErrors['process_payment'] = 'No payment_auth_code is available for '.$refId;
 						}
 					} else {
 						// Process a new transaction
-						$transHash['amount'] = $pPaymentParams['trans_amount'];
-						$transHash['merchantAccountId'] = $this->getParameter( $this->mCurrencySupport, $pPaymentParams['trans_currency'] );
+						$transHash['amount'] = $pPaymentParams['payment_amount'];
+						$transHash['merchantAccountId'] = $this->getParameter( $this->mCurrencySupport, $pPaymentParams['payment_currency'] );
 						$transHash['creditCard'] = array(
 							'number' => $this->getPaymentNumber( $pPaymentParams ),
 							'expirationMonth' => $this->getParameter( $pPaymentParams, 'payment_expires_month' ),
@@ -419,7 +403,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 					}
 				} else if( $pPaymentParams['charge_amount'] < 0 ) {
 					// Process a refund
-					if( $txnID = $this->getParameter( $pPaymentParams, 'trans_ref_id' ) ) {
+					if( $txnID = $this->getParameter( $pPaymentParams, 'payment_ref_id' ) ) {
 						$findResult = Braintree_Transaction::find($txnID);
 
 						// Transaction is Settled so Refund
@@ -448,18 +432,18 @@ class braintree_api extends CommercePluginPaymentCardBase {
 				$pPaymentParams['result'] = array();
 				if( $result->success ) {
 					$pnref = $result->transaction->id;
-					$this->trans_ref_id = $pnref;
+					$this->payment_ref_id = $pnref;
 					if( $transExchange = urldecode($result->transaction->disbursementDetails->settlementCurrencyExchangeRate) ) {
 						$logHash['exchange_rate'] = $transExchange;
 					}
 					$logHash['payment_status'] = $result->transaction->status;
-					$logHash['trans_result'] = $result->transaction->processorResponseCode || 'Failure';
-					$logHash['trans_date'] = $result->transaction->createdAt->format('Y-m-d H:i:s+00');
-					$logHash['trans_amount'] = (float) urldecode( $result->transaction->amount );
-					$logHash['trans_currency'] = $result->transaction->currencyIsoCode;
-					$logHash['trans_message'] = trim( $result->transaction->processorResponseText );
-					$logHash['trans_ref_id'] = $pnref;
-					$logHash['trans_parent_ref_id'] = $result->transaction->refundedTransactionId;
+					$logHash['payment_result'] = $result->transaction->processorResponseCode || 'Failure';
+					$logHash['payment_date'] = $result->transaction->createdAt->format('Y-m-d H:i:s+00');
+					$logHash['payment_amount'] = (float) urldecode( $result->transaction->amount );
+					$logHash['payment_currency'] = $result->transaction->currencyIsoCode;
+					$logHash['payment_message'] = trim( $result->transaction->processorResponseText );
+					$logHash['payment_ref_id'] = $pnref;
+					$logHash['payment_parent_ref_id'] = $result->transaction->refundedTransactionId;
 //					$logHash['pending_reason'] = $this->pendingreason;
 					$logHash['address_company'] = $result->transaction->billingDetails->company;
 					$logHash['address_street'] = $result->transaction->shippingDetails->streetAddress;
@@ -473,13 +457,13 @@ class braintree_api extends CommercePluginPaymentCardBase {
 						$ret = TRUE;
 						$logHash['is_success'] = 'y';
 
-						$pOrder->info['trans_ref_id'] = $pnref;
+						$pOrder->info['payment_ref_id'] = $pnref;
 						//replace middle CC num with XXXX
 						if( !empty( $transHash['payment_number'] ) ) {
 							$pOrder->info['payment_number'] = substr($transHash['payment_number'], 0, 6) . str_repeat('X', (strlen($transHash['payment_number']) - 6)) . substr($transHash['payment_number'], -4);
 						}
 						
-						$logHash['trans_auth_code'] = $result->transaction->creditCardDetails->token;
+						$logHash['payment_auth_code'] = $result->transaction->creditCardDetails->token;
 						$this->payment_type = $this->getModuleConfigValue( '_TEXT_TITLE' ) . '(' . $result->transaction->creditCardDetails->cardType . ')';
 						$this->mPaymentStatus = 'Completed';
 						$this->avs = $result->transaction->avsPostalCodeResponseCode;
@@ -491,7 +475,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
 					} else {
 
-						$logHash['trans_message'] .= ' '.$result->message;
+						$logHash['payment_message'] .= ' '.$result->message;
 						$error_msg = 'Error processing transaction: ' . $result->message;
 
 						if (preg_match('/^1(\d+)/', $result->transaction->processorResponseCode)) {
@@ -538,71 +522,12 @@ class braintree_api extends CommercePluginPaymentCardBase {
 			$ret = FALSE;
 		}
 
-		if( !empty( $logHash['trans_ref_id'] ) ) {
+		if( !empty( $logHash['payment_ref_id'] ) ) {
 			$this->logTransaction( $logHash, $pOrder );
 		}
 
 		return $ret;
 	}
-
-    /**
-     * Used to read details of an existing transaction.  FOR FUTURE USE.
-     */
-    function _GetTransactionDetails($oID) {
-
-        if ($oID == '' || $oID < 1)
-            return FALSE;
-        global $db, $messageStack, $doPayPal;
-
-        $doBraintree = $this->braintree_init();
-
-        // look up history on this order from PayPal table
-
-        $sql = "SELECT * FROM " . TABLE_ORDERS_PAYMENTS . " WHERE orders_id = ? AND parent_trans_ref_id = ''";
-        $zc_btHist = $this->mDb->GetOne( $sql, array( $oID ) );
-        if ($zc_btHist->RecordCount() == 0)
-            return false;
-        $txnID = $zc_btHist->fields['trans_ref_id'];
-        if ($txnID == '' || $txnID === 0)
-            return FALSE;
-
-        /**
-         * Read data from PayPal
-         */
-        try {
-            $result = Braintree_Transaction::find($txnID);
-
-            // Load data into $response
-            $response['FIRSTNAME'] = $result->customerDetails->firstName;
-            $response['LASTNAME'] = $result->customerDetails->lastName;
-            $response['BUSINESS'] = $result->billingDetails->company;
-            $response['NAME'] = $result->creditCardDetails->cardholderName;
-            $response['BILLTOSTREET'] = $result->billingDetails->streetAddress;
-            $response['BILLTOSTREET2'] = $result->billingDetails->extendedAddress;
-            $response['BILLTOCITY'] = $result->billingDetails->locality;
-            $response['BILLTOSTATE'] = $result->billingDetails->region;
-            $response['BILLTOZIP'] = $result->billingDetails->postalCode;
-            $response['BILLTOCOUNTRY'] = $result->billingDetails->countryName;
-            $response['TRANSACTIONID'] = $result->id;
-            $response['PARENTTRANSACTIONID'] = $result->refundedTransactionId;
-            $response['TRANSACTIONTYPE'] = $result->type;
-            $response['PAYMENTTYPE'] = $result->creditCardDetails->cardType;
-            $response['PAYMENTSTATUS'] = $result->status;
-
-            $createdAt_date = new DateTime($result->createdAt->date);
-            $createdAt_formatted = $createdAt_date->format('Y-m-d H:i:s');
-            $response['ORDERTIME'] = $createdAt_formatted;
-
-            $response['CURRENCY'] = $result->currencyIsoCode;
-            $response['AMT'] = $result->amount;
-            $response['EXCHANGERATE'] = $result->disbursementDetails->settlementCurrencyExchangeRate;
-            $response['EMAIL'] = $zc_btHist->fields['payer_email'];
-        } catch (Exception $e) {
-            $messageStack->add($e->getMessage(), 'error');
-        }
-
-        return $response;
-    }
 
 	/**
 	* rows for com_configuration table as associative array of column => value
@@ -691,102 +616,6 @@ class braintree_api extends CommercePluginPaymentCardBase {
 	}
 
     /**
-     * Used to submit a refund for a given transaction.
-     */
-    function _doRefund($oID, $amount = 'Full', $note = '') {
-        global $db, $doBraintree, $messageStack;
-
-        $new_order_status = (int) $this->getModuleConfigValue( '_REFUNDED_STATUS_ID' );
-        $doBraintree = $this->braintree_init();
-        $proceedToRefund = false;
-        $refundNote = strip_tags(zen_db_input($_POST['refnote']));
-
-        if (isset($_POST['fullrefund']) && $_POST['fullrefund'] == $this->getModuleConfigValue( '_ENTRY_REFUND_BUTTON_TEXT_FULL' )) {
-            $refundAmt = 'Full';
-            if (isset($_POST['reffullconfirm']) && $_POST['reffullconfirm'] == 'on') {
-                $proceedToRefund = true;
-            } else {
-                $messageStack->add_session($this->getModuleConfigValue( '_TEXT_REFUND_FULL_CONFIRM_ERROR' ), 'error');
-            }
-        }
-
-        if (isset($_POST['partialrefund']) && $_POST['partialrefund'] == $this->getModuleConfigValue( '_ENTRY_REFUND_BUTTON_TEXT_PARTIAL' )) {
-            $refundAmt = (float) $_POST['refamt'];
-            $proceedToRefund = true;
-            if ($refundAmt == 0) {
-                $messageStack->add_session($this->getModuleConfigValue( '_TEXT_INVALID_REFUND_AMOUNT' ), 'error');
-                $proceedToRefund = false;
-            }
-        }
-
-        // look up history on this order FROM " . TABLE_BRAINTREE . "  table
-        $sql = "SELECT * FROM " . TABLE_BRAINTREE . "  WHERE orders_id = :orderID AND parent_trans_ref_id = '' ";
-        $sql = $db->bindVars($sql, ':orderID', $oID, 'integer');
-        $zc_btHist = $db->Execute($sql);
-        if ($zc_btHist->RecordCount() == 0)
-            return false;
-        $txnID = $zc_btHist->fields['trans_ref_id'];
-
-        /**
-         * Submit refund request to Braintree
-         */
-        if ($proceedToRefund) {
-
-            try {
-
-                $result = Braintree_Transaction::find($txnID);
-
-                if ($result->status == "submitted_for_settlement" || $result->status == "authorized") {
-
-                    // Transaction is pending so Void
-
-                    $result = Braintree_Transaction::void($txnID);
-                    $transactionId = $txnID;
-                } else if ($result->status == "settled" || $result->status == "settling") {
-
-                    // Transaction is Settled so Refund
-
-                    if (isset($_POST['fullrefund']) && $_POST['fullrefund'] == $this->getModuleConfigValue( '_ENTRY_REFUND_BUTTON_TEXT_FULL' )) {
-                        $result = Braintree_Transaction::refund($txnID);
-                        $transactionId = $result->transaction->refundId;
-                    }
-
-                    if (isset($_POST['partialrefund']) && $_POST['partialrefund'] == $this->getModuleConfigValue( '_ENTRY_REFUND_BUTTON_TEXT_PARTIAL' )) {
-                        $result = Braintree_Transaction::refund($txnID, $refundAmt);
-                        $transactionId = $result->transaction->refundId;
-                    }
-                }
-
-                if ($result->success) {
-
-                    if (!isset($result->transaction->amount))
-                        $result->transaction->amount = $refundAmt;
-
-                    $new_order_status = ($new_order_status > 0 ? $new_order_status : 1);
-
-                    $sql_data_array = array('orders_id' => $oID,
-                        'orders_status_id' => (int) $new_order_status,
-                        'comments' => 'REFUND INITIATED. Trans ID:' . $transactionId . "\n" . ' Gross Refund Amt: ' . $refundAmt . "\n" . $refundNote,
-                        'customer_notified' => 0
-                    );
-
-                    zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
-
-                    $db->Execute("UPDATE " . TABLE_ORDERS . " SET orders_status = ? WHERE orders_id = ?", array( (int)$new_order_status, (int)$oID ) );
-
-                    $messageStack->add_session(sprintf($this->getModuleConfigValue( '_TEXT_REFUND_INITIATED' ), $refundAmt, $transactionId), 'success');
-                    return true;
-                } else {
-
-                    $messageStack->add_session($result->errors, 'error');
-                }
-            } catch (Exception $e) {
-                $messageStack->add_session($e->getMessage(), 'error');
-            }
-        }
-    }
-
-    /**
      * Initialize the Braintree object for communication to the processing gateways
      */
     function braintree_init() {
@@ -800,29 +629,6 @@ class braintree_api extends CommercePluginPaymentCardBase {
         } else {
             return FALSE;
         }
-    }
-
-}
-
-/**
- * this is ONLY here to offer compatibility with ZC versions prior to v1.5.2
- */
-if (!function_exists('plugin_version_check_for_updates')) {
-
-    function plugin_version_check_for_updates($fileid = 0, $version_string_to_check = '') {
-        if ($fileid == 0)
-            return FALSE;
-        $new_version_available = FALSE;
-        $lookup_index = 0;
-        $url = 'http://www.zen-cart.com/downloads.php?do=versioncheck' . '&id=' . (int) $fileid;
-        $data = json_decode(file_get_contents($url), true);
-        // compare versions
-        if (strcmp($data[$lookup_index]['latest_plugin_version'], $version_string_to_check) > 0)
-            $new_version_available = TRUE;
-        // check whether present ZC version is compatible with the latest available plugin version
-        if (!in_array('v' . PROJECT_VERSION_MAJOR . '.' . PROJECT_VERSION_MINOR, $data[$lookup_index]['zcversions']))
-            $new_version_available = FALSE;
-        return ($new_version_available) ? $data[$lookup_index] : FALSE;
     }
 
 }

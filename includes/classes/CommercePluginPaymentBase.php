@@ -17,7 +17,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 	var $payment_expires;
 	var $payment_owner;
 	var $payment_number;
-	var $trans_ref_id;
+	var $payment_ref_id;
 */
 	public function __construct() {
 		parent::__construct();
@@ -110,9 +110,9 @@ eb( $_SESSION );
 
 		// We assume a default error, and let payment method set the success
 		$logHash['is_success'] = 'n';
-		$logHash['exchange_rate'] = '1.0';
+		$logHash['exchange_rate'] = $pOrder->info['currency_value'];
 		$logHash['payment_status'] = 'default';
-		$logHash['trans_amount'] = $this->getParameter( $pPaymentParams, 'trans_amount' );
+		$logHash['payment_amount'] = $this->getParameter( $pPaymentParams, 'payment_amount' );
 
 		return $logHash;
 	}
@@ -156,7 +156,7 @@ eb( $_SESSION );
 		$pPaymentParams['payment_email'] = BitBase::getParameter( $pOrder->customer, 'email_address', $gBitUser->getField('email') );
 		$pPaymentParams['payment_user_id'] = BitBase::getParameter( $pOrder->customer, 'user_id', $gBitUser->getField('user_id') );
 
-		if( !empty( $pPaymentParams['trans_ref_id'] ) && empty( $pPaymentParams['charge_amount'] ) ) {
+		if( !empty( $pPaymentParams['payment_ref_id'] ) && empty( $pPaymentParams['charge_amount'] ) ) {
 			$this->mErrors['charge_amount'] = 'Invalid amount';
 		} elseif( empty( $pPaymentParams['charge_amount'] ) ) {
 			if( $pPaymentParams['charge_amount'] = $pOrder->getPaymentDue() ) {
@@ -169,10 +169,10 @@ eb( $_SESSION );
 		}
 
 		if( empty( $this->mErrors ) ) {
-			if( !empty( $pPaymentParams['trans_ref_id'] ) ) {
+			if( !empty( $pPaymentParams['payment_ref_id'] ) ) {
 				// reference transaction
 				$pPaymentParams['orders_id'] = $pOrder->mOrdersId;
-				$pPaymentParams['trans_currency'] = BitBase::getParameter( $pPaymentParams, 'charge_currency', DEFAULT_CURRENCY );
+				$pPaymentParams['payment_currency'] = BitBase::getParameter( $pPaymentParams, 'charge_currency', DEFAULT_CURRENCY );
 				// completed orders have a single joined 'name' field
 				$pOrder->billing['firstname'] = substr( $pOrder->billing['name'], 0, strpos( $pOrder->billing['name'], ' ' ) );
 				$pOrder->billing['lastname'] = substr( $pOrder->billing['name'], strpos( $pOrder->billing['name'], ' ' ) + 1 );
@@ -182,7 +182,7 @@ eb( $_SESSION );
 				// new transaction, Calculate the next expected order id
 				$pPaymentParams['orders_id'] = (!empty( $_SESSION['orders_id'] ) ? $_SESSION['orders_id'] : $pOrder->getNextOrderId());
 				$_SESSION['orders_id'] = $pPaymentParams['orders_id'];
-				$pPaymentParams['trans_currency'] = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
+				$pPaymentParams['payment_currency'] = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
 				$pOrder->info['payment_number'] = $this->getParameter( $pPaymentParams, 'payment_number' );
 				$pOrder->info['payment_expires'] = $this->getPaymentExpires( $pPaymentParams );
 				$pOrder->info['payment_type'] = $this->getParameter( $pPaymentParams, 'payment_type' );
@@ -191,24 +191,24 @@ eb( $_SESSION );
 
 			$defaultCurrency = $this->getDefaultCurrency();
 
-			if( $this->isCurrencySupported( $pPaymentParams['trans_currency'] ) ) {
-				$targetCurrency = $pPaymentParams['trans_currency'];
+			if( $this->isCurrencySupported( $pPaymentParams['payment_currency'] ) ) {
+				$targetCurrency = $pPaymentParams['payment_currency'];
 			} else {
 				$targetCurrency = $defaultCurrency;
 			}
 
 			if( $targetCurrency == $pPaymentParams['charge_currency'] ) {
-				$pPaymentParams['trans_amount'] = $pPaymentParams['charge_amount'];
-				$pPaymentParams['trans_currency'] = $pPaymentParams['charge_currency'];
+				$pPaymentParams['payment_amount'] = $pPaymentParams['charge_amount'];
+				$pPaymentParams['payment_currency'] = $pPaymentParams['charge_currency'];
 			} else {
 				// we can't process the requested currency, we need to convert
 				if( !empty( $pPaymentParams['currency_value'] ) ) {
-					$convertedAmount = $pPaymentParams['trans_amount'] / $pPaymentParams['currency_value'];
+					$convertedAmount = $pPaymentParams['payment_amount'] / $pPaymentParams['currency_value'];
 				} else {
 					$convertedAmount = $currencies->convert( $pPaymentParams['charge_amount'], $targetCurrency, $pPaymentParams['charge_currency'] );
 				}
 
-				$pPaymentParams['trans_amount'] = number_format( $convertedAmount, $currencies->get_decimal_places( $targetCurrency ), '.', '' ) ;
+				$pPaymentParams['payment_amount'] = number_format( $convertedAmount, $currencies->get_decimal_places( $targetCurrency ), '.', '' ) ;
 			}
 
 			foreach( $this->getSessionVars() as $var ) {
@@ -217,7 +217,7 @@ eb( $_SESSION );
 
 			$maxPayment = (int)$this->getModuleConfigValue('_PAYMENT_LIMIT_MAX');
 			$minPayment = (int)$this->getModuleConfigValue('_PAYMENT_LIMIT_MIN');
-			if( $pPaymentParams['trans_currency'] == $defaultCurrency ) {
+			if( $pPaymentParams['payment_currency'] == $defaultCurrency ) {
 				$maxPayment = $currencies->convert( $maxPayment, $pPaymentParams['charge_currency'], $defaultCurrency );
 				$minPayment = $currencies->convert( $minPayment, $pPaymentParams['charge_currency'], $defaultCurrency );
 			}

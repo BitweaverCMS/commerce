@@ -40,7 +40,7 @@ class order extends CommerceOrder {
 
 class CommerceOrder extends CommerceOrderBase {
 	public $mOrdersId;
-	public $info, $totals, $customer, $content_type, $email_low_stock, $products_ordered_attributes, $products_ordered_email;
+	public $info, $totals, $customer, $content_type, $email_low_stock, $products_ordered_attributes, $products_ordered_email, $mPayments = array();
 
 	private $mNextOrdersId;
 
@@ -244,11 +244,10 @@ class CommerceOrder extends CommerceOrderBase {
 								LEFT JOIN `".BIT_DB_PREFIX."stats_referer_urls` sru ON (sru.`referer_url_id`=srum.`referer_url_id`) ";
 			}
 
-			$order_query = "SELECT co.*, uu.*, cpccl.`trans_ref_id`, cpccl.`trans_result`, cpccl.`trans_message`, cpccl.`trans_amount`, cpccl.`trans_date` $selectSql
+			$order_query = "SELECT co.*, uu.* $selectSql
 							FROM " . TABLE_ORDERS . " co
 								INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(uu.`user_id`=co.`customers_id`)
 								$joinSql
-								LEFT JOIN " . TABLE_ORDERS_PAYMENTS . " cpccl ON(cpccl.`orders_id`=co.`orders_id` AND `is_success`='y')
 							WHERE co.`orders_id` = ?";
 			$order = $this->mDb->query( $order_query, array( $this->mOrdersId ) );
 			if( $order->RecordCount() ) {
@@ -262,6 +261,8 @@ class CommerceOrder extends CommerceOrderBase {
 											'orders_value' => $totals->fields['orders_value']);
 					$totals->MoveNext();
 				}
+
+				$this->mPayments = $this->mDb->getAssoc( "SELECT `orders_payments_id`, * FROM " . TABLE_ORDERS_PAYMENTS . " copay WHERE `orders_id`=? ORDER BY payment_date DESC", array(  $this->mOrdersId ) ); 
 
 				$this->info = array('currency' => $order->fields['currency'],
 									'currency_value' => $order->fields['currency_value'],
@@ -279,12 +280,12 @@ class CommerceOrder extends CommerceOrderBase {
 									'payment_owner' => $order->fields['payment_owner'],
 									'payment_number' => $order->fields['payment_number'],
 									'payment_expires' => $order->fields['payment_expires'],
-									'trans_ref_id' => $order->fields['trans_ref_id'],
 									'date_purchased' => $order->fields['date_purchased'],
 									'orders_status_id' => $order->fields['orders_status_id'],
 									'orders_status_name' => zen_get_order_status_name( $order->fields['orders_status_id'] ),
 									'last_modified' => $order->fields['last_modified'],
 									'total' => $order->fields['order_total'],
+									'amount_due' => $order->fields['amount_due'],
 									'tax' => $order->fields['order_tax'],
 									'ip_address' => $order->fields['ip_address']
 									);
@@ -311,43 +312,32 @@ class CommerceOrder extends CommerceOrderBase {
 					$this->customer['referer_url'] = $order->fields['referer_url'];
 				}
 
-				$this->delivery = array_merge(
-									array ( 'name' => $order->fields['delivery_name'],
-											'company' => $order->fields['delivery_company'],
-											'street_address' => $order->fields['delivery_street_address'],
-											'suburb' => $order->fields['delivery_suburb'],
-											'city' => $order->fields['delivery_city'],
-											'postcode' => $order->fields['delivery_postcode'],
-											'state' => $order->fields['delivery_state'],
-											'zone_id' => zen_get_zone_id( $order->fields['delivery_country'], $order->fields['delivery_state'] ),
-											'telephone' => $order->fields['delivery_telephone'],
-											'format_id' => $order->fields['delivery_address_format_id'] ),
-									zen_get_countries( $order->fields['delivery_country'] )
-								  );
-				if( strpos( $this->delivery['name'], ' ' ) ) {
-					list( $this->delivery['first_name'], $this->delivery['last_name'] ) = explode( ' ', $this->delivery['name'],  2 );
+				foreach( array( 'delivery', 'billing' ) as $addressType ) {
+					$this->$addressType = array_merge(
+										array ( 'name' => $order->fields[$addressType.'_name'],
+												'company' => $order->fields[$addressType.'_company'],
+												'street_address' => $order->fields[$addressType.'_street_address'],
+												'suburb' => $order->fields[$addressType.'_suburb'],
+												'city' => $order->fields[$addressType.'_city'],
+												'postcode' => $order->fields[$addressType.'_postcode'],
+												'state' => $order->fields[$addressType.'_state'],
+												'zone_id' => zen_get_zone_id( $order->fields[$addressType.'_country'], $order->fields[$addressType.'_state'] ),
+												'telephone' => $order->fields[$addressType.'_telephone'],
+												'format_id' => $order->fields[$addressType.'_address_format_id'] ),
+									  );
+					if( $order->fields[$addressType.'_country'] ) {
+						$this->$addressType = array_merge( $this->$addressType, zen_get_countries( $order->fields[$addressType.'_country'] ) );
+					}
+
+					if( strpos( $this->$addressType['name'], ' ' ) ) {
+						list( $this->$addressType['first_name'], $this->$addressType['last_name'] ) = explode( ' ', $this->$addressType['name'],  2 );
+					}
 				}
 
+				// nullify street address if empty
 				if (empty($this->delivery['name']) && empty($this->delivery['street_address'])) {
 					$this->delivery = false;
 				}
-
-				$this->billing = array_merge( 
-									array ( 'name' => $order->fields['billing_name'],
-											'company' => $order->fields['billing_company'],
-											'street_address' => $order->fields['billing_street_address'],
-											'suburb' => $order->fields['billing_suburb'],
-											'city' => $order->fields['billing_city'],
-											'postcode' => $order->fields['billing_postcode'],
-											'state' => $order->fields['billing_state'],
-											'telephone' => $order->fields['billing_telephone'],
-											'format_id' => $order->fields['billing_address_format_id'] ),
-									zen_get_countries( $order->fields['billing_country'] )
-								);
-				if( strpos( $this->billing['name'], ' ' ) ) {
-					list( $this->billing['first_name'], $this->billing['last_name'] ) = explode( ' ', $this->billing['name'],  2 );
-				}
-
 
 				$orders_products_query = 	"SELECT op.*, pt.*, p.content_id, p.related_content_id, lc.user_id
 											FROM " . TABLE_ORDERS_PRODUCTS . " op
@@ -1028,6 +1018,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 							'orders_status_id' => $this->info['orders_status_id'],
 							'order_total' => $this->info['total'],
 							'order_tax' => $this->info['tax'],
+							'amount_due' => $this->info['amount_due'],
 							'currency' => $this->info['currency'],
 							'currency_value' => $this->info['currency_value'],
 							'payment_method' => $this->info['payment_method'],
@@ -1118,7 +1109,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 
 			if( !empty( $pRequest['additional_charge'] ) ) { 
 				if( $paymentModule = $this->getPaymentModule() ) {
-					$pRequest['trans_ref_id'] = $this->info['trans_ref_id'];
+					$pRequest['payment_ref_id'] = $this->info['payment_ref_id'];
 					if( $paymentModule->processPayment( $pRequest, $this ) ) {
 						$statusMsg .= "\n\n".tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
 						$adjustmentText .= ' - '.tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();

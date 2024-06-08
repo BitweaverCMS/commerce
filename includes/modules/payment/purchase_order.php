@@ -88,13 +88,15 @@ class purchase_order extends CommercePluginPaymentBase {
 	function processPayment( &$pPaymentParams, &$pOrder ) {
 
 		if( $ret = self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
+
+			$pOrder->info['amount_due'] = $this->getParameter( $pPaymentParams, 'payment_amount' );
 			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
 
 			$logHash['is_success'] = 'y';
 			$logHash['payment_status'] = 'pending';
-			$logHash['trans_ref_id'] = trim( $pPaymentParams['payment_po_org'].' / '.$pPaymentParams['payment_po_contact'] .' / '.$pPaymentParams['payment_po_number'] );
-			$logHash['trans_result'] = '1';
-			$logHash['trans_message'] = trim( 'Purchase Order Recevied' );
+			$logHash['payment_ref_id'] = trim( $pPaymentParams['payment_po_org'].' / '.$pPaymentParams['payment_po_contact'] .' / '.$pPaymentParams['payment_po_number'] );
+			$logHash['payment_result'] = '1';
+			$logHash['payment_message'] = trim( 'Purchase Order Recevied' );
 
 			$logHash['payment_number'] = $pPaymentParams['payment_po_number'];
 			$logHash['payment_type'] = 'Purchase Order';

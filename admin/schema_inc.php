@@ -690,6 +690,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_commissions_payments' => "
 
 BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   orders_id I4 PRIMARY AUTO,
+  ip_address C(39),
   customers_id I4,
   customers_name C(128),
   customers_company C(128),
@@ -743,7 +744,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   currency_value N(14,6),
   order_total N(14,2),
   order_tax N(14,2),
-  ip_address C(39)
+  amount_due N(14,2)
   CONSTRAINT ', CONSTRAINT `orders_cust_ref` FOREIGN KEY ( `customers_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers`( `customers_id` )'
 ",
 
@@ -841,18 +842,18 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_payments' => "
   payment_module X NOTNULL,
   payment_mode X NOTNULL,
   payment_status C(256) NOTNULL,
-  trans_ref_id C(64) NOTNULL,
-  trans_parent_ref_id C(256),
+  payment_ref_id C(64) NOTNULL,
+  payment_parent_ref_id C(256),
   payment_type C(256),
   payment_owner C(64),
   payment_number C(32),
   payment_expires C(4),
-  trans_result C(250) NOTNULL,
-  trans_message X NOTNULL,
-  trans_amount N(11,2) NOTNULL,
-  trans_currency C(3) NOTNULL,
+  payment_result C(250) NOTNULL,
+  payment_message X NOTNULL,
+  payment_amount N(11,2) NOTNULL,
+  payment_currency C(3) NOTNULL,
   exchange_rate F NOTNULL,
-  trans_date T,
+  payment_date T,
   pending_reason C(256),
   address_company X NOTNULL,
   address_street X NOTNULL,

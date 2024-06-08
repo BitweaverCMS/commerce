@@ -162,8 +162,8 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			if( $pPaymentParams['payment_user_id'] != $gBitUser->mUserId ) {
 				$postFields['COMMENT1'] .= ' / '.$gBitUser->getField( 'login' ).' ('.$gBitUser->mUserId.')';
 			}
-			if( !empty( $pPaymentParams['trans_ref_id'] ) ) {	
-				$postFields['ORIGID'] = $pPaymentParams['trans_ref_id'];
+			if( !empty( $pPaymentParams['payment_ref_id'] ) ) {	
+				$postFields['ORIGID'] = $pPaymentParams['payment_ref_id'];
 				$postFields['COMMENT2'] = 'Reference Trans for '.$postFields['ORIGID']; //	(Optional) Merchant-defined value for reporting and auditing purposes.  Limitations: 128 alphanumeric characters
 			} else {
 				$postFields['ACCT'] = $this->getPaymentNumber( $pPaymentParams ); // (Required for credit cards) Credit card or purchase card number. For example, ACCT=5555555555554444. For the pinless debit TENDER type, ACCT can be the bank account number. 
@@ -191,7 +191,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			- V = Void
 			*/ 
 
-			$postFields['CURRENCY'] = $pPaymentParams['trans_currency'];
+			$postFields['CURRENCY'] = $pPaymentParams['payment_currency'];
 
 			$processors = static::getProcessors();
 
@@ -278,21 +278,21 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			if( MODULE_PAYMENT_PAYFLOWPRO_TYPE == 'Authorization' ) {
 				$postFields['TRXTYPE'] = 'A';
-			} elseif( $pPaymentParams['trans_amount'] > 0 ) {
+			} elseif( $pPaymentParams['payment_amount'] > 0 ) {
 				$postFields['TRXTYPE'] = 'S';
-			} elseif( $pPaymentParams['trans_amount'] < 0 ) {
+			} elseif( $pPaymentParams['payment_amount'] < 0 ) {
 				$postFields['TRXTYPE'] = 'C';
-				$pPaymentParams['trans_amount'] = -1.0 * $pPaymentParams['trans_amount'];
+				$pPaymentParams['payment_amount'] = -1.0 * $pPaymentParams['payment_amount'];
 			}
 
-			$postFields['AMT'] = $pPaymentParams['trans_amount']; // (Required) Amount (Default: U.S. based currency). Nnumeric characters and a decimal only. The maximum length varies depending on your processor. Specify the exact amount to the cent using a decimal point (use 34.00 not 34). Do not include comma separators (use 1199.95 not 1,199.95). Your processor or Internet Merchant Account provider may stipulate a maximum amount.
+			$postFields['AMT'] = $pPaymentParams['payment_amount']; // (Required) Amount (Default: U.S. based currency). Nnumeric characters and a decimal only. The maximum length varies depending on your processor. Specify the exact amount to the cent using a decimal point (use 34.00 not 34). Do not include comma separators (use 1199.95 not 1,199.95). Your processor or Internet Merchant Account provider may stipulate a maximum amount.
 
-			$paymentDecimal = $currencies->get_decimal_places( $pPaymentParams['trans_currency'] );
+			$paymentDecimal = $currencies->get_decimal_places( $pPaymentParams['payment_currency'] );
 
 			// ITEMAMT	(Required if L_COSTn is specified). Sum of cost of all items in this order. 
 			// ITEMAMT = L_QTY0 * LCOST0 + L_QTY1 * LCOST1 + L_QTYn * L_COSTn Limitations: Nine numeric characters plus decimal.
-			$shippingAmount = $currencies->convert( $pPaymentParams['trans_currency'] );
-			$postFields['ITEMAMT'] = number_format( $pPaymentParams['trans_amount'] - $pOrder->getFieldLocalized('shipping_cost') - $pOrder->getFieldLocalized('tax'), $paymentDecimal, '.', '' );
+			$shippingAmount = $currencies->convert( $pPaymentParams['payment_currency'] );
+			$postFields['ITEMAMT'] = number_format( $pPaymentParams['payment_amount'] - $pOrder->getFieldLocalized('shipping_cost') - $pOrder->getFieldLocalized('tax'), $paymentDecimal, '.', '' );
 			// DISCOUNT	(Optional) Shipping discount for this order. Specify the discount as a positive amount.  Limitations: Nine numeric characters plus decimal (.) character. No currency symbol. Specify the exact amount to the cent using a decimal point; use 34.00, not 34. Do not include comma separators; use 1199.95 not 1,199.95.
 
 //			$postFields['DISCOUNT'] = number_format( ($pOrder->getFieldLocalized('total') - $postFields['AMT']), $paymentDecimal, '.', '' );
@@ -349,13 +349,13 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				# Check result
 				if( isset( $responseHash['PNREF'] ) ) {
 					$this->pnref = $responseHash['PNREF'];
-					$logHash['trans_ref_id'] = $responseHash['PNREF'];
+					$logHash['payment_ref_id'] = $responseHash['PNREF'];
 				}
 
 				if( isset( $responseHash['RESULT'] ) ) {
 					$this->result = (int)$responseHash['RESULT'];
-					$logHash['trans_result'] = $this->result;
-					$logHash['trans_message'] = $responseHash['RESPMSG'];
+					$logHash['payment_result'] = $this->result;
+					$logHash['payment_message'] = $responseHash['RESPMSG'];
 					if( BitBase::getParameter( $responseHash, 'DUPLICATE' ) == 2 ) {
 						$duplicateError = 'Duplicate Order ( '.$responseHash['ORDERID'].' )';
 						$this->mErrors['process_payment'] = $duplicateError;
@@ -378,8 +378,8 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			$ret = TRUE;
 			$logHash['is_success'] = 'y';
 			$logHash['payment_status'] = 'Success';
-			$logHash['trans_ref_id'] = BitBase::getParameter( $responseHash, 'PNREF' );
-			$pOrder->info['trans_ref_id'] = BitBase::getParameter( $responseHash, 'PNREF' );
+			$logHash['payment_ref_id'] = BitBase::getParameter( $responseHash, 'PNREF' );
+			$pOrder->info['payment_ref_id'] = BitBase::getParameter( $responseHash, 'PNREF' );
 			if( !empty( $postFields['ACCT'] ) && MODULE_PAYMENT_PAYFLOWPRO_CARD_PRIVACY == 'True' ) {
 				//replace middle CC num with XXXX
 				$pOrder->info['payment_number'] = $this->privatizePaymentNumber( $postFields['ACCT'] );

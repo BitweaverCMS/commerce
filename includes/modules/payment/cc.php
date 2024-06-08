@@ -108,11 +108,9 @@ class cc extends CommercePluginPaymentCardBase {
 			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
 
 			$ret = TRUE;
-			$logHash['trans_result'] = '1';
-			$logHash['trans_ref_id'] = 'NONE';
-			$logHash['trans_currency'] = $pOrder->getField( 'currency', DEFAULT_CURRENCY );
+			$logHash['payment_result'] = '1';
 			$logHash['is_success'] = 'y';
-			$logHash['payment_status'] = 'Success';
+			$logHash['payment_status'] = 'pending';
 			$pOrder->info['payment_expires'] = $pPaymentParams['payment_expires'];
 			$pOrder->info['payment_type'] = $pPaymentParams['payment_type'];
 			$pOrder->info['payment_owner'] = $pPaymentParams['payment_owner'];
