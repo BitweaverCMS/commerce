@@ -262,7 +262,7 @@ class CommerceOrder extends CommerceOrderBase {
 					$totals->MoveNext();
 				}
 
-				$this->mPayments = $this->mDb->getAssoc( "SELECT `orders_payments_id`, * FROM " . TABLE_ORDERS_PAYMENTS . " copay WHERE `orders_id`=? ORDER BY payment_date DESC", array(  $this->mOrdersId ) ); 
+				$this->mPayments = $this->mDb->getAssoc( "SELECT `orders_payments_id`, * FROM " . TABLE_ORDERS_PAYMENTS . " copay LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=copay.`user_id` ) WHERE `orders_id`=? ORDER BY payment_date DESC", array(  $this->mOrdersId ) ); 
 
 				$this->info = array('currency' => $order->fields['currency'],
 									'currency_value' => $order->fields['currency_value'],
@@ -1447,6 +1447,17 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 			$emailVars['EXTRA_INFO'] = $extra_info['HTML'];
 			zen_mail('', SEND_EXTRA_ORDER_EMAILS_TO, tra( '[NEW ORDER]' ) . ' ' . EMAIL_TEXT_SUBJECT . EMAIL_ORDER_NUMBER_SUBJECT . $this->mOrdersId, $email_order . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $emailVars, 'checkout_extra','',$pFormat);
 		}
+	}
+
+	public function hasDifferentBillingAddress() {
+
+		foreach( array_keys( $this->delivery ) as $addressKey ) {
+			if( $this->delivery[$addressKey] != $this->billing[$addressKey] ) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
 	}
 
 	function getFormattedAddress( $pAddressHash, $pBreak='<br>' ) {

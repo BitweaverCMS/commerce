@@ -39,7 +39,7 @@ if( empty( $_REQUEST['main_page'] ) ) {
 
 define( 'BITCOMMERCE_ADMIN', FALSE );
 
-global $request_type;
+global $gBitCustomer, $request_type;
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_inc.php' );
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'bitcommerce_start_user_inc.php' );
 
@@ -51,7 +51,7 @@ if (isset($_REQUEST['cPath'])) $_REQUEST['cPath'] = preg_replace('/[^0-9_]/', ''
 if (isset($_REQUEST['main_page'])) $_REQUEST['main_page'] = preg_replace('/[^0-9a-zA-Z_]/', '', $_REQUEST['main_page']);
 
 // navigation history
-if (!isset($_SESSION['navigation'])) {
+if( empty( $_SESSION['navigation'] ) || !is_a( $_SESSION['navigation'], 'navigationHistory' ) ) {
 	$_SESSION['navigation'] = new navigationHistory;
 }
 $_SESSION['navigation']->add_current_page();

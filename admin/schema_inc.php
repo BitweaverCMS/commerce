@@ -1791,6 +1791,7 @@ $gBitInstaller->registerSchemaDefault( BITCOMMERCE_PKG_NAME, array(
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (40, 1, 'Fulfilling')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (41, 1, 'Expediting')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (50, 1, 'Shipped')",
+"INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (51, 1, 'Amount Due')",
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_orders_status` (orders_status_id, language_id, orders_status_name) VALUES (60, 1, 'Updated')",
 
 "INSERT INTO `".BITCOMMERCE_DB_PREFIX."com_languages` (languages_id, name, code, image, directory, sort_order) VALUES (1,'English', 'en', 'icon.gif', 'en',1)",

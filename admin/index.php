@@ -138,7 +138,7 @@ print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_list_orders_inc.tpl' );
 		usort($statusHash, "cmp");
 		foreach( $statusHash as $ordersStatusHash ) {
 			$listProducts = $ordersStatusHash['orders_count'] < 200 ? '&orders_products=1' : '';
-			print '<tr class="order-'.($ordersStatusHash['orders_status_id'] > 0 ? 'live' : 'dead').' '.strtolower( $ordersStatusHash['orders_status_name'] ).'"><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison='.$listProducts.'&orders_status_id=' . $ordersStatusHash['orders_status_id'] . '">' . tra( $ordersStatusHash['orders_status_name'] ) . '</a></td><td class="text-right"> ' . $ordersStatusHash['orders_count'] . '</td></tr>';
+			print '<tr class="order-'.($ordersStatusHash['orders_status_id'] > 0 ? 'live' : 'dead').' '.strtolower( preg_replace( '/[^\p{L}\p{N}]+/u', '', $ordersStatusHash['orders_status_name'] ) ).'"><td><a href="' . BITCOMMERCE_PKG_URL . 'admin/index.php?orders_status_comparison='.$listProducts.'&orders_status_id=' . $ordersStatusHash['orders_status_id'] . '">' . tra( $ordersStatusHash['orders_status_name'] ) . '</a></td><td class="text-right"> ' . $ordersStatusHash['orders_count'] . '</td></tr>';
 		}
 	}
 ?>

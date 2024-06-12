@@ -1,6 +1,6 @@
 <?php
 // globalize the major singletons
-global $gBitProduct, $gCommerceSystem, $gBitDb, $gBitSmarty, $gBitThemes, $gBitUser;
+global $gBitProduct, $gBitCustomer, $gCommerceSystem, $gBitDb, $gBitSmarty, $gBitThemes, $gBitUser;
 
 // We must include this file separately as admin/ has different ideas of templates and constants, etc.
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/html_output.php');

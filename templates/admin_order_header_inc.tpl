@@ -14,7 +14,7 @@ function editAddress( pAddress ) {
 {/literal}
 
 <div class="row">
-	<div class="col-xs-6">
+	<div class="col-sm-4 col-xs-12">
 		<h4>{tr}Customer{/tr}</h4>
 		{displayname hash=$order->customer} (ID: {$order->customer.user_id})
 		<a href="list_orders.php?user_id={$order->customer.user_id}">{booticon iname="fa-clock" iexplain="Customer Sales History"}</a>
@@ -44,68 +44,60 @@ function editAddress( pAddress ) {
 			</ul></div>
 		{/if}
 	</div>
-	<div class="col-xs-6">
-		<h4>{tr}Payment Info{/tr}</h4>
-		{if $order->info.amount_due}
-		<div class="alert alert-danger">{tr}Amount Due:{/tr} {$currencies->format($order->info.amount_due,true,$order->info.currency,$order->info.currency_value)}<span class="pull-right"><a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoices.php?oID={$smarty.request.oID}" class="btn btn-default btn-xs">{tr}Record Payment{/tr}</a></span></div>
-		{/if}
-<dd>
-{foreach from=$order->mPayments item=paymentHash}
-	<dt>{$paymentHash.payment_module}: {$paymentHash.payment_owner} / {$paymentHash.payment_number}</dt>
-		{if $paymentHash.payment_type || $paymentHash.payment_owner || $paymentHash.payment_number}
-		<div class="clear">
-			<div class="pull-left">{tr}Owner{/tr}:</div>
-			<div class="pull-right">{$paymentHash.payment_owner}</div>
-		</div>
-		<div class="clear">
-			<div class="pull-left">{$paymentHash.payment_type}:</div>
-			<div class="pull-right">{$paymentHash.payment_number}</div>
-		</div>
-		{if $paymentHash.payment_expires}
-		<div class="clear">
-			<div class="pull-left">{tr}Expires{/tr}: </div>
-			<div class="pull-right">{$paymentHash.payment_expires}</div>
-		</div>
-		{/if}
-		{if empty( $paymentHash.payment_ref_id)}
-			<div class="alert alert-danger">{booticon iname="fa-triangle-exclamation"} {$order->info.payment_module_code}: {tr}This payment has no Transaction ID. Verify funds were actually collected, or if this is a duplicate order.{/tr}</div>
-		{else}
-		<div class="clear">
-			<div class="pull-left">{$paymentHash.payment_module|replace:'_':' '|ucwords} {tr}Ref ID{/tr}:</div>
-			<div class="pull-right">{$paymentHash.payment_ref_id}</div>
-		</div>
-		{/if}
-		<div class="clear">
-			<div class="pull-left">{tr}IP{/tr}:</div>
-			<div class="pull-right"> {$paymentHash.ip_address}</div>
-		</div>
-		{/if}
-	<dd>
-{$paymentHash|vd}
-{/foreach}
-</dd>
-
-		{if $order->info.currency != $smarty.const.DEFAULT_CURRENCY}
-		<div class="clear">
-			<div class="pull-left">{tr}Currency{/tr}:</div>
-			<div class="pull-right">{$currencies->format(1.0,true,$order->info.currency,$order->info.currency_value)} / {$currencies->format(1.0,true,$smarty.const.DEFAULT_CURRENCY)}</div>
-		</div>
-		{/if}
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-xs-6">
+	<div class="col-sm-4 col-xs-12">
 		<h4><a class="icon" onclick="editAddress('delivery');return false;"><i class="fa fal fa-edit"></i></a> {tr}Shipping Address{/tr}</h4>
 		<div id="deliveryaddress">
 			{$order->getFormattedAddress('delivery')}
 		</div>
 	</div>
-	<div class="col-xs-6">
+	{if $order->hasDifferentBillingAddress()}
+	<div class="col-sm-4 col-xs-12">
 		<h4><a class="icon" onclick="editAddress('billing');return false;"><i class="fa fal fa-edit"></i></a> {tr}Billing Address{/tr}</h4>
 		<div id="billingaddress">
 			{$order->getFormattedAddress('billing')}
 		</div>
+	</div>
+	{/if}
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		{if $order->info.amount_due}
+		<div class="alert alert-danger">{tr}Amount Due:{/tr} {$currencies->format($order->info.amount_due,true,$order->info.currency,$order->info.currency_value)}<span class="pull-right"><a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoices.php?oID={$smarty.request.oID}" class="btn btn-default btn-xs">{tr}Record Payment{/tr}</a></span></div>
+		{/if}
+<table class="table table-condensed">
+<tr>
+	<th>{tr}Payment{/tr}</th>
+	<th></th>
+	<th>{tr}Number{/tr}</th>
+	<th>{tr}Reference{/tr}</th>
+	<th>{tr}Amount{/tr}</th>
+	<th>{tr}IP{/tr}</th>
+</tr>
+{foreach from=$order->mPayments item=paymentHash}
+<tr>
+	<td>{$paymentHash.payment_module|replace:'_':' '|ucwords}</td>
+		<td>{if $paymentHash.payment_owner}{$paymentHash.payment_owner}{/if}{if $paymentHash.user_id!=$paymentHash.customers_id}{displayname hash=$paymentHash}{/if}</td>
+		<td>{if $paymentHash.payment_type}{$paymentHash.payment_type}: {/if}<tt>{$paymentHash.payment_number}</tt>{if $paymentHash.payment_expires} <div class="inline-block">{tr}Expires{/tr}: <span class="date">{$paymentHash.payment_expires}</span></div>{/if}
+	</td>
+	<td>
+		{if empty( $paymentHash.payment_ref_id)}
+			<div class="inline-block alert alert-danger">{booticon iname="fa-triangle-exclamation"}{tr}This payment has no Transaction ID. Verify funds were collected, or if this is a duplicate order.{/tr}</div>
+		{else}
+		<div class="inline-block">{$paymentHash.payment_ref_id}</div>
+		{/if}
+	</td>
+	<td>{$currencies->format(1.0,true,$paymentHash.currency,$paymentHash.payment_amount)}</td>
+	<td>{$paymentHash.ip_address}</td>
+</tr>
+{if $paymentHash.payment_message && $paymentHash.payment_message != 'Approved'}
+<tr>
+	<td></td>
+	<td colspan="5">{$paymentHash.payment_message}</td>
+</tr>
+{/if}
+{/foreach}
+</table>
 	</div>
 </div>
 
