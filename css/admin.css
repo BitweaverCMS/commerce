@@ -23,7 +23,7 @@ table.table tr.comments	td { border-top:none; font-size:80%; }
 .table tr.refunded, tr.chargeback, tr.fraud, tr.amountdue { color:#a00; }
 .table tr.transferring { background-color:#afa; }
 .table tr.expediting	{ background-color:#fef; }
-.table tr.amountdue	{ background-color:#fee; }
+.table tr.paymentdue	{ background-color:#ffe; }
 .table tr.shipped td	{ border-top: 3px solid #999; }
 
 .table.order-list code { background-color:#dddddd; }

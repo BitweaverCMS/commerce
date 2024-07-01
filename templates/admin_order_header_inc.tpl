@@ -13,7 +13,7 @@ function editAddress( pAddress ) {
 /* ]]> */</script>
 {/literal}
 
-<div class="row">
+<div class="row pb-1">
 	<div class="col-sm-4 col-xs-12">
 		<h4>{tr}Customer{/tr}</h4>
 		{displayname hash=$order->customer} (ID: {$order->customer.user_id})

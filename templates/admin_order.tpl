@@ -47,15 +47,17 @@ function getShippingQuotes( pOrderId ) {
 {strip}
 
 <header>
-	<div class="btn-group pull-right">
-		<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
-		<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
-	</div>
-	<h1>{$smarty.const.HEADING_TITLE} {if $orderReviews}<span onclick="BitBase.toggleElementDisplay('order-review-{$order->mOrdersId}')" class="badge">{$orderReviews|count} @ {booticon iname="fa-star"} {foreach name=orderReviews from=$orderReviews.results item=$reviewHash}{$reviewHash.reviews_rating}{if !$smarty.foreach.orderReviews.last}, {/if}{/foreach}</span>{/if}</h1>
-	{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}
-		{if $order->info.estimated_ship_date} &bull; {tr}Est Ship{/tr}: {$order->info.estimated_ship_date|substr:0:10} {/if}
-		{if $order->info.estimated_arrival_date} &bull; {tr}Est Arrival{/tr}: {$order->info.estimated_arrival_date|substr:0:10} {/if}
+	<div class="pull-right">
+		<span class="date inline-block">{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}</span>
+		{if $order->info.estimated_ship_date} &bull; <span class="date inline-block">{tr}Est Ship{/tr}: {$order->info.estimated_ship_date|substr:0:10}</span> {/if}
+		{if $order->info.estimated_arrival_date} &bull; <span class="date inline-block">{tr}Est Arrival{/tr}: {$order->info.estimated_arrival_date|substr:0:10}</span> {/if}
 		&bull; <span class="link" onclick="$('#new-deadline-block').toggle()">{if $order->info.deadline_date} <span class="badge alert-danger" >{tr}DEADLINE{/tr}: {$order->info.deadline_date|substr:0:10}</span> {else} <span class="btn btn-xs btn-default">{booticon iname="fa-plus"} Deadline</span> {/if}</span>
+		<div class="btn-group">
+			<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
+			<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
+		</div>
+	</div>
+	<h1 class="inline-block">{$smarty.const.HEADING_TITLE} {if $orderReviews}<span onclick="BitBase.toggleElementDisplay('order-review-{$order->mOrdersId}')" class="badge">{$orderReviews|count} @ {booticon iname="fa-star"} {foreach name=orderReviews from=$orderReviews.results item=$reviewHash}{$reviewHash.reviews_rating}{if !$smarty.foreach.orderReviews.last}, {/if}{/foreach}</span>{/if}</h1>
 
 <div id="new-deadline-block" class="form-inline" style="display:none">
 <form class="status" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;action=update_deadline" method="post"><div style="display:inline">
