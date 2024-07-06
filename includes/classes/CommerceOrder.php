@@ -730,7 +730,7 @@ class CommerceOrder extends CommerceOrderBase {
 
 			if( isset( $quote['error'] ) || !($quoteHash = $gCommerceShipping->quoteToHash( $quote )) ) {
 				$pSessionHash['shipping'] = '';
-				$this->mErrors['shipping'] = 'Could not quote shipping method: '.$pOrderHash['shipping'];
+				$this->mErrors['shipping'] = 'Could not quote shipping method: '.$pSessionHash['shipping_method'];
 			} else {
 				$pSessionHash['shipping'] = $quoteHash;
 			}
@@ -1018,7 +1018,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 							'orders_status_id' => $this->info['orders_status_id'],
 							'order_total' => $this->info['total'],
 							'order_tax' => $this->info['tax'],
-							'amount_due' => $this->info['amount_due'],
+							'amount_due' => BitBase::getParameter( $this->info, 'amount_due', NULL ),
 							'currency' => $this->info['currency'],
 							'currency_value' => $this->info['currency_value'],
 							'payment_method' => $this->info['payment_method'],
