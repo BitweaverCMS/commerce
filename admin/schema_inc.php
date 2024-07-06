@@ -12,7 +12,7 @@ define( 'BITCOMMERCE_INSTALL_PREFIX', $prefix );
 
 // ### Sequences
 $sequences = array (
-	'com_commissions_payments_id_seq' => array( 'start' => 1 )
+	'com_commissions_payments_id_seq' => array( 'start' => 1 ),
 	'com_products_options_values_id_seq' => array( 'start' => 100 )
 );
 $gBitInstaller->registerSchemaSequences( BITCOMMERCE_PKG_NAME, $sequences );
