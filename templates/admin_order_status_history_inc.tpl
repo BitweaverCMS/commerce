@@ -23,10 +23,17 @@
 			<input type="hidden" name="charge_currency" value="{$gBitOrder->getField('currency')}"/>
 			<input type="hidden" name="currency_value" value="{$gBitOrder->getField('currency_value')}"/>
 			{/if}
+<select name="payment_ref_id" class="form-control">
+{foreach from=$order->mPayments item=paymentHash}
+	<option value="{$paymentHash.payment_ref_id}">{$paymentHash.payment_ref_id}  =  {$paymentHash.payment_amount} {$paymentHash.payment_currency}</option>
+{/foreach}
+</select>
 			<div class="input-group">
 				{if $leftSymbol}<span class="input-group-addon">{$leftSymbol}</span>{/if}
 				<input class="form-control input-sm text-right" type="text" name="charge_amount" value="{$smarty.request.charge_amount}"/>
 				{if $rightSymbol}<span class="input-group-addon">{$rightSymbol}</span>{/if}
+				<span class="input-group-addon">
+				</span>
 			</div>
 			{formhelp note="Enter a negative number for a credit"}
 		{/forminput}

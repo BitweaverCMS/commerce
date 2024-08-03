@@ -29,7 +29,6 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 
 		$this->mExpediteFlag = $this->getParameter( $_SESSION, 'ot_expedite' );
 
-		$this->setExpedite( FALSE );
 		if( isset( $_REQUEST['ot_expedite'] ) ) {
 			$this->setExpedite( $_REQUEST['ot_expedite'] == 1 );
 			bit_redirect( $_SERVER['HTTP_REFERER'] );

@@ -262,7 +262,7 @@ class CommerceOrder extends CommerceOrderBase {
 					$totals->MoveNext();
 				}
 
-				$this->mPayments = $this->mDb->getAssoc( "SELECT `orders_payments_id`, * FROM " . TABLE_ORDERS_PAYMENTS . " copay LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=copay.`user_id` ) WHERE `orders_id`=? ORDER BY payment_date DESC", array(  $this->mOrdersId ) ); 
+				$this->mPayments = $this->mDb->getAssoc( "SELECT `orders_payments_id`, * FROM " . TABLE_ORDERS_PAYMENTS . " copay LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=copay.`user_id` ) WHERE `orders_id`=? ORDER BY payment_date", array(  $this->mOrdersId ) ); 
 
 				$this->info = array('currency' => $order->fields['currency'],
 									'currency_value' => $order->fields['currency_value'],
@@ -1109,7 +1109,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 
 			if( !empty( $pRequest['additional_charge'] ) ) { 
 				if( $paymentModule = $this->getPaymentModule() ) {
-					$pRequest['payment_ref_id'] = $this->info['payment_ref_id'];
+//					$pRequest['payment_ref_id'] = $this->info['payment_ref_id'];
 					if( $paymentModule->processPayment( $pRequest, $this ) ) {
 						$statusMsg .= "\n\n".tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
 						$adjustmentText .= ' - '.tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();

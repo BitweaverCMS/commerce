@@ -320,9 +320,7 @@ if( $order_exists ) {
 	print '</div>';
 
 	// check if order has open gv
-	$gv_check = $gBitDb->query("select `order_id`, `unique_id`
-							from " . TABLE_COUPON_GV_QUEUE ."
-							where `order_id` = '" . $_REQUEST['oID'] . "' and `release_flag`='N'");
+	$gv_check = $gBitDb->query("SELECT `order_id`, `unique_id` FROM " . TABLE_COUPON_GV_QUEUE ." WHERE `order_id` = ? AND `release_flag`='N'", array( $_REQUEST['oID'] ) );
 	if ($gv_check->RecordCount() > 0) {
 		echo '<a class="btn btn-default btn-sm" href="' . zen_href_link_admin(FILENAME_GV_QUEUE, 'order=' . $_REQUEST['oID']) . '">' . tra( 'Gift Queue' ) . '</a>';
 	}

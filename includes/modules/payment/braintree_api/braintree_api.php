@@ -303,6 +303,10 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
 		$ret = FALSE;
 
+		// Generic default class for error message
+		$result = new stdClass();
+		$result->errors = array();
+
 		if( self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
 
 			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
@@ -440,6 +444,10 @@ class braintree_api extends CommercePluginPaymentCardBase {
 					$logHash['payment_result'] = $result->transaction->processorResponseCode || 'Failure';
 					$logHash['payment_date'] = $result->transaction->createdAt->format('Y-m-d H:i:s+00');
 					$logHash['payment_amount'] = (float) urldecode( $result->transaction->amount );
+					if( $pPaymentParams['charge_amount'] < 0 ) {
+						// credits are logged as a negative amount
+						$logHash['payment_amount'] *= -1;
+					}
 					$logHash['payment_currency'] = $result->transaction->currencyIsoCode;
 					$logHash['payment_message'] = trim( $result->transaction->processorResponseText );
 					$logHash['payment_ref_id'] = $pnref;
@@ -512,8 +520,6 @@ class braintree_api extends CommercePluginPaymentCardBase {
 		} else {
 			$errorString = implode( $this->mErrors );
 			$this->mErrors = array( 'process_payment' => $errorString );
-			$result = new stdClass();
-			$result->errors = array();
 		}
 
 		if( !empty( $this->mErrors['process_payment'] ) ) {
