@@ -77,8 +77,8 @@ function editAddress( pAddress ) {
 {foreach from=$order->mPayments item=paymentHash}
 <tr>
 	<td>{$paymentHash.payment_module|replace:'_':' '|ucwords}</td>
-		<td>{if $paymentHash.payment_owner}{$paymentHash.payment_owner}{/if}{if $paymentHash.user_id!=$paymentHash.customers_id}{displayname hash=$paymentHash}{/if}</td>
-		<td>{if $paymentHash.payment_type}{$paymentHash.payment_type}: {/if}<tt>{$paymentHash.payment_number}</tt>{if $paymentHash.payment_expires} <div class="inline-block">{tr}Expires{/tr}: <span class="date">{$paymentHash.payment_expires}</span></div>{/if}
+	<td>{if $paymentHash.payment_owner}{$paymentHash.payment_owner}{/if}{if $paymentHash.user_id!=$paymentHash.customers_id}{displayname hash=$paymentHash}{/if}</td>
+	<td>{if $paymentHash.payment_type}{$paymentHash.payment_type}: {/if}{if $paymentHash.payment_parent_ref_id}{$paymentHash.payment_parent_ref_id}{/if}{if $paymentHash.payment_number}<tt>{$paymentHash.payment_number}</tt>{/if}{if $paymentHash.payment_expires} <div class="inline-block">{tr}Expires{/tr}: <span class="date">{$paymentHash.payment_expires}</span></div>{/if}
 	</td>
 	<td>
 		{if empty( $paymentHash.payment_ref_id)}
@@ -90,7 +90,7 @@ function editAddress( pAddress ) {
 	<td>{$currencies->format(1.0,true,$paymentHash.currency,$paymentHash.payment_amount)}</td>
 	<td>{$paymentHash.ip_address}</td>
 </tr>
-{if $paymentHash.payment_message && $paymentHash.payment_message != 'Approved'}
+{if $paymentHash.payment_message && $paymentHash.payment_message != 'Approved' && $paymentHash.payment_message != 'Processed'}
 <tr>
 	<td></td>
 	<td colspan="5">{$paymentHash.payment_message}</td>
