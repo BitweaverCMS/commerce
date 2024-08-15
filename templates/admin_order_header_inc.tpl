@@ -70,9 +70,10 @@ function editAddress( pAddress ) {
 	<th>{tr}Payment{/tr}</th>
 	<th></th>
 	<th>{tr}Number{/tr}</th>
-	<th>{tr}Reference{/tr}</th>
+	<th>{tr}Payment ID{/tr}</th>
 	<th>{tr}Amount{/tr}</th>
 	<th>{tr}IP{/tr}</th>
+	<th>{tr}Date{/tr}</th>
 </tr>
 {foreach from=$order->mPayments item=paymentHash}
 <tr>
@@ -89,6 +90,7 @@ function editAddress( pAddress ) {
 	</td>
 	<td>{$currencies->format(1.0,true,$paymentHash.currency,$paymentHash.payment_amount)}</td>
 	<td>{$paymentHash.ip_address}</td>
+	<td><span class="date">{$paymentHash.payment_date}</span></td>
 </tr>
 {if $paymentHash.payment_message && $paymentHash.payment_message != 'Approved' && $paymentHash.payment_message != 'Processed'}
 <tr>
