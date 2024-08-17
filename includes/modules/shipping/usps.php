@@ -596,6 +596,10 @@ class usps extends CommercePluginShippingBase {
 								'<Length>' . $length . '</Length>' .
 								'<Height>' . $height . '</Height>' .
 								'<Girth>' . $girth . '</Girth>';
+
+				// turn off dimensions becase there is no bounds checking
+				// $dimensions = '';
+
 				$request .=  '<Package ID="' . $package_count . '">' .
 							 '<Service>' . $service . '</Service>' .
 							 ($FirstClassMailType != '' ? '<FirstClassMailType>' . $FirstClassMailType . '</FirstClassMailType>' : '') .
