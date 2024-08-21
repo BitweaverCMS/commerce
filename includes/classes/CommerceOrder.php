@@ -321,12 +321,15 @@ class CommerceOrder extends CommerceOrderBase {
 												'city' => $order->fields[$addressType.'_city'],
 												'postcode' => $order->fields[$addressType.'_postcode'],
 												'state' => $order->fields[$addressType.'_state'],
-												'zone_id' => zen_get_zone_id( $order->fields[$addressType.'_country'], $order->fields[$addressType.'_state'] ),
 												'telephone' => $order->fields[$addressType.'_telephone'],
 												'format_id' => $order->fields[$addressType.'_address_format_id'] ),
 									  );
 					if( $order->fields[$addressType.'_country'] ) {
 						$this->$addressType = array_merge( $this->$addressType, zen_get_countries( $order->fields[$addressType.'_country'] ) );
+					}
+
+					if( $order->fields[$addressType.'_state'] ) {
+						$this->$addressType = array_merge( $this->$addressType,  zen_get_zone_by_name( $this->$addressType['countries_id'], $order->fields[$addressType.'_state'] ) );
 					}
 
 					if( strpos( $this->$addressType['name'], ' ' ) ) {
