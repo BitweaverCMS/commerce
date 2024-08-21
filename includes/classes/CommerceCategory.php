@@ -74,7 +74,7 @@ class CommerceCategory extends BitBase {
 			$bindVars[] = $pListHash['parent_id'];
 		}
 
-		$sql .= "ORDER BY c.`sort_order`, cd.`categories_name`";
+		$sql .= " ORDER BY c.`sort_order`, cd.`categories_name`";
 
 		if( $ret = $gBitDb->getAssoc( $sql, $bindVars ) ) {
 		}
