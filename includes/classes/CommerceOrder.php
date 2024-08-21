@@ -968,8 +968,8 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 		global $gBitCustomer;
 
 		$this->mDb->StartTrans();
-		if( !empty( $_SESSION['shipping'] ) && $_SESSION['shipping'] == 'free_free') {
-			$this->info['shipping_module_code'] = $_SESSION['shipping'];
+		if( !empty( $_SESSION['shipping_method'] ) && $_SESSION['shipping_method'] == 'free_free') {
+			$this->info['shipping_module_code'] = $_SESSION['shipping_method'];
 		}
 
 		$this->mOrdersId =  (!empty( $pPaymentParams['orders_id'] ) ? $pPaymentParams['orders_id'] : $this->getNextOrderId());

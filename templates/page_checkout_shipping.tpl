@@ -99,7 +99,7 @@
 			{if $freeShipping}
 				<div class="alert alert-success">
 					{tr}This order qualifies for free shipping.{/tr}
-					<input type="hidden" name="shipping" value="free_free"/>
+					<input type="hidden" name="shipping_method" value="free_free"/>
 				</div>
 			{else}
 				{include file="bitpackage:bitcommerce/checkout_javascript.tpl"}
