@@ -99,7 +99,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		$shipString = '';
 		$holidays = BitDate::getHolidays();
 
-		if( $manfTime = $this->getFulfillmentDays( $pOrderBase ) ) {
+		if( ($manfTime = $this->getFulfillmentDays( $pOrderBase )) !== FALSE ) {
 			$delay = $manfTime;
 			$dow = date( 'w' );
 			$hour = date( 'H' );
