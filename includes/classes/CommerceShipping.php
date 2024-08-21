@@ -74,6 +74,7 @@ class CommerceShipping extends BitSingleton {
 				$paddingWeights = preg_split("/[:,]/" , SHIPPING_BOX_PADDING);
 				$paddingPercent = $paddingWeights[0];
 				$paddingWeight = $paddingWeights[1];
+				$shipHash['shipping_num_boxes'] = 1; // at least one parcel shipping
 				foreach( $this->mShipModules as &$shipModule ) {
 					if( $shipModule->isEnabled() && (empty( $module ) || ($shipModule->code == $module)) ) {
 						$shipHash['shipping_weight_total'] = $orderTotalWeight;
