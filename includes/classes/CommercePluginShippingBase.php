@@ -28,6 +28,11 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		$this->tax_basis = $this->getConfig( $this->getModuleKeyTrunk().'_TAX_BASIS' );
 	}
 
+	public function createShipment( $pOrder, $pShipmentHash ) {
+		// Default empty implementation
+		return FALSE;
+	}
+
 	protected function getModuleType() {
 		return 'shipping';
 	}

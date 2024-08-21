@@ -47,7 +47,23 @@ class CommerceShipping extends BitSingleton {
 	function isShippingAvailable() {
 		return count( $this->mShipModules );
 	}
-	
+
+	function shipOrder( $pPodSalesId, $pShipmentHash ) {
+		$ret = FALSE;
+
+		list( $shipCarrier, $shipMethod ) = explode( '_', $pShipmentHash['shipment']['ship_method'] );
+		$orderHash = CommercePluginFulfillmentPrintBase::splitTransferOrderId( $pPodSalesId );
+		$order = new order( $orderHash['orders_id'] );
+
+		foreach( $this->mShipModules as &$shipModule ) {
+			if( $shipModule->isEnabled() && ($shipModule->code == $shipCarrier) ) {
+				$ret = $shipModule->createShipment( $order, $pShipmentHash );
+			}
+		}
+		
+		return $ret;
+	}
+
 	function quote( $pOrderBase, $method = '', $module = '' ) {
 		global $currencies, $gCommerceSystem;
 
