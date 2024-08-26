@@ -81,6 +81,7 @@ class CommerceShipping extends BitSingleton {
 //			'SHIPPING_DAYS_DELAY',
 			if( ($shipHash['destination'] = $pOrderBase->getShippingDestination()) && ($shipHash['origin'] = $pOrderBase->getShippingOrigin()) ) {
 				$shipHash['shipping_value'] = $pOrderBase->getShipmentValue();
+				$shipHash['shipping_value_currency'] = $pOrderBase->getOrderCurrency();
 
 				// Stuff from ancient ZenCart, probably still works
 				$boxWeights = preg_split("/[:,]/", SHIPPING_BOX_WEIGHT);

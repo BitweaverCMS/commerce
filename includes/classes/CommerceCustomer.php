@@ -472,10 +472,11 @@ class CommerceCustomer extends CommerceBase {
 				$whereSql = " AND cab.`customers_id`=?";
 				array_push( $bindVars, $this->mCustomerId );
 			}
-			$query = "SELECT cab.*,ccou.*, cab.`address_book_id`=cu.`customers_default_address_id` AS `entry_primary`
+			$query = "SELECT cab.*,ccou.*,czon.*,cab.`address_book_id`=cu.`customers_default_address_id` AS `entry_primary`
 					  FROM " . TABLE_ADDRESS_BOOK . " cab
 						INNER JOIN " . TABLE_COUNTRIES . " ccou ON (ccou.`countries_id`=cab.`entry_country_id`)
 						INNER JOIN " . TABLE_CUSTOMERS . " cu ON( cab.`customers_id`=cu.`customers_id` )
+						LEFT JOIN " . TABLE_ZONES. " czon ON (czon.`zone_id`=cab.`entry_zone_id`)
 					  WHERE `address_book_id`=? $whereSql";
 			if( $ret = $this->mDb->getRow( $query, $bindVars ) ) {
 				$ret['country_id'] = $ret['entry_country_id'];

@@ -85,6 +85,10 @@ abstract class CommerceOrderBase extends BitBase {
 		return $ret;
 	}
 
+	public function getOrderCurrency() {
+		return $this->getField( 'currency', DEFAULT_CURRENCY );
+	}
+
 	public function getShipmentValue() {
 		$this->calculate();
 		$ret = $this->subtotal - $this->free_shipping_prices();
