@@ -217,7 +217,8 @@ class fedexrest extends CommercePluginShippingBase {
 	function quote( $pShipHash ) {
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 
-$this->getOAuthToken();
+			$this->getOAuthToken();
+
 			$pShipHash['shipping_num_boxes'] = (!empty( $pShipHash['shipping_num_boxes'] ) ? $pShipHash['shipping_num_boxes'] : 1);
 
 			// Do the rate query
@@ -262,7 +263,6 @@ $this->getOAuthToken();
 			$this->fedex_shipping_weight = $shipping_weight;
 */
 
-			$isIntlOrder = $this->isInternationOrder( $pShipHash );	
 
 			$packages = [];
 			$boxValue = round($pShipHash['shipping_value'] / $pShipHash['shipping_num_boxes'], 2);
@@ -357,19 +357,19 @@ $this->getOAuthToken();
 				"carrierCodes" => ["FDXG", "FDXE"],
 			];
 
-			if( $isIntlOrder ) { 
+			if( $this->isInternationOrder( $pShipHash ) ) { 
 				$rate_data ["requestedShipment"]["customsClearanceDetail"] = [ 
 					"commodities" => [ 
 						[ "description" => "Goods", 
 						"quantity" => "1", 
 						"quantityUnits" => "PCS", 
-						"weight" => [ 
-							"units" => $this->getModuleConfigValue( '_WEIGHT' ), 
-							"value" => ($_SESSION['cart']->show_weight()), 
-						], 
+						"weight" => [
+							"units" => $this->getModuleConfigValue( '_WEIGHT' ),
+							"value" => $pShipHash['shipping_weight_box'],
+						],
 						"customsValue" => [ 
-							"amount" => ($_SESSION['cart']->show_total()), 
-							"currency" => $_SESSION['currency'],
+							"amount" => $pShipHash['shipping_value'], 
+							"currency" => $pShipHash['shipping_value_currency'],
 						], 
 						], 
 					], 
