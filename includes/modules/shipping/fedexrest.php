@@ -313,7 +313,7 @@ class fedexrest extends CommercePluginShippingBase {
 			} else if ($this->getModuleConfigValue( '_SHIP_TO_RESIDENCE' ) == 'false') {
 				$ship_to_residential = false; 
 			} else { 
-				$ship_to_residential = (empty($order->delivery['company'])); 
+				$ship_to_residential = empty( trim( $pShipHash['destination']['company'] ) ); 
 			}
 
 			$shipDate = new DateTime();
