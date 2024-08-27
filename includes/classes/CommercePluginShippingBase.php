@@ -151,9 +151,12 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 			$explodeArray =  array_map('trim', explode( ',', $excludeList ));
 		}
 
-		if( in_array( $pShipHash['destination']['countries_iso_code_2'], $explodeArray ) ) {
+		if( !empty( $explodeArray ) && in_array( $pShipHash['destination']['countries_iso_code_2'], $explodeArray ) ) {
 			// country is in module EXCLUDE list
 		} elseif( $shipperOrigin && $pShipHash['origin']['countries_iso_code_2'] != $shipperOrigin ) {
+if( $this->code == 'fedexrest' ) {
+	eb( $explodeArray, $shipperOrigin, $pShipHash['destination'] );
+}
 
 		} elseif( $this->isEnabled() && !empty( $pShipHash['shipping_weight_total'] ) ) {
 			$pass = TRUE;
