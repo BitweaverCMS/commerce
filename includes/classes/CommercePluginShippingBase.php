@@ -154,10 +154,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		if( !empty( $explodeArray ) && in_array( $pShipHash['destination']['countries_iso_code_2'], $explodeArray ) ) {
 			// country is in module EXCLUDE list
 		} elseif( $shipperOrigin && $pShipHash['origin']['countries_iso_code_2'] != $shipperOrigin ) {
-if( $this->code == 'fedexrest' ) {
-	eb( $explodeArray, $shipperOrigin, $pShipHash['destination'] );
-}
-
+			// Do nothing because Origin of shipment is not the same as the origin of this shipping method (ie US shipment and CanadaPost shipper)
 		} elseif( $this->isEnabled() && !empty( $pShipHash['shipping_weight_total'] ) ) {
 			$pass = TRUE;
 			// Check to see if shipping module is zone silo'ed
