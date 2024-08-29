@@ -287,7 +287,7 @@ class fedexrest extends CommercePluginShippingBase {
 					$package += [
 						"declaredValue" => [
 							"amount" => $boxValue,
-							"currency" => $pShipmentHash['shipping_value_currency'],
+							"currency" => $pShipHash['shipping_value_currency'],
 						], 
 					]; 
 				}
@@ -562,10 +562,10 @@ class fedexrest extends CommercePluginShippingBase {
 	// }}} Quote
 
 	// {{{  ++++++++ createShipment ++++++++
-	function createShipment( $pOrder, $pShipmentHash ) {
+	function createShipment( $pOrder, $pShipHash ) {
 		global $gCommerceSystem;
 
-		list( $shipCarrier, $shipMethod ) = explode( '_', $pShipmentHash['shipment']['ship_method'] );
+		list( $shipCarrier, $shipMethod ) = explode( '_', $pShipHash['shipment']['ship_method'] );
 
 		$requestJson = '{
   "mergeLabelDocOption": "LABELS_AND_DOCS",
@@ -1778,7 +1778,7 @@ $requestJson .= '
 	"oneLabelAtATime": true
 }
 ';
-		eb( $requestJson, $pShipmentHash, $pOrder->info, $pOrder->billing, $pOrder->delivery, $pOrder->customer );
+		eb( $requestJson, $pShipHash, $pOrder->info, $pOrder->billing, $pOrder->delivery, $pOrder->customer );
 	}
 	// }}} ++++ createShipment ++++
 
