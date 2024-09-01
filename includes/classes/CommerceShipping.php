@@ -51,7 +51,7 @@ class CommerceShipping extends BitSingleton {
 	function shipOrder( $pPodSalesId, $pShipmentHash ) {
 		$ret = FALSE;
 
-		list( $shipCarrier, $shipMethod ) = explode( '_', $pShipmentHash['shipment']['ship_method'] );
+		list( $shipCarrier, $shipMethod ) = explode( '_', $pShipmentHash['shipment']['ship_method'], 2 );
 		$orderHash = CommercePluginFulfillmentPrintBase::splitTransferOrderId( $pPodSalesId );
 		$order = new order( $orderHash['orders_id'] );
 
