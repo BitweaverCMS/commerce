@@ -429,7 +429,7 @@ class CommerceOrder extends CommerceOrderBase {
 		global $gBitUser;
 		$ret = FALSE;
 		if( $this->isValid() && self::verifyIdParameter( $this->customer, 'user_id' ) ) {
-			$ret = ($gBitUser->mUserId == $this->customer['user_id']) || $gBitUser->hasPermission( 'p_commerce_admin' );
+			$ret = ($gBitUser->mUserId == $this->customer['user_id']) || $gBitUser->hasPermission( 'p_bitcommerce_admin' );
 		}
 		return $ret;
 	}
