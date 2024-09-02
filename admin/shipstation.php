@@ -34,7 +34,7 @@ $gBitUser->login( $_GET['SS-UserName'], $_GET['SS-Password'], FALSE, FALSE );
 
 define('DATE_TIME_FORMAT', '%m/%d/%Y' . ' %H:%M:%S');
 //set the content type to xml
-//header('Content-Type: text/xml');
+header('Content-Type: text/xml');
 
 /**
  * function to add noode to the xml
