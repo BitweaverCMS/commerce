@@ -15,9 +15,9 @@ class ot_gv extends CommercePluginOrderTotalBase {
 	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
 
-		$this->title = MODULE_ORDER_TOTAL_GV_TITLE;
-		$this->header = MODULE_ORDER_TOTAL_GV_HEADER;
-		$this->description = MODULE_ORDER_TOTAL_GV_DESCRIPTION;
+		$this->title = tra( 'Gift Certificates' );
+		$this->header = tra( 'Gift Certificates' );
+		$this->description = tra( 'Gift Certificates' );
 		$this->userGvBalance = 0.0;
 		if( $this->isEnabled() ) {
 			global $gBitUser, $gCommerceSystem;
