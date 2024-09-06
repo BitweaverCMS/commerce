@@ -18,6 +18,10 @@ class fedexwebservices extends CommercePluginShippingBase {
 		$this->icon				= 'shipping_fedex';
 	}
 
+	public function isEnabled() {
+		return FALSE; // SOAP IS DEAD as of 2024-08-31
+	}
+
 	function quote( $pShipHash ) {
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 		
