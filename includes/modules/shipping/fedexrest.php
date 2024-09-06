@@ -531,7 +531,7 @@ class fedexrest extends CommercePluginShippingBase {
 
 				$this->sortQuoteMethods( $methods );
 				$quotes['methods'] = $methods;
-vvd( $quotes, $arr_response );
+
 				if ($this->tax_class > 0) {
 					$quotes['tax'] = zen_get_tax_rate($this->tax_class, $order->delivery['country']['id'], $order->delivery['zone_id']);
 				}
