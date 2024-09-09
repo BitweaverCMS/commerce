@@ -426,7 +426,8 @@ class fedexrest extends CommercePluginShippingBase {
 				$methods = [];
 				foreach ($arr_response['output']['rateReplyDetails'] as $rate) {
 					// ensure key exists (i.e. service enabled) 
-					$check_serviceType = str_replace('_', '', $rate['serviceType']); 
+					// no more stripping of underscores, just split of first _ fore shippingmodule_shippingmethod string
+					$check_serviceType = $rate['serviceType']; //str_replace('_', '', $rate['serviceType']); 
 					$method_ok = false; 
 					if (array_key_exists($rate['serviceType'], $this->types)) {
 						if ($pShipHash['method'] == '') {
