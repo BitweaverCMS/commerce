@@ -93,8 +93,9 @@
 			</fieldset>
 		{/foreach}
 
-		{foreach from=$order->otCreditSelection() item=selection}
+		{foreach from=$order->otCreditSelection( $smarty.session ) item=selection}
 			{if $selection}
+				{assign var=otCode value=$selection.id}
 			<fieldset>
 				<legend>
 					{$selection.module|tra}
@@ -102,8 +103,8 @@
 				{if !empty($selection.checkbox)}
 					{$selection.checkbox}
 				{/if}
-				{if !empty($smarty.request.credit_class_error_code) && $smarty.request.credit_class_error_code == $selection.id}
-					{formfeedback error=$smarty.request.credit_class_error}
+				{if !empty($smarty.request.ot_errors.$otCode)}
+					{formfeedback error=$smarty.request.ot_errors.$otCode}
 				{/if}
 				{foreach from=$selection.fields item=selectionField}
 					<div class="form-group">

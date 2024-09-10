@@ -92,7 +92,7 @@ require(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 $order = new order();
 if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail(STORE_OWNER_EMAIL_ADDRESS,'IPN DEBUG MESSAGE', '7.1 Started Order ' . $_SESSION['payment'] );
 
-$order->otProcess( $_REQUEST );
+$order->otProcess( $_REQUESTi, $_SESSION );
 
 if (isset($_SESSION['customer_id'])) {
 	$new_order_id = $order->create();

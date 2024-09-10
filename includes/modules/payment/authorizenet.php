@@ -174,14 +174,14 @@ class authorizenet extends CommercePluginPaymentCardBase {
 		return $selection;
 	}
 
-	function verifyPayment( &$pPaymentParameters, &$pOrder ) {
-		if( empty( $pPaymentParameters['authorizenet_cc_number'] ) ) {
+	public function verifyPayment( $pOrder, &$pPaymentParams ) {
+		if( empty( $pPaymentParams['authorizenet_cc_number'] ) ) {
 			$error = tra( 'Please enter a credit card number.' );
-		} elseif( $this->verifyCreditCard( $pPaymentParameters['authorizenet_cc_number'], $pPaymentParameters['authorizenet_cc_expires_month'], $pPaymentParameters['authorizenet_cc_expires_year'], $pPaymentParameters['authorizenet_cc_cvv'] ) ) {
+		} elseif( $this->verifyCreditCard( $pPaymentParams['authorizenet_cc_number'], $pPaymentParams['authorizenet_cc_expires_month'], $pPaymentParams['authorizenet_cc_expires_year'], $pPaymentParams['authorizenet_cc_cvv'] ) ) {
 			$ret = TRUE;
 		} else {
 			foreach( array( 'authorizenet_cc_owner', 'authorizenet_cc_number', 'authorizenet_cc_expires_month', 'authorizenet_cc_expires_year', 'authorizenet_cc_cvv' ) as $key ) {
-				$_SESSION[$key] = BitBase::getParameter( $pPaymentParameters, $key );
+				$_SESSION[$key] = BitBase::getParameter( $pPaymentParams, $key );
 			}
 			$_SESSION['pfp_error'] = $this->mErrors;
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
@@ -189,7 +189,7 @@ class authorizenet extends CommercePluginPaymentCardBase {
 		return $ret;
 	}
 
-	function confirmation( $pPaymentParameters ) {
+	function confirmation( $pPaymentParams ) {
 		global $_POST;
 
 		$confirmation = array('title' => $this->title . ': ' . $this->cc_type,
@@ -203,7 +203,7 @@ class authorizenet extends CommercePluginPaymentCardBase {
 		return $confirmation;
 	}
 
-	function process_button( $pPaymentParameters ) {
+	function process_button( $pPaymentParams ) {
 		global $_SERVER, $order;
 
 		$sequence = rand(1, 1000);
@@ -241,11 +241,10 @@ class authorizenet extends CommercePluginPaymentCardBase {
 		return $process_button_string;
 	}
 
-	function processPayment( &$pPaymentParameters, &$pOrder ) {
-		global $_POST;
+	function processPayment( $pOrder, &$pPaymentParams ) {
 
-		if ($_POST['x_response_code'] == '1') return;
-		if ($_POST['x_response_code'] == '2') {
+		if ($pPaymentParams['x_response_code'] == '1') return;
+		if ($pPaymentParams['x_response_code'] == '2') {
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(MODULE_PAYMENT_AUTHORIZENET_TEXT_DECLINED_MESSAGE), 'SSL', true, false));
 		}
 		// Code 3 is an error - but anything else is an error too (IMHO)

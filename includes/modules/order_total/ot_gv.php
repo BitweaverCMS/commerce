@@ -37,7 +37,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	private function getDiscount( $pGvAmount ) {
+	private function getDiscount( $pGvAmount, &$pSessionParams ) {
 		global $gBitUser;
 
 		$od_amount = 0.0;
@@ -45,7 +45,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		// clean out negative values and strip common currency symbols
 		$creditAmount = preg_replace( '/[^\d\.]/', '', $pGvAmount );
 		//$orderTotal = $this->mOrder->getField( 'total' ); // this is old school, doesn't account for coupons
-		$orderTotal = $this->mOrder->getSubTotal( $this->code );
+		$orderTotal = $this->mOrder->getSubtotal( $this->code, $pSessionParams );
 
 		if ( !empty( $creditAmount ) ) {
 			if( $this->include_shipping == 'false') { 
@@ -98,12 +98,12 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		return $od_amount + $tod_amount;
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $currencies;
 
-		if( !empty( $_SESSION['cot_gv'] ) ) {
-			if( $deduction = $this->getOrderDeduction( $_SESSION['cot_gv'] ) ) {
+		if( !empty( $pSessionParams['cot_gv'] ) ) {
+			if( $deduction = $this->getOrderDeduction( $pSessionParams['cot_gv'], $pSessionParams ) ) {
 				$this->mOrder->info['gv_amount'] = $deduction;
 				$this->setOrderDeduction( $deduction );
 				$this->mProcessingOutput = array( 'code' => $this->code,
@@ -115,16 +115,16 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	public function getOrderDeduction( $pOrder ) {
+	public function getOrderDeduction( $pOrder, &$pSessionParams ) {
 		$ret = null;
-		if( !empty( $_SESSION['cot_gv'] ) ) {
-			if (preg_match('#[^0-9/.]#', trim($_SESSION['cot_gv']))) {
+		if( !empty( $pSessionParams['cot_gv'] ) ) {
+			if (preg_match('#[^0-9/.]#', trim($pSessionParams['cot_gv']))) {
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_AMOUNT), 'SSL',true, false));
-			} elseif ($_SESSION['cot_gv'] > $this->userGvBalance ) {
-				$_SESSION['cot_gv'] = $this->userGvBalance;
+			} elseif ($pSessionParams['cot_gv'] > $this->userGvBalance ) {
+				$pSessionParams['cot_gv'] = $this->userGvBalance;
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_AMOUNT), 'SSL',true, false));
 			} else {
-				$ret = $this->getDiscount( $_SESSION['cot_gv'] );
+				$ret = $this->getDiscount( $pSessionParams['cot_gv'], $pSessionParams );
 			}
 		}
 		return $ret;
@@ -163,7 +163,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 	}
 
 
-	public function credit_selection( $pOrder ) {
+	public function credit_selection( $pOrder, &$pSessionParams ) {
 		global $currencies, $gBitUser;
 		$selection = array();
 		$couponId = $this->mDb->getOne("SELECT coupon_id FROM " . TABLE_COUPONS . " where coupon_type = 'G' and coupon_active='Y'");
@@ -187,70 +187,73 @@ class ot_gv extends CommercePluginOrderTotalBase {
 			$selection = array(	'id' => $this->code,
 								'module' => $this->title,
 								'checkbox' => $this->checkbox,
-								'fields' => array(array('title' => tra( 'Gift Certificate Code' ),
-								'field' => zen_draw_input_field('gv_redeem_code'))));
+								'fields' => array(
+									array( 'title' => tra( 'Gift Certificate Code' ), 'field' => zen_draw_input_field('gv_redeem_code', BitBase::getParameter($pSessionParams, 'gv_redeem_code') )))
+								);
 		}
 		return $selection;
 	}
 
-	function apply_credit() {
+	function apply_credit( &$pSessionParams ) {
 		global $gBitUser;
 		$ret = FALSE;
 		if( $this->mOrder->getField( 'gv_amount' ) ) {
 			$this->mDb->query( "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " SET `amount` = `amount` - ? WHERE `customer_id` = ?", array( $this->mOrder->getField( 'gv_amount' ), $gBitUser->mUserId ) );
 			$ret = TRUE;
-			unset( $_SESSION['cot_gv'] );
+			unset( $pSessionParams['cot_gv'] );
 		}
 		return $ret;
 	}
 
 
-	function collect_posts( $pRequestParams ) {
+	function collect_posts( $pRequestParams, &$pSessionParams ) {
 		global $gBitUser, $currencies;
+
+		$retError = FALSE;
+
 		if ( !empty( $pRequestParams['cot_gv'] ) && is_numeric( $pRequestParams['cot_gv'] ) && $pRequestParams['cot_gv'] > 0 ) {
-			$_SESSION['cot_gv'] = $pRequestParams['cot_gv'];
-		} elseif( isset( $_SESSION['cot_gv'] ) ) {
-			unset( $_SESSION['cot_gv'] );
+			$pSessionParams['cot_gv'] = $pRequestParams['cot_gv'];
+		} elseif( isset( $pSessionParams['cot_gv'] ) ) {
+			unset( $$pSessionParams['cot_gv'] );
 		}
 		if ( !empty( $pRequestParams['gv_redeem_code'] ) ) {
-			$gv_result = $this->mDb->query( "SELECT `coupon_id`, `coupon_type`, `coupon_amount` FROM " . TABLE_COUPONS . " WHERE `coupon_code` = ?", array( $pRequestParams['gv_redeem_code'] ) );
-			if ($gv_result->RecordCount() > 0) {
-				$redeem_query = $this->mDb->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $gv_result->fields['coupon_id'] . "'");
-				if ( ($redeem_query->RecordCount() > 0) && ($gv_result->fields['coupon_type'] == 'G')	) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_INVALID_REDEEM_GV), 'SSL'));
+			if( $gvHash = $this->mDb->getRow( "SELECT `coupon_id`, `coupon_type`, `coupon_amount` FROM " . TABLE_COUPONS . " WHERE `coupon_code` = ?", array( $pRequestParams['gv_redeem_code'] ) ) ) {
+				$redeem_query = $this->mDb->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $gvHash['coupon_id'] . "'");
+				if ( ($redeem_query->RecordCount() > 0) && ($gvHash['coupon_type'] == 'G')	) {
+					$retError = ERROR_NO_INVALID_REDEEM_GV;
+				}
+				if ($gvHash['coupon_type'] == 'G') {
+					$gv_amount = $gvHash['coupon_amount'];
+					// Things to set
+					// ip address of claimant
+					// customer id of claimant
+					// date
+					// redemption flag
+					// now update customer account with gv_amount
+					$gv_amount_result=$this->mDb->query("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?", array( $gBitUser->mUserId ) );
+					$customer_gv = false;
+					$total_gv_amount = $gv_amount;;
+					if ($gv_amount_result->RecordCount() > 0) {
+						$total_gv_amount = $gv_amount_result->fields['amount'] + $gv_amount;
+						$customer_gv = true;
+					}
+					$this->mDb->query("UPDATE " . TABLE_COUPONS . " set coupon_active = 'N' where coupon_id = ?", array( $gvHash['coupon_id'] ) );
+					$this->mDb->query("INSERT INTO	" . TABLE_COUPON_REDEEM_TRACK . " (redeem_date, coupon_id, customer_id, redeem_ip) values ( now(), ?, ?, ?)", array( $gvHash['coupon_id'], $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) );
+					if ($customer_gv) {
+						// already has gv_amount so update
+						$this->mDb->query( "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = ? where `customer_id` = ?", array( $total_gv_amount, $gBitUser->mUserId ) );
+					} else {
+						// no gv_amount so insert
+						$this->mDb->query("INSERT INTO " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values (?, ?)", array( $gBitUser->mUserId, $total_gv_amount ) );
+					}
+					$retError = ERROR_REDEEMED_AMOUNT. $currencies->format($gv_amount);
 				}
 			} else {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_INVALID_REDEEM_GV), 'SSL'));
+				$retError = ERROR_NO_REDEEM_CODE.' '.$pRequestParams['gv_redeem_code'];
 			}
-			if ($gv_result->fields['coupon_type'] == 'G') {
-				$gv_amount = $gv_result->fields['coupon_amount'];
-				// Things to set
-				// ip address of claimant
-				// customer id of claimant
-				// date
-				// redemption flag
-				// now update customer account with gv_amount
-				$gv_amount_result=$this->mDb->query("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?", array( $gBitUser->mUserId ) );
-				$customer_gv = false;
-				$total_gv_amount = $gv_amount;;
-				if ($gv_amount_result->RecordCount() > 0) {
-					$total_gv_amount = $gv_amount_result->fields['amount'] + $gv_amount;
-					$customer_gv = true;
-				}
-				$this->mDb->query("UPDATE " . TABLE_COUPONS . " set coupon_active = 'N' where coupon_id = ?", array( $gv_result->fields['coupon_id'] ) );
-				$this->mDb->query("INSERT INTO	" . TABLE_COUPON_REDEEM_TRACK . " (redeem_date, coupon_id, customer_id, redeem_ip) values ( now(), ?, ?, ?)", array( $gv_result->fields['coupon_id'], $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) );
-				if ($customer_gv) {
-					// already has gv_amount so update
-					$this->mDb->query( "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = ? where `customer_id` = ?", array( $total_gv_amount, $gBitUser->mUserId ) );
-				} else {
-					// no gv_amount so insert
-					$this->mDb->query("INSERT INTO " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values (?, ?)", array( $gBitUser->mUserId, $total_gv_amount ) );
-				}
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_REDEEMED_AMOUNT. $currencies->format($gv_amount)), 'SSL'));
-		 }
-	 }
-	 if ( isset( $pRequestParams['submit_redeem_x'] ) && $gv_result->fields['coupon_type'] == 'G') zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_REDEEM_CODE), 'SSL'));
- }
+	 	}
+		return $retError;
+ 	}
 
 	private function getGvBalance( $pCustomersId ) {
 		return $this->mDb->getOne( "SELECT `amount` FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?", array( $pCustomersId ) );

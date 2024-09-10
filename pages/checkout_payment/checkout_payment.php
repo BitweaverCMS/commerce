@@ -71,6 +71,12 @@ if( empty( $_SESSION['billto'] ) || empty( $order->billing ) || !$gBitCustomer->
 	}
 }
 
+if( !empty( $_REQUEST['ot_error_encode'] ) ) {
+	if( $errorHash = unserialize( $_REQUEST['ot_error_encode'] ) ) {
+		$_REQUEST['ot_errors'] = $errorHash;
+	}
+}
+
 if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $order->billing ) ) {
 	if( $addresses = $gBitCustomer->getAddresses() ) {
 		$gBitSmarty->assign( 'addresses', $addresses );
@@ -93,7 +99,7 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 	$breadcrumb->add(NAVBAR_TITLE_2);
 	$gBitSmarty->assign( 'order', $order );
 
-	$order->otProcess( $_REQUEST );
+	$order->otProcess( $_REQUEST, $_SESSION );
 }
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_payment.tpl' );

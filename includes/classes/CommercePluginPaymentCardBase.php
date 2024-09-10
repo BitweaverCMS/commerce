@@ -103,7 +103,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		return $selection;
 	}
 
-	public function verifyPayment( &$pPaymentParams, &$pOrder ) {
+	public function verifyPayment( $pOrder, &$pPaymentParams ) {
 		global $gCommerceSystem;
 		unset( $_SESSION[$this->code.'_error'] );
 
@@ -121,7 +121,7 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 			}
 		} 
 
-		if( parent::verifyPayment( $pPaymentParams, $pOrder ) ) {
+		if( parent::verifyPayment( $pOrder, $pPaymentParams ) ) {
 			$pOrder->info['payment_cvv'] = $this->getParameter( $pPaymentParams, 'payment_cvv' );
 			// payment is fully verified
 			if( $this->mErrors ) {

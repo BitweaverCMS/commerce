@@ -29,11 +29,11 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		}
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $currencies;
 
-		if( $od_amount = $this->getDiscountHash() ) {
+		if( $od_amount = $this->getDiscountHash( $pSessionParams ) ) {
 			$this->deduction = $od_amount['total'];
 			if ($od_amount['total'] > 0) {
 				while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
@@ -64,8 +64,8 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		return false;
 	}
 
-	function clear_posts() {
-		unset($_SESSION['cc_id']);
+	protected function getSessionVars() {
+		return array_merge( parent::getSessionVars(), array( 'cc_id', 'dc_redeem_code' ) );
 	}
 
 	function use_credit_amount() {
@@ -73,21 +73,25 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 	}
 
 
-	public function credit_selection( $pOrder ) {
+	public function credit_selection( $pOrder, &$pSessionParams ) {
 		$selection = array(	'id' => $this->code,
 							 'module' => $this->title,
-							 'fields' => array(array('title' => 'Coupon Code',
-							 'field' => zen_draw_input_field('dc_redeem_code'))));
+							 'fields' => array(
+								array('title' => 'Coupon Code', 'field' => zen_draw_input_field('dc_redeem_code', BitBase::getParameter( $pSessionParams, 'dc_redeem_code' )))
+							)
+						);
 		return $selection;
 	}
 
 
-	function collect_posts( $pRequestParams ) {
+	function collect_posts( $pRequestParams, &$pSessionParams ) {
 		global $currencies;
+		$error = FALSE;
+
 		if ( $couponCode = trim( BitBase::getParameter( $pRequestParams, 'dc_redeem_code' ) ) ) {
 			$coupon = new CommerceVoucher();
 			if ( !$coupon->load( $couponCode ) ) {
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_COUPON.'-'.$couponCode ), 'SSL',true, false));
+				$error = TEXT_INVALID_REDEEM_COUPON.'-'.$couponCode;
 			} elseif ($coupon->getField('coupon_type') != 'G') {
 				// JTD - added missing code here to handle coupon product restrictions
 				// look through the items in the cart to see if this coupon is valid for any item in the cart
@@ -98,60 +102,61 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 						$foundvalid = TRUE;
 					}
 				}
-				if (!$foundvalid) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( TEXT_INVALID_COUPON_PRODUCT.' "'.$couponCode.'"' ), 'SSL',true, false));
-				}
 				// JTD - end of additions of missing code to handle coupon product restrictions
 
-				if( !$coupon->isRedeemable() ) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode( $coupon->mErrors['redeem_error'].'-'.$couponCode ), 'SSL',true, false));
-				}
-
-				if ($coupon->getField('coupon_type')=='S') {
-					if( $coupon->getField( 'restrict_to_shipping' ) ) {
-						$shippingMethods = array_map( 'trim', explode( ',', $coupon->getField( 'restrict_to_shipping' ) ) );
-						if( in_array( $this->mOrder->info['shipping_method_code'], $shippingMethods ) ) {
+				if (!$foundvalid) {
+					$error = TEXT_INVALID_COUPON_PRODUCT.' "'.$couponCode.'"';
+				} elseif( !$coupon->isRedeemable() ) {
+					$error = $coupon->mErrors['redeem_error'].'-'.$couponCode;
+				} else {
+					if ($coupon->getField('coupon_type')=='S') {
+						if( $coupon->getField( 'restrict_to_shipping' ) ) {
+							$shippingMethods = array_map( 'trim', explode( ',', $coupon->getField( 'restrict_to_shipping' ) ) );
+							if( in_array( $this->mOrder->info['shipping_method_code'], $shippingMethods ) ) {
+								$coupon_amount = $this->mOrder->info['shipping_cost'];
+							}
+						} else {
 							$coupon_amount = $this->mOrder->info['shipping_cost'];
 						}
 					} else {
-						$coupon_amount = $this->mOrder->info['shipping_cost'];
+						$coupon_amount = $currencies->format($coupon->getField('coupon_amount')) . ' ';
 					}
-				} else {
-					$coupon_amount = $currencies->format($coupon->getField('coupon_amount')) . ' ';
+					$pSessionParams['cc_id'] = $coupon->mCouponId;
+					$pSessionParams['dc_redeem_code'] = $couponCode;
 				}
-				$_SESSION['cc_id'] = $coupon->mCouponId;
-			}
-			if( !empty( $pRequestParams['submit_redeem_coupon_x'] ) && !$pRequestParams['gv_redeem_code']) {
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEST_NO_REDEEM_CODE.'-'.$couponCode), 'SSL', true, false));
 			}
 		}
+
+		return $error;
 	}
 
-	function apply_credit() {
-		$cc_id = $_SESSION['cc_id'];
+	function apply_credit( &$pSessionParams ) {
+		$cc_id = $pSessionParams['cc_id'];
 		if( !empty( $this->deduction ) ) {
 			$bindVars = array( $cc_id, $_SERVER['REMOTE_ADDR'],  $this->mOrder->customer['customers_id'], $this->mOrder->mOrdersId );
 			$this->mDb->query( "INSERT INTO " . TABLE_COUPON_REDEEM_TRACK . " (redeem_date, coupon_id, redeem_ip, customer_id, order_id) VALUES ( now(), ?, ?, ?, ?)", $bindVars );
 		}
-		$_SESSION['cc_id'] = "";
+		$pSessionParams['cc_id'] = "";
+		$pSessionParams['dc_redeem_code'] = "";
 	}
 
-	function getOrderDeduction( $pOrder ) {
+	function getOrderDeduction( $pOrder, &$pSessionParams ) {
 
-		$od_amount = $this->getDiscountHash();
+		$od_amount = $this->getDiscountHash( $pSessionParams );
 
 		return $od_amount['total'] + $od_amount['tax'];
 	}
 
-	private function getDiscountHash() {
+	private function getDiscountHash( &$pSessionParams ) {
 
 		$orderTotal = $this->getDiscountTotal();
 
 		$tax_address = zen_get_tax_locations();
 		$od_amount['total'] = 0;
 		$od_amount['tax'] = 0;
-		if ($_SESSION['cc_id']) {
-			$coupon = new CommerceVoucher( $_SESSION['cc_id'] );
+
+		if( !empty( $pSessionParams['cc_id'] ) ) {
+			$coupon = new CommerceVoucher( $pSessionParams['cc_id'] );
 			if( $coupon->load() && $coupon->isRedeemable() ) {
 				if ($coupon->getField( 'coupon_minimum_order' ) <= $orderTotal) {
 
@@ -191,7 +196,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 							$discountQuantity = $productHash['products_quantity'];
 						}
 
-						if( $productHash && $discountQuantity && $this->is_product_valid( $productHash, $_SESSION['cc_id'] ) ) {
+						if( $productHash && $discountQuantity && $this->is_product_valid( $productHash, $pSessionParams['cc_id'] ) ) {
 							// _P_ercentage discount
 							if ($coupon->getField( 'coupon_type' ) == 'P') {
 								$runningDiscountQuantity += $discountQuantity;
@@ -204,54 +209,58 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 									$runningDiscount = $totalDiscount;
 									$itemDiscount = 0;
 								}
-								switch ($this->calculate_tax) {
-									case 'Credit Note':
-										$tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
-										$tax_desc = zen_get_tax_description($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
-										$od_amount[$tax_desc] = $runningDiscount / 100 * $tax_rate;
-										$od_amount['tax'] += $od_amount[$tax_desc];
-										break;
-									case 'Standard':
-										$ratio = $runningDiscount / $this->getDiscountTotal();
-										$tax_rate = zen_get_tax_rate($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-										$tax_desc = zen_get_tax_description($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-										if ($tax_rate > 0) {
-											if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
-											$od_amount[$tax_desc] += (($productHash['final_price'] * $discountQuantity) * $tax_rate)/100 * $ratio;
+								if( !empty( $tax_address ) ) {
+									switch ($this->calculate_tax) {
+										case 'Credit Note':
+											$tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
+											$tax_desc = zen_get_tax_description($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
+											$od_amount[$tax_desc] = $runningDiscount / 100 * $tax_rate;
 											$od_amount['tax'] += $od_amount[$tax_desc];
-										}
-										break;
-								}
-							// _F_ixed discount
-							} elseif ($coupon->getField( 'coupon_type' ) == 'F') {
-								switch ($this->calculate_tax) {
-									case 'Credit Note':
-										$tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
-										$tax_desc = zen_get_tax_description($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
-										$od_amount[$tax_desc] = $runningDiscount / 100 * $tax_rate;
-										$od_amount['tax'] += $od_amount[$tax_desc];
-										break;
-									case 'Standard':
-										$ratio = $runningDiscount / $this->getDiscountTotal();
-										$t_prid = zen_get_prid( $productKey );
-										$cc_result = $this->mDb->query("select `products_tax_class_id` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $t_prid ) );
-
-										if ($this->is_product_valid( $productHash, $_SESSION['cc_id'])) {
-											if( $runningDiscount < $totalDiscount ) {
-												$runningDiscount += ($productHash['final_price'] * $discountQuantity);
-											}
-											if( $runningDiscount > $totalDiscount ) {
-												$runningDiscount = $totalDiscount;
-											}
-											$tax_rate = zen_get_tax_rate($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
-											$tax_desc = zen_get_tax_description($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+											break;
+										case 'Standard':
+											$ratio = $runningDiscount / $this->getDiscountTotal();
+											$tax_rate = zen_get_tax_rate($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+											$tax_desc = zen_get_tax_description($productHash['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
 											if ($tax_rate > 0) {
 												if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
 												$od_amount[$tax_desc] += (($productHash['final_price'] * $discountQuantity) * $tax_rate)/100 * $ratio;
 												$od_amount['tax'] += $od_amount[$tax_desc];
 											}
-										}
-										break;
+											break;
+									}
+								}
+							// _F_ixed discount
+							} elseif ($coupon->getField( 'coupon_type' ) == 'F') {
+								if( !empty( $tax_address ) ) {
+									switch ($this->calculate_tax) {
+										case 'Credit Note':
+											$tax_rate = zen_get_tax_rate($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
+											$tax_desc = zen_get_tax_description($this->tax_class, $tax_address['country_id'], $tax_address['zone_id']);
+											$od_amount[$tax_desc] = $runningDiscount / 100 * $tax_rate;
+											$od_amount['tax'] += $od_amount[$tax_desc];
+											break;
+										case 'Standard':
+											$ratio = $runningDiscount / $this->getDiscountTotal();
+											$t_prid = zen_get_prid( $productKey );
+											$cc_result = $this->mDb->query("select `products_tax_class_id` from " . TABLE_PRODUCTS . " where `products_id` = ?", array( $t_prid ) );
+
+											if ($this->is_product_valid( $productHash, $pSessionParams['cc_id'])) {
+												if( $runningDiscount < $totalDiscount ) {
+													$runningDiscount += ($productHash['final_price'] * $discountQuantity);
+												}
+												if( $runningDiscount > $totalDiscount ) {
+													$runningDiscount = $totalDiscount;
+												}
+												$tax_rate = zen_get_tax_rate($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+												$tax_desc = zen_get_tax_description($cc_result->fields['products_tax_class_id'], $tax_address['country_id'], $tax_address['zone_id']);
+												if ($tax_rate > 0) {
+													if( empty( $od_amount[$tax_desc] ) ) { $od_amount[$tax_desc] = 0; }
+													$od_amount[$tax_desc] += (($productHash['final_price'] * $discountQuantity) * $tax_rate)/100 * $ratio;
+													$od_amount['tax'] += $od_amount[$tax_desc];
+												}
+											}
+											break;
+									}
 								}
 							}
 						}
@@ -263,6 +272,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 				}
 			}
 		}
+
 		return $od_amount;
 	}
 

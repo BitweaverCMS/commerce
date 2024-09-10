@@ -25,8 +25,8 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 		return 'MODULE_ORDER_TOTAL_SHIPPING_STATUS';
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $currencies;
 
 		if (MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') {

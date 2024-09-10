@@ -18,8 +18,8 @@ class ot_loworderfee extends CommercePluginOrderTotalBase {
 		$this->description = MODULE_ORDER_TOTAL_LOWORDERFEE_DESCRIPTION;
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $currencies;
 
 		if (MODULE_ORDER_TOTAL_LOWORDERFEE_LOW_ORDER_FEE == 'true') {

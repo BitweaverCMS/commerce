@@ -258,13 +258,13 @@ abstract class CommerceOrderBase extends BitBase {
 			});
 	}
 
-	function otProcess( $pPaymentParams = array() ) {
+	function otProcess( $pRequestParams = array(), $pSessionParams = array() ) {
 		$this->scanOtModules();
 		$ret = array();
 
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
 			if( $otObject->isEnabled() ) {
-				$otObject->process( $pPaymentParams );
+				$otObject->process( $pRequestParams, $pSessionParams );
 				if( $otOutput = $otObject->getOutput() ) {
 					$outHash = array( 'code' => $otObject->code, 'sort_order' => $otObject->getSortOrder() );
 					foreach( array( 'title', 'text', 'value' ) as $key ) {
@@ -307,11 +307,11 @@ abstract class CommerceOrderBase extends BitBase {
 	// for entering a Gift Voucher number. Note credit classes can decide whether this part is displayed depending on
 	// E.g. a setting in the admin section.
 	//
-	function otCreditSelection() {
+	function otCreditSelection( &$pSessionParams ) {
 		$this->scanOtModules();
 		$ret = array();
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
-			$selection = $otObject->credit_selection( $this );
+			$selection = $otObject->credit_selection( $this, $pSessionParams );
 			if (is_array($selection)) {
 				$ret[] = $selection;
 			}
@@ -338,35 +338,40 @@ abstract class CommerceOrderBase extends BitBase {
 	// entering redeem codes(Gift Vouchers/Discount Coupons). This function is used to validate these codes.
 	// If they are valid then the necessary actions are taken, if not valid we are returned to checkout payment
 	// with an error
-	function otCollectPosts( $pRequestParams ) {
+	function otCollectPosts( &$pRequestParams, &$pSessionParams ) {
 		$this->scanOtModules();
+		$retErrors = array();
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
 			$post_var = 'c' . $otObject->code;
 			if ( !empty( $pRequestParams[$post_var] ) ) {
-				$_SESSION[$post_var] = $pRequestParams[$post_var];
+				$pSessionParams[$post_var] = $pRequestParams[$post_var];
 			}
-			$otObject->collect_posts( $pRequestParams );
+			if( $error = $otObject->collect_posts( $pRequestParams, $pSessionParams ) ) {
+				$retErrors[$otObject->code] = $error;
+			}
 		}
+		return $retErrors;
 	}
 
 	// this function is called in checkout process. it tests whether a decision was made at checkout payment to use
 	// the credit amount be applied aginst the order. If so some action is taken. E.g. for a Gift voucher the account
 	// is reduced the order total amount.
-	function otApplyCredit() {
+	function otApplyCredit( &$pSessionParams ) {
 		$this->scanOtModules();
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
-			$otObject->apply_credit();
+			$otObject->apply_credit( $pSessionParams );
 		}
 	}
 
 	// Called in checkout process to clear session variables created by each credit class module.
-	function otClearPosts() {
+	function otClearPosts( &$pSessionParams ) {
 		$this->scanOtModules();
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
 			$postVar = 'c' . $otObject->code;
-			if( isset( $_SESSION[$postVar] ) ) {
-				unset( $_SESSION[$post_var] );
+			if( isset( $pSessionParams[$postVar] ) ) {
+				unset( $pSessionParams[$post_var] );
 			}
+			$otObject->clearSessionDetails();
 		}
 	}
 
@@ -388,11 +393,11 @@ abstract class CommerceOrderBase extends BitBase {
 	// credits available are greater than the order total. If they are then a variable (credit_covers) is set to
 	// true. This is used to bypass the payment method. In other words if the Gift Voucher is more than the order
 	// total, we don't want to go to paypal etc.
-	function hasPaymentDue() {
-		return ($this->getPaymentDue() > 0);
+	function hasPaymentDue( $pSessionParams ) {
+		return ($this->getPaymentDue( $pSessionParams ) > 0);
 	}
 
-	function getSubtotal( $pToModule = 'ot_subtotal' ) {
+	function getSubtotal( $pToModule = 'ot_subtotal', &$pSessionParams ) {
 		global $currencies;
 		$this->scanOtModules();
 		$round = $currencies->get_decimal_places( $this->getField( 'currency', DEFAULT_CURRENCY ) );
@@ -401,7 +406,7 @@ abstract class CommerceOrderBase extends BitBase {
 			foreach( $this->mOtClasses as $class=>&$otObject ) {
 				if( $class == $pToModule ) {
 					break;
-				} elseif( $orderCredit = $otObject->getOrderDeduction( $this ) ) {
+				} elseif( $orderCredit = $otObject->getOrderDeduction( $this, $pSessionParams ) ) {
 					$totalDeductions += $orderCredit;
 					$totalDue -= $orderCredit;
 				}
@@ -410,19 +415,20 @@ abstract class CommerceOrderBase extends BitBase {
 		return round( $totalDue, $round );
 	}
 
-	function getPaymentDue() {
+	function getPaymentDue( &$pSessionParams ) {
 		global $currencies;
 		$this->scanOtModules();
 		$round = $currencies->get_decimal_places( $this->getField( 'currency', DEFAULT_CURRENCY ) );
 		if( $totalDue = $this->getField( 'total' ) ) {
 			$totalDeductions = 0;
 			foreach( $this->mOtClasses as $class=>&$otObject ) {
-				if( $otObject->isEnabled() && ($orderCredit = $otObject->getOrderDeduction( $this )) ) {
+				if( $otObject->isEnabled() && ($orderCredit = $otObject->getOrderDeduction( $this, $pSessionParams )) ) {
 					$totalDeductions += $orderCredit;
 					$totalDue -= $orderCredit;
 				}
 			}
 		}
+
 		return round( $totalDue, $round );
 	}
 

@@ -126,11 +126,11 @@ class CommercePaymentManager {
 		return $ret;
 	}
 
-	function verifyPayment( &$pPaymentParams, &$pOrder ) {
+	function verifyPayment( $pOrder, &$pPaymentParams ) {
 		$ret = FALSE;
-		if( $pOrder->hasPaymentDue() ) {	
+		if( $pOrder->hasPaymentDue( $pPaymentParams ) ) {	
 			if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
-				if( !($ret = $this->mPaymentObjects[$this->selected_module]->verifyPayment( $pPaymentParams, $pOrder )) ) {
+				if( !($ret = $this->mPaymentObjects[$this->selected_module]->verifyPayment( $pOrder, $pPaymentParams )) ) {
 					$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
 				}
 			}
@@ -153,13 +153,13 @@ class CommercePaymentManager {
 		}
 	}
 
-	function processPayment( &$pPaymentParams, $pOrder ) {
+	function processPayment( $pOrder, &$pPaymentParams ) {
 		global $gBitProduct;
 		$ret = NULL;
 
 		$gBitProduct->invokeServices( 'commerce_pre_purchase_function', $pOrder );
 		if( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
-			if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $pPaymentParams, $pOrder ) ) {
+			if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $pOrder, $pPaymentParams ) ) {
 				if( isset( $_SESSION['orders_id'] ) ) {
 					unset( $_SESSION['orders_id'] );
 				}

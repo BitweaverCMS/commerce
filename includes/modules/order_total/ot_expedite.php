@@ -54,8 +54,8 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 		return $ret;
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $gCommerceSystem, $currencies;
 
 		if( $this->isEnabled() ) {

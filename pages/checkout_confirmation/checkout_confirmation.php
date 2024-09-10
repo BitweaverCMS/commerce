@@ -33,7 +33,9 @@ require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'page_checkout_parameters_inc.php' );
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
 $order = new order();
 
-$order->otCollectPosts( $_POST );
+if( $errors = $order->otCollectPosts( $_REQUEST, $_SESSION ) ) {
+	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'ot_error_encode=' . urlencode(serialize($errors)), 'SSL'));
+}
 
 // load the selected payment module
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
@@ -41,14 +43,13 @@ require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
 $paymentManager = new CommercePaymentManager($_SESSION['payment_method']);
 $paymentManager->update_status( $_REQUEST );
 
-if( $order->hasPaymentDue() ) {
+if( $order->hasPaymentDue( $_SESSION ) ) {
 	if( (empty( $_SESSION['payment_method'] ) || !$paymentManager->isModuleActive( $_SESSION['payment_method'] ) ) ) {
 		$messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
 		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 	}
 
-	$mergedPaymentParams = array_merge( $_SESSION, $_REQUEST );
-	if( !$paymentManager->verifyPayment( $mergedPaymentParams, $order ) ) {
+	if( !$paymentManager->verifyPayment( $order, $_REQUEST, $_SESSION ) ) {
 		$messageStack->add_session('checkout_payment', current( $paymentManager->mErrors ), 'error');
 		zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 	}
@@ -79,7 +80,7 @@ $breadcrumb->add(NAVBAR_TITLE_2);
 
 $gBitSmarty->assign( 'order', $order );
 
-$order->otProcess( array_merge( $_SESSION, $_REQUEST ) );
+$order->otProcess( $_REQUEST, $_SESSION );
 
 $gBitSmarty->assign( 'formActionUrl', $paymentManager->get_form_action_url() );
 $gBitSmarty->assign( 'paymentModules', $paymentManager );

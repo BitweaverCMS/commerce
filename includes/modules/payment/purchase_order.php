@@ -55,10 +55,10 @@ class purchase_order extends CommercePluginPaymentBase {
 		return $ret;
 	}
 
-	function verifyPayment( &$pPaymentParams, &$pOrder ) {
+	function verifyPayment( $pOrder, &$pPaymentParams ) {
 		if( !$this->isUserPermitted() ) {
 			 $this->mErrors['payment'] = 'Purchase order not allowed.';
-		} elseif( parent::verifyPayment( $pPaymentParams, $pOrder ) ) {
+		} elseif( parent::verifyPayment( $pOrder, $pPaymentParams ) ) {
 			foreach( array( 'payment_po_contact' => 'Purchaser Name',  'payment_po_org' => 'Purchaser Organization', 'payment_po_number' => 'PO Number' ) as $key=>$title ) {
 				if( empty( $pPaymentParams[$key] ) ) {
 					$this->mErrors[$key] = $title.' was not set.';
@@ -85,12 +85,12 @@ class purchase_order extends CommercePluginPaymentBase {
 		return $confirmation;
 	}
 
-	function processPayment( &$pPaymentParams, &$pOrder ) {
+	function processPayment( $pOrder, &$pPaymentParams ) {
 
-		if( $ret = self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
+		if( $ret = self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
 
 			$pOrder->info['amount_due'] = $this->getParameter( $pPaymentParams, 'payment_amount' );
-			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
+			$logHash = $this->logTransactionPrep( $pOrder, $pPaymentParams );
 
 			$logHash['is_success'] = 'y';
 			$logHash['payment_status'] = 'pending';

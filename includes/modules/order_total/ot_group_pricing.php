@@ -32,11 +32,11 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 		return 'MODULE_ORDER_TOTAL_GROUP_PRICING_STATUS';
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $currencies;
 
-		if( $groupDiscount = $this->getGroupDiscount( $_SESSION['customer_id'] ) ) {
+		if( $groupDiscount = $this->getGroupDiscount( $pSessionParams['customer_id'] ) ) {
 			$order_total = $this->get_order_total();
 			$gift_vouchers = $gBitCustomer->mCart->gv_only();
 			$discount = ($order_total - $gift_vouchers) * $groupDiscount['group_percentage'] / 100;
@@ -122,14 +122,14 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 		return $ret;
 	}
 
-	function getOrderDeduction( $pOrder ) {
+	function getOrderDeduction( $pOrder, &$pSessionParams ) {
 		$ret = 0;
 		if( $this->isEnabled() ) {
 			$order_total = $pOrder->getField( 'total' );
 			$tod_amount = 0;
 			if( $this->include_shipping == 'false') $order_total -= $this->mOrder->info['shipping_cost'];
 			if( $this->include_tax == 'false') $order_total -= $this->mOrder->info['tax'];
-			if( $groupDiscount = $this->getGroupDiscount( $_SESSION['customer_id'] ) ) {
+			if( $groupDiscount = $this->getGroupDiscount( $pSessionParams['customer_id'] ) ) {
 				$order_total = $this->get_order_total();
 				$discount = $order_total * $groupDiscount['group_percentage'] / 100;
 				$od_amount = zen_round($discount, 2);

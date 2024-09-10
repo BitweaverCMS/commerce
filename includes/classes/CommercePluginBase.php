@@ -144,6 +144,20 @@ abstract class CommercePluginBase extends CommerceBase {
 		return $this->mDb->getAssoc( 'SELECT `configuration_key`, * FROM ' . TABLE_CONFIGURATION . ' WHERE `configuration_key` LIKE ?', array( $this->getModuleKeyTrunk().'\_%' ) );
 	}
 
+	// Default methods that should be overridden in derived classes
+	protected function getSessionVars() {
+		return array();
+	}
+
+	public function clearSessionDetails() {
+		foreach( $this->getSessionVars() as $var ) {
+			// $_SESSION[$var] = $this->$var; WTF, makes no sense
+			if( isset( $_SESSION[$var] ) ) {
+				unset( $_SESSION[$var] );
+			}
+		}	
+	}
+
 	public function isEnabled() {
 		if( !isset( $this->isEnabled ) ) {
 			$this->isEnabled = $this->isCommerceConfigActive( $this->getStatusKey() );

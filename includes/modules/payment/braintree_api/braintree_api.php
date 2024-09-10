@@ -295,7 +295,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
     /**
      * Prepare and submit the final authorization to Braintree via the appropriate means as configured
      */
-	function processPayment( &$pPaymentParams, &$pOrder ) {
+	function processPayment( $pOrder, &$pPaymentParams ) {
 		global $gCommerceSystem;
 
 		$postFields = array();
@@ -307,9 +307,9 @@ class braintree_api extends CommercePluginPaymentCardBase {
 		$result = new stdClass();
 		$result->errors = array();
 
-		if( self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
+		if( self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
 
-			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
+			$logHash = $this->logTransactionPrep( $pOrder, $pPaymentParams );
 			$logHash['payment_mode'] = 'USA';
 
 			try {
@@ -437,6 +437,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 				if( $result->success ) {
 					$pnref = $result->transaction->id;
 					$this->payment_ref_id = $pnref;
+					$logHash['exchange_rate'] = 1.0;
 					if( $transExchange = urldecode($result->transaction->disbursementDetails->settlementCurrencyExchangeRate) ) {
 						$logHash['exchange_rate'] = $transExchange;
 					}

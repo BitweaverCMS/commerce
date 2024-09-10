@@ -95,14 +95,14 @@ class payflowpro extends CommercePluginPaymentCardBase {
 		return $ret;
 	}
 
-	function processPayment( &$pPaymentParams, &$pOrder ) {
+	function processPayment( $pOrder, &$pPaymentParams ) {
 		global $messageStack, $response, $gBitDb, $gBitUser, $currencies;
 
 		$postFields = array();
 		$responseHash = array();
 		$this->result = NULL;
 
-		if( self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
+		if( self::verifyPayment( $pOrder, $pPaymentParams ) ) {
 
 			/* === Core Credit Card Parameters ===
 
@@ -339,7 +339,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			curl_close($ch);
 
-			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
+			$logHash = $this->logTransactionPrep( $pOrder, $pPaymentParams );
 
 			if( $response ) {
 				$responseHash = $this->_parseNameValueList($response);

@@ -109,7 +109,7 @@ class authorizenet_aim extends CommercePluginPaymentCardBase {
 
 
 	// Evaluates the Credit Card Type for acceptance and the validity of the Credit Card Number & Expiration Date
-function verifyPayment( &$pPaymentParameters, &$pOrder ) {
+	public function verifyPayment( $pOrder, &$pPaymentParams ) {
 
 		include(DIR_WS_CLASSES . 'cc_validation.php');
 
@@ -186,7 +186,7 @@ function process_button( $pPaymentParameters ) {
 	return false;
 	}
 
-function processPayment( &$pPaymentParameters, &$pOrder ) {
+function processPayment( $pOrder, &$pPaymentParameters ) {
 	global $response, $gBitDb, $order;
 
 	if (MODULE_PAYMENT_AUTHORIZENET_AIM_STORE_NUMBER == 'True') {

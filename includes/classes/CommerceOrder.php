@@ -646,17 +646,15 @@ class CommerceOrder extends CommerceOrderBase {
 				$this->$addressType = $addressHash;
 			}
 		}
-
 /*
+This is all done in orderFromCart called below
+
 		$this->info = array('orders_status_id' => DEFAULT_ORDERS_STATUS_ID,
 							'currency' => !empty( $pOrderHash['currency'] ) ? $pOrderHash['currency'] : NULL,
 							'currency_value' => !empty( $pOrderHash['currency'] ) ? $currencies->currencies[$pOrderHash['currency']]['currency_value'] : NULL,
 							'payment_method' => '',
 							'payment_module_code' => '',
-							'coupon_code' => $coupon_code,
-							'shipping_method' => !empty( $pOrderHash['shipping']['title'] ) ? $pOrderHash['shipping']['title'] : '',
-							'shipping_method_code' => !empty( $pOrderHash['shipping']['code'] ) ? $pOrderHash['shipping']['code'] : '',
-							'shipping_module_code' => !empty( $pOrderHash['shipping']['id'] ) ? $pOrderHash['shipping']['id'] : '',
+							'coupon_code' => !empty( $pOrderHash['dc_redeem_code'] ) ? $pOrderHash['dc_redeem_code'] : NULL,
 							'shipping_cost' => !empty( $pOrderHash['shipping']['cost'] ) ? $pOrderHash['shipping']['cost'] : 0,
 							'estimated_ship_date' => !empty( $pOrderHash['shipping']['ship_date'] ) ? $pOrderHash['shipping']['ship_date'] : NULL,
 							'estimated_arrival_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL,
@@ -665,17 +663,29 @@ class CommerceOrder extends CommerceOrderBase {
 							'total' => 0,
 							'tax_groups' => array(),
 							'comments' => $this->getParameter( $pOrderHash, 'comments' ),
+							'deadline_date' => $this->getParameter( $pOrderHash, 'deadline_date' ),
 							'ip_address' => $_SERVER['REMOTE_ADDR']
 							);
+
+		if( !empty( $pOrderHash['shipping_method'] ) ) {
+			// load all enabled shipping modules
+			require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
+			global $gCommerceShipping;
+			list($module, $method) = explode('_', $pOrderHash['shipping_method'], 2);
+			$this->info['shipping_method'] = $pOrderHash['shipping_method'];
+			$this->info['shipping_method_code'] = $method;
+			$this->info['shipping_module_code'] = $module;
+		}
+
+		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pOrderHash, 'payment_method' ) ) ) {
+			$this->info['payment_method'] = $paymentModule->title;
+			$this->info['payment_module_code'] = $paymentModule->code;
+			if( !empty( $paymentModule->orders_status ) && is_numeric( $paymentModule->orders_status ) && $paymentModule->orders_status > 0 ) {
+				$this->info['orders_status_id'] = $paymentModule->orders_status;
+			}
+		}
 */
-/*
-'cart_quantity' => '',
-'comments' => '',
-'deadline_date' => '',
-'payment' => '',
-'purchase_options_ids' => '',
-'shipping' => '',
-*/
+
 		if( !empty( $pOrderHash['cart'] ) ) {
 			$lineItemStrings = explode( ';', $pOrderHash['cart'] );
 			foreach( $lineItemStrings as $lineItemString ) {
@@ -722,6 +732,8 @@ class CommerceOrder extends CommerceOrderBase {
 		if( !empty( $pSessionHash['cc_id'] ) ) {
 			$coupon_code_query = "SELECT `coupon_code` FROM " . TABLE_COUPONS . " WHERE `coupon_id` = ?";
 			$coupon_code = $this->mDb->GetOne($coupon_code_query, array( (int)$pSessionHash['cc_id'] ) );
+		} elseif( !empty( $pSessionHash['dc_redeem_code'] ) ) {
+			$coupon_code = $pSessionHash['dc_redeem_code'];
 		}
 
 		if( !empty( $pSessionHash['shipping_method'] ) ) {
@@ -752,6 +764,7 @@ class CommerceOrder extends CommerceOrderBase {
 							'shipping_cost' => !empty( $pSessionHash['shipping']['cost'] ) ? $pSessionHash['shipping']['cost'] : 0,
 							'estimated_ship_date' => !empty( $pSessionHash['shipping']['ship_date'] ) ? $pSessionHash['shipping']['ship_date'] : NULL,
 							'estimated_arrival_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL,
+							'deadline_date' => $this->getParameter( $pSessionHash, 'deadline_date', NULL ),
 							'subtotal' => 0,
 							'tax' => 0,
 							'total' => 0,
@@ -916,15 +929,17 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 		return CommerceSystem::loadModule( 'payment', $pModule );
 	}
 
-	function process( $pSessionParams ) {
+	function process( $pRequestParams, &$pSessionParams ) {
 		$ret = FALSE;
 		// load selected payment module
 		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
 		$paymentManager = new CommercePaymentManager( BitBase::getParameter( $pSessionParams, 'payment_method') );
-		// group pricing or expedite will affect total
-		$this->otProcess( $pSessionParams );
-		if( !$this->hasPaymentDue() || (!empty( $pSessionParams['payment_method'] ) && $paymentManager->processPayment( $pSessionParams, $this )) ) {
-			$newOrderId = $this->create( $pSessionParams );
+		// Order Totals may effect processing, e.g. group pricing, coupons, expedite, etc.
+		$this->otProcess( $pRequestParams, $pSessionParams );
+		// Mush together request and Session data and send it for payment processing
+		$paymentParams = array_merge( $pRequestParams, $pSessionParams );
+		if( !$this->hasPaymentDue( $paymentParams ) || (!empty( $paymentParams['payment_method'] ) && $paymentManager->processPayment( $this, $paymentParams )) ) {
+			$newOrderId = $this->create( $paymentParams );
 
 			$paymentManager->after_order_create( $newOrderId, $this );
 			$this->sendOrderEmail();
@@ -1063,7 +1078,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 		$this->mDb->CompleteTrans();
 
 		$this->mDb->StartTrans();
-		$this->otApplyCredit();
+		$this->otApplyCredit( $_SESSION );
 		$this->mDb->CompleteTrans();
 
 		$this->mDb->StartTrans();
@@ -1099,24 +1114,26 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 		return( $this->mOrdersId );
 	}
 
-	public function adjustOrder( $pRequest ) {
+	public function adjustOrder( &$pPaymentParams, &$pSessionParams ) {
 
 		$ret = TRUE;
 		$adjustmentText = tra( 'Order Payment Adjustment' ).' - '.date('Y-m-d H:i');
-		$statusMsg = BitBase::getParameter( $pRequest, 'comments' );
+		$statusMsg = BitBase::getParameter( $pPaymentParams, 'comments' );
 
 		global $currencies, $messageStack;
-		if( !empty( $pRequest['charge_amount'] ) ) {
-			$formatCharge = $currencies->format( $pRequest['charge_amount'], FALSE, BitBase::getParameter( $pRequest, 'charge_currency' ) );
+		if( !empty( $pPaymentParams['charge_amount'] ) ) {
+			$formatCharge = $currencies->format( $pPaymentParams['charge_amount'], FALSE, BitBase::getParameter( $pPaymentParams, 'charge_currency' ) );
 			$statusMsg = trim( $statusMsg."\n\n".tra( 'A payment adjustment has been made to this order for the following amount:' )."\n".$formatCharge );
 
-			if( !empty( $pRequest['additional_charge'] ) ) { 
+			if( !empty( $pPaymentParams['additional_charge'] ) ) { 
 				if( $paymentModule = $this->getPaymentModule() ) {
-//					$pRequest['payment_ref_id'] = $this->info['payment_ref_id'];
-					if( $paymentModule->processPayment( $pRequest, $this ) ) {
+//					$pPaymentParams['payment_ref_id'] = $this->info['payment_ref_id'];
+					// Mush together request and Session data and send it for payment processing
+					$paymentParams = array_merge( $pRequestParams, $pSessionParams );
+					if( $paymentModule->processPayment( $this, $paymentParams ) ) {
 						$statusMsg .= "\n\n".tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
 						$adjustmentText .= ' - '.tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
-						$pRequest['comments'] = (!empty( $pRequest['comments'] ) ? $pRequest['comments']."\n\n" : '').$statusMsg;
+						$pPaymentParams['comments'] = (!empty( $pPaymentParams['comments'] ) ? $pPaymentParams['comments']."\n\n" : '').$statusMsg;
 						
 					} else {
 						$statusMsg = tra( 'Additional charge could not be made:' ).' '.$formatCharge.'<br/>'.implode( '<br/>', $paymentModule->mErrors );
@@ -1132,21 +1149,21 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 			}
 		}
 
-		if( $statusMsg || (BitBase::getParameter( $pRequest, 'status' ) != $this->getField( 'orders_status_id' )) ) {
-			$pRequest['comments'] = $statusMsg;
-			$this->updateStatus( $pRequest );
+		if( $statusMsg || (BitBase::getParameter( $pPaymentParams, 'status' ) != $this->getField( 'orders_status_id' )) ) {
+			$pPaymentParams['comments'] = $statusMsg;
+			$this->updateStatus( $pPaymentParams );
 		}
 
 		if( $ret ) {
-			if( $adjustTotal = (BitBase::getParameter( $pRequest, 'adjust_total' ) == 'y') ) {
+			if( $adjustTotal = (BitBase::getParameter( $pPaymentParams, 'adjust_total' ) == 'y') ) {
 				// discounting or credits affected final order_total
-				$newTotal = (float)BitBase::getParameter( $pRequest, 'charge_amount', 0 ) + (float)$this->getField( 'total' );
+				$newTotal = (float)BitBase::getParameter( $pPaymentParams, 'charge_amount', 0 ) + (float)$this->getField( 'total' );
 				$maxSortOrder = $this->mDb->getOne( "SELECT MAX(sort_order) + 1 FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id`=? ", array( $this->mOrdersId ) );
 				$this->mDb->query( "UPDATE " . TABLE_ORDERS_TOTAL . " SET `class`=?, title=? WHERE `orders_id`=? AND class='ot_total'", array( 'ot_subtotal', 'Previous Total', $this->mOrdersId ) );
 				$sqlParams = array( 'orders_id' => $this->mOrdersId,
 									'title' => $adjustmentText, //$this->mOtClasses[$key]->title,
 									'text' => $adjustmentText,
-									'orders_value' => BitBase::getParameter( $pRequest, 'charge_amount', 0),
+									'orders_value' => BitBase::getParameter( $pPaymentParams, 'charge_amount', 0),
 									'class' => 'ot_subtotal',
 									'sort_order' => $maxSortOrder++,
 								  );
@@ -1154,7 +1171,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 				$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `order_total`=? WHERE `orders_id`=?", array( $newTotal, $this->mOrdersId ) );
 				$sqlParams = array( 'orders_id' => $this->mOrdersId,
 									'title' => 'Total',
-									'text' => $currencies->format( $newTotal, FALSE, BitBase::getParameter( $pRequest, 'charge_currency' ) ),
+									'text' => $currencies->format( $newTotal, FALSE, BitBase::getParameter( $pPaymentParams, 'charge_currency' ) ),
 									'orders_value' => $newTotal,
 									'class' => 'ot_total',
 									'sort_order' => $maxSortOrder++
@@ -1162,7 +1179,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 				$this->mDb->associateInsert(TABLE_ORDERS_TOTAL, $sqlParams );
 			}
 		}
-//eb( $ret, $statusMsg, $pRequest, $this->info, $newTotal );
+//eb( $ret, $statusMsg, $pPaymentParams, $this->info, $newTotal );
 		return $ret;
 	}
 

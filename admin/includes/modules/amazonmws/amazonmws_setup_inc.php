@@ -303,7 +303,7 @@ function amazon_process_order( $pAmazonOrderId ) {
 					require_once( DIR_WS_MODULES.'payment/amazonmws.php' );
 					$amazon = new amazonmws( $azOrder->getAmazonOrderId() );
 					$amazonOutput = $amazon->process();
-					$order_totals = $order->otProcess();
+					$order_totals = $order->otProcess( $_REQUEST, $_SESSION );
 					array_splice( $order_totals, count( $order_totals ) - 1, 0, array( $amazonOutput ) );
 					if( $ordersId = $order->create( $order_totals, 2 ) ) {
 						$order->create_add_products( $ordersId );
