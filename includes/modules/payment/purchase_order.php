@@ -28,7 +28,7 @@ class purchase_order extends CommercePluginPaymentBase {
 
 	function selection() {
 		$ret = array();
-		if( $this->isUserPermitted() ) {
+		if( $this->isUserEnabled() ) {
 			$ret = array(	'id' => $this->code,
 								'module' => $this->title,
 								'fields' => array(	
@@ -39,33 +39,6 @@ class purchase_order extends CommercePluginPaymentBase {
 								);
 		}
 		return $ret;
-	}
-
-	private function isUserPermitted( $pUserId=NULL ) {
-		if( $ret = parent::isEnabled() ) {
-			if( $poPerm = $this->getModuleConfigValue( '_PERMISSION' ) ) {
-				global $gBitUser;
-				if( BitBase::verifyId( $pUserId ) && $checkUser = BitUser::getUserObject( $uid ) ) {
-				} else {
-					$checkUser = &$gBitUser;
-				}
-				$ret = $checkUser->hasPermission( $poPerm );
-			}
-		}
-		return $ret;
-	}
-
-	function verifyPayment( $pOrder, &$pPaymentParams ) {
-		if( !$this->isUserPermitted() ) {
-			 $this->mErrors['payment'] = 'Purchase order not allowed.';
-		} elseif( parent::verifyPayment( $pOrder, $pPaymentParams ) ) {
-			foreach( array( 'payment_po_contact' => 'Purchaser Name',  'payment_po_org' => 'Purchaser Organization', 'payment_po_number' => 'PO Number' ) as $key=>$title ) {
-				if( empty( $pPaymentParams[$key] ) ) {
-					$this->mErrors[$key] = $title.' was not set.';
-				}
-			}
-		}
-		return (count( $this->mErrors ) === 0);
 	}
 
 	protected function getSessionVars() {

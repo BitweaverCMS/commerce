@@ -39,6 +39,20 @@ abstract class CommercePluginBase extends CommerceBase {
 		$this->check = $this->isInstalled(); // legacy support for old plugins
 	}
 
+	public function isUserEnabled( $pUserId=NULL ) {
+		if( $ret = $this->isEnabled() ) {
+			if( $poPerm = $this->getCommerceConfig( $this->getPermissionKey() ) ) {
+				global $gBitUser;
+				if( BitBase::verifyId( $pUserId ) && $checkUser = BitUser::getUserObject( $uid ) ) {
+				} else {
+					$checkUser = &$gBitUser;
+				}
+				$ret = $checkUser->hasPermission( $poPerm );
+			}
+		}
+		return $ret;
+	}
+
 	public function getAdminTitle() {
 		return (!empty( $this->adminTitle ) ? $this->adminTitle : (!empty( $this->title) ? $this->title: $this->code));
 	}
@@ -59,12 +73,20 @@ abstract class CommercePluginBase extends CommerceBase {
 		return 'MODULE_'.$this->mModuleKey.'_'.$this->mConfigKey;
 	}
 
-	protected function getSortOrderKey() {
-		return $this->getModuleKeyTrunk().'_SORT_ORDER';
+	protected function getTitleKey() {
+		return $this->getModuleKeyTrunk().'_TITLE';
 	}
 
 	protected function getStatusKey() {
 		return $this->getModuleKeyTrunk().'_STATUS';
+	}
+
+	protected function getPermissionKey() {
+		return $this->getModuleKeyTrunk().'_PERMISSION';
+	}
+
+	protected function getSortOrderKey() {
+		return $this->getModuleKeyTrunk().'_SORT_ORDER';
 	}
 
 	public function keys() {
@@ -195,7 +217,7 @@ abstract class CommercePluginBase extends CommerceBase {
 
 			if( $missingConfigKeys = array_flip( array_diff( $defaultKeys, $activeKeys ) ) ) {
 				foreach( $defaultConfig as $configKey => $configHash ) {
-					if( !empty( $missingConfigKeys[$configKey] ) ) {
+					if( isset( $missingConfigKeys[$configKey] ) ) {
 						$this->storeModuleConfigHash( $configKey, $configHash );
 					}
 				}
@@ -215,6 +237,11 @@ abstract class CommercePluginBase extends CommerceBase {
 	protected function config() {
 		$i = 1;
 		return array( 
+			$this->getTitleKey() => array(
+				'configuration_title' => 'Title',
+				'configuration_description' => 'Title of module display to customer.',
+				'sort_order' => $i++,
+			),
 			$this->getStatusKey() => array(
 				'configuration_title' => 'Enable '.$this->title,
 				'configuration_value' => 'True',
@@ -227,6 +254,12 @@ abstract class CommercePluginBase extends CommerceBase {
 				'configuration_description' => 'Sort order of display.',
 				'sort_order' => $i++,
 			),
+			$this->getPermissionKey() => array(
+				'configuration_title' => ucwords( $this->code ).' Permission',
+				'configuration_description' => '<strong>Ex: p_bitcommerce_special_customer</strong> This permission is required to show and accept '.$this->code.' '.$this->getModuleType().'. Leave empty to give access to all customers. To limit use, make sure you have a <a href="/users/admin/edit_group.php">Group configured</a> with that permission, and desired users are also in that group.',
+				'configuration_value' => '',
+				'sort_order' => $i++,
+			)
 		);
 	}
 

@@ -145,62 +145,64 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		}
 */
 		$quoteBase = array();
-		$explodeArray = array();
-		$shipperOrigin = $this->getModuleConfigValue( '_ORIGIN_COUNTRY_CODE' );
-		if( $excludeList = $this->getModuleConfigValue( '_EXCLUDE_COUNTRIES_ISO2' ) ) {
-			$explodeArray =  array_map('trim', explode( ',', $excludeList ));
-		}
-
-		if( !empty( $explodeArray ) && in_array( $pShipHash['destination']['countries_iso_code_2'], $explodeArray ) ) {
-			// country is in module EXCLUDE list
-		} elseif( $shipperOrigin && $pShipHash['origin']['countries_iso_code_2'] != $shipperOrigin ) {
-			// Do nothing because Origin of shipment is not the same as the origin of this shipping method (ie US shipment and CanadaPost shipper)
-		} elseif( $this->isEnabled() && !empty( $pShipHash['shipping_weight_total'] ) ) {
-			$pass = TRUE;
-			// Check to see if shipping module is zone silo'ed
-			if( ($shipperZone = $this->getShipperZone()) && !$freeShipping && !empty( $pShipHash['destination'] ) && !empty( $pShipHash['origin'] ) ) {
-				if( is_null( $this->mShipZones ) ) {
-					// cache mShipZones in memory
-					$this->mShipZones = $this->mDb->getCol( "SELECT `zone_id` FROM " . TABLE_ZONES_TO_GEO_ZONES . " WHERE `geo_zone_id` = ? ORDER BY `zone_id`", array( $shipperZone ), FALSE, BIT_QUERY_CACHE_TIME );
-				}
-
-				if( count( $this->mShipZones ) ) {
-					$pass = FALSE;
-					foreach( $this->mShipZones as $zoneId ) {
-						if(  $pShipHash['destination']['countries_id'] && $zoneId == $pShipHash['destination']['zone_id']) {
-							$pass = TRUE;
-							break;
-						}
-					}
-				} else {
-					$pass = TRUE;
-				}
+		if( $this->isUserEnabled() ) {
+			$explodeArray = array();
+			$shipperOrigin = $this->getModuleConfigValue( '_ORIGIN_COUNTRY_CODE' );
+			if( $excludeList = $this->getModuleConfigValue( '_EXCLUDE_COUNTRIES_ISO2' ) ) {
+				$explodeArray =  array_map('trim', explode( ',', $excludeList ));
 			}
 
-			// if ($error == true) $quotes['error'] = MODULE_'.$this->mModuleKey.'_ZONES_INVALID_ZONE;
+			if( !empty( $explodeArray ) && in_array( $pShipHash['destination']['countries_iso_code_2'], $explodeArray ) ) {
+				// country is in module EXCLUDE list
+			} elseif( $shipperOrigin && $pShipHash['origin']['countries_iso_code_2'] != $shipperOrigin ) {
+				// Do nothing because Origin of shipment is not the same as the origin of this shipping method (ie US shipment and CanadaPost shipper)
+			} elseif( $this->isEnabled() && !empty( $pShipHash['shipping_weight_total'] ) ) {
+				$pass = TRUE;
+				// Check to see if shipping module is zone silo'ed
+				if( ($shipperZone = $this->getShipperZone()) && !$freeShipping && !empty( $pShipHash['destination'] ) && !empty( $pShipHash['origin'] ) ) {
+					if( is_null( $this->mShipZones ) ) {
+						// cache mShipZones in memory
+						$this->mShipZones = $this->mDb->getCol( "SELECT `zone_id` FROM " . TABLE_ZONES_TO_GEO_ZONES . " WHERE `geo_zone_id` = ? ORDER BY `zone_id`", array( $shipperZone ), FALSE, BIT_QUERY_CACHE_TIME );
+					}
 
-			if( $pass ) {
-				switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
-					case (0):
-						$show_box_weight = '';
-						break;
-					case (1):
-						$show_box_weight = '(' . $pShipHash['shipping_num_boxes']. ' ' . TEXT_SHIPPING_BOXES . ')';
-						break;
-					case (2):
-						$show_box_weight = '(' . number_format($pShipHash['shipping_weight_total'] * $pShipHash['shipping_num_boxes'],2) . tra( 'lbs' ) . ')';
-						break;
-					default:
-						$show_box_weight = '(' . $pShipHash['shipping_num_boxes'] . ' x ' . number_format($pShipHash['shipping_weight_box'],2) . tra( 'lbs' ) . ')';
-						break;
+					if( count( $this->mShipZones ) ) {
+						$pass = FALSE;
+						foreach( $this->mShipZones as $zoneId ) {
+							if(  $pShipHash['destination']['countries_id'] && $zoneId == $pShipHash['destination']['zone_id']) {
+								$pass = TRUE;
+								break;
+							}
+						}
+					} else {
+						$pass = TRUE;
+					}
 				}
-				$quoteBase = array(
-									'id' => $this->code,
-									'module' => $this->title,
-									'weight' => $show_box_weight,
-									'icon' => $this->icon,
-									'tax' => $this->getShippingTax( $pShipHash )
-								);
+
+				// if ($error == true) $quotes['error'] = MODULE_'.$this->mModuleKey.'_ZONES_INVALID_ZONE;
+
+				if( $pass ) {
+					switch (SHIPPING_BOX_WEIGHT_DISPLAY) {
+						case (0):
+							$show_box_weight = '';
+							break;
+						case (1):
+							$show_box_weight = '(' . $pShipHash['shipping_num_boxes']. ' ' . TEXT_SHIPPING_BOXES . ')';
+							break;
+						case (2):
+							$show_box_weight = '(' . number_format($pShipHash['shipping_weight_total'] * $pShipHash['shipping_num_boxes'],2) . tra( 'lbs' ) . ')';
+							break;
+						default:
+							$show_box_weight = '(' . $pShipHash['shipping_num_boxes'] . ' x ' . number_format($pShipHash['shipping_weight_box'],2) . tra( 'lbs' ) . ')';
+							break;
+					}
+					$quoteBase = array(
+										'id' => $this->code,
+										'module' => $this->title,
+										'weight' => $show_box_weight,
+										'icon' => $this->icon,
+										'tax' => $this->getShippingTax( $pShipHash )
+									);
+				}
 			}
 		}
 
@@ -260,6 +262,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 				$sortValues[] = $key[$sortKey];
 				$sortIds[] = $key['id'];
 			}
+
 			array_multisort($sortValues, $sortMode, $sortIds, SORT_ASC, $pMethods);
 		}
 	}

@@ -93,7 +93,7 @@ class CommerceShipping extends BitSingleton {
 				$paddingWeight = $paddingWeights[1];
 				$shipHash['shipping_num_boxes'] = 1; // at least one parcel shipping
 				foreach( $this->mShipModules as &$shipModule ) {
-					if( $shipModule->isEnabled() && (empty( $module ) || ($shipModule->code == $module)) ) {
+					if( $shipModule->isUserEnabled() && (empty( $module ) || ($shipModule->code == $module)) ) {
 						$shipHash['shipping_weight_total'] = $orderTotalWeight;
 						if ($shipHash['shipping_weight_total'] > $shipModule->maxShippingWeight() ) { // Split into many boxes
 							$shipHash['shipping_num_boxes'] = ceil( $shipHash['shipping_weight_total'] / $shipModule->maxShippingWeight() );
