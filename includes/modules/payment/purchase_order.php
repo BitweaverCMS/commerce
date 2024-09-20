@@ -61,9 +61,10 @@ class purchase_order extends CommercePluginPaymentBase {
 	function processPayment( $pOrder, &$pPaymentParams ) {
 
 		if( $ret = self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
-
 			$pOrder->info['amount_due'] = $this->getParameter( $pPaymentParams, 'payment_amount' );
 			$logHash = $this->logTransactionPrep( $pOrder, $pPaymentParams );
+
+			$defaultCurrency = $this->getDefaultCurrency();
 
 			$logHash['is_success'] = 'y';
 			$logHash['payment_status'] = 'pending';
@@ -71,6 +72,9 @@ class purchase_order extends CommercePluginPaymentBase {
 			$logHash['payment_result'] = '1';
 			$logHash['payment_message'] = trim( 'Purchase Order Recevied' );
 
+			// DEFAULT CURRENCY only for now
+			$logHash['payment_currency'] = $defaultCurrency; // $pPaymentParams['payment_currency'];
+			$logHash['exchange_rate'] = 1.0; // $pPaymentParams['exchange_rate'];
 			$logHash['payment_number'] = $pPaymentParams['payment_po_number'];
 			$logHash['payment_type'] = 'Purchase Order';
 			$logHash['payment_owner'] = trim( $pPaymentParams['payment_po_org'].' '.$pPaymentParams['payment_po_contact'] );
