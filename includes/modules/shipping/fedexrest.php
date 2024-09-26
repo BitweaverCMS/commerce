@@ -746,7 +746,7 @@ $requestJson .= '
 				}
 			}
 		}
-	}
+	},
 	"requestedPackageLineItems": [
 		{
 			"sequenceNumber": "1",
@@ -760,11 +760,11 @@ $requestJson .= '
 				"value": '.$pShipHash['shipment']['weight'].'
 			},
 			"dimensions": {
-				"length": '.$pShipHash['shipment']['length'].',
-				"width": '.$pShipHash['shipment']['width'].',
-				"height": '.$pShipHash['shipment']['height'].',
+				"length": "'.$pShipHash['shipment']['length'].'",
+				"width": "'.$pShipHash['shipment']['width'].'",
+				"height": "'.$pShipHash['shipment']['height'].'",
 				"units": "'.$pShipHash['shipment']['dimension_units'].'"
-			},
+			}
 		}
 	]
 '.
