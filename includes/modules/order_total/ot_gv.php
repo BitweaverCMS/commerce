@@ -214,7 +214,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		if ( !empty( $pRequestParams['cot_gv'] ) && is_numeric( $pRequestParams['cot_gv'] ) && $pRequestParams['cot_gv'] > 0 ) {
 			$pSessionParams['cot_gv'] = $pRequestParams['cot_gv'];
 		} elseif( isset( $pSessionParams['cot_gv'] ) ) {
-			unset( $$pSessionParams['cot_gv'] );
+			unset( $pSessionParams['cot_gv'] );
 		}
 		if ( !empty( $pRequestParams['gv_redeem_code'] ) ) {
 			if( $gvHash = $this->mDb->getRow( "SELECT `coupon_id`, `coupon_type`, `coupon_amount` FROM " . TABLE_COUPONS . " WHERE `coupon_code` = ?", array( $pRequestParams['gv_redeem_code'] ) ) ) {
