@@ -20,7 +20,7 @@
 // $Id$
 //
 
-  define('MODULE_ORDER_TOTAL_COUPON_TITLE', tra( 'Discount Coupons' ) );
+//  define('MODULE_ORDER_TOTAL_COUPON_TITLE', tra( 'Discount Coupons' ) );
   define('MODULE_ORDER_TOTAL_COUPON_HEADER', tra( 'Gift Certificates' ) . '/' . tra( 'Discount Coupons' ) );
   define('MODULE_ORDER_TOTAL_COUPON_DESCRIPTION', tra( 'Discount Coupons' ) );
   define('MODULE_ORDER_TOTAL_COUPON_TEXT_ENTER_CODE', tra('Redemption Code') );

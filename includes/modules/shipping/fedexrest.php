@@ -317,7 +317,7 @@ class fedexrest extends CommercePluginShippingBase {
 			} else if ($this->getModuleConfigValue( '_SHIP_TO_RESIDENCE' ) == 'false') {
 				$ship_to_residential = false; 
 			} else { 
-				$ship_to_residential = empty( trim( $pShipHash['destination']['company'] ) ); 
+				$ship_to_residential = empty( trim( BitBase::getParameter( $pShipHash['destination'], 'company' ) ) ); 
 			}
 
 			$shipDate = new DateTime( $this->getShippingDate( $pShipHash ) );
@@ -342,8 +342,8 @@ class fedexrest extends CommercePluginShippingBase {
 					],
 					"recipient" => [
 						"address" => [
-							"city" => $pShipHash['destination']['city'],
-							"stateOrProvinceCode" => $pShipHash['destination']['zone_code'],
+							"city" => BitBase::getParameter( $pShipHash['destination'], 'city' ),
+							"stateOrProvinceCode" => BitBase::getParameter( $pShipHash['destination'], 'zone_code' ),
 							"postalCode" => $pShipHash['destination']['postcode'],
 							"countryCode" => $pShipHash['destination']['countries_iso_code_2'],
 							"residential" => $ship_to_residential, 

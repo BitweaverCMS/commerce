@@ -22,7 +22,6 @@ class purchase_order extends CommercePluginPaymentBase {
 
 	function __construct() {
 		parent::__construct();
-		$this->title = 'Purchase Order';
 		$this->description = 'Payment via purchase request from verified organization';
 	}
 

@@ -15,18 +15,18 @@ class ot_gv extends CommercePluginOrderTotalBase {
 	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
 
-		$this->title = tra( 'Gift Certificates' );
+		$this->title = $this->getTitle( 'Gift Certificates' );
 		$this->header = tra( 'Gift Certificates' );
 		$this->description = tra( 'Gift Certificates' );
 		$this->userGvBalance = 0.0;
 		if( $this->isEnabled() ) {
 			global $gBitUser, $gCommerceSystem;
 			$this->user_prompt = tra( 'Apply Balance' );
-			$this->include_shipping = $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_INC_SHIPPING' );
-			$this->include_tax = $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_INC_TAX' );
-			$this->calculate_tax = $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_CALC_TAX' );
-			$this->credit_tax = $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_CREDIT_TAX' );
-			$this->tax_class	= $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_TAX_CLASS' );
+			$this->include_shipping = $this->getModuleConfigValue( '_INC_SHIPPING' );
+			$this->include_tax = $this->getModuleConfigValue( '_INC_TAX' );
+			$this->calculate_tax = $this->getModuleConfigValue( '_CALC_TAX' );
+			$this->credit_tax = $this->getModuleConfigValue( '_CREDIT_TAX' );
+			$this->tax_class = $this->getModuleConfigValue( '_TAX_CLASS' );
 			$this->credit_class = true;
 			$this->userGvBalance = $this->getGvBalance( $gBitUser->mUserId );
 			if( empty( $this->userGvBalance ) ) {
@@ -259,31 +259,69 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		return $this->mDb->getOne( "SELECT `amount` FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?", array( $pCustomersId ) );
 	}
 
-	public function keys() {
-		return array_merge(
-					array_keys( $this->config() ),
-					array('MODULE_ORDER_TOTAL_GV_QUEUE', 'MODULE_ORDER_TOTAL_GV_INC_SHIPPING', 'MODULE_ORDER_TOTAL_GV_INC_TAX', 'MODULE_ORDER_TOTAL_GV_CALC_TAX', 'MODULE_ORDER_TOTAL_GV_TAX_CLASS', 'MODULE_ORDER_TOTAL_GV_CREDIT_TAX', 'MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID')
-				);
-	}
-
-	function install() {
-		parent::install();
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Queue Purchases', 'MODULE_ORDER_TOTAL_GV_QUEUE', 'true', 'Do you want to queue purchases of the Gift Voucher?', '6', '3','zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_GV_INC_SHIPPING', 'true', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_GV_INC_TAX', 'true', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_GV_CALC_TAX', 'None', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(''None'', ''Standard'', ''Credit Note''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_GV_TAX_CLASS', '0', 'Use the following tax class when treating Gift Voucher as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Credit including Tax', 'MODULE_ORDER_TOTAL_GV_CREDIT_TAX', 'false', 'Add tax to purchased Gift Voucher when crediting to Account', '6', '8','zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID', '0', 'Set the status of orders made where GV covers full payment', '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-	}
-
+	// {{{	++++++++ config ++++++++
 	/*
 	* rows for com_configuration table as associative array of column => value
 	*/
 	protected function config() {
-		$ret = parent::config();
+		$parentConfig = parent::config();
+		$i = count( $parentConfig );
+		return array_merge( $parentConfig, array( 
+			$this->getModuleKeyTrunk().'_QUEUE' => array(
+				'configuration_title' => 'Queue Purchases',
+				'configuration_description' => 'Do you want to queue purchases of the Gift Voucher?',
+				'configuration_value' => 'true',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_INC_SHIPPING' => array(
+				'configuration_title' => 'Include Shipping',
+				'configuration_description' => 'Include Shipping in calculation',
+				'configuration_value' => 'true',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_INC_TAX' => array(
+				'configuration_title' => 'Include Tax',
+				'configuration_description' => 'Include Tax in calculation.',
+				'configuration_value' => 'true',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_CALC_TAX' => array(
+				'configuration_title' => 'Re-calculate Tax',
+				'configuration_description' => 'Re-Calculate Tax',
+				'configuration_value' => 'None',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array(''None'', ''Standard'', ''Credit Note''), ",
+			),
+			$this->getModuleKeyTrunk().'_TAX_CLASS' => array(
+				'configuration_title' => 'Tax Class',
+				'configuration_description' => 'Use the following tax class when treating Gift Voucher as Credit Note.',
+				'configuration_value' => '0',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_pull_down_tax_classes(",
+				'use_function' => "zen_get_tax_class_title",
+			),
+			$this->getModuleKeyTrunk().'_CREDIT_TAX' => array(
+				'configuration_title' => 'Credit including Tax',
+				'configuration_description' => 'Add tax to purchased Gift Voucher when crediting to Account',
+				'configuration_value' => 'false',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array(''true'', ''false''), ",
+			),
+			$this->getModuleKeyTrunk().'_ORDER_STATUS_ID' => array(
+				'configuration_title' => 'Set Order Status',
+				'configuration_description' => 'Set the status of orders made where GV covers full payment',
+				'configuration_value' => '0',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_pull_down_order_statuses(",
+				'use_function' => "zen_get_order_status_name",
+			),
+		) );
 		// set some default values
 		$ret[$this->getModuleKeyTrunk().'_SORT_ORDER']['configuration_value'] = '840';
 		return $ret;
 	}
+	// }}} ++++ config ++++
 }

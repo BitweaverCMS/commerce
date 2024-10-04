@@ -22,7 +22,7 @@
 // $Id$
 //
 
-  define('MODULE_ORDER_TOTAL_COD_TITLE', tra( 'COD Fee' ) );
+//  define('MODULE_ORDER_TOTAL_COD_TITLE', tra( 'COD Fee' ) );
   define('MODULE_ORDER_TOTAL_COD_DESCRIPTION', tra( 'COD Fee' ) );
   define('TEXT_INFO_COD_FEES', tra( '<strong>Note:</strong> COD fees may apply' ) );
 ?>

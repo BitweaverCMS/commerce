@@ -14,7 +14,6 @@ class ot_total extends CommercePluginOrderTotalBase {
 	
 	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
-		$this->title = MODULE_ORDER_TOTAL_TOTAL_TITLE;
 		$this->description = MODULE_ORDER_TOTAL_TOTAL_DESCRIPTION;
 	}
 

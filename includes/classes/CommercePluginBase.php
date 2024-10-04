@@ -37,6 +37,7 @@ abstract class CommercePluginBase extends CommerceBase {
 		$this->mModuleKey = $this->getModuleKey();
 		$this->enabled = $this->isEnabled(); // legacy support for old plugins
 		$this->check = $this->isInstalled(); // legacy support for old plugins
+		$this->title = $this->getTitle();
 	}
 
 	public function isUserEnabled( $pUserId=NULL ) {
@@ -71,6 +72,16 @@ abstract class CommercePluginBase extends CommerceBase {
 
 	protected function getModuleKeyTrunk() {
 		return 'MODULE_'.$this->mModuleKey.'_'.$this->mConfigKey;
+	}
+
+	protected function getTitle( $pDefault = '' ) {
+		if( !empty( $pDefault ) ) {
+			$ret = $pDefault;
+		} elseif( $ret = $this->getModuleConfigValue( '_TITLE' ) ) {
+		} else {
+	 		$ret = ucwords( str_replace( '_', ' ', get_class( $this ) ) );
+		}
+		return tra( $ret );
 	}
 
 	protected function getTitleKey() {

@@ -17,7 +17,6 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		parent::__construct( $pOrder );
 
 		$this->header = MODULE_ORDER_TOTAL_COUPON_HEADER;
-		$this->title = MODULE_ORDER_TOTAL_COUPON_TITLE;
 		$this->description = MODULE_ORDER_TOTAL_COUPON_DESCRIPTION;
 		if( $this->isEnabled() ) {
 			$this->user_prompt = '';
@@ -369,29 +368,47 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		return $orderTotal;
 	}
 
-
-	public function keys() {
-		return array_merge(
-					array_keys( $this->config() ),
-					array('MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING', 'MODULE_ORDER_TOTAL_COUPON_INC_TAX', 'MODULE_ORDER_TOTAL_COUPON_CALC_TAX', 'MODULE_ORDER_TOTAL_COUPON_TAX_CLASS')
-				);
-	}
-
-	function install() {
-		parent::install();
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_COUPON_INC_SHIPPING', 'true', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_COUPON_INC_TAX', 'false', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(''true'', ''false''), ', 'NOW')");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_COUPON_CALC_TAX', 'Standard', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(''None'', ''Standard'', ''Credit Note''), ', 'NOW')");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_COUPON_TAX_CLASS', '0', 'Use the following tax class when treating Discount Coupon as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', 'NOW')");
-	}
-
+	// {{{	++++++++ config ++++++++
 	/*
 	* rows for com_configuration table as associative array of column => value
 	*/
 	protected function config() {
-		$ret = parent::config();
+		$parentConfig = parent::config();
+		$i = count( $parentConfig );
+		return array_merge( $parentConfig, array( 
+			$this->getModuleKeyTrunk().'_INC_SHIPPING' => array(
+				'configuration_title' => 'Include Shipping',
+				'configuration_description' => 'Include Shipping in calculation',
+				'configuration_value' => 'true',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_INC_TAX' => array(
+				'configuration_title' => 'Include Tax',
+				'configuration_description' => 'Include Tax in calculation.',
+				'configuration_value' => 'true',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_CALC_TAX' => array(
+				'configuration_title' => 'Re-calculate Tax',
+				'configuration_description' => 'Re-Calculate Tax',
+				'configuration_value' => 'None',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array(''None'', ''Standard'', ''Credit Note''), ",
+			),
+			$this->getModuleKeyTrunk().'_TAX_CLASS' => array(
+				'configuration_title' => 'Tax Class',
+				'configuration_description' => 'Use the following tax class when treating Discount Coupon as Credit Note.',
+				'configuration_value' => '0',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_pull_down_tax_classes(",
+				'use_function' => "zen_get_tax_class_title",
+			),
+		) );
 		// set some default values
 		$ret[$this->getModuleKeyTrunk().'_SORT_ORDER']['configuration_value'] = '280';
 		return $ret;
 	}
+	// }}} ++++ config ++++
 }
