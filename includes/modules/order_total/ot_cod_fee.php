@@ -94,73 +94,73 @@ class ot_cod_fee extends CommercePluginOrderTotalBase {
 		$parentConfig = parent::config();
 		$i = count( $parentConfig );
 		return array_merge( $parentConfig, array( 
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_FLAT' => array(
+			$this->getModuleKeyTrunk().'_FEE_FLAT' => array(
 				'configuration_description' => 'COD Fee for FLAT',
 				'configuration_title' => 'FLAT: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'AT:3.00,DE:3.58,00:9.99',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_FREE' => array(
+			$this->getModuleKeyTrunk().'_FEE_FREE' => array(
 				'configuration_description' => 'COD Fee for Free Shipping by default',
 				'configuration_title' => 'Free by default: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'US:3.00',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_FREESHIPPER' => array(
+			$this->getModuleKeyTrunk().'_FEE_FREESHIPPER' => array(
 				'configuration_description' => 'COD Fee for Free Shipping Module',
 				'configuration_title' => 'Free Module: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'CA:4.50,US:3.00,00:9.99',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_ITEM' => array(
+			$this->getModuleKeyTrunk().'_FEE_ITEM' => array(
 				'configuration_description' => 'COD Fee for ITEM',
 				'configuration_title' => 'ITEM: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'AT:3.00,DE:3.58,00:9.99',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_TABLE' => array(
+			$this->getModuleKeyTrunk().'_FEE_TABLE' => array(
 				'configuration_description' => 'COD Fee for TABLE',
 				'configuration_title' => 'TABLE: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'AT:3.00,DE:3.58,00:9.99',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_UPS' => array(
+			$this->getModuleKeyTrunk().'_FEE_UPS' => array(
 				'configuration_description' => 'COD Fee for UPS',
 				'configuration_title' => 'UPS: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'CA:4.50,US:3.00,00:9.99',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_USPS' => array(
+			$this->getModuleKeyTrunk().'_FEE_USPS' => array(
 				'configuration_description' => 'COD Fee for USPS',
 				'configuration_title' => 'USPS: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'CA:4.50,US:3.00,00:9.99',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_ZONES' => array(
+			$this->getModuleKeyTrunk().'_FEE_ZONES' => array(
 				'configuration_description' => 'COD Fee for ZONES',
 				'configuration_title' => 'ZONES: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'CA:4.50,US:3.00,00:9.99',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_AP' => array(
+			$this->getModuleKeyTrunk().'_FEE_AP' => array(
 				'configuration_description' => 'COD Fee for Austrian Post',
 				'configuration_title' => 'Austrian Post: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'AT:3.63,00:9.99',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_DP' => array(
+			$this->getModuleKeyTrunk().'_FEE_DP' => array(
 				'configuration_description' => 'COD Fee for German Post',
 				'configuration_title' => 'German Post: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'DE:3.58,00:9.99',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_SERVICEPAKKE' => array(
+			$this->getModuleKeyTrunk().'_FEE_SERVICEPAKKE' => array(
 				'configuration_description' => 'COD Fee for Servicepakke',
 				'configuration_title' => 'Servicepakke: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'NO:69',
 				'sort_order' => $i++,
 			),
-			$this->getModuleKeyTrunk().'MODULE_ORDER_TOTAL_COD_FEE_FEDEX' => array(
+			$this->getModuleKeyTrunk().'_FEE_FEDEX' => array(
 				'configuration_description' => 'COD Fee for FedEx',
 				'configuration_title' => 'FedEx: &lt;Country code&gt;:&lt;COD price&gt;, .... 00 as country code applies for all countries. If country code is 00, it must be the last statement. If no 00:9.99 appears, COD shipping in foreign countries is not calculated (not possible)',
 				'configuration_value' => 'US:3.00',
