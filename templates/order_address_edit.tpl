@@ -11,7 +11,7 @@
 		<input class="form-control" type="text" maxlength="64" name="name" value="{$address.name|escape:"htmlall"}" /><acronym title="{tr}Required{/tr}">*</acronym>
 	{/forminput}
 </div>
-	<div class="form-group">
+<div class="form-group">
 	{formlabel label="Company" for=""}
 	{forminput}
 		<input class="form-control" type="text" maxlength="128" name="company" value="{$address.company|escape:"htmlall"}" />
