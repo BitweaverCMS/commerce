@@ -241,8 +241,10 @@ function getShippingQuotes( pOrderId ) {
 {php}
 	global $fulfillmentFiles;
 
-	foreach( $fulfillmentFiles as $fulfillmentFile )  {
-		include $fulfillmentFile;
+	if( !empty( $fulfillmentFiles ) ) {
+		foreach( $fulfillmentFiles as $fulfillmentFile )  {
+			include $fulfillmentFile;
+		}
 	}
 {/php}
 {/jstabs}
