@@ -123,6 +123,8 @@ ul.products li .thumb { padding-right:20px; }
 
 #shippingquotes img.shipper-logo {max-height:90px;}
 #shippingquotes .row.quote { border-top:1px solid #dedede; padding-top: 5px;}
+#shippingquotes .fa.shipper-icon { font-size:6rem;}
+#shippingquotes .fa.fab.shipper-icon { font-size:8rem;}
 
 /*Checkout CSS Bar*/
 .shopping-cart .cart-item {border-bottom:0px solid transparent; }
