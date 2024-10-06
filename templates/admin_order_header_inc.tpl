@@ -10,6 +10,16 @@ function editAddress( pAddress ) {
 		}
 	})
 }
+function editPayment( pPayment ) {
+	jQuery.ajax({
+		data: 'edit_payment='+pPayment+'&oID='+{/literal}{$smarty.request.oID}{literal},
+		url: "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php{literal}",
+		timeout: 60000,
+		success: function(r) { 
+			$('#record-payment-block').html(r);
+		}
+	})
+}
 /* ]]> */</script>
 {/literal}
 
@@ -63,8 +73,11 @@ function editAddress( pAddress ) {
 <div class="row">
 	<div class="col-xs-12">
 		{if $order->info.amount_due}
-		<div class="alert alert-danger">{tr}Amount Due:{/tr} {$currencies->format($order->info.amount_due,true,$order->info.currency,$order->info.currency_value)}<span class="pull-right"><a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoices.php?oID={$smarty.request.oID}" class="btn btn-default btn-xs">{tr}Record Payment{/tr}</a></span></div>
+		<div class="alert alert-danger">{tr}Amount Due:{/tr} {$currencies->format($order->info.amount_due,true,$order->info.currency,$order->info.currency_value)}<div class="pull-right"><div class="btn btn-default btn-xs" onclick="editPayment('new');return false;">{tr}Record Payment{/tr}</div></div></div>
 		{/if}
+		<div id="record-payment-block" style="">
+		</div>
+
 <table class="table table-condensed">
 <tr>
 	<th>{tr}Payment{/tr}</th>

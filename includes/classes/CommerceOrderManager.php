@@ -12,8 +12,128 @@
 // +----------------------------------------------------------------------+
 //  $Id$
 //
+require_once( KERNEL_PKG_CLASS_PATH.'BitSingleton.php' );
 
-class CommerceOrderManager extends BitBase {
+class CommerceOrderManager extends BitSingleton {
+
+	function __construct() {
+		parent::__construct();
+	}
+
+	public function __wakeup() {
+		parent::__wakeup();
+	}
+
+	public function __sleep() {
+		return parent::__sleep();
+	}
+
+
+	public function getPaymentTypes() {
+		$paymentTypes = $this->mDb->getCol( "SELECT DISTINCT payment_type FROM " . TABLE_ORDERS_PAYMENTS . " ORDER BY payment_type" );
+		$ret = array_merge( array( 'Check', 'Cash', 'Credit' ), $paymentTypes );
+		return $ret;
+	}
+
+	private function verifyOrdersPayment( &$pParamHash, $pOrder ) {
+		$ret = FALSE;
+
+		global $gBitUser;
+		$pParamHash['payment_store']['user_id'] = $gBitUser->mUserId;
+		$pParamHash['payment_store']['customers_id'] = $pOrder->customer['customers_id'];
+		$pParamHash['payment_store']['ip_address'] = $_SERVER['REMOTE_ADDR'];
+
+		$columns = array( 
+			'oID' => 'orders_id', 
+			'payment_ref_id' => 'payment_ref_id', 
+			'payment_result' => 'payment_result', 
+			'payment_auth_code' => 'payment_auth_code', 
+			'payment_message' => 'payment_message', 
+			'payment_amount' => 'payment_amount', 
+			'payment_date' => 'payment_date', 
+			'customers_id' => 'customers_id', 
+			'is_success' => 'is_success', 
+			'customers_email' => 'customers_email', 
+			'payment_type' => 'payment_type', 
+			'payment_owner' => 'payment_owner', 
+			'payment_number' => 'payment_number', 
+			'payment_expires' => 'payment_expires', 
+			'transaction_date' => 'transaction_date', 
+			'payment_module' => 'payment_module', 
+			'payment_mode' => 'payment_mode', 
+			'payment_status' => 'payment_status', 
+			'trans_parent_ref_id' => 'trans_parent_ref_id', 
+			'payment_currency' => 'payment_currency', 
+			'exchange_rate' => 'exchange_rate', 
+			'payment_parent_ref_id' => 'payment_parent_ref_id', 
+			'pending_reason' => 'pending_reason', 
+			'first_name' => 'first_name', 
+			'last_name' => 'last_name', 
+			'address_company' => 'address_company', 
+			'address_name' => 'address_name', 
+			'address_street_address' => 'address_street', 
+			'address_suburb' => 'address_suburb', 
+			'address_city' => 'address_city', 
+			'state' => 'address_state', 
+			'address_postcode' => 'address_zip', 
+			'address_country' => 'address_country', 
+			'num_cart_items' 
+		);
+
+
+		if( BitBase::verifyIdParameter( $pParamHash, 'country_id' ) ) {
+			$pParamHash['address_country'] = zen_get_country_name( $pParamHash['country_id'] );
+		}
+
+		foreach( $columns as $inputKey => $colName ) {
+			if( isset( $pParamHash[$inputKey] ) ) {
+				$pParamHash['payment_store'][$colName] = $pParamHash[$inputKey];
+			}
+		}
+		// No bounds checking yet
+		$ret = TRUE;
+
+		return $ret;
+	}
+
+	public function storeOrdersPayment( &$pParamHash, $pOrder ) {
+		$ret = FALSE;
+		$sessionParams = array();
+		if( !empty( $pParamHash['adjust_total'] ) ) {
+			$ret = $order->adjustOrder( $pParamHash, $sessionParams );
+		} else {
+			$ret = TRUE;
+			$this->mDb->StartTrans();
+
+			if( $this->verifyOrdersPayment( $pParamHash, $pOrder ) ) {
+				$ordersUpdate = array();
+				$this->mDb->associateInsert( TABLE_ORDERS_PAYMENTS, $pParamHash['payment_store'] );
+			
+				$statusHash['comments'] = trim( "New Payment Recorded:" . $pParamHash['payment_number'] . "\n\n" . BitBase::getParameter( $pParamHash, 'comments', NULL ) );
+				$statusHash['status'] = BitBase::getParameter( $pParamHash, 'status' );
+				$pOrder->updateStatus( $statusHash );
+
+				if( $pOrder->getField( 'amount_due' ) ) {
+					$amountDue = ($pOrder->getField( 'amount_due' ) - $pParamHash['payment_store']['payment_amount']);
+					$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `amount_due` = ? WHERE `orders_id` = ?", array( $amountDue, $pOrder->mOrdersId ) );
+				}
+			}
+				
+			$this->mDb->CompleteTrans();
+		}
+
+		return $ret;
+	}
+
+	private function verifyPayment( &$pParamHash, $pOrder ) {
+		global $gBitUser;
+
+		$pParamHash['payment_store']['user_id'] = $gBitUser->mUserId;
+		$pParamHash['payment_store']['customers_id'] = $gOrder->getField( 'customers_id' );
+		$pParamHash['payment_store']['orders_id'] = $gOrder->getField( 'orders_id' );
+
+		return( empty( $pParamHash['payment_store']['errors'] ) );
+	}
 
 	function getProductHistory( $pListHash ) {
 		$whereSql = '';
@@ -61,3 +181,5 @@ class CommerceOrderManager extends BitBase {
 		return $ret;
 	}
 }
+
+CommerceOrderManager::loadSingleton();
