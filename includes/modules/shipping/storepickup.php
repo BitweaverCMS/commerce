@@ -8,37 +8,20 @@
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 
-require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingBase.php' );
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingRateTableBase.php' );
 
-class storepickup extends CommercePluginShippingBase {
+class storepickup extends CommercePluginShippingRateTableBase {
 	var $code, $title, $description, $icon, $enabled;
 
 	function __construct() {
 		parent::__construct();
-		$this->title = tra( 'Store Pickup' );
 		$this->description = tra( 'Customer In Store Pick-up' );
+		$this->booticon				= 'fa-hand-holding-box';
+	}
+	
+	public function quote( $pShipHash ) {
+		return parent::quote( $pShipHash );
 	}
 
-	function quote( $pShipHash ) {
-		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
-			$quotes['methods'][] = array(
-										'id' => $this->code,
-										'code' => $this->code,
-										'title' => tra( 'Walk In' ),
-										'cost' => MODULE_SHIPPING_STOREPICKUP_COST
-										);
-		}
-		return $quotes;
-	}
-
-	protected function config() {
-		return array_merge( parent::config(), array( 
-			$this->getModuleKeyTrunk().'_COST' => array(
-				'configuration_title' => 'Shipping Cost',
-				'configuration_description' => 'The shipping cost for all orders using this shipping method.',
-				'configuration_value' => '0',
-			),
-		) );
-	}
 }
 ?>

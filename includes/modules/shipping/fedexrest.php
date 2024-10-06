@@ -37,8 +37,8 @@ class fedexrest extends CommercePluginShippingBase {
 		parent::__construct();
 		$this->title			= tra( 'FedEx' );
 		$this->description		= 'You will need to have registered an account with FedEx and proper approval from FedEx identity to use this module. Please see the README.TXT file for other requirements.';
-		$this->icon				= 'shipping_fedex';
-
+		$this->icon = 'shipping_fedex';
+		$this->booticon = 'fab fa-fedex';
 		if( $this->getModuleConfigValue( '_MODE' ) == 'Test' ) {
 			$this->mBaseUrl = 'https://apis-sandbox.fedex.com';
 		}
@@ -545,8 +545,13 @@ class fedexrest extends CommercePluginShippingBase {
 				}
 			}
 
-			if ( !empty( $this->icon ) && !empty( $quotes ) ) {
-				$quotes['icon'] = $this->icon;
+			if ( !empty( $quotes ) ) {
+				if( !empty( $this->icon ) ) {
+					$quotes['icon'] = $this->icon;
+				}
+				if( !empty( $this->booticon ) ) {
+					$quotes['booticon'] = $this->booticon;
+				}
 			}
 		}
 

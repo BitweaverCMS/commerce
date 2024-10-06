@@ -21,7 +21,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 		parent::__construct();
 		$this->quotes = array();
 		$this->icon = 'shipping_'.$this->code;
-		$this->title = $this->getConfig( $this->getModuleKeyTrunk().'_TEXT_TITLE', $this->code );
+		$this->booticon = 'fa-'.$this->code;
 		$this->description = $this->getConfig( $this->getModuleKeyTrunk().'_TEXT_DESCRIPTION' );
 		$this->sort_order = $this->getConfig( $this->getModuleKeyTrunk().'_SORT_ORDER' );
 		$this->tax_class = $this->getConfig( $this->getModuleKeyTrunk().'_TAX_CLASS' );
@@ -199,9 +199,14 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 										'id' => $this->code,
 										'module' => $this->title,
 										'weight' => $show_box_weight,
-										'icon' => $this->icon,
 										'tax' => $this->getShippingTax( $pShipHash )
 									);
+					if( !empty( $this->icon ) ) {
+						$quoteBase['icon'] = $this->icon;
+					}
+					if( !empty( $this->booticon ) ) {
+						$quoteBase['booticon'] = $this->booticon;
+					}
 				}
 			}
 		}

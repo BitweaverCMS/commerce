@@ -22,6 +22,7 @@ class ups extends CommercePluginShippingBase {
 
 		$this->title = tra( 'United Parcel Service' );
 		$this->description = tra( 'This retrieves generic shipping quotes. For negotiated rates, use the UPSXML module instead.' );
+		$this->booticon				= 'fab fa-ups';
 
 
 		if( $this->isEnabled() ) {
