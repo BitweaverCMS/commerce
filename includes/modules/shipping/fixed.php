@@ -10,18 +10,15 @@
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingRateTableBase.php' );
 
-class storepickup extends CommercePluginShippingRateTableBase {
-	var $code, $title, $description, $icon, $enabled;
+class fixed extends CommercePluginShippingBase {
 
 	function __construct() {
 		parent::__construct();
-		$this->description = tra( 'Customer In Store Pick-up' );
-		$this->booticon				= 'fa-hand-holding-box';
+		$this->description = tra( 'Fixed Rate' );
 	}
-	
+
 	public function quote( $pShipHash ) {
 		return parent::quote( $pShipHash );
 	}
 
 }
-?>

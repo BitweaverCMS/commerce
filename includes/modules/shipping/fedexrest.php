@@ -37,8 +37,8 @@ class fedexrest extends CommercePluginShippingBase {
 		parent::__construct();
 		$this->title			= tra( 'FedEx' );
 		$this->description		= 'You will need to have registered an account with FedEx and proper approval from FedEx identity to use this module. Please see the README.TXT file for other requirements.';
-		$this->icon				= 'shipping_fedex';
-
+		$this->icon = 'shipping_fedex';
+		$this->booticon = 'fab fa-fedex';
 		if( $this->getModuleConfigValue( '_MODE' ) == 'Test' ) {
 			$this->mBaseUrl = 'https://apis-sandbox.fedex.com';
 		}
@@ -342,8 +342,8 @@ class fedexrest extends CommercePluginShippingBase {
 					],
 					"recipient" => [
 						"address" => [
-							"city" => $pShipHash['destination']['city'],
-							"stateOrProvinceCode" => $pShipHash['destination']['zone_code'],
+							"city" => BitBase::getParameter( $pShipHash['destination'], 'city' ),
+							"stateOrProvinceCode" => BitBase::getParameter( $pShipHash['destination'], 'zone_code' ),
 							"postalCode" => $pShipHash['destination']['postcode'],
 							"countryCode" => $pShipHash['destination']['countries_iso_code_2'],
 							"residential" => $ship_to_residential, 
@@ -545,8 +545,13 @@ class fedexrest extends CommercePluginShippingBase {
 				}
 			}
 
-			if ( !empty( $this->icon ) && !empty( $quotes ) ) {
-				$quotes['icon'] = $this->icon;
+			if ( !empty( $quotes ) ) {
+				if( !empty( $this->icon ) ) {
+					$quotes['icon'] = $this->icon;
+				}
+				if( !empty( $this->booticon ) ) {
+					$quotes['booticon'] = $this->booticon;
+				}
 			}
 		}
 
@@ -746,7 +751,7 @@ $requestJson .= '
 				}
 			}
 		}
-	}
+	},
 	"requestedPackageLineItems": [
 		{
 			"sequenceNumber": "1",
@@ -760,11 +765,11 @@ $requestJson .= '
 				"value": '.$pShipHash['shipment']['weight'].'
 			},
 			"dimensions": {
-				"length": '.$pShipHash['shipment']['length'].',
-				"width": '.$pShipHash['shipment']['width'].',
-				"height": '.$pShipHash['shipment']['height'].',
+				"length": "'.$pShipHash['shipment']['length'].'",
+				"width": "'.$pShipHash['shipment']['width'].'",
+				"height": "'.$pShipHash['shipment']['height'].'",
 				"units": "'.$pShipHash['shipment']['dimension_units'].'"
-			},
+			}
 		}
 	]
 '.

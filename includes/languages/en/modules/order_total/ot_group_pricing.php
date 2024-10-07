@@ -20,6 +20,6 @@
 // $Id$
 //
 
-  define('MODULE_ORDER_TOTAL_GROUP_PRICING_TITLE', tra( 'Group Discount' ) );
+//  define('MODULE_ORDER_TOTAL_GROUP_PRICING_TITLE', tra( 'Group Discount' ) );
   define('MODULE_ORDER_TOTAL_GROUP_PRICING_DESCRIPTION', tra( 'Group Discount' ) );
 ?>

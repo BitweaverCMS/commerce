@@ -18,7 +18,7 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 		parent::__construct( $pOrder );
 		$this->code = 'ot_expedite';
 
-		$this->title = tra( 'Expedited Processing' );
+		$this->title = $this->getTitle( 'Expedited Processing' );
 		$this->description = '';
 		if( $this->isEnabled() ) {
 			$this->sort_order = MODULE_ORDER_TOTAL_EXPEDITE_SORT_ORDER;
@@ -54,8 +54,8 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 		return $ret;
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $gCommerceSystem, $currencies;
 
 		if( $this->isEnabled() ) {
@@ -107,26 +107,20 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	public function keys() {
-		return array_merge(
-					array_keys( $this->config() ),
-					array('MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE', 'MODULE_ORDER_TOTAL_EXPEDITE_INFO_URL')
-				);
-	}
-
-	function install() {
-		parent::install();
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Expedite Order Fee', 'MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE', '25%', 'Expedite Fee. Examples: 15%, or 10.00 (native currency will be used)', '6', '3', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `date_added`) values ('Expedite Information URL', 'MODULE_ORDER_TOTAL_EXPEDITE_INFO_URL', NULL, 'URL with information on Expedite Service', '6', '3', now())");
-	}
-
-	/*
-	* rows for com_configuration table as associative array of column => value
-	*/
 	protected function config() {
-		$ret = parent::config();
-		// set some default values
-		$ret[$this->getModuleKeyTrunk().'_SORT_ORDER']['configuration_value'] = '950';
-		return $ret;
+		$i = 20;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_ORDER_FEE' => array(
+				'configuration_title' => 'Expedite Order Fee',
+				'configuration_description' => 'Expedite Fee. Examples: 15%, or 10.00 (native currency will be used)',
+				'configuration_value' => '25%',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_INFO_URL' => array(
+				'configuration_title' => 'Expedite Information URL',
+				'configuration_description' => 'URL with information on Expedite Service',
+				'sort_order' => $i++,
+			)
+		) );
 	}
 }

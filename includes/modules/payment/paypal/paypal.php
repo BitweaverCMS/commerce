@@ -112,21 +112,21 @@ class paypal extends CommercePluginPaymentBase {
 		return $process_button_string;
 	}
 
-	function processPayment( &$pPaymentParameters, &$pOrder ) {
+	function processPayment( $pOrder, &$pPaymentParameters ) {
 		// now just need to check here whether we are here because of IPN or auto-return, we cn use the referer variable for that
 		// If we have come from auto return, check to see wether the order has been created by IPN and if not create it now.
-		if ($_GET['referer'] == 'paypal') {
+		if ($pPaymentParameters['referer'] == 'paypal') {
 			$gBitCustomer->mCart->reset(true);
-			unset($_SESSION['sendto']);
-			unset($_SESSION['billto']);
-			unset($_SESSION['shipping']);
-			unset($_SESSION['payment']);
-			unset($_SESSION['comments']);
-			$pOrder->otClearPosts();
+			$this->clearSessionDetails();
+			$pOrder->otClearPosts( $_SESSION );
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_SUCCESS, '', 'SSL'));
 		} else {
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
 		}
+	}
+
+	protected function getSessionVars() {
+		return array( 'sendto', 'billto', 'shipping', 'payment', 'comments' );
 	}
 
 	function check_referrer($zf_domain) {

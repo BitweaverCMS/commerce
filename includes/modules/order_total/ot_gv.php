@@ -15,18 +15,18 @@ class ot_gv extends CommercePluginOrderTotalBase {
 	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
 
-		$this->title = tra( 'Gift Certificates' );
+		$this->title = $this->getTitle( 'Gift Certificates' );
 		$this->header = tra( 'Gift Certificates' );
 		$this->description = tra( 'Gift Certificates' );
 		$this->userGvBalance = 0.0;
 		if( $this->isEnabled() ) {
 			global $gBitUser, $gCommerceSystem;
 			$this->user_prompt = tra( 'Apply Balance' );
-			$this->include_shipping = $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_INC_SHIPPING' );
-			$this->include_tax = $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_INC_TAX' );
-			$this->calculate_tax = $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_CALC_TAX' );
-			$this->credit_tax = $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_CREDIT_TAX' );
-			$this->tax_class	= $gCommerceSystem->getConfig( 'MODULE_ORDER_TOTAL_GV_TAX_CLASS' );
+			$this->include_shipping = $this->getModuleConfigValue( '_INC_SHIPPING' );
+			$this->include_tax = $this->getModuleConfigValue( '_INC_TAX' );
+			$this->calculate_tax = $this->getModuleConfigValue( '_CALC_TAX' );
+			$this->credit_tax = $this->getModuleConfigValue( '_CREDIT_TAX' );
+			$this->tax_class = $this->getModuleConfigValue( '_TAX_CLASS' );
 			$this->credit_class = true;
 			$this->userGvBalance = $this->getGvBalance( $gBitUser->mUserId );
 			if( empty( $this->userGvBalance ) ) {
@@ -37,7 +37,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	private function getDiscount( $pGvAmount ) {
+	private function getDiscount( $pGvAmount, &$pSessionParams ) {
 		global $gBitUser;
 
 		$od_amount = 0.0;
@@ -45,7 +45,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		// clean out negative values and strip common currency symbols
 		$creditAmount = preg_replace( '/[^\d\.]/', '', $pGvAmount );
 		//$orderTotal = $this->mOrder->getField( 'total' ); // this is old school, doesn't account for coupons
-		$orderTotal = $this->mOrder->getSubTotal( $this->code );
+		$orderTotal = $this->mOrder->getSubtotal( $this->code, $pSessionParams );
 
 		if ( !empty( $creditAmount ) ) {
 			if( $this->include_shipping == 'false') { 
@@ -98,12 +98,12 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		return $od_amount + $tod_amount;
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $currencies;
 
-		if( !empty( $_SESSION['cot_gv'] ) ) {
-			if( $deduction = $this->getOrderDeduction( $_SESSION['cot_gv'] ) ) {
+		if( !empty( $pSessionParams['cot_gv'] ) ) {
+			if( $deduction = $this->getOrderDeduction( $pSessionParams['cot_gv'], $pSessionParams ) ) {
 				$this->mOrder->info['gv_amount'] = $deduction;
 				$this->setOrderDeduction( $deduction );
 				$this->mProcessingOutput = array( 'code' => $this->code,
@@ -115,16 +115,16 @@ class ot_gv extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	public function getOrderDeduction( $pOrder ) {
+	public function getOrderDeduction( $pOrder, &$pSessionParams ) {
 		$ret = null;
-		if( !empty( $_SESSION['cot_gv'] ) ) {
-			if (preg_match('#[^0-9/.]#', trim($_SESSION['cot_gv']))) {
+		if( !empty( $pSessionParams['cot_gv'] ) ) {
+			if (preg_match('#[^0-9/.]#', trim($pSessionParams['cot_gv']))) {
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_AMOUNT), 'SSL',true, false));
-			} elseif ($_SESSION['cot_gv'] > $this->userGvBalance ) {
-				$_SESSION['cot_gv'] = $this->userGvBalance;
+			} elseif ($pSessionParams['cot_gv'] > $this->userGvBalance ) {
+				$pSessionParams['cot_gv'] = $this->userGvBalance;
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_AMOUNT), 'SSL',true, false));
 			} else {
-				$ret = $this->getDiscount( $_SESSION['cot_gv'] );
+				$ret = $this->getDiscount( $pSessionParams['cot_gv'], $pSessionParams );
 			}
 		}
 		return $ret;
@@ -163,7 +163,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 	}
 
 
-	public function credit_selection( $pOrder ) {
+	public function credit_selection( $pOrder, &$pSessionParams ) {
 		global $currencies, $gBitUser;
 		$selection = array();
 		$couponId = $this->mDb->getOne("SELECT coupon_id FROM " . TABLE_COUPONS . " where coupon_type = 'G' and coupon_active='Y'");
@@ -187,100 +187,141 @@ class ot_gv extends CommercePluginOrderTotalBase {
 			$selection = array(	'id' => $this->code,
 								'module' => $this->title,
 								'checkbox' => $this->checkbox,
-								'fields' => array(array('title' => tra( 'Gift Certificate Code' ),
-								'field' => zen_draw_input_field('gv_redeem_code'))));
+								'fields' => array(
+									array( 'title' => tra( 'Gift Certificate Code' ), 'field' => zen_draw_input_field('gv_redeem_code', BitBase::getParameter($pSessionParams, 'gv_redeem_code') )))
+								);
 		}
 		return $selection;
 	}
 
-	function apply_credit() {
+	function apply_credit( &$pSessionParams ) {
 		global $gBitUser;
 		$ret = FALSE;
 		if( $this->mOrder->getField( 'gv_amount' ) ) {
 			$this->mDb->query( "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " SET `amount` = `amount` - ? WHERE `customer_id` = ?", array( $this->mOrder->getField( 'gv_amount' ), $gBitUser->mUserId ) );
 			$ret = TRUE;
-			unset( $_SESSION['cot_gv'] );
+			unset( $pSessionParams['cot_gv'] );
 		}
 		return $ret;
 	}
 
 
-	function collect_posts( $pRequestParams ) {
+	function collect_posts( $pRequestParams, &$pSessionParams ) {
 		global $gBitUser, $currencies;
+
+		$retError = FALSE;
+
 		if ( !empty( $pRequestParams['cot_gv'] ) && is_numeric( $pRequestParams['cot_gv'] ) && $pRequestParams['cot_gv'] > 0 ) {
-			$_SESSION['cot_gv'] = $pRequestParams['cot_gv'];
-		} elseif( isset( $_SESSION['cot_gv'] ) ) {
-			unset( $_SESSION['cot_gv'] );
+			$pSessionParams['cot_gv'] = $pRequestParams['cot_gv'];
+		} elseif( isset( $pSessionParams['cot_gv'] ) ) {
+			unset( $pSessionParams['cot_gv'] );
 		}
 		if ( !empty( $pRequestParams['gv_redeem_code'] ) ) {
-			$gv_result = $this->mDb->query( "SELECT `coupon_id`, `coupon_type`, `coupon_amount` FROM " . TABLE_COUPONS . " WHERE `coupon_code` = ?", array( $pRequestParams['gv_redeem_code'] ) );
-			if ($gv_result->RecordCount() > 0) {
-				$redeem_query = $this->mDb->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $gv_result->fields['coupon_id'] . "'");
-				if ( ($redeem_query->RecordCount() > 0) && ($gv_result->fields['coupon_type'] == 'G')	) {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_INVALID_REDEEM_GV), 'SSL'));
+			if( $gvHash = $this->mDb->getRow( "SELECT `coupon_id`, `coupon_type`, `coupon_amount` FROM " . TABLE_COUPONS . " WHERE `coupon_code` = ?", array( $pRequestParams['gv_redeem_code'] ) ) ) {
+				$redeem_query = $this->mDb->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $gvHash['coupon_id'] . "'");
+				if ( ($redeem_query->RecordCount() > 0) && ($gvHash['coupon_type'] == 'G')	) {
+					$retError = ERROR_NO_INVALID_REDEEM_GV;
+				}
+				if ($gvHash['coupon_type'] == 'G') {
+					$gv_amount = $gvHash['coupon_amount'];
+					// Things to set
+					// ip address of claimant
+					// customer id of claimant
+					// date
+					// redemption flag
+					// now update customer account with gv_amount
+					$gv_amount_result=$this->mDb->query("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?", array( $gBitUser->mUserId ) );
+					$customer_gv = false;
+					$total_gv_amount = $gv_amount;;
+					if ($gv_amount_result->RecordCount() > 0) {
+						$total_gv_amount = $gv_amount_result->fields['amount'] + $gv_amount;
+						$customer_gv = true;
+					}
+					$this->mDb->query("UPDATE " . TABLE_COUPONS . " set coupon_active = 'N' where coupon_id = ?", array( $gvHash['coupon_id'] ) );
+					$this->mDb->query("INSERT INTO	" . TABLE_COUPON_REDEEM_TRACK . " (redeem_date, coupon_id, customer_id, redeem_ip) values ( now(), ?, ?, ?)", array( $gvHash['coupon_id'], $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) );
+					if ($customer_gv) {
+						// already has gv_amount so update
+						$this->mDb->query( "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = ? where `customer_id` = ?", array( $total_gv_amount, $gBitUser->mUserId ) );
+					} else {
+						// no gv_amount so insert
+						$this->mDb->query("INSERT INTO " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values (?, ?)", array( $gBitUser->mUserId, $total_gv_amount ) );
+					}
+					$retError = ERROR_REDEEMED_AMOUNT. $currencies->format($gv_amount);
 				}
 			} else {
-					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_INVALID_REDEEM_GV), 'SSL'));
+				$retError = ERROR_NO_REDEEM_CODE.' '.$pRequestParams['gv_redeem_code'];
 			}
-			if ($gv_result->fields['coupon_type'] == 'G') {
-				$gv_amount = $gv_result->fields['coupon_amount'];
-				// Things to set
-				// ip address of claimant
-				// customer id of claimant
-				// date
-				// redemption flag
-				// now update customer account with gv_amount
-				$gv_amount_result=$this->mDb->query("select `amount` from " . TABLE_COUPON_GV_CUSTOMER . " where `customer_id` = ?", array( $gBitUser->mUserId ) );
-				$customer_gv = false;
-				$total_gv_amount = $gv_amount;;
-				if ($gv_amount_result->RecordCount() > 0) {
-					$total_gv_amount = $gv_amount_result->fields['amount'] + $gv_amount;
-					$customer_gv = true;
-				}
-				$this->mDb->query("UPDATE " . TABLE_COUPONS . " set coupon_active = 'N' where coupon_id = ?", array( $gv_result->fields['coupon_id'] ) );
-				$this->mDb->query("INSERT INTO	" . TABLE_COUPON_REDEEM_TRACK . " (redeem_date, coupon_id, customer_id, redeem_ip) values ( now(), ?, ?, ?)", array( $gv_result->fields['coupon_id'], $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) );
-				if ($customer_gv) {
-					// already has gv_amount so update
-					$this->mDb->query( "UPDATE " . TABLE_COUPON_GV_CUSTOMER . " set `amount` = ? where `customer_id` = ?", array( $total_gv_amount, $gBitUser->mUserId ) );
-				} else {
-					// no gv_amount so insert
-					$this->mDb->query("INSERT INTO " . TABLE_COUPON_GV_CUSTOMER . " (`customer_id`, `amount`) values (?, ?)", array( $gBitUser->mUserId, $total_gv_amount ) );
-				}
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_REDEEMED_AMOUNT. $currencies->format($gv_amount)), 'SSL'));
-		 }
-	 }
-	 if ( isset( $pRequestParams['submit_redeem_x'] ) && $gv_result->fields['coupon_type'] == 'G') zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_REDEEM_CODE), 'SSL'));
- }
+	 	}
+		return $retError;
+ 	}
 
 	private function getGvBalance( $pCustomersId ) {
 		return $this->mDb->getOne( "SELECT `amount` FROM " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id` = ?", array( $pCustomersId ) );
 	}
 
-	public function keys() {
-		return array_merge(
-					array_keys( $this->config() ),
-					array('MODULE_ORDER_TOTAL_GV_QUEUE', 'MODULE_ORDER_TOTAL_GV_INC_SHIPPING', 'MODULE_ORDER_TOTAL_GV_INC_TAX', 'MODULE_ORDER_TOTAL_GV_CALC_TAX', 'MODULE_ORDER_TOTAL_GV_TAX_CLASS', 'MODULE_ORDER_TOTAL_GV_CREDIT_TAX', 'MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID')
-				);
-	}
-
-	function install() {
-		parent::install();
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Queue Purchases', 'MODULE_ORDER_TOTAL_GV_QUEUE', 'true', 'Do you want to queue purchases of the Gift Voucher?', '6', '3','zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_GV_INC_SHIPPING', 'true', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_GV_INC_TAX', 'true', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_GV_CALC_TAX', 'None', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(''None'', ''Standard'', ''Credit Note''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_GV_TAX_CLASS', '0', 'Use the following tax class when treating Gift Voucher as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Credit including Tax', 'MODULE_ORDER_TOTAL_GV_CREDIT_TAX', 'false', 'Add tax to purchased Gift Voucher when crediting to Account', '6', '8','zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `use_function`, `date_added`) values ('Set Order Status', 'MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID', '0', 'Set the status of orders made where GV covers full payment', '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-	}
-
+	// {{{	++++++++ config ++++++++
 	/*
 	* rows for com_configuration table as associative array of column => value
 	*/
 	protected function config() {
-		$ret = parent::config();
+		$parentConfig = parent::config();
+		$i = count( $parentConfig );
+		return array_merge( $parentConfig, array( 
+			$this->getModuleKeyTrunk().'_QUEUE' => array(
+				'configuration_title' => 'Queue Purchases',
+				'configuration_description' => 'Do you want to queue purchases of the Gift Voucher?',
+				'configuration_value' => 'true',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_INC_SHIPPING' => array(
+				'configuration_title' => 'Include Shipping',
+				'configuration_description' => 'Include Shipping in calculation',
+				'configuration_value' => 'true',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_INC_TAX' => array(
+				'configuration_title' => 'Include Tax',
+				'configuration_description' => 'Include Tax in calculation.',
+				'configuration_value' => 'true',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_CALC_TAX' => array(
+				'configuration_title' => 'Re-calculate Tax',
+				'configuration_description' => 'Re-Calculate Tax',
+				'configuration_value' => 'None',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array(''None'', ''Standard'', ''Credit Note''), ",
+			),
+			$this->getModuleKeyTrunk().'_TAX_CLASS' => array(
+				'configuration_title' => 'Tax Class',
+				'configuration_description' => 'Use the following tax class when treating Gift Voucher as Credit Note.',
+				'configuration_value' => '0',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_pull_down_tax_classes(",
+				'use_function' => "zen_get_tax_class_title",
+			),
+			$this->getModuleKeyTrunk().'_CREDIT_TAX' => array(
+				'configuration_title' => 'Credit including Tax',
+				'configuration_description' => 'Add tax to purchased Gift Voucher when crediting to Account',
+				'configuration_value' => 'false',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array(''true'', ''false''), ",
+			),
+			$this->getModuleKeyTrunk().'_ORDER_STATUS_ID' => array(
+				'configuration_title' => 'Set Order Status',
+				'configuration_description' => 'Set the status of orders made where GV covers full payment',
+				'configuration_value' => '0',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_pull_down_order_statuses(",
+				'use_function' => "zen_get_order_status_name",
+			),
+		) );
 		// set some default values
 		$ret[$this->getModuleKeyTrunk().'_SORT_ORDER']['configuration_value'] = '840';
 		return $ret;
 	}
+	// }}} ++++ config ++++
 }

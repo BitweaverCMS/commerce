@@ -16,6 +16,7 @@ class supersaver extends CommercePluginShippingBase {
 		parent::__construct();
 		$this->title = tra( 'SuperSaver Shipping' );
 		$this->description = tra( 'Offer fixed rate (or free!) shipping for orders within a specified amount.' );
+		$this->booticon = 'fa-piggy-bank';
 	}
 
 	function quote( $pShipHash ) {

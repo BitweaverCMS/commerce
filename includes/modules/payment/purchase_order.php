@@ -22,13 +22,12 @@ class purchase_order extends CommercePluginPaymentBase {
 
 	function __construct() {
 		parent::__construct();
-		$this->title = 'Purchase Order';
 		$this->description = 'Payment via purchase request from verified organization';
 	}
 
 	function selection() {
 		$ret = array();
-		if( $this->isUserPermitted() ) {
+		if( $this->isUserEnabled() ) {
 			$ret = array(	'id' => $this->code,
 								'module' => $this->title,
 								'fields' => array(	
@@ -37,35 +36,11 @@ class purchase_order extends CommercePluginPaymentBase {
 												array( 'title' => 'PO Number', 'field' => zen_draw_input_field('payment_po_number')),
 											),
 								);
-		}
-		return $ret;
-	}
-
-	private function isUserPermitted( $pUserId=NULL ) {
-		if( $ret = parent::isEnabled() ) {
-			if( $poPerm = $this->getModuleConfigValue( '_PERMISSION' ) ) {
-				global $gBitUser;
-				if( BitBase::verifyId( $pUserId ) && $checkUser = BitUser::getUserObject( $uid ) ) {
-				} else {
-					$checkUser = &$gBitUser;
-				}
-				$ret = $checkUser->hasPermission( $poPerm );
+			if( $terms = $this->getModuleConfigValue( '_TERMS' ) ) {
+				$ret['fields'][] = array( 'title' => 'Terms', 'field' => $terms );
 			}
 		}
 		return $ret;
-	}
-
-	function verifyPayment( &$pPaymentParams, &$pOrder ) {
-		if( !$this->isUserPermitted() ) {
-			 $this->mErrors['payment'] = 'Purchase order not allowed.';
-		} elseif( parent::verifyPayment( $pPaymentParams, $pOrder ) ) {
-			foreach( array( 'payment_po_contact' => 'Purchaser Name',  'payment_po_org' => 'Purchaser Organization', 'payment_po_number' => 'PO Number' ) as $key=>$title ) {
-				if( empty( $pPaymentParams[$key] ) ) {
-					$this->mErrors[$key] = $title.' was not set.';
-				}
-			}
-		}
-		return (count( $this->mErrors ) === 0);
 	}
 
 	protected function getSessionVars() {
@@ -82,25 +57,32 @@ class purchase_order extends CommercePluginPaymentBase {
 								)
 							);
 
+		if( $terms = $this->getModuleConfigValue( '_TERMS' ) ) {
+			$confirmation['fields'][] = array( 'title' => 'Terms', 'field' => $terms );
+		}
+
 		return $confirmation;
 	}
 
-	function processPayment( &$pPaymentParams, &$pOrder ) {
+	function processPayment( $pOrder, &$pPaymentParams ) {
 
-		if( $ret = self::verifyPayment ( $pPaymentParams, $pOrder ) ) {
-
+		if( $ret = self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
 			$pOrder->info['amount_due'] = $this->getParameter( $pPaymentParams, 'payment_amount' );
-			$logHash = $this->logTransactionPrep( $pPaymentParams, $pOrder );
+			$logHash = $this->logTransactionPrep( $pOrder, $pPaymentParams );
+
+			$defaultCurrency = $this->getDefaultCurrency();
 
 			$logHash['is_success'] = 'y';
 			$logHash['payment_status'] = 'pending';
-			$logHash['payment_ref_id'] = trim( $pPaymentParams['payment_po_org'].' / '.$pPaymentParams['payment_po_contact'] .' / '.$pPaymentParams['payment_po_number'] );
+			$logHash['payment_owner'] = trim( $pPaymentParams['payment_po_contact'] );
+			$logHash['address_company'] = trim( $pPaymentParams['payment_po_org'] );
+			$logHash['payment_number'] = trim( $pPaymentParams['payment_po_number'] );
 			$logHash['payment_result'] = '1';
-			$logHash['payment_message'] = trim( 'Purchase Order Recevied' );
 
-			$logHash['payment_number'] = $pPaymentParams['payment_po_number'];
-			$logHash['payment_type'] = 'Purchase Order';
-			$logHash['payment_owner'] = trim( $pPaymentParams['payment_po_org'].' '.$pPaymentParams['payment_po_contact'] );
+			// DEFAULT CURRENCY only for now
+			$logHash['payment_currency'] = $defaultCurrency; // $pPaymentParams['payment_currency'];
+			$logHash['exchange_rate'] = 1.0; // $pPaymentParams['exchange_rate'];
+			$logHash['payment_type'] = $this->getModuleConfigValue( '_TERMS' );
 			$logHash['payment_expires'] = NULL;
 
 			$this->logTransaction( $logHash );
@@ -109,15 +91,21 @@ class purchase_order extends CommercePluginPaymentBase {
 		return $ret;
 	}
 
+	// {{{	++++++++ config ++++++++
+	/*
+	* rows for com_configuration table as associative array of column => value
+	*/
 	protected function config() {
-		$i = 20;
-		return array_merge( parent::config(), array( 
-			$this->getModuleKeyTrunk().'_PERMISSION' => array(
-				'configuration_title' => 'Purchase Order Permission',
-				'configuration_description' => '<strong>Ex: p_bitcommerce_purchase_order</strong> This permission is required to show and accept Purchase Order. Leave empty to give access to all customers. Make sure you have a <a href="/users/admin/edit_group.php">Group configured</a> with that permission, and desired users are also in that group.',
-				'configuration_value' => 'p_bitcommerce_purchase_order',
+		$parentConfig = parent::config();
+		$i = count( $parentConfig );
+		return array_merge( $parentConfig, array( 
+			$this->getModuleKeyTrunk().'_TERMS' => array(
+				'configuration_title' => 'Purchase Order Terms',
+				'configuration_description' => 'Terms listed during checking. Ex: Net 30',
+				'configuration_value' => 'Net 30',
 				'sort_order' => $i++,
 			)
 		) );
 	}
+	// }}}
 }

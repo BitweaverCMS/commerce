@@ -20,7 +20,7 @@
 // $Id$
 //
 
-  define('MODULE_ORDER_TOTAL_SHIPPING_TITLE', tra( 'Shipping' ) );
+//  define('MODULE_ORDER_TOTAL_SHIPPING_TITLE', tra( 'Shipping' ) );
   define('MODULE_ORDER_TOTAL_SHIPPING_DESCRIPTION', tra( 'Order Shipping Cost' ) );
 
   define('FREE_SHIPPING_TITLE', tra( 'Free Shipping' ) );

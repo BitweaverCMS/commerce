@@ -20,7 +20,7 @@
 // $Id$
 //
 
-  define('MODULE_ORDER_TOTAL_GV_TITLE', tra( 'Discount Coupons' ) );
+//  define('MODULE_ORDER_TOTAL_GV_TITLE', tra( 'Discount Coupons' ) );
   define('MODULE_ORDER_TOTAL_GV_HEADER', tra( 'Gift Certificates' ) . '/' . tra( 'Discount Coupons' ) );
   define('MODULE_ORDER_TOTAL_GV_DESCRIPTION', tra( 'Discount Coupons' ) );
 if( !defined( 'SHIPPING_NOT_INCLUDED' ) ) {

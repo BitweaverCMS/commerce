@@ -146,6 +146,8 @@ class upsxml extends CommercePluginShippingBase {
 				'UPS 10kg Box' => '25'
 			);
 
+			$this->icon				= 'shipping_ups';
+			$this->booticon				= 'fab fa-ups';
 		}
 	}
 

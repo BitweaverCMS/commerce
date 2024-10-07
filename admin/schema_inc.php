@@ -886,7 +886,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_total' => "
   orders_total_id I4 PRIMARY AUTO,
   orders_id I4 NOTNULL,
   title C(255),
-  text C(255),
+  text C(512),
   orders_value N(15,4),
   class C(32),
   sort_order I4

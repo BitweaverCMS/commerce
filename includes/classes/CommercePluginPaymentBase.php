@@ -69,20 +69,13 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		return 'payment';
 	}
 
-	protected function clearSessionDetails() {
-eb( $_SESSION );
-		foreach( $this->getSessionVars() as $var ) {
-			$_SESSION[$var] = $this->$var;
-		}	
-	}
-
 	protected function saveSessionDetails() {
 		foreach( $this->getSessionVars() as $var ) {
 			$_SESSION[$var] = $this->$var;
 		}	
 	}
 
-	protected function logTransactionPrep( $pPaymentParams, $pOrder ) {
+	protected function logTransactionPrep( $pOrder, $pPaymentParams ) {
 		global $gBitUser;
 		$logHash = array();
 
@@ -126,11 +119,6 @@ eb( $_SESSION );
 		return NULL;
 	}
 
-	// Default methods that should be overridden in derived classes
-	protected function getSessionVars() {
-		return array();
-	}
-
 	function selection() {
 		return array( 'id' => $this->code, 'module' => $this->title );
 	}
@@ -149,7 +137,7 @@ eb( $_SESSION );
 		return in_array( $pCurrency, $gatewayCurrencies ) ;
 	}
 
-	public function verifyPayment( &$pPaymentParams, &$pOrder ) {
+	public function verifyPayment( $pOrder, &$pPaymentParams ) {
 
 		global $gBitUser, $currencies;
 
@@ -159,7 +147,7 @@ eb( $_SESSION );
 		if( !empty( $pPaymentParams['payment_ref_id'] ) && empty( $pPaymentParams['charge_amount'] ) ) {
 			$this->mErrors['charge_amount'] = 'Invalid amount';
 		} elseif( empty( $pPaymentParams['charge_amount'] ) ) {
-			if( $pPaymentParams['charge_amount'] = $pOrder->getPaymentDue() ) {
+			if( $pPaymentParams['charge_amount'] = $pOrder->getPaymentDue( $pPaymentParams ) ) {
 				$pPaymentParams['charge_currency'] = DEFAULT_CURRENCY;
 			} else {
 				$this->mErrors['charge_amount'] = 'Invalid amount';
@@ -242,7 +230,7 @@ eb( $_SESSION );
 		return count( $this->mErrors ) === 0;
 	}
 
-	function processPayment( &$pPaymentParams, &$pOrder ) {
+	function processPayment( $pOrder, &$pPaymentParams ) {
 		$this->mErrors['process_payment'] = 'This modules has not implemented the ::processPayment method. ('.$this->code.')';
 		return FALSE;
 	}

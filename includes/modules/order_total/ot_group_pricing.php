@@ -15,15 +15,12 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
 		$this->code = 'ot_group_pricing';
-		$this->title = MODULE_ORDER_TOTAL_GROUP_PRICING_TITLE;
-		$this->description = MODULE_ORDER_TOTAL_GROUP_PRICING_DESCRIPTION;
 
 		if( $this->isEnabled() ) {
-			$this->sort_order = MODULE_ORDER_TOTAL_GROUP_PRICING_SORT_ORDER;
-			$this->include_shipping = MODULE_ORDER_TOTAL_GROUP_PRICING_INC_SHIPPING;
-			$this->include_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_INC_TAX;
-			$this->calculate_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_CALC_TAX;
-			$this->credit_tax = MODULE_ORDER_TOTAL_GROUP_PRICING_CREDIT_TAX;
+			$this->include_shipping = $this->getModuleConfigValue( '_INC_SHIPPING' );
+			$this->include_tax = $this->getModuleConfigValue( '_INC_TAX' );
+			$this->calculate_tax = $this->getModuleConfigValue( '_CALC_TAX' );
+			$this->credit_tax = $this->getModuleConfigValue( '_CREDIT_TAX' );
 			$this->credit_class = true;
 		}
 	}
@@ -32,11 +29,11 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 		return 'MODULE_ORDER_TOTAL_GROUP_PRICING_STATUS';
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $currencies;
 
-		if( $groupDiscount = $this->getGroupDiscount( $_SESSION['customer_id'] ) ) {
+		if( $groupDiscount = $this->getGroupDiscount( $pSessionParams['customer_id'] ) ) {
 			$order_total = $this->get_order_total();
 			$gift_vouchers = $gBitCustomer->mCart->gv_only();
 			$discount = ($order_total - $gift_vouchers) * $groupDiscount['group_percentage'] / 100;
@@ -122,14 +119,14 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 		return $ret;
 	}
 
-	function getOrderDeduction( $pOrder ) {
+	function getOrderDeduction( $pOrder, &$pSessionParams ) {
 		$ret = 0;
 		if( $this->isEnabled() ) {
 			$order_total = $pOrder->getField( 'total' );
 			$tod_amount = 0;
 			if( $this->include_shipping == 'false') $order_total -= $this->mOrder->info['shipping_cost'];
 			if( $this->include_tax == 'false') $order_total -= $this->mOrder->info['tax'];
-			if( $groupDiscount = $this->getGroupDiscount( $_SESSION['customer_id'] ) ) {
+			if( $groupDiscount = $this->getGroupDiscount( $pSessionParams['customer_id'] ) ) {
 				$order_total = $this->get_order_total();
 				$discount = $order_total * $groupDiscount['group_percentage'] / 100;
 				$od_amount = zen_round($discount, 2);
@@ -142,28 +139,48 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 		return $ret;
 	}
 
-	public function keys() {
-		return array_merge(
-					array_keys( $this->config() ),
-					array('MODULE_ORDER_TOTAL_GROUP_PRICING_INC_SHIPPING', 'MODULE_ORDER_TOTAL_GROUP_PRICING_INC_TAX', 'MODULE_ORDER_TOTAL_GROUP_PRICING_CALC_TAX', 'MODULE_ORDER_TOTAL_GROUP_PRICING_TAX_CLASS')
-				);
-	}
-
-	function install() {
-		parent::install();
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Shipping', 'MODULE_ORDER_TOTAL_GROUP_PRICING_INC_SHIPPING', 'false', 'Include Shipping in calculation', '6', '5', 'zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Include Tax', 'MODULE_ORDER_TOTAL_GROUP_PRICING_INC_TAX', 'true', 'Include Tax in calculation.', '6', '6','zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function` ,`date_added`) values ('Re-calculate Tax', 'MODULE_ORDER_TOTAL_GROUP_PRICING_CALC_TAX', 'Standard', 'Re-Calculate Tax', '6', '7','zen_cfg_select_option(array(\'None\', \'Standard\', \'Credit Note\'), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `set_function`, `date_added`) values ('Tax Class', 'MODULE_ORDER_TOTAL_GROUP_PRICING_TAX_CLASS', '0', 'Use the following tax class when treating Group Discount as Credit Note.', '6', '0', 'zen_get_tax_class_title', 'zen_cfg_pull_down_tax_classes(', now())");
-	}
-
+	// {{{	++++++++ config ++++++++
 	/*
 	* rows for com_configuration table as associative array of column => value
 	*/
 	protected function config() {
-		$ret = parent::config();
+		$parentConfig = parent::config();
+		$i = count( $parentConfig );
+		return array_merge( $parentConfig, array( 
+			$this->getModuleKeyTrunk().'_INC_SHIPPING' => array(
+				'configuration_title' => 'Include Shipping',
+				'configuration_description' => 'Include Shipping in calculation',
+				'configuration_value' => 'true',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_INC_TAX' => array(
+				'configuration_title' => 'Include Tax',
+				'configuration_description' => 'Include Tax in calculation.',
+				'configuration_value' => 'true',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_CALC_TAX' => array(
+				'configuration_title' => 'Re-calculate Tax',
+				'configuration_description' => 'Re-Calculate Tax',
+				'configuration_value' => 'None',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('None', 'Standard', 'Credit Note'), ",
+			),
+			$this->getModuleKeyTrunk().'_TAX_CLASS' => array(
+				'configuration_title' => 'Tax Class',
+				'configuration_description' => 'Use the following tax class when treating Gift Voucher as Credit Note.',
+				'configuration_value' => '0',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_pull_down_tax_classes(",
+				'use_function' => "zen_get_tax_class_title",
+			),
+		) );
 		// set some default values
 		$ret[$this->getModuleKeyTrunk().'_SORT_ORDER']['configuration_value'] = '290';
 		return $ret;
 	}
+	// }}} ++++ config ++++
+
 }

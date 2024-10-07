@@ -9,7 +9,11 @@
 			<div class="ph-1">
 				<div class="row">
 					<div class="col-xs-8">
+						{if $quotes[ix].booticon}
+						{booticon iname=$quotes[ix].booticon class="shipper-icon"}
+						{else}
 						{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].module class="img-responsive shipper-logo"}
+						{/if}
 						{if $quotes[ix].note}
 							<p class="help-block">{$quotes[ix].note}</p>
 						{/if}
@@ -25,7 +29,7 @@
 				<div class="row">
 					<div class="col-xs-12">
 						{assign var=shipDate value=$quotes[ix].origin.ship_date|strtotime}
-						<div class="help-block">{tr}Ships from{/tr} {$quotes[ix].origin.countries_name} {*if $quotes[ix].origin.ship_date}{tr}on{/tr} {$shipDate|bit_long_date}{/if*}</div>
+						<div class="help-block">{$quotes[ix].module} {tr}Ships from{/tr} {$quotes[ix].origin.countries_name} {*if $quotes[ix].origin.ship_date}{tr}on{/tr} {$shipDate|bit_long_date}{/if*}</div>
 					</div>
 				</div>
 				{/if}

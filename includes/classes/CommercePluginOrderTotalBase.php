@@ -34,15 +34,15 @@ abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
 		return 'order_total';
 	}
 
-	function process( $pPaymentParams = array() ) {
+	function process( $pPaymentParams, &$pSessionParams ) {
 		$this->mProcessingOutput = array();
 	}
 
-	public function credit_selection( $pOrder ) {}
+	public function credit_selection( $pOrder, &$pSessionParams ) {}
 	public function update_credit_account( $i ) {}
-	public function collect_posts( $pRequestParams ) {}
-	public function apply_credit() {}
-	public function getOrderDeduction( $pOrder ) {}
+	public function collect_posts( $pRequestParams, &$pSessionParams ) {}
+	public function apply_credit( &$pSessionParams ) {}
+	public function getOrderDeduction( $pOrder, &$pSessionParams ) {}
 
 	public function getOutput() {
 		return $this->mProcessingOutput;

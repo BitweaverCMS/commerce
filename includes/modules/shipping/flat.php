@@ -14,7 +14,6 @@ class flat extends CommercePluginShippingBase {
 
 	function __construct() {
 		parent::__construct();
-		$this->title = tra( 'Flat Rate' );
 		$this->description = tra( 'Fixed price shipping for orders of any size.' );
 	}
 

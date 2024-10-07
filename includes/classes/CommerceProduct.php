@@ -484,6 +484,7 @@ If a special exist * 10+9
 			if( $pAttributes ) {
 				// loop through passed in attributes and add addition cost to the price
 				foreach( $pAttributes as $optionId => $att ) {
+					$valueId = 0;
 					if( is_numeric( $att ) ) {
 						// cart has a simple list of $optionId=$valueId
 						$valueId = $att;
@@ -492,9 +493,9 @@ If a special exist * 10+9
 						$optionId = $att['products_options_id'];
 						$valueId = $att['products_options_values_id'];
 					}
-					$finalPrince = $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity );
+					$finalPrice = $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity );
 					$taxRate = zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) );
-					$ret += zen_add_tax( $finalPrince, $taxRate );
+					$ret += zen_add_tax( $finalPrice, $taxRate );
 
 					// $ret += zen_add_tax( $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity ), zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) ) );
 				}

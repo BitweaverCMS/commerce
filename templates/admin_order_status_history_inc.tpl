@@ -14,7 +14,7 @@
 	{/forminput}
 	<div id="additional-charge" style="display:none">
 		{forminput label="checkbox"}
-			<input type="checkbox" name="additional_charge" value="y" checked/>{booticon iname="fa-money"} {tr}Make Additional Charge{/tr}
+			<input type="checkbox" name="additional_charge" value="y" checked/>{booticon iname="fa-cash-register"} {tr}Make Additional Charge{/tr}
 		{/forminput}
 		{forminput id="charge-amount"}
 			{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol( $gBitOrder->getField('currency') )}

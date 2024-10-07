@@ -55,6 +55,7 @@ class usps extends CommercePluginShippingBase {
 		parent::__construct();
 		$this->title = tra( 'United States Postal Service' );
 		$this->description = tra( 'United States Postal Service<br /><br />You will need to have a <a href="https://www.usps.com/business/web-tools-apis/">USPS Web Tools User ID</a> to use this module<br /><br />USPS expects you to use pounds as weight measure for your products.' );
+		$this->booticon = 'fab fa-usps';
 
 		// check if all keys are in configuration table and correct version
 		if( $this->isEnabled() ) {

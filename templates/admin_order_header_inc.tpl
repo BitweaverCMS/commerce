@@ -10,6 +10,16 @@ function editAddress( pAddress ) {
 		}
 	})
 }
+function editPayment( pPayment ) {
+	jQuery.ajax({
+		data: 'edit_payment='+pPayment+'&oID='+{/literal}{$smarty.request.oID}{literal},
+		url: "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php{literal}",
+		timeout: 60000,
+		success: function(r) { 
+			$('#record-payment-block').html(r);
+		}
+	})
+}
 /* ]]> */</script>
 {/literal}
 
@@ -63,41 +73,37 @@ function editAddress( pAddress ) {
 <div class="row">
 	<div class="col-xs-12">
 		{if $order->info.amount_due}
-		<div class="alert alert-danger">{tr}Amount Due:{/tr} {$currencies->format($order->info.amount_due,true,$order->info.currency,$order->info.currency_value)}<span class="pull-right"><a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoices.php?oID={$smarty.request.oID}" class="btn btn-default btn-xs">{tr}Record Payment{/tr}</a></span></div>
+		<div class="alert alert-danger">{tr}Amount Due:{/tr} {$currencies->format($order->info.amount_due,true,$order->info.currency,$order->info.currency_value)}<div class="pull-right"><div class="btn btn-default btn-xs" onclick="editPayment('new');return false;">{tr}Record Payment{/tr}</div></div></div>
 		{/if}
+		<div id="record-payment-block" style="">
+		</div>
 <table class="table table-condensed">
 <tr>
-	<th>{tr}Payment{/tr}</th>
-	<th></th>
-	<th>{tr}Number{/tr}</th>
-	<th>{tr}Payment ID{/tr}</th>
-	<th>{tr}Amount{/tr}</th>
-	<th>{tr}IP{/tr}</th>
 	<th>{tr}Date{/tr}</th>
+	<th>{tr}IP{/tr}</th>
+	<th>{tr}Payment{/tr}</th>
+	<th>{tr}Number{/tr}</th>
+	<th>{tr}Amount{/tr}</th>
 </tr>
 {foreach from=$order->mPayments item=paymentHash}
 <tr>
-	<td>{$paymentHash.payment_module|replace:'_':' '|ucwords}</td>
-	<td>{if $paymentHash.payment_owner}{$paymentHash.payment_owner}{/if}{if $paymentHash.user_id!=$paymentHash.customers_id}{displayname hash=$paymentHash}{/if}</td>
-	<td>{if $paymentHash.payment_type}{$paymentHash.payment_type}: {/if}{if $paymentHash.payment_parent_ref_id}{$paymentHash.payment_parent_ref_id}{/if}{if $paymentHash.payment_number}<tt>{$paymentHash.payment_number}</tt>{/if}{if $paymentHash.payment_expires} <div class="inline-block">{tr}Expires{/tr}: <span class="date">{$paymentHash.payment_expires}</span></div>{/if}
-	</td>
-	<td>
-		{if empty( $paymentHash.payment_ref_id)}
-			<div class="inline-block alert alert-danger">{booticon iname="fa-triangle-exclamation"}{tr}This payment has no Transaction ID. Verify funds were collected, or if this is a duplicate order.{/tr}</div>
-		{else}
-		<div class="inline-block">{$paymentHash.payment_ref_id}</div>
-		{/if}
-	</td>
-	<td>{$currencies->format(1.0,true,$paymentHash.currency,$paymentHash.payment_amount)}</td>
-	<td>{$paymentHash.ip_address}</td>
 	<td><span class="date">{$paymentHash.payment_date}</span></td>
-</tr>
+	<td>{$paymentHash.ip_address}{if $paymentHash.user_id!=$paymentHash.customers_id} {displayname hash=$paymentHash}{/if}</td>
+	<td>{if $paymentHash.payment_owner}{$paymentHash.payment_owner} {$paymentHash.address_company}{/if}</td>
+	<td>{if $paymentHash.payment_type && $paymentHash.payment_type!=$paymentHash.payment_module}{$paymentHash.payment_module|replace:'_':' '|ucwords} {$paymentHash.payment_type}: {/if}{if $paymentHash.payment_parent_ref_id}{$paymentHash.payment_parent_ref_id}{/if}{if $paymentHash.payment_number}<tt>{$paymentHash.payment_number}</tt>{/if}{if $paymentHash.payment_expires} <div class="inline-block">{tr}Expires{/tr}: <tt>{$paymentHash.payment_expires}</tt></div>{/if}
+		{if empty( $paymentHash.payment_ref_id)}
+			{if $paymentHash.payment_type=='charge'}
+				<div class="inline-block alert alert-danger">{booticon iname="fa-triangle-exclamation"}{tr}This charge payment has no Transaction ID. Verify funds were collected, or if this is a duplicate order.{/tr}</div>
+			{/if}
+		{else}
+		Ref <tt>{$paymentHash.payment_ref_id}</tt>
+		{/if}
 {if $paymentHash.payment_message && $paymentHash.payment_message != 'Approved' && $paymentHash.payment_message != 'Processed'}
-<tr>
-	<td></td>
-	<td colspan="5">{$paymentHash.payment_message}</td>
-</tr>
+	<div>{$paymentHash.payment_message}</div>
 {/if}
+	</td>
+	<td class="text-right">{$currencies->format(1.0,true,$paymentHash.currency,$paymentHash.payment_amount)}</td>
+</tr>
 {/foreach}
 </table>
 	</div>

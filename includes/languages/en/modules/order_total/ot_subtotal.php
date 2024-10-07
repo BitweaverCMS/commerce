@@ -20,6 +20,6 @@
 // $Id$
 //
 
-  define('MODULE_ORDER_TOTAL_SUBTOTAL_TITLE', tra( 'Sub-Total' ) );
+//  define('MODULE_ORDER_TOTAL_SUBTOTAL_TITLE', tra( 'Sub-Total' ) );
   define('MODULE_ORDER_TOTAL_SUBTOTAL_DESCRIPTION', tra( 'Order Sub-Total' ) );
 ?>

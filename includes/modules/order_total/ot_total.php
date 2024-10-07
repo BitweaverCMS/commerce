@@ -14,12 +14,11 @@ class ot_total extends CommercePluginOrderTotalBase {
 	
 	function __construct( $pOrder=NULL ) {
 		parent::__construct( $pOrder );
-		$this->title = MODULE_ORDER_TOTAL_TOTAL_TITLE;
 		$this->description = MODULE_ORDER_TOTAL_TOTAL_DESCRIPTION;
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $currencies;
 		$total = $currencies->roundValue( $this->mOrder->info['total'] - $this->mOrder->getDeductionTotal() );
 		$this->mProcessingOutput = array( 'code' => $this->code,

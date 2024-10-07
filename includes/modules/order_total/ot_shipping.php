@@ -16,7 +16,6 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 		parent::__construct( $pOrder );
 		$this->code = 'ot_shipping';
 
-		$this->title = MODULE_ORDER_TOTAL_SHIPPING_TITLE;
 		$this->description = MODULE_ORDER_TOTAL_SHIPPING_DESCRIPTION;
 		$this->sort_order = MODULE_ORDER_TOTAL_SHIPPING_SORT_ORDER;
 	}
@@ -25,8 +24,8 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 		return 'MODULE_ORDER_TOTAL_SHIPPING_STATUS';
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $currencies;
 
 		if (MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') {
@@ -97,27 +96,38 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 		}
 	}
 
-	public function keys() {
-		return array_merge(
-					array_keys( $this->config() ),
-					array('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER', 'MODULE_ORDER_TOTAL_SHIPPING_DESTINATION')
-				);
-	}
-
-	function install() {
-		parent::install();
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Allow Free Shipping', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING', 'false', 'Do you want to allow free shipping?', '6', '3', 'zen_cfg_select_option(array(''true'', ''false''), ', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `use_function`, `date_added`) values ('Free Shipping For Orders Over', 'MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER', '50', 'Provide free shipping for orders over the set amount.', '6', '4', 'currencies->format', now())");
-		$this->mDb->Execute("insert into " . TABLE_CONFIGURATION . " (`configuration_title`, `configuration_key`, `configuration_value`, `configuration_description`, `configuration_group_id`, `sort_order`, `set_function`, `date_added`) values ('Provide Free Shipping For Orders Made', 'MODULE_ORDER_TOTAL_SHIPPING_DESTINATION', 'national', 'Provide free shipping for orders sent to the set destination.', '6', '5', 'zen_cfg_select_option(array(\'national\', \'international\', \'both\'), ', now())");
-	}
-
+	// {{{	++++++++ config ++++++++
 	/*
 	* rows for com_configuration table as associative array of column => value
 	*/
 	protected function config() {
-		$ret = parent::config();
+		$i = 20;
+		return array_merge( parent::config(), array( 
+			$this->getModuleKeyTrunk().'_FREE_SHIPPING' => array(
+				'configuration_title' => 'Allow Free Shipping',
+				'configuration_description' => 'Do you want to allow free shipping?',
+				'configuration_value' => 'false',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
+			),
+			$this->getModuleKeyTrunk().'_FREE_SHIPPING_OVER' => array(
+				'configuration_title' => 'Free Shipping For Orders Over',
+				'configuration_description' => 'Provide free shipping for orders over the set amount',
+				'configuration_value' => '50',
+				'sort_order' => $i++,
+				'use_function' => 'currencies->format',
+			),
+			$this->getModuleKeyTrunk().'_DESTINATION' => array(
+				'configuration_title' => 'Free Shipping For Orders To Destination',
+				'configuration_description' => 'Provide free shipping for orders over the set amount.',
+				'configuration_value' => 'national',
+				'sort_order' => $i++,
+				'set_function' => "zen_cfg_select_option(array(\'national\', \'international\', \'both\'), ",
+			),
+		) );
 		// set some default values
 		$ret[$this->getModuleKeyTrunk().'_SORT_ORDER']['configuration_value'] = '200';
 		return $ret;
 	}
+	// }}} ++++ config ++++
 }

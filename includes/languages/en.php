@@ -334,7 +334,7 @@ define('VOUCHER_BALANCE', TEXT_GV_NAME . ' Balance ');
 define('BOX_HEADING_GIFT_VOUCHER', TEXT_GV_NAME . ' Account');
 define('GV_FAQ', TEXT_GV_NAME . ' FAQ');
 define('ERROR_REDEEMED_AMOUNT', 'Congratulations, you have redeemed ');
-define('ERROR_NO_REDEEM_CODE', 'You did not enter a ' . TEXT_GV_REDEEM . '.');
+define('ERROR_NO_REDEEM_CODE', 'Invalid ' . TEXT_GV_REDEEM . ':');
 define('ERROR_NO_INVALID_REDEEM_GV', 'Invalid ' . TEXT_GV_NAME . ' ' . TEXT_GV_REDEEM);
 define('TABLE_HEADING_CREDIT', 'Credits Available');
 define('GV_HAS_VOUCHERA', 'You have funds in your ' . TEXT_GV_NAME . ' Account. If you want <br />

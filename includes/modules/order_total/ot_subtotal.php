@@ -16,7 +16,7 @@ class ot_subtotal extends CommercePluginOrderTotalBase {
 		parent::__construct( $pOrder );
 		$this->code = 'ot_subtotal';
 
-		$this->title = MODULE_ORDER_TOTAL_SUBTOTAL_TITLE;
+		$this->title = $this->getTitle( 'Sub-Total' );
 		$this->description = MODULE_ORDER_TOTAL_SUBTOTAL_DESCRIPTION;
 		$this->sort_order = MODULE_ORDER_TOTAL_SUBTOTAL_SORT_ORDER;
 	}
@@ -25,8 +25,8 @@ class ot_subtotal extends CommercePluginOrderTotalBase {
 		return 'MODULE_ORDER_TOTAL_SUBTOTAL_STATUS';
 	}
 
-	function process( $pSessionParams = array() ) {
-		parent::process( $pSessionParams );
+	function process( $pPaymentParams, &$pSessionParams ) {
+		parent::process( $pPaymentParams, $pSessionParams );
 		global $currencies;
 
 		$this->mProcessingOutput = array( 'code' => $this->code,
