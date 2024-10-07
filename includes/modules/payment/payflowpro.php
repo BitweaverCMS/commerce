@@ -354,6 +354,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 				if( isset( $responseHash['RESULT'] ) ) {
 					$this->result = (int)$responseHash['RESULT'];
+					$logHash['payment_mode'] = 'charge';
 					$logHash['payment_result'] = $this->result;
 					$logHash['payment_message'] = $responseHash['RESPMSG'];
 					if( BitBase::getParameter( $responseHash, 'DUPLICATE' ) == 2 ) {

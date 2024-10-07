@@ -1,5 +1,6 @@
 <form method="post" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID}">
 <input type="hidden" name="action" value="save_payment">
+<input type="hidden" name="payment_module" value="manual">
 {fieldset legend="Edit Payment"}
 <div class="row">
 	<div class="col-sm-6 col-xs-12">
@@ -80,6 +81,14 @@
 		</div>
 	</div>
 </div>
+		<div class="form-group">
+			{formfeedback error=$errors.payment_ref_id}
+			{formlabel label="Payment Reference ID" for=""}
+			{forminput}
+				<input class="form-control" type="text" maxlength="64" name="payment_number" value="{$payment.payment_ref_id|default:$smarty.request.payment_ref_id|escape:"htmlall"}">
+				{formhelp note="Transaction ID used with Card transactions; leave empty unknown"}
+			{/forminput}
+		</div>
 		<div class="form-group">
 			{formfeedback error=$errors.payment_message}
 			{formlabel label="Order Status" for=""}

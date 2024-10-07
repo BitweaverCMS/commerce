@@ -310,7 +310,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 		if( self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
 
 			$logHash = $this->logTransactionPrep( $pOrder, $pPaymentParams );
-			$logHash['payment_mode'] = 'USA';
+			$logHash['payment_mode'] = 'charge';
 
 			try {
 				// making a sale

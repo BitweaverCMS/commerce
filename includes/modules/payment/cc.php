@@ -111,6 +111,7 @@ class cc extends CommercePluginPaymentCardBase {
 			$logHash['payment_result'] = '1';
 			$logHash['is_success'] = 'y';
 			$logHash['payment_status'] = 'pending';
+			$logHash['payment_mode'] = 'charge';
 			$pOrder->info['payment_expires'] = $pPaymentParams['payment_expires'];
 			$pOrder->info['payment_type'] = $pPaymentParams['payment_type'];
 			$pOrder->info['payment_owner'] = $pPaymentParams['payment_owner'];
