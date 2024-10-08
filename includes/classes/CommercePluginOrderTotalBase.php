@@ -30,6 +30,16 @@ abstract class CommercePluginOrderTotalBase extends CommercePluginBase {
 		return strtoupper( str_replace( 'ot_', '', $this->code ) );
 	}
 
+	protected function getTitle( $pDefault = '' ) {
+		if( !empty( $pDefault ) ) {
+			$ret = $pDefault;
+		} elseif( $ret = $this->getModuleConfigValue( '_TITLE' ) ) {
+		} else {
+			$ret = ucwords( str_replace( '_', ' ', str_replace( 'ot_', ' ', get_class( $this ) ) ) );
+		}
+		return tra( $ret );
+	}
+
 	protected function getModuleType() {
 		return 'order_total';
 	}

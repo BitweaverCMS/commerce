@@ -293,7 +293,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 				'configuration_description' => 'Re-Calculate Tax',
 				'configuration_value' => 'None',
 				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array(''None'', ''Standard'', ''Credit Note''), ",
+				'set_function' => "zen_cfg_select_option(array('None', 'Standard', 'Credit Note'), ",
 			),
 			$this->getModuleKeyTrunk().'_TAX_CLASS' => array(
 				'configuration_title' => 'Tax Class',
@@ -308,7 +308,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 				'configuration_description' => 'Add tax to purchased Gift Voucher when crediting to Account',
 				'configuration_value' => 'false',
 				'sort_order' => $i++,
-				'set_function' => "zen_cfg_select_option(array(''true'', ''false''), ",
+				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
 			),
 			$this->getModuleKeyTrunk().'_ORDER_STATUS_ID' => array(
 				'configuration_title' => 'Set Order Status',
