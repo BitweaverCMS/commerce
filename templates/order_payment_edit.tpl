@@ -4,9 +4,31 @@
 {fieldset legend="Edit Payment"}
 <div class="row">
 	<div class="col-sm-6 col-xs-12">
+
+<div class="row">
+	<div class="col-sm-6">
+		<div class="form-group">
+			{formfeedback error=$errors.payment_date}
+			{formlabel label="Date" for=""}<acronym title="{tr}Required{/tr}">*</acronym>
+			{forminput}
+				<div class="input-group date" id="payment-date">
+					<input type="text" class="form-control" name="payment_date" value="{$payment.payment_date|default:time|date_format:'Y-m-d'}"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+				</div>
+				{formhelp note="Date payment was received."}
+<script>
+$('.input-group.date').datepicker({
+    format: "yyyy-mm-dd",
+    clearBtn: true,
+    todayHighlight: true
+});
+</script>
+			{/forminput}
+		</div>
+	</div>
+	<div class="col-sm-6">
 		<div class="form-group">
 			{formfeedback error=$errors.name}
-			{formlabel label="Payment Success" for=""}
+			{formlabel label="Success" for=""}
 			{forminput}
 				<input type="hidden" name="payment_result" value="0">
 				<select name="is_success" class="form-control">
@@ -15,6 +37,8 @@
 				</select>
 			{/forminput}
 		</div>
+	</div>
+</div>
 		<div class="form-group">
 			{formlabel label="Payment Owner" for=""}<acronym title="{tr}Required{/tr}">*</acronym>
 			{forminput}
@@ -85,7 +109,7 @@
 			{formfeedback error=$errors.payment_ref_id}
 			{formlabel label="Payment Reference ID" for=""}
 			{forminput}
-				<input class="form-control" type="text" maxlength="64" name="payment_number" value="{$payment.payment_ref_id|default:$smarty.request.payment_ref_id|escape:"htmlall"}">
+				<input class="form-control" type="text" maxlength="64" name="payment_ref_id" value="{$payment.payment_ref_id|default:$smarty.request.payment_ref_id|escape:"htmlall"}">
 				{formhelp note="Transaction ID used with Card transactions; leave empty unknown"}
 			{/forminput}
 		</div>

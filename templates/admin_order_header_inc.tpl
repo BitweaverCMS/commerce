@@ -87,7 +87,7 @@ function editPayment( pPayment ) {
 </tr>
 {foreach from=$order->mPayments item=paymentHash}
 <tr>
-	<td><span class="date">{$paymentHash.payment_date}</span></td>
+	<td><span class="date">{$paymentHash.payment_date|date_format:'Y-m-d H:i'}</span></td>
 	<td>{$paymentHash.ip_address}{if $paymentHash.user_id!=$paymentHash.customers_id} {displayname hash=$paymentHash}{/if}</td>
 	<td>{if $paymentHash.payment_owner}{$paymentHash.payment_owner} {$paymentHash.address_company}{/if}</td>
 	<td>{if $paymentHash.payment_type && $paymentHash.payment_type!=$paymentHash.payment_module}{$paymentHash.payment_module|replace:'_':' '|ucwords} {$paymentHash.payment_type}: {/if}{if $paymentHash.payment_parent_ref_id}{$paymentHash.payment_parent_ref_id}{/if}{if $paymentHash.payment_number}<tt>{$paymentHash.payment_number}</tt>{/if}{if $paymentHash.payment_expires} <div class="inline-block">{tr}Expires{/tr}: <tt>{$paymentHash.payment_expires}</tt></div>{/if}
