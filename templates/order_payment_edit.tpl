@@ -90,7 +90,7 @@ $('.input-group.date').datepicker({
 			{formlabel label="Payment Number" for=""}<acronym title="{tr}Required{/tr}">*</acronym>
 			{forminput}
 				<input class="form-control" type="text" maxlength="64" name="payment_number" value="{$payment.payment_number|default:$smarty.request.payment_number|escape:"htmlall"}" required>
-				{formhelp note="Credit Card or PO Number"}
+				{formhelp note="PO, Check, or Credit Card Number"}
 			{/forminput}
 		</div>
 	</div>
