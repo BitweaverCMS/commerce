@@ -187,7 +187,7 @@ class fedexrest extends CommercePluginShippingBase {
 
 		$response = curl_exec($ch);
 		if (curl_errno($ch) !== 0) {
-			bit_error_email( 'FedEx Error from cURL: ' . sprintf('Error [%d]: %s', curl_errno($ch), curl_error($ch)) );
+			bit_error_email( 'FedEx CURL Error: ' . sprintf('Error [%d]: %s', curl_errno($ch), curl_error($ch)), $input, $curl_options );
 			curl_close($ch);
 			return false;  
 		}
