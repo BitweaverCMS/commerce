@@ -19,7 +19,7 @@
 					<input type="hidden" name="business" value="{$commission.commissions_paypal_address}" />
 					<input type="hidden" name="item_name" value="{$commission.commission_type|ucwords} Payments Through {$commission.period_end_date} ( {$commission.user_id} )" />
 					<input type="hidden" name="item_number" value="{$commission.user_id}" />
-					<input type="hidden" name="amount" value="{$commission.commission_sum}" />
+					<input type="hidden" name="amount" value="{$commission.commission_sum|round:2}" />
 					<input type="hidden" name="no_shipping" value="1" />
 					<input type="hidden" name="no_note" value="1" />
 					<input type="hidden" name="currency_code" value="USD" />
