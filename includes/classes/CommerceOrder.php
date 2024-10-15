@@ -1129,7 +1129,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 				if( $paymentModule = $this->getPaymentModule() ) {
 //					$pPaymentParams['payment_ref_id'] = $this->info['payment_ref_id'];
 					// Mush together request and Session data and send it for payment processing
-					$paymentParams = array_merge( $pRequestParams, $pSessionParams );
+					$paymentParams = array_merge( $pPaymentParams, $pSessionParams );
 					if( $paymentModule->processPayment( $this, $paymentParams ) ) {
 						$statusMsg .= "\n\n".tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
 						$adjustmentText .= ' - '.tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
