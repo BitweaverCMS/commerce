@@ -137,6 +137,11 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 
 		if( !empty( $_REQUEST['action'] ) ) {
 		switch( $_REQUEST['action'] ) {
+			case 'process':
+				if( $order->getField( 'orders_status_id' ) == $gCommerceSystem->getConfig( 'DEFAULT_ORDERS_STATUS_ID' ) ) {
+					$order->updateStatus( array( 'status' => $gCommerceSystem->getConfig( 'PROCESSING_ORDERS_STATUS_ID', $gCommerceSystem->getConfig( 'DEFAULT_ORDERS_STATUS_ID' ) ) ) );
+				}
+				break;
 			case 'save_new_option':
 				$query = "SELECT 
 					cpo.`products_options_name` AS products_options,

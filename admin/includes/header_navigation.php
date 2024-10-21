@@ -26,7 +26,6 @@ if( $rs = $gBitDb->query( "SELECT `configuration_group_id` as `cg_id`, `configur
 				<li><a href="/kernel/admin/index.php?page=layout&amp;module_package=bitcommerce">Layout Boxes Controller</a></li>
 				<li><a href="layout_controller.php?action=reset_defaults">RESET LAYOUT</a></li>
 				<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>banner_manager.php">Banner Manager</a></li>
-				<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>store_manager.php">Store Manager</a></li>
 				<li><a href="<?php echo DIR_WS_HTTPS_ADMIN;?>define_pages_editor.php">Define Pages Editor</a></li>
 			</ul>
 		</li>

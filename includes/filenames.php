@@ -97,7 +97,6 @@ define('FILENAME_STATS_CUSTOMERS', 'stats_customers');
 define('FILENAME_STATS_CUSTOMERS_REFERRALS', 'stats_customers_referrals');
 define('FILENAME_STATS_PRODUCTS_PURCHASED', 'stats_products_purchased');
 define('FILENAME_STATS_PRODUCTS_VIEWED', 'stats_products_viewed');
-define('FILENAME_STORE_MANAGER', 'store_manager');
 define('FILENAME_STATS_PRODUCTS_LOWSTOCK', 'stats_products_lowstock');
 define('FILENAME_SHIPPING', 'shippinginfo');
 define('FILENAME_SUPPLIERS', 'suppliers');  
