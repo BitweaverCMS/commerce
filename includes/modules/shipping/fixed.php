@@ -10,7 +10,7 @@
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingRateTableBase.php' );
 
-class fixed extends CommercePluginShippingBase {
+class fixed extends CommercePluginShippingRateTableBase {
 
 	function __construct() {
 		parent::__construct();

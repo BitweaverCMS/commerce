@@ -12,7 +12,7 @@ require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePluginShippingBase.php' );
 
 class CommercePluginShippingRateTableBase extends CommercePluginShippingBase {
 
-	function quote( $pShipHash ) {
+	public function quote( $pShipHash ) {
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 			if( $this->getModuleConfigValue( '_MODE' ) == 'price' ) {
 				$shipMetric = BitBase::getParameter( $pShipHash, 'shipping_value', 0);
