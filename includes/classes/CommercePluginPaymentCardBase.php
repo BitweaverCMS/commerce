@@ -19,13 +19,11 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		$this->title = 'Credit Card';
 
 		if( $this->isEnabled() ) {
-			if( $statusId = $this->getModuleConfigValue( '_ORDER_STATUS_ID' ) ) {
-				$this->order_status = $statusId;
-			}
-
+/*
 			if( $paymentZoneId = $this->getModuleConfigValue( '_ZONE' ) ) {
 				$this->enabled = ($paymentZoneId == $order->billing['zone_id']);
 			}
+*/
 		}
 	}
 

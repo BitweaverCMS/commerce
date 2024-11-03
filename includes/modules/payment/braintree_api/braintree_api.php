@@ -67,10 +67,6 @@ class braintree_api extends CommercePluginPaymentCardBase {
 			$this->sort_order = $this->getModuleConfigValue( '_SORT_ORDER' );
 			$this->order_pending_status = $this->getModuleConfigValue( '_ORDER_PENDING_STATUS_ID' );
 
-			if ((int) $this->getModuleConfigValue( '_ORDER_STATUS_ID' ) > 0) {
-				$this->order_status = $this->getModuleConfigValue( '_ORDER_STATUS_ID' );
-			}
-
 			$this->zone = (int) $this->getModuleConfigValue( '_ZONE' );
 
 			// debug setup

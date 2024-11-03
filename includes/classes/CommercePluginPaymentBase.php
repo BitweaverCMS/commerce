@@ -137,10 +137,13 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		return in_array( $pCurrency, $gatewayCurrencies ) ;
 	}
 
+	public function getProcessedOrdersStatus() {
+		return $this->getModuleConfigValue( '_ORDERS_STATUS_ID', DEFAULT_ORDERS_STATUS_ID );
+	}
+
 	public function verifyPayment( $pOrder, &$pPaymentParams ) {
 
 		global $gBitUser, $currencies;
-
 		$pPaymentParams['payment_email'] = BitBase::getParameter( $pOrder->customer, 'email_address', $gBitUser->getField('email') );
 		$pPaymentParams['payment_user_id'] = BitBase::getParameter( $pOrder->customer, 'user_id', $gBitUser->getField('user_id') );
 
@@ -257,7 +260,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 	protected function config() {
 		$i = 10;
 		return array_merge( parent::config(), array( 
-			$this->getModuleKeyTrunk().'_ORDER_STATUS_ID' => array(
+			$this->getModuleKeyTrunk().'_ORDERS_STATUS_ID' => array(
 				'configuration_title' => 'Initial Order Status',
 				'configuration_description' => 'Orders made with this payment module will be set to the status.',
 				'sort_order' => $i++,

@@ -75,8 +75,9 @@ function editPayment( pPayment ) {
 		{if $order->info.amount_due}
 		<div class="alert alert-danger">{tr}Amount Due:{/tr} {$currencies->format($order->info.amount_due,true,$order->info.currency,$order->info.currency_value)}<div class="pull-right"><div class="btn btn-default btn-xs" onclick="editPayment('new');return false;">{tr}Record Payment{/tr}</div></div></div>
 		{/if}
-		<div id="record-payment-block" style="">
-		</div>
+		<form method="post" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID}">
+			<div id="record-payment-block" style=""></div>
+		</form>
 <table class="table table-condensed">
 <tr>
 	<th>{tr}Date{/tr}</th>

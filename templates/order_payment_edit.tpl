@@ -1,4 +1,3 @@
-<form method="post" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID}">
 <input type="hidden" name="action" value="save_payment">
 <input type="hidden" name="payment_module" value="manual">
 {fieldset legend="Edit Payment"}
@@ -58,10 +57,8 @@ $('.input-group.date').datepicker({
 			{forminput id="charge-amount"}
 				{assign var=leftSymbol value=$gCommerceCurrencies->getLeftSymbol( $order->getField('currency') )}
 				{assign var=rightSymbol value=$gCommerceCurrencies->getRightSymbol( $order->getField('currency') )}
-				{if $order->getField('currency') && $order->getField('currency') != $smarty.const.DEFAULT_CURRENCY}
-				<input type="hidden" name="charge_currency" value="{$order->getField('currency')}"/>
-				<input type="hidden" name="currency_value" value="{$order->getField('currency_value')}"/>
-				{/if}
+				<input type="hidden" name="payment_currency" value="{$order->getField('currency', $smarty.const.DEFAULT_CURRENCY )}"/>
+				<input type="hidden" name="exchange_rate" value="{$order->getField('currency_value', 1.0)}"/>
 				<div class="input-group">
 					{if $leftSymbol}<span class="input-group-addon">{$leftSymbol}</span>{/if}
 					<input class="form-control input-sm text-right" type="text" name="payment_amount" value="{$payment.payment_amount|default:$smarty.request.payment_amount|default:$order->getField('amount_due')|escape:"htmlall"}" />
@@ -117,7 +114,7 @@ $('.input-group.date').datepicker({
 			{formfeedback error=$errors.payment_message}
 			{formlabel label="Order Status" for=""}
 			{forminput}
-				{html_options class="form-control" name='status' options=$orderStatuses selected=$gBitOrder->getStatus()}
+				{html_options class="form-control" name='status' options=$orderStatuses selected=$order->getStatus()}
 				{formhelp note="Change order status"}
 			{/forminput}
 			{forminput label="checkbox"}
@@ -161,7 +158,11 @@ $('.input-group.date').datepicker({
 			{formlabel label="State/Province" for=""}
 			{formfeedback error=$errors.state}<acronym title="{tr}Required{/tr}">*</acronym>
 			{forminput}
+				{if $statePullDown}
 				{$statePullDown}
+				{else}
+				<input class="form-control" type="text" name="state" value="">
+				{/if}	
 			{/forminput}
 		</div>
 	</div>
@@ -194,4 +195,3 @@ $('.input-group.date').datepicker({
 </div>
 <input type="submit" name="save_payment" value="{tr}Save{/tr}" class="btn btn-primary"> <button class="btn btn-default" onclick="this.form.innerHTML='';return false;">{tr}Cancel{/tr}</button>
 {/fieldset}
-</form>

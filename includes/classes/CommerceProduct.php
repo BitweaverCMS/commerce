@@ -493,11 +493,10 @@ If a special exist * 10+9
 						$optionId = $att['products_options_id'];
 						$valueId = $att['products_options_values_id'];
 					}
-					$finalPrice = $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity );
+
+					$finalPrice = $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity, $att );
 					$taxRate = zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) );
 					$ret += zen_add_tax( $finalPrice, $taxRate );
-
-					// $ret += zen_add_tax( $this->getAttributesPriceFinalRecurring( $valueId, $pQuantity ), zen_get_tax_rate( $this->getField( 'products_tax_class_id' ) ) );
 				}
 			}
 
@@ -676,7 +675,7 @@ If a special exist * 10+9
 
 	////
 	// attributes final price including any bulk discount, but not include one-time charges
-	function getAttributesPriceFinalRecurring( $pOptionsValuesId, $pQuantity = 1 ) {
+	protected function getAttributesPriceFinalRecurring( $pOptionsValuesId, $pQuantity = 1, $pAttributeHash = array() ) {
 		$attributes_price_final = 0;
 		if( $optionValue = $this->getOptionValue( NULL, $pOptionsValuesId ) ) {
 			if( isset( $optionValue['override_price'] ) ) {
@@ -1844,7 +1843,7 @@ If a special exist * 10+9
 							$new_options_values_price = 0;
 						} else {
 							// collect price information if it exists
-							$new_value_price = $this->getAttributesPriceFinalRecurring( $vals["products_options_values_id"] );
+							$new_value_price = $this->getAttributesPriceFinalRecurring( $vals["products_options_values_id"], 1, $vals );
 
 							$vals['value_price'] = $new_value_price;
 
@@ -2609,6 +2608,10 @@ Skip deleting of images for now
 
 	public function displayOrderData( $pOrdersProductHash ) {
 		// stub function does nothing in base class
+	}
+
+	public function productPurchased( &$pOrder, $pCartItemHash ) {
+eb( $pCartItemHash );
 	}
 
 	public function isVirtual( $pOptionsHash=NULL ) {

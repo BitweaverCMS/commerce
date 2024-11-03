@@ -27,21 +27,11 @@ class authorizenet extends CommercePluginPaymentCardBase {
 
 // class constructor
 	function __construct() {
-		global $order;
-
 		parent::__construct();
 
 		$this->code = 'authorizenet';
 		$this->adminTitle = tra( 'Authorize.net' );
 		$this->description = tra( 'Credit card processing with Authorize.net payment processor.' );
-		if( $this->isEnabled() ) {
-			if ((int)MODULE_PAYMENT_AUTHORIZENET_ORDER_STATUS_ID > 0) {
-				$this->order_status = MODULE_PAYMENT_AUTHORIZENET_ORDER_STATUS_ID;
-			}
-
-			if (is_object($order)) $this->update_status();
-
-		}
 		$this->form_action_url = 'https://secure.authorize.net/gateway/transact.dll';
 	}
 

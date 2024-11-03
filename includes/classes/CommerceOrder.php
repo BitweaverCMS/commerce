@@ -751,8 +751,7 @@ This is all done in orderFromCart called below
 			}
 		}
 
-
-		$this->info = array('orders_status_id' => DEFAULT_ORDERS_STATUS_ID,
+		$this->info = array('orders_status_id' => DEFAULT_ORDERS_STATUS_ID, // may be adjusted below
 							'currency' => !empty( $pSessionHash['currency'] ) ? $pSessionHash['currency'] : NULL,
 							'currency_value' => !empty( $pSessionHash['currency'] ) ? $currencies->currencies[$pSessionHash['currency']]['currency_value'] : NULL,
 							'payment_method' => '',
@@ -775,7 +774,7 @@ This is all done in orderFromCart called below
 
 		if ($this->info['total'] == 0) {
 			if (DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID == 0) {
-				$this->info['orders_status_id'] = DEFAULT_ORDERS_STATUS_ID;
+				$this->info['orders_status_id'] =  DEFAULT_ORDERS_STATUS_ID;
 			} else {
 				$this->info['orders_status_id'] = DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID;
 			}
@@ -784,9 +783,7 @@ This is all done in orderFromCart called below
 		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pSessionHash, 'payment_method' ) ) ) {
 			$this->info['payment_method'] = $paymentModule->title;
 			$this->info['payment_module_code'] = $paymentModule->code;
-			if( !empty( $paymentModule->orders_status ) && is_numeric( $paymentModule->orders_status ) && $paymentModule->orders_status > 0 ) {
-				$this->info['orders_status_id'] = $paymentModule->orders_status;
-			}
+			$this->info['orders_status_id'] = $paymentModule->getProcessedOrdersStatus();
 		}
 
 		if( $defaultAddress = $gBitCustomer->getAddress( $gBitCustomer->getDefaultAddressId() ) ) {
@@ -873,8 +870,8 @@ This is all done in orderFromCart called below
 					// Determine if attribute is a text attribute and change products array if it is.
 if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name'] ) ) { eb( 'EMTPY', $attributes,  $this->contents[$cartItemKey]['attributes']  ); }
 					$attrValue = $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name']; 
-					if( !empty( $this->contents[$cartItemKey]['attributes_values'][$optionKey]['products_options_value_text'] ) ) {
-						$attrValue .= ' <div class="alert alert-info">'. $this->contents[$cartItemKey]['attributes_values'][$optionKey] . '</div>';
+					if( !empty( $valueHash['products_options_values_text'] ) ) {
+						$this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_text'] = $valueHash['products_options_values_text'];
 					}
 					$this->contents[$cartItemKey]['attributes'][$subindex]['value'] = $attrValue;
 					$subindex++;
@@ -1107,9 +1104,15 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 							'customer_notified' => $customer_notification,
 							'comments' => $this->info['comments'] );
 		$this->mDb->associateInsert(TABLE_ORDERS_STATUS_HISTORY, $sqlParams );
-		$this->mDb->CompleteTrans();
 
 		$this->createAddProducts( $this->mOrdersId );
+
+		foreach( array_keys( $this->contents ) as $cartItemKey ) {
+			if( $addProduct = CommerceProduct::getCommerceObject( array( 'products_id' => $sql_data_array['products_id'] ) ) ) {
+				$addProduct->productPurchased( $this, $this->contents[$cartItemKey] );
+			}
+		}
+		$this->mDb->CompleteTrans();
 
 		return( $this->mOrdersId );
 	}
@@ -1234,6 +1237,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 								'product_is_free' => $this->contents[$cartItemKey]['product_is_free'],
 								'products_discount_type' => $this->contents[$cartItemKey]['products_discount_type'],
 								'products_discount_type_from' => $this->contents[$cartItemKey]['products_discount_type_from']);
+
 			$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS, $sql_data_array);
 			$this->contents[$cartItemKey]['orders_products_id'] = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
 
@@ -1246,6 +1250,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 			//------insert customer choosen option to order--------
 			$attributes_exist = '0';
 			$this->products_ordered_attributes = '';
+
 			if( !empty($this->contents[$cartItemKey]['attributes']) ) {
 				$attributes_exist = '1';
 				foreach( $this->contents[$cartItemKey]['attributes'] as $j=>$attrHash ) {

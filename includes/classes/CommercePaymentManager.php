@@ -11,7 +11,7 @@
  *
  */
 
-class CommercePaymentManager {
+class CommercePaymentManager extends BitSingleton {
 	private $selected_module;
 	private $mPaymentObjects = array();
 
@@ -160,6 +160,7 @@ class CommercePaymentManager {
 		$gBitProduct->invokeServices( 'commerce_pre_purchase_function', $pOrder );
 		if( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
 			if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $pOrder, $pPaymentParams ) ) {
+				$pPaymentParams['initial_orders_status_id'] = $this->mPaymentObjects[$this->selected_module]->getProcessedOrdersStatus();
 				if( isset( $_SESSION['orders_id'] ) ) {
 					unset( $_SESSION['orders_id'] );
 				}

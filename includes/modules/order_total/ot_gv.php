@@ -90,8 +90,8 @@ class ot_gv extends CommercePluginOrderTotalBase {
 			}
 
 			$od_amount = $creditAmount + $tod_amount;
-			if ($od_amount >= $this->mOrder->getField( 'total' ) && defined( 'MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID' ) && MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID != 0) {
-				 $this->mOrder->info['order_status'] = MODULE_ORDER_TOTAL_GV_ORDER_STATUS_ID;
+			if ($od_amount >= $this->mOrder->getField( 'total' ) && defined( 'MODULE_ORDER_TOTAL_GV_ORDERS_STATUS_ID' ) && MODULE_ORDER_TOTAL_GV_ORDERS_STATUS_ID != 0) {
+				 $this->mOrder->info['order_status'] = MODULE_ORDER_TOTAL_GV_ORDERS_STATUS_ID;
 			}
 		}
 
@@ -310,7 +310,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 				'sort_order' => $i++,
 				'set_function' => "zen_cfg_select_option(array('true', 'false'), ",
 			),
-			$this->getModuleKeyTrunk().'_ORDER_STATUS_ID' => array(
+			$this->getModuleKeyTrunk().'_ORDERS_STATUS_ID' => array(
 				'configuration_title' => 'Set Order Status',
 				'configuration_description' => 'Set the status of orders made where GV covers full payment',
 				'configuration_value' => '0',

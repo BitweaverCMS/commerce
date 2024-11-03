@@ -109,7 +109,7 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 			} elseif( !empty( $_REQUEST['address_type'] ) ) {
 				$gBitSmarty->display( 'bitpackage:bitcommerce/order_address_edit.tpl' );
 			} else {
-					print "<span class='alert alert-danger'>Empty Option</span>";
+				print "<span class='alert alert-danger'>Empty Option</span>";
 			}
 		}
 

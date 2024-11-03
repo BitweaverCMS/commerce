@@ -152,7 +152,7 @@ function amazon_process_order( $pAmazonOrderId ) {
 					require_once(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 					$order = new order();
 
-					$order->info = array('order_status' => DEFAULT_ORDERS_STATUS_ID,
+					$order->info = array('order_status' => $this->getModuleConfigValue( '_ORDERS_STATUS_ID', DEFAULT_ORDERS_STATUS_ID ),
 										'subtotal' => 0,
 										'tax' => 0,
 										'total' => 0,
@@ -308,7 +308,7 @@ function amazon_process_order( $pAmazonOrderId ) {
 					if( $ordersId = $order->create( $order_totals, 2 ) ) {
 						$order->create_add_products( $ordersId );
 						$ret = $ordersId;
-						$order->updateStatus( array( 'status' => MODULE_PAYMENT_AMAZONMWS_INITIAL_ORDER_STATUS_ID ) );
+						$order->updateStatus( array( 'status' => MODULE_PAYMENT_AMAZONMWS_ORDER_STATUS_ID ) );
 					}
 				}
 				chdir( $oldCwd );

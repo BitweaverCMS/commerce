@@ -32,7 +32,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 	}
 
 	public function getFinalStatus() {
-		return $this->getModuleConfigValue( '_FINAL_ORDER_STATUS_ID' );
+		return $this->getModuleConfigValue( '_FINAL_ORDERS_STATUS_ID' );
 	}
 
 	protected function getOrignCountryCode() {
