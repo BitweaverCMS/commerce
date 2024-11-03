@@ -42,7 +42,13 @@
 				<div class="col-md-10 col-sm-9 col-xs-12">
 					<ul>
 					{foreach $orderItem.attributes item=orderItemAttribute}
-						<li><em>{$orderItemAttribute.products_options_name|escape}:</em> {$orderItemAttribute.value}</li>
+						<li>
+							{$orderItemAttribute.products_options_name}: {if $orderItemAttribute.value}{$orderItemAttribute.value}{/if}
+							{if $orderItemAttribute.products_options_values_text}
+								<div class="alert alert-info">{$orderItemAttribute.products_options_values_text}</div>
+							{/if}
+{$orderItemAttribute|vd}
+</li>
 					{/foreach}
 					</ul>
 				</div>

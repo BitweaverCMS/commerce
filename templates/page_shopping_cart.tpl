@@ -30,8 +30,8 @@
 					<ul class="list-unstyled">
 					{foreach from=$basket.attributes key=optionKey item=$attrHash}
 						<li>
-							{if $attrHash.products_options_value_text}
-								<div class="alert alert-info"><strong>{$attrHash.products_options_values_name}:</strong> {$attrHash.products_options_value_text}</div>
+							{if $attrHash.products_options_values_text}
+								<div class="alert alert-info"><strong>{$attrHash.products_options_values_name}:</strong> {$attrHash.products_options_values_text}</div>
 							{else}
 								{$attrHash.products_options_values_name}
 							{/if}

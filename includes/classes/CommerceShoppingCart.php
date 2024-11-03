@@ -86,7 +86,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			foreach( $products as $basketId=>$basketProduct ) {
 				$this->contents[$basketProduct['products_key']] = $basketProduct;
 
-				$query = "SELECT cba.`products_options_id`||'='||cba.`products_options_values_id` AS `hash_key`, cba.`products_options_id`, cba.`products_options_values_id`, cba.`products_options_value_text`, cpa.`products_options_values_name`
+				$query = "SELECT cba.`products_options_id`||'='||cba.`products_options_values_id` AS `hash_key`, cba.`products_options_id`, cba.`products_options_values_id`, cba.`products_options_values_text`, cpa.`products_options_values_name`
 						  FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " cba
 							INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON ( cba.products_options_values_id=cpa.products_options_values_id )
 							LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " cpo ON( cba.products_options_id=cpo.products_options_id )
@@ -167,13 +167,13 @@ class CommerceShoppingCart extends CommerceOrderBase {
 					if (is_array($value) ) {
 						reset($value);
 						foreach( $value AS $optValId =>$optVal ) {
-							$sql = "INSERT INTO  " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " (`customers_basket_id`, `products_options_id`, `products_options_key`, `products_options_values_id`, `products_options_value_text`) VALUES ( ?, ?, ?, ?, ? )";
+							$sql = "INSERT INTO  " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " (`customers_basket_id`, `products_options_id`, `products_options_key`, `products_options_values_id`, `products_options_values_text`) VALUES ( ?, ?, ?, ?, ? )";
 							$bindVars = array( $basketId, (int)$option, $option.'='.$optValId, (int)$optValId, ($optVal!=$optValId ? $optVal : NULL) );
 							$this->mDb->query($sql, $bindVars );
 						}
 					} else {
 						// update db insert to include attribute value_text. This is needed for text attributes.
-						$sql = "INSERT INTO " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " (`customers_basket_id`, `products_options_id`, `products_options_key`, `products_options_values_id`, `products_options_value_text`) VALUES (?, ?, ?, ?, ?)";
+						$sql = "INSERT INTO " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " (`customers_basket_id`, `products_options_id`, `products_options_key`, `products_options_values_id`, `products_options_values_text`) VALUES (?, ?, ?, ?, ?)";
 						$bindVars = array( $basketId, (int)$option, $option, (int)$value, (!is_numeric( $value ) ? $value : NULL) );
 						$this->mDb->query( $sql, $bindVars );
 					}
