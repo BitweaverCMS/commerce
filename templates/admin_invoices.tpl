@@ -1,0 +1,98 @@
+{include file="bitpackage:bitcommerce/admin_header_inc.tpl"}
+
+{include_php file="`$smarty.const.BITCOMMERCE_PKG_ADMIN_PATH`includes/header_navigation.php"}
+
+<h1>{tr}Due Orders{/tr}</h1>
+
+{form name='cart_quantity' method='post' enctype='multipart/form-data'}
+<input type="hidden" name="cart_quantity" value="1">
+<table>
+{foreach from=$smarty.request.order_ids item=$orderId}
+	<tr>
+		<td>
+			<label class="checkbox-inline"><input type="checkbox" name="orders_id[]" value="{$smarty.request.oID}"> {$orderId} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$orderId}">{booticon iname="fa-shopping-cart" class="fa-xs"}</a></label>
+		</td>
+	</tr>
+{/foreach}
+</table>
+
+{html_options class="form-control" name="payment_type" options=$paymentModules|array_keys}
+
+<div class="form-group">
+	{formfeedback error=$errors.city}
+	{formlabel label="Payment Owner" for=""}
+	{forminput}
+		<input class="form-control" type="text" name="payment_owner" value="{$address.city|escape:"htmlall"}" /><acronym title="{tr}Required{/tr}">*</acronym>
+	{/forminput}
+</div>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+{foreach from=$dueOrders key=userId item=$customerHash name=dueorders}
+	<div class="panel panel-default user-{$userId}">
+		<div class="panel-heading" role="tab" id="due-user-{$userId}">
+			<h4 class="panel-title">
+				<input type="checkbox" class="batch-checkbox" name="" value="" onclick="toggleBatchCheckbox(this,'.user-{$userId} .batch-checkbox')"> <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-user-{$userId}" aria-expanded="true" aria-controls="collapse-user-{$userId}">{displayname user_id=$userId nolink=1}</a>
+			</h4>
+		</div>
+		<div id="collapse-user-{$userId}" class="panel-collapse collapse {if $smarty.foreach.dueorders.first}in{/if}" role="tabpanel" aria-labelledby="due-user-{$userId}">
+			<div class="panel-body">
+
+	{foreach from=$customerHash key=paymentRefId item=$customerOrders}
+	<div class="payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""}">
+		{assign var=orderCount value=0}
+		{assign var=orderSum value=0}
+		{foreach from=$customerOrders item=orderHash}
+			{assign var=orderCount value=$orderCount+1}
+			{assign var=orderSum value=$orderSum+$orderHash.amount_due}
+			{forminput label="checkbox"}
+			<div class="row">
+				<div class="col-xs-2 col-sm-1"><input type="checkbox" name="" value="" class="batch-checkbox" disabled> <a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URL}orders.php?oID={$orderHash.orders_id}">{$orderHash.orders_id}</a></div>
+				<div class="col-xs-2">{$gCommerceCurrencies->format($orderHash.amount_due,true,$orderHash.currency,$orderHash.currency_value)}</div>
+				<div class="col-xs-8 col-sm9">{$orderHash.date_purchased|strtotime|date_format:"%Y-%m-%d %H:%m"} {$orderHash.payment_method}: {$orderHash.payment_number}</div>
+			</div>
+			{/forminput}
+		{/foreach}
+		{forminput label="checkbox"}
+			<div class="row" style="border-top:1px solid #ccc;padding-bottom:2em;">
+				<div class="col-xs-2 col-sm-1"><input class="batch-checkbox" type="checkbox" name="id[25][17]" value="{$paymentRefId}" onclick="toggleBatchCheckbox(this,'.user-{$userId} .payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""} .batch-checkbox');"></div>
+				<div class="col-xs-2">{$gCommerceCurrencies->format($orderSum,true,$orderHash.currency,$orderHash.currency_value)}</div>
+				<div class="col-xs-8"><strong>{$paymentRefId}</strong></div>
+			</div>
+		{/forminput}
+	</div>
+	{/foreach}
+
+			</div>
+		</div>
+	</div>
+{/foreach}
+</div>
+
+		{*<button class="btn btn-default batch-button" formaction="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?products_id={$gCommerceSystem->getConfig('INVOICE_PRODUCT_ID', '9')}&amp;action=add_product" disabled>{tr}Pay Invoice{/tr}</button>
+		<button class="btn btn-default batch-button" name="action" value="record_payment" formaction="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URL}invoices.php" disabled>{tr}Record Payment{/tr}</button>*}
+		<input type="submit" class="btn btn-default batch-button" onclick="editPayment('new');return false;" disabled value="{tr}Record Payment{/tr}">
+		<div id="record-payment-block" class="pt-2" style=""></div>
+{/form}
+		<div>{*$dueOrders|vd*}</div>
+
+
+
+<script>{literal}
+function toggleBatchCheckbox( pCheckbox, pSelector ) {
+	var checkState = pCheckbox.checked;
+	$('.batch-checkbox').prop('checked', false);
+	$('.batch-button').prop('disabled', false);
+	pCheckbox.checked = checkState;
+	$(pSelector).prop('checked', checkState);
+}
+function editPayment( pPayment ) {
+	jQuery.ajax({
+		data: 'action=record_payment',
+		url: "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/invoices.php{literal}",
+		timeout: 60000,
+		success: function(r) { 
+			$('#record-payment-block').html(r);
+		}
+	})
+}
+{/literal}</script>

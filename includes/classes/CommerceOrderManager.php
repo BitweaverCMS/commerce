@@ -45,6 +45,7 @@ class CommerceOrderManager extends BitSingleton {
 
 		$columns = array( 
 			'oID' => 'orders_id', 
+			'orders_id' => 'orders_id', 
 			'payment_ref_id' => 'payment_ref_id', 
 			'payment_result' => 'payment_result', 
 			'payment_auth_code' => 'payment_auth_code', 
@@ -84,12 +85,16 @@ class CommerceOrderManager extends BitSingleton {
 		if( BitBase::verifyIdParameter( $pParamHash, 'country_id' ) ) {
 			$pParamHash['address_country'] = zen_get_country_name( $pParamHash['country_id'] );
 		}
+		if( empty( $pParamHash['payment_status'] ) ) {
+			$pParamHash['payment_status'] = ($pParamHash['is_success'] == 'y' ? 'PAID' : 'unsuccessful');
+		}
 
 		foreach( $columns as $inputKey => $colName ) {
 			if( isset( $pParamHash[$inputKey] ) ) {
 				$pParamHash['payment_store'][$colName] = $pParamHash[$inputKey];
 			}
 		}
+
 		// No bounds checking yet
 		$ret = TRUE;
 
@@ -99,12 +104,12 @@ class CommerceOrderManager extends BitSingleton {
 	public function storeOrdersPayment( &$pParamHash, $pOrder ) {
 		$ret = FALSE;
 		$sessionParams = array();
+
 		if( !empty( $pParamHash['adjust_total'] ) ) {
-			$ret = $order->adjustOrder( $pParamHash, $sessionParams );
+			$ret = $pOrder->adjustOrder( $pParamHash, $sessionParams );
 		} else {
 			$ret = TRUE;
 			$this->mDb->StartTrans();
-
 			if( $this->verifyOrdersPayment( $pParamHash, $pOrder ) ) {
 				$ordersUpdate = array();
 				$this->mDb->associateInsert( TABLE_ORDERS_PAYMENTS, $pParamHash['payment_store'] );
@@ -118,8 +123,33 @@ class CommerceOrderManager extends BitSingleton {
 					$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `amount_due` = ? WHERE `orders_id` = ?", array( $amountDue, $pOrder->mOrdersId ) );
 				}
 			}
-				
 			$this->mDb->CompleteTrans();
+		}
+
+		return $ret;
+	}
+
+	private function prepGetDueList(&$pListHash){
+		// keep a copy of user_id for later...
+		$userId = parent::getParameter( $pListHash, 'user_id' );
+		parent::prepGetList($pListHash);
+	}
+
+	public function getDueOrders( $pListHash = array() ) {
+		$ret = array();
+		$whereSql = '';
+$this->prepGetDueList( $pListHash );
+		$bindVars = array();
+
+		if( !empty( $pListHash['payment_number'] ) ) {
+			$whereSql .= ' AND cop.`payment_number`=? ';
+			$bindVars[] = $pListHash['payment_number'];
+		}
+
+		if( $rs = $this->mDb->query( "SELECT * FROM " . TABLE_ORDERS . " co INNER JOIN " . TABLE_ORDERS_PAYMENTS . " cop ON (co.`orders_id`=cop.`orders_id`) WHERE co.`orders_status_id` > 0 AND co.`amount_due` > 0 $whereSql ORDER BY cop.`payment_number`", $bindVars ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$ret[$row['customers_id']][$row['payment_number']][] = $row;
+			}
 		}
 
 		return $ret;
