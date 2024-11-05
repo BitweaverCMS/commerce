@@ -67,7 +67,7 @@ class CommerceSystem extends BitSingleton {
 		$this->storeConfig( $configKey, $pConfigValue );
 	}
 
-	public function storeConfig ( $pConfigKey, $pConfigValue ) {
+	public function storeConfig ( $pConfigKey, $pConfigValue, $pDefaultTitle='' ) {
 		if( is_array( $pConfigValue ) ){
 			// see usage in UPS and USPS
 			$pConfigValue = implode( ", ", $pConfigValue );
@@ -78,7 +78,7 @@ class CommerceSystem extends BitSingleton {
 			if( isset( $this->mConfig[$pConfigKey] ) ) {
 				$this->mDb->query( "UPDATE " . TABLE_CONFIGURATION . " SET `configuration_value` = ?, `last_modified`='NOW' WHERE `configuration_key` = ?", array( $pConfigValue, $pConfigKey ) );
 			} else {
-				$defaultTitle = ucwords( strtolower( str_replace( '_', ' ', preg_replace( '/MODULE_[A-Z]*_/', '', $pConfigKey ) ) ) );
+				$defaultTitle = (!empty( $pDefaultTitle ) ? $pDefaultTitle : ucwords( strtolower( str_replace( '_', ' ', preg_replace( '/MODULE_[A-Z]*_/', '', $pConfigKey ) ) ) ));
 				$this->mDb->query( "INSERT INTO " . TABLE_CONFIGURATION . " ( `configuration_value`, `configuration_key`, `configuration_title` ) VALUES ( ?, ?, ? )", array( $pConfigValue, $pConfigKey, $defaultTitle ) );
 			}
 		} else {
