@@ -1685,21 +1685,23 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 	}
 
 	function combineOrders( $pParamHash ) {
-		global $currencies;
+		global $currencies, $gCommerceSystem;
 		$ret = FALSE;
 
 		$sql = "SELECT * FROM " . TABLE_ORDERS . " WHERE `orders_id`=?";
 		$sourceHash = $this->mDb->getRow( $sql, array( $pParamHash['source_orders_id'] ) );
 		$destHash = $this->mDb->getRow( $sql, array( $pParamHash['dest_orders_id'] ) );
 
+		$combineOrdersStatus = $gCommerceSystem->getConfig( 'COMBINE_ORDERS_STATUS_ID', DEFAULT_ORDERS_STATUS_ID );
+
 		if( empty( $sourceHash ) ) {
 			$this->mErrors['combine'] = "Order $pParamHash[source_orders_id] not found";
 		} elseif( empty( $destHash ) ) {
 			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] not found";
-		} elseif( $sourceHash['orders_status_id'] != DEFAULT_ORDERS_STATUS_ID ) {
-			$this->mErrors['combine'] = "Order $pParamHash[source_orders_id] does not have status " . zen_get_order_status_name( DEFAULT_ORDERS_STATUS_ID );
-		} elseif( $destHash['orders_status_id'] != DEFAULT_ORDERS_STATUS_ID ) {
-			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] does not have status " . zen_get_order_status_name( DEFAULT_ORDERS_STATUS_ID );
+		} elseif( $sourceHash['orders_status_id'] != $combineOrdersStatus ) {
+			$this->mErrors['combine'] = "Order $pParamHash[source_orders_id] does not have status " . zen_get_order_status_name( $combineOrdersStatus );
+		} elseif( $destHash['orders_status_id'] != $combineOrdersStatus ) {
+			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] does not have status " . zen_get_order_status_name( $combineOrdersStatus );
 		} elseif( $pParamHash['dest_orders_id'] == $pParamHash['source_orders_id'] ) {
 			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] cannot be combined into itself";
 		} elseif( ($sourceHash['delivery_street_address'] == $destHash['delivery_street_address']) &&

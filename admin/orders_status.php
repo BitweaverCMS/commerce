@@ -52,8 +52,10 @@ if (zen_not_null($action)) {
 				}
 			}
 
-			if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
-				$gBitDb->query( "UPDATE " . TABLE_CONFIGURATION . " set `configuration_value` = ? where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'", array( $ordersStatusId ) );
+			foreach( array( 'new' => 'DEFAULT_ORDERS_STATUS_ID', 'combine' => 'COMBINE_ORDERS_STATUS_ID' ) as $statusCheck => $statusConfigKey ) {
+				if( BitBase::getParameter( $_POST, $statusCheck ) == 'on' ) {
+					$gCommerceSystem->storeConfig( $statusConfigKey, $ordersStatusId, 'Default Status For '.ucfirst( $statusCheck ).' Orders' ); 
+				}
 			}
 
 			zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $ordersStatusId));
@@ -67,10 +69,11 @@ if (zen_not_null($action)) {
 			}
 			$ordersStatusId = zen_db_prepare_input($_GET['orders_status_id']);
 
-			$ordersStatusHash = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
-
-			if ($ordersStatusHash->fields['configuration_value'] == $ordersStatusId) {
-				$gBitDb->Execute("update " . TABLE_CONFIGURATION . " set `configuration_value` = '' where `configuration_key` = 'DEFAULT_ORDERS_STATUS_ID'");
+			foreach( array( 'DEFAULT_ORDERS_STATUS_ID', 'COMBINE_ORDERS_STATUS_ID' ) as $statusConfigKey ) {
+				$ordersStatusHash = $gBitDb->Execute("select `configuration_value` from " . TABLE_CONFIGURATION . " where `configuration_key` = '$statusConfigKey'");
+				if ($ordersStatusHash->fields['configuration_value'] == $ordersStatusId) {
+					$gBitDb->Execute("update " . TABLE_CONFIGURATION . " set `configuration_value` = '' where `configuration_key` = '$statusConfigKey'");
+				}
 			}
 
 			$gBitDb->Execute("delete from " . TABLE_ORDERS_STATUS . " where orders_status_id = '" . zen_db_input($ordersStatusId) . "'");
@@ -83,20 +86,20 @@ if (zen_not_null($action)) {
 			$status = $gBitDb->Execute("select count(*) as `ocount` from " . TABLE_ORDERS . " where `orders_status_id` = '" . (int)$ordersStatusId . "'");
 
 			$remove_status = true;
-			if ($ordersStatusId == DEFAULT_ORDERS_STATUS_ID) {
-				$remove_status = false;
-				$messageStack->add(ERROR_REMOVE_DEFAULT_ORDER_STATUS, 'error');
-			} elseif ($status->fields['ocount'] > 0) {
-				$remove_status = false;
-				$messageStack->add(ERROR_STATUS_USED_IN_ORDERS, 'error');
-			} else {
-				$history = $gBitDb->Execute("select count(*) as `oscount`
-																 from " . TABLE_ORDERS_STATUS_HISTORY . "
-																 where orders_status_id = '" . (int)$ordersStatusId . "'");
-
-				if ($history->fields['oscount'] > 0) {
+			
+			foreach( array( 'DEFAULT_ORDERS_STATUS_ID', 'COMBINE_ORDERS_STATUS_ID' ) as $statusId ) {
+				if ($ordersStatusId == DEFAULT_ORDERS_STATUS_ID) {
 					$remove_status = false;
-					$messageStack->add(ERROR_STATUS_USED_IN_HISTORY, 'error');
+					$messageStack->add(ERROR_REMOVE_DEFAULT_ORDER_STATUS, 'error');
+				} elseif ($status->fields['ocount'] > 0) {
+					$remove_status = false;
+					$messageStack->add(ERROR_STATUS_USED_IN_ORDERS, 'error');
+				} else {
+					$history = $gBitDb->Execute("SELECT count(*) as `oscount` FROM " . TABLE_ORDERS_STATUS_HISTORY . " WHERE orders_status_id = '" . (int)$ordersStatusId . "'");
+					if ($history->fields['oscount'] > 0) {
+						$remove_status = false;
+						$messageStack->add(ERROR_STATUS_USED_IN_HISTORY, 'error');
+					}
 				}
 			}
 			break;
@@ -111,7 +114,7 @@ if (zen_not_null($action)) {
 <div class="col-md-8">
 	<table class="table table-hover">
 		<tr class="dataTableHeadingRow">
-			<td class="text-right"><?php echo tra( 'ID' ); ?></td>
+			<td class=""><?php echo tra( 'ID' ); if (empty($action)) { echo ' <a class="btn btn-default btn-xs" href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&action=new') . '">' . tra( 'New' ) . '</a>'; } ?></td>
 			<td><?php echo tra( 'Status Name' ); ?></td>
 			<td class="text-right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
 		</tr>
@@ -132,7 +135,10 @@ while (!$ordersStatus->EOF) {
 
 	echo '<td class="dataTableContent currency">' . '#' . $ordersStatus->fields['orders_status_id'] . '</td><td class="dataTableContent">' . $ordersStatus->fields['orders_status_name'];
 	if (DEFAULT_ORDERS_STATUS_ID == $ordersStatus->fields['orders_status_id']) {
-		echo '<strong>(' . tra( 'Default' ) . ')</strong>';
+		echo ' <strong>(' . tra( 'Default' ) . ')</strong>';
+	}
+	if (COMBINE_ORDERS_STATUS_ID == $ordersStatus->fields['orders_status_id']) {
+		echo ' <strong>(' . tra( 'Combine' ) . ')</strong>';
 	}
 	echo "</td>\n";
 ?>
@@ -147,13 +153,6 @@ while (!$ordersStatus->EOF) {
 			<div class="col-sm-6 text-left"><?php echo $ordersStatus_split->display_count($ordersStatus_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_ORDERS_STATUS); ?></div>
 							<div class="col-sm-6 text-right"><?php echo $ordersStatus_split->display_links($ordersStatus_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></div>
 					</div>
-<?php
-if (empty($action)) {
-?>
-									<?php echo '<a class="btn btn-default" href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&action=new') . '">' . tra( 'Add New Status' ) . '</a>'; ?>
-<?php
-}
-?>
 </div>
 <div class="col-md-4">
 	<div class="panel-group">
@@ -181,7 +180,7 @@ switch ($action) {
 
 		$contents[] = array('text' => '<label>'.tra( TEXT_INFO_ORDERS_STATUS_NAME ).'</label>' . $ordersStatus_inputs_string );
 		$contents[] = array('text' => '<label>'.tra( 'Status ID' ).'</label>'.zen_draw_input_field( 'orders_status_id', (int)BitBase::getParameter( $_REQUEST, 'orders_status_id' ), NULL, 'number' ) );
-		$contents[] = array('text' => zen_draw_selection_field( array( 'type' => 'checkbox', 'name'=>'default', 'label' => TEXT_SET_DEFAULT ) ) );
+		$contents[] = array('text' => zen_draw_selection_field( array( 'type' => 'checkbox', 'name'=>'new', 'label' => TEXT_SET_DEFAULT ) ) );
 		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_insert.gif', IMAGE_INSERT) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 		break;
 	case 'edit':
@@ -201,7 +200,12 @@ switch ($action) {
 		}
 
 		$contents[] = array('text' => '<br>' . TEXT_INFO_ORDERS_STATUS_NAME . $ordersStatus_inputs_string);
-		if (DEFAULT_ORDERS_STATUS_ID != $oInfo->orders_status_id) $contents[] = array('text' => '<br>' . zen_draw_selection_field( array( 'type' => 'checkbox', 'name'=>'default', 'label' => TEXT_SET_DEFAULT ) ));
+		if (DEFAULT_ORDERS_STATUS_ID != $oInfo->orders_status_id) {
+			$contents[] = array('text' => '<br>' . zen_draw_selection_field( array( 'type' => 'checkbox', 'name'=>'new', 'label' => TEXT_SET_DEFAULT ) ));
+		}
+		if ($gCommerceSystem->getConfig( 'COMBINE_ORDERS_STATUS_ID' ) != $oInfo->orders_status_id) {
+			$contents[] = array('text' => '<br>' . zen_draw_selection_field( array( 'type' => 'checkbox', 'name'=>'combine', 'label' => 'Orders must have this status to be combined' ) ));
+		}
 		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 		break;
 	case 'delete':
@@ -238,6 +242,7 @@ if ( (zen_not_null($heading)) && (zen_not_null($contents)) ) {
 		</div>
 	</div>
 </div>
+asdfsda
 
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
