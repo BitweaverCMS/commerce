@@ -6,10 +6,6 @@ require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderManager.php');
 
-if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
-	switch( $action ) {
-		case 'record_payment':
-			if( $gBitThemes->isAjaxRequest() ) {
 				$payment = array();
 				if( is_numeric( $editPayment ) ) {
 					$payment = $gCommerceOrderManager->getPayment();
@@ -22,8 +18,12 @@ if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
 				$gBitSmarty->assign_by_ref( 'order', $order );
 				$orderStatuses = commerce_get_statuses( TRUE );
 				$orderStatuses[''] = 'No Change';
-				$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId ) );
+				$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId, 'required' ) );
 				$gBitSmarty->assign( 'orderStatuses', $orderStatuses );
+if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
+	switch( $action ) {
+		case 'record_payment':
+			if( $gBitThemes->isAjaxRequest() ) {
 				$gBitSmarty->display( 'bitpackage:bitcommerce/order_payment_edit.tpl' );
 				exit;
 			}
@@ -43,8 +43,8 @@ if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
 									if( $amountDue = $order->getField( 'amount_due' ) ) {
 										$ordersPaid++;
 										$amountPaid += $amountDue;
+										$paymentHash = $_REQUEST;
 										if( $ordersCount > 1 ) {
-											$paymentHash = $_REQUEST;
 											$paymentHash['oID'] = $paymentOrderHash['orders_id'];
 											$paymentHash['payment_amount'] = $amountDue;
 											$paymentHash['comments'] = trim( "PAID $ordersPaid of $ordersCount, ". $currencies->format( $amountPaid, FALSE, '', '', FALSE ) ." of " . $currencies->format( $_REQUEST['payment_amount'], FALSE, '', '', FALSE ) . "\n\n" . $paymentHash['comments'] );

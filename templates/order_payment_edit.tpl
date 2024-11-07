@@ -29,7 +29,7 @@ $('.input-group.date').datepicker({
 			{formfeedback error=$errors.name}
 			{formlabel label="Success" for=""}
 			{forminput}
-				<input type="hidden" name="payment_result" value="0">
+				<input type="hidden" name="payment_result" value="i">
 				<select name="is_success" class="form-control">
 					<option value="y">{tr}Yes{/tr}</option>
 					<option value="n">{tr}No{/tr}</option>
@@ -117,12 +117,14 @@ $('.input-group.date').datepicker({
 				{html_options class="form-control" name='status' options=$orderStatuses selected=$order->getStatus()}
 				{formhelp note="Change order status"}
 			{/forminput}
+{*
 			{forminput label="checkbox"}
 				<input type="checkbox" name="adjust_total" value="y" id="adjust_total"/>{booticon iname="fa-money-check-dollar-pen"} {tr}Adjust Order Total{/tr}
 			{/forminput}
 			{forminput label="checkbox"}
 				<input type="checkbox" name="additional_charge" value="y">{booticon iname="fa fa-cash-register"} {tr}Make Additional Charge{/tr} {tr}<span class="small">(For Credit Card Only)</span>{/tr}
 			{/forminput}
+*}
 		</div>
 	</div>
 	<div class="col-sm-6 col-xs-12">

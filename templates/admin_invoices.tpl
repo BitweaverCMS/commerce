@@ -31,7 +31,7 @@
 	<div class="panel panel-default user-{$userId}">
 		<div class="panel-heading" role="tab" id="due-user-{$userId}">
 			<h4 class="panel-title">
-				<input type="checkbox" class="batch-checkbox" name="" value="" onclick="toggleBatchCheckbox(this,'.user-{$userId} .batch-checkbox')"> <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-user-{$userId}" aria-expanded="true" aria-controls="collapse-user-{$userId}">{displayname user_id=$userId nolink=1}</a>
+				{*<input type="checkbox" class="batch-checkbox" name="" value="" onclick="toggleBatchCheckbox(this,'.user-{$userId} .batch-checkbox')">*} <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-user-{$userId}" aria-expanded="true" aria-controls="collapse-user-{$userId}">{displayname user_id=$userId nolink=1}</a>
 			</h4>
 		</div>
 		<div id="collapse-user-{$userId}" class="panel-collapse collapse {if $smarty.foreach.dueorders.first}in{/if}" role="tabpanel" aria-labelledby="due-user-{$userId}">
@@ -54,7 +54,7 @@
 		{/foreach}
 		{forminput label="checkbox"}
 			<div class="row" style="border-top:1px solid #ccc;padding-bottom:2em;">
-				<div class="col-xs-2 col-sm-1"><input class="batch-checkbox" type="checkbox" name="id[25][17]" value="{$paymentRefId}" onclick="toggleBatchCheckbox(this,'.user-{$userId} .payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""} .batch-checkbox');"></div>
+				<div class="col-xs-2 col-sm-1"><input class="batch-checkbox" type="checkbox" name="id[25][17]" value="{$paymentRefId}" onclick="selectInvoice('{$paymentRefId|escape:'quotes'}','{$orderSum}');toggleBatchCheckbox(this,'.user-{$userId} .payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""} .batch-checkbox');"></div>
 				<div class="col-xs-2">{$gCommerceCurrencies->format($orderSum,true,$orderHash.currency,$orderHash.currency_value)}</div>
 				<div class="col-xs-8"><strong>{$paymentRefId}</strong></div>
 			</div>
@@ -68,12 +68,10 @@
 {/foreach}
 </div>
 
-		{*<button class="btn btn-default batch-button" formaction="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?products_id={$gCommerceSystem->getConfig('INVOICE_PRODUCT_ID', '9')}&amp;action=add_product" disabled>{tr}Pay Invoice{/tr}</button>
-		<button class="btn btn-default batch-button" name="action" value="record_payment" formaction="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URL}invoices.php" disabled>{tr}Record Payment{/tr}</button>*}
-		<input type="submit" class="btn btn-default batch-button" onclick="editPayment('new');return false;" disabled value="{tr}Record Payment{/tr}">
-		<div id="record-payment-block" class="pt-2" style=""></div>
+<div id="record-payment-block" style="display:none">
+	{include file="bitpackage:bitcommerce/order_payment_edit.tpl"}
+</div>
 {/form}
-		<div>{*$dueOrders|vd*}</div>
 
 
 
@@ -94,5 +92,10 @@ function editPayment( pPayment ) {
 			$('#record-payment-block').html(r);
 		}
 	})
+}
+function selectInvoice( pPaymentNumber, pPaymentAmount ) {
+	$('#record-payment-block').show();
+	$("input[name='payment_number']").val( pPaymentNumber );
+	$("input[name='payment_amount']").val( pPaymentAmount );
 }
 {/literal}</script>
