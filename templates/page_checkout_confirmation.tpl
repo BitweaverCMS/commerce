@@ -47,8 +47,7 @@
 							{if $orderItemAttribute.products_options_values_text}
 								<div class="alert alert-info">{$orderItemAttribute.products_options_values_text}</div>
 							{/if}
-{$orderItemAttribute|vd}
-</li>
+						</li>
 					{/foreach}
 					</ul>
 				</div>
