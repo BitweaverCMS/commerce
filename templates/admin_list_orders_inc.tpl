@@ -40,12 +40,12 @@
 	{assign var=orderProduct value=CommerceProduct::getCommerceObject($product.products_id)}
 		{if $orderProduct}
 	<tr>
-		<td colspan="4">
+		<td colspan="6">
 			<div class="row">
-				<div class="col-xs-2">
-					<img src="{CommerceProduct::getImageUrlFromHash($product)}" class="img-responsive"/>
+				<div class="col-xs-3 text-center">
+					<img src="{CommerceProduct::getImageUrlFromHash($product)}" class="img-responsive"/><div class="small">{$product.products_id}</div>
 				</div>
-				<div class="col-xs-8">		
+				<div class="col-xs-9">		
 					#{$smarty.foreach.orderproducts.iteration} - <a href="{$orderProduct->getDisplayUrl()}">{$product.products_name}</a>
 					<span class="small">{$orderProduct->getProductsModel()}</span>
 					{if $product.attributes}
@@ -58,27 +58,19 @@
 				</div>
 			</div>
 		</td>
-		<td class="text-right">
+		<td colspan="2" class="text-right no-wrap">
 			{assign var=quantityTotal value=$quantityTotal+$product.products_quantity}
 			{$product.products_quantity} x 
 			{assign var=finalIncome value=$product.products_quantity*$product.final_price}
 			{assign var=finalTotal value=$finalTotal+$finalIncome}
-			${$product.final_price} {if $product.products_quantity>1} : ${$finalIncome} {/if} = 
-		</td>
-		<td class="text-right">
+			${$product.final_price}{if $product.products_quantity>1} : ${$finalIncome} {/if}&nbsp; =<br>
 			{math equation="n*(x-y)" assign=wholesaleProfit n=$product.products_quantity x=$product.final_price|default:0 y=$product.products_wholesale|default:0}
 			{assign var=wholesaleProfitTotal value=$wholesaleProfitTotal+$wholesaleProfit}
-			+ {$wholesaleProfit|number_format:2}
-		</td>
-		<td class="text-right">
+			+ {$wholesaleProfit|number_format:2}<br>
 			{if $gBitUser->hasPermission('p_admin')}
 			{math equation="n*(x-y)" assign=distributorIncome n=$product.products_quantity x=$product.products_wholesale|default:0 y=$product.products_cogs|default:0}
 			{assign var=distributorIncomeTotal value=$distributorIncomeTotal+$distributorIncome}
-			+ [{$distributorIncome|number_format:2}]
-			{/if}
-		</td>
-		<td class="text-right">
-			{if $gBitUser->hasPermission('p_admin')}
+			+ [{$distributorIncome|number_format:2}]<br>
 			{math equation="n*(x)" assign=cogs n=$product.products_quantity x=$product.products_cogs|default:0}
 			{assign var=cogsTotal value=$cogsTotal+$cogs}
 			+ ({$cogs|number_format:2})
