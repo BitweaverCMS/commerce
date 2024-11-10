@@ -1,5 +1,10 @@
 <?php
-require_once('includes/application_top.php');
+
+if (!$gBitUser->isRegistered() ) {
+	$_SESSION['navigation']->set_snapshot();
+	zen_redirect(FILENAME_LOGIN);
+}
+
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php');
@@ -77,5 +82,5 @@ $paymentModules = $gCommerceSystem->scanModules( 'payment', TRUE );
 
 $gBitSmarty->assign_by_ref( 'paymentModules', $paymentModules );
 
-$gBitSystem->display( "bitpackage:bitcommerce/admin_invoices.tpl" , NULL, array( 'display_mode' => 'admin' ));
+print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_invoices.tpl' );
 

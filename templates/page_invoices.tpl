@@ -1,8 +1,10 @@
-{include file="bitpackage:bitcommerce/admin_header_inc.tpl"}
+<header class="page-header">
+	<h1>{tr}Due Orders{/tr}</h1>
+</header>
 
-{include_php file="`$smarty.const.BITCOMMERCE_PKG_ADMIN_PATH`includes/header_navigation.php"}
+{$messageStack->output('address')}
 
-<h1>{tr}Due Orders{/tr}</h1>
+
 
 {form name='cart_quantity' method='post' enctype='multipart/form-data'}
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -74,7 +76,9 @@ function editPayment( pPayment ) {
 }
 function selectInvoice( pPaymentNumber, pPaymentAmount ) {
 	$('#record-payment-block').show();
+{/literal}{if $gBitUser->hasPermission('p_commerce_admin')}
 	$("input[name='payment_number']").val( pPaymentNumber );
+{/if}{literal}
 	$("input[name='payment_amount']").val( pPaymentAmount );
 }
 {/literal}</script>
