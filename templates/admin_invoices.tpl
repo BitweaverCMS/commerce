@@ -5,27 +5,6 @@
 <h1>{tr}Due Orders{/tr}</h1>
 
 {form name='cart_quantity' method='post' enctype='multipart/form-data'}
-<input type="hidden" name="cart_quantity" value="1">
-<table>
-{foreach from=$smarty.request.order_ids item=$orderId}
-	<tr>
-		<td>
-			<label class="checkbox-inline"><input type="checkbox" name="orders_id[]" value="{$smarty.request.oID}"> {$orderId} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$orderId}">{booticon iname="fa-shopping-cart" class="fa-xs"}</a></label>
-		</td>
-	</tr>
-{/foreach}
-</table>
-
-{html_options class="form-control" name="payment_type" options=$paymentModules|array_keys}
-
-<div class="form-group">
-	{formfeedback error=$errors.city}
-	{formlabel label="Payment Owner" for=""}
-	{forminput}
-		<input class="form-control" type="text" name="payment_owner" value="{$address.city|escape:"htmlall"}" /><acronym title="{tr}Required{/tr}">*</acronym>
-	{/forminput}
-</div>
-
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 {foreach from=$dueOrders key=userId item=$customerHash name=dueorders}
 	<div class="panel panel-default user-{$userId}">
@@ -41,7 +20,7 @@
 	<div class="payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""}">
 		{assign var=orderCount value=0}
 		{assign var=orderSum value=0}
-		{foreach from=$customerOrders item=orderHash}
+		{foreach from=$customerOrders item=orderHash name=customerOrders}
 			{assign var=orderCount value=$orderCount+1}
 			{assign var=orderSum value=$orderSum+$orderHash.amount_due}
 			{forminput label="checkbox"}
@@ -54,7 +33,7 @@
 		{/foreach}
 		{forminput label="checkbox"}
 			<div class="row" style="border-top:1px solid #ccc;padding-bottom:2em;">
-				<div class="col-xs-2 col-sm-1"><input class="batch-checkbox" type="checkbox" name="id[25][17]" value="{$paymentRefId}" onclick="selectInvoice('{$paymentRefId|escape:'quotes'}','{$orderSum}');toggleBatchCheckbox(this,'.user-{$userId} .payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""} .batch-checkbox');"></div>
+				<div class="col-xs-2 col-sm-1"><input class="batch-checkbox" type="checkbox" name="id[25][17]" value="{$paymentRefId}" onclick="selectInvoice('{$paymentRefId|escape:'quotes'}','{$orderSum}');toggleBatchCheckbox(this,'.user-{$userId} .payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""} .batch-checkbox');"> <tt>@{$orderCount}</tt> </div>
 				<div class="col-xs-2">{$gCommerceCurrencies->format($orderSum,true,$orderHash.currency,$orderHash.currency_value)}</div>
 				<div class="col-xs-8"><strong>{$paymentRefId}</strong></div>
 			</div>

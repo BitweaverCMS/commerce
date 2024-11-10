@@ -136,10 +136,17 @@ class CommerceOrderManager extends BitSingleton {
 	}
 
 	public function getDueOrders( $pListHash = array() ) {
+		global $gBitUser;
+
 		$ret = array();
 		$whereSql = '';
 $this->prepGetDueList( $pListHash );
 		$bindVars = array();
+
+		if( !$gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
+			$whereSql .= ' AND co.`customers_id`=? ';
+			$bindVars[] = $gBitUser->mUserId;
+		}
 
 		if( !empty( $pListHash['payment_number'] ) ) {
 			$whereSql .= ' AND cop.`payment_number`=? ';

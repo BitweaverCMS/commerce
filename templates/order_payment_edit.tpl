@@ -107,7 +107,7 @@ $('.input-group.date').datepicker({
 			{formlabel label="Payment Reference ID" for=""}
 			{forminput}
 				<input class="form-control" type="text" maxlength="64" name="payment_ref_id" value="{$payment.payment_ref_id|default:$smarty.request.payment_ref_id|escape:"htmlall"}">
-				{formhelp note="Transaction ID used with Card transactions; leave empty unknown"}
+				{formhelp note="Transaction ID used with Card transactions; leave if empty unknown"}
 			{/forminput}
 		</div>
 		<div class="form-group">

@@ -1,25 +1,29 @@
 <?php
-
 require_once('includes/application_top.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderManager.php');
 
-				$payment = array();
-				if( is_numeric( $editPayment ) ) {
-					$payment = $gCommerceOrderManager->getPayment();
-				}
-				$paymentTypes = $gCommerceOrderManager->getPaymentTypes();
-				sort( $paymentTypes );
-				$gBitSmarty->assign( 'paymentTypes', array_combine( $paymentTypes, $paymentTypes ) );
-				$gBitSmarty->assign_by_ref( 'payment', $payment );
-				$order = new CommerceOrder();
-				$gBitSmarty->assign_by_ref( 'order', $order );
-				$orderStatuses = commerce_get_statuses( TRUE );
-				$orderStatuses[''] = 'No Change';
-				$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId, 'required' ) );
-				$gBitSmarty->assign( 'orderStatuses', $orderStatuses );
+global $gBitUser;
+$gBitUser->verifyRegistered();
+
+$payment = array();
+if( is_numeric( $editPayment ) ) {
+	$payment = $gCommerceOrderManager->getPayment();
+}
+
+$paymentTypes = $gCommerceOrderManager->getPaymentTypes();
+sort( $paymentTypes );
+$gBitSmarty->assign( 'paymentTypes', array_combine( $paymentTypes, $paymentTypes ) );
+$gBitSmarty->assign_by_ref( 'payment', $payment );
+$order = new CommerceOrder();
+$gBitSmarty->assign_by_ref( 'order', $order );
+$orderStatuses = commerce_get_statuses( TRUE );
+$orderStatuses[''] = 'No Change';
+$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId, 'required' ) );
+$gBitSmarty->assign( 'orderStatuses', $orderStatuses );
+
 if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
 	switch( $action ) {
 		case 'record_payment':
