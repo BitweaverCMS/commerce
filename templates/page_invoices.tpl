@@ -27,17 +27,19 @@
 			{assign var=orderSum value=$orderSum+$orderHash.amount_due}
 			{forminput label="checkbox"}
 			<div class="row">
-				<div class="col-xs-2 col-sm-1"><input type="checkbox" name="" value="" class="batch-checkbox" disabled> <a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URL}orders.php?oID={$orderHash.orders_id}">{$orderHash.orders_id}</a></div>
-				<div class="col-xs-2">{$gCommerceCurrencies->format($orderHash.amount_due,true,$orderHash.currency,$orderHash.currency_value)}</div>
-				<div class="col-xs-8 col-sm9">{$orderHash.date_purchased|strtotime|date_format:"%Y-%m-%d %H:%m"} {$orderHash.payment_method}: {$orderHash.payment_number}</div>
+				<div class="col-xs-2 col-sm-1"><input type="checkbox" name="" value="" class="batch-checkbox" disabled> 
+					{if $gBitUser->hasPermission( 'p_bitcommerce_admin' )}<a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URL}orders.php?oID={$orderHash.orders_id}">{else} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}account_history_info?order_id={$orderHash.orders_id}">{/if}{$orderHash.orders_id}</a>
+				</div>
+				<div class="col-xs-2 col-sm-1">{$gCommerceCurrencies->format($orderHash.amount_due,true,$orderHash.currency,$orderHash.currency_value)}</div>
+				<div class="col-xs-8 col-sm-5"><span class="date">{$orderHash.date_purchased|strtotime|date_format:"%Y-%m-%d %H:%m"}</span> {$orderHash.delivery_name}, {$orderHash.delivery_city}, {$orderHash.delivery_state}</div>
+				<div class="col-xs-8 col-sm-3">{$orderHash.payment_method}: {$orderHash.payment_number}</div>
 			</div>
 			{/forminput}
 		{/foreach}
 		{forminput label="checkbox"}
 			<div class="row" style="border-top:1px solid #ccc;padding-bottom:2em;">
 				<div class="col-xs-2 col-sm-1"><input class="batch-checkbox" type="checkbox" name="id[25][17]" value="{$paymentRefId}" onclick="selectInvoice('{$paymentRefId|escape:'quotes'}','{$orderSum}');toggleBatchCheckbox(this,'.user-{$userId} .payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""} .batch-checkbox');"> <tt>@{$orderCount}</tt> </div>
-				<div class="col-xs-2">{$gCommerceCurrencies->format($orderSum,true,$orderHash.currency,$orderHash.currency_value)}</div>
-				<div class="col-xs-8"><strong>{$paymentRefId}</strong></div>
+				<div class="col-xs-10">{$gCommerceCurrencies->format($orderSum,true,$orderHash.currency,$orderHash.currency_value)} <strong class="inline-block pl-2">{$paymentRefId}</strong></div>
 			</div>
 		{/forminput}
 	</div>
