@@ -67,6 +67,7 @@ if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
 					}
 				}
 			}
+			bit_redirect( zen_get_page_url( 'invoices' ) );
 			break;
 	}
 }

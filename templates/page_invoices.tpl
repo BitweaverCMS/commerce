@@ -6,7 +6,8 @@
 
 
 
-{form name='cart_quantity' method='post' enctype='multipart/form-data'}
+{form name='invoices' method='post' enctype='multipart/form-data'}
+<input type="hidden" name="main_page" value="invoices" />
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 {foreach from=$dueOrders key=userId item=$customerHash name=dueorders}
 	<div class="panel panel-default user-{$userId}">
