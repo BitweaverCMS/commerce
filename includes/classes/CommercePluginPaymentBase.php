@@ -98,7 +98,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		$logHash['address_suburb'] =  $pOrder->delivery['suburb'];
 		$logHash['address_city'] =    $pOrder->delivery['city'];
 		$logHash['address_state'] =   $pOrder->delivery['state'];
-		$logHash['address_code'] =     $pOrder->delivery['postcode'];
+		$logHash['address_postcode'] =     $pOrder->delivery['postcode'];
 		$logHash['address_country'] = $pOrder->delivery['countries_iso_code_2'];
 
 		// We assume a default error, and let payment method set the success

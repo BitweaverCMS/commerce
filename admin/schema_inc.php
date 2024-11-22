@@ -862,7 +862,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_payments' => "
   address_suburb X NOTNULL,
   address_city X NOTNULL,
   address_state X NOTNULL,
-  address_code C(256) NOTNULL,
+  address_postcode C(256) NOTNULL,
   address_country C(256) NOTNULL,
   num_cart_items I4 NOTNULL
   CONSTRAINT ', CONSTRAINT `com_orders_payments_log_user_ref` FOREIGN KEY (`customers_id`) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_customers` (`customers_id`)'			  
@@ -1105,7 +1105,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_paypal' => "
   address_street C(64),
   address_city C(32),
   address_state C(32),
-  address_code C(10),
+  address_postcode C(10),
   address_country C(64),
   address_status C(11),
   payer_email C(96),
