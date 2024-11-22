@@ -2611,7 +2611,6 @@ Skip deleting of images for now
 	}
 
 	public function productPurchased( &$pOrder, $pCartItemHash ) {
-eb( $pCartItemHash );
 	}
 
 	public function isVirtual( $pOptionsHash=NULL ) {

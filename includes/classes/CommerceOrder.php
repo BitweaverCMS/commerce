@@ -1108,7 +1108,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 		$this->createAddProducts( $this->mOrdersId );
 
 		foreach( array_keys( $this->contents ) as $cartItemKey ) {
-			if( $addProduct = CommerceProduct::getCommerceObject( array( 'products_id' => $sql_data_array['products_id'] ) ) ) {
+			if( $addProduct = CommerceProduct::getCommerceObject( array( 'products_id' => $this->contents[$cartItemKey]['products_id'] ) ) ) {
 				$addProduct->productPurchased( $this, $this->contents[$cartItemKey] );
 			}
 		}
