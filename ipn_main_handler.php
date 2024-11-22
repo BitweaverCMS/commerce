@@ -121,7 +121,7 @@ if(eregi("VERIFIED",$info) && $_POST['txn_type'] == 'web_accept' && $_POST['busi
                         address_street => $_POST['addrss_street'],
                         address_city => $_POST['address_city'],
                         address_state => $_POST['address_state'],
-                        address_zip => $_POST['address_zip'],
+                        address_code => $_POST['address_code'],
                         address_country => $_POST['address_country'],
                         address_status => $_POST['address_status'],
                         payer_email => $_POST['payer_email'],

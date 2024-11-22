@@ -76,7 +76,7 @@ class CommerceOrderManager extends BitSingleton {
 			'address_suburb' => 'address_suburb', 
 			'address_city' => 'address_city', 
 			'state' => 'address_state', 
-			'address_postcode' => 'address_zip', 
+			'address_postcode' => 'address_code', 
 			'address_country' => 'address_country', 
 			'num_cart_items' 
 		);

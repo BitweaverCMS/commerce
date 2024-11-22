@@ -455,7 +455,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 					$logHash['address_suburb'] = $result->transaction->shippingDetails->extendedAddress;
 					$logHash['address_city'] = $result->transaction->shippingDetails->locality;
 					$logHash['address_state'] = $result->transaction->shippingDetails->region;
-					$logHash['address_zip'] = $result->transaction->shippingDetails->postalCode;
+					$logHash['address_code'] = $result->transaction->shippingDetails->postalCode;
 					$logHash['address_country'] = $result->transaction->shippingDetails->countryName;
 
 					if ($result->success) {
