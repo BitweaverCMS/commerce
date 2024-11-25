@@ -75,7 +75,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		}	
 	}
 
-	protected function logTransactionPrep( $pOrder, $pPaymentParams ) {
+	protected function prepPayment( $pOrder, $pPaymentParams ) {
 		global $gBitUser;
 		$logHash = array();
 
@@ -94,7 +94,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		$logHash['num_cart_items'] = count( $pOrder->contents );
 
 		$logHash['address_company'] = $pOrder->delivery['company'];
-		$logHash['address_street'] =  $pOrder->delivery['street_address'];
+		$logHash['address_street_address'] =  $pOrder->delivery['street_address'];
 		$logHash['address_suburb'] =  $pOrder->delivery['suburb'];
 		$logHash['address_city'] =    $pOrder->delivery['city'];
 		$logHash['address_state'] =   $pOrder->delivery['state'];
@@ -108,10 +108,6 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		$logHash['payment_amount'] = $this->getParameter( $pPaymentParams, 'payment_amount' );
 
 		return $logHash;
-	}
-
-	protected function logTransaction( $pTransactionHash ) {
-		$this->mDb->associateInsert( TABLE_ORDERS_PAYMENTS, $pTransactionHash );
 	}
 
 	function getTransactionReference() {
@@ -157,6 +153,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 			}
 		} elseif( empty( $pPaymentParams['charge_currency'] ) ) {
 			$pPaymentParams['charge_currency'] = DEFAULT_CURRENCY;
+			$pPaymentParams['currency_value'] = 1.0;
 		}
 
 		if( empty( $this->mErrors ) ) {
@@ -170,9 +167,13 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 				$pOrder->delivery['firstname'] = substr( $pOrder->billing['name'], 0, strpos( $pOrder->billing['name'], ' ' ) );
 				$pOrder->delivery['lastname'] = substr( $pOrder->billing['name'], strpos( $pOrder->billing['name'], ' ' ) + 1 );
 			} else {
-				// new transaction, Calculate the next expected order id
-				$pPaymentParams['orders_id'] = (!empty( $_SESSION['orders_id'] ) ? $_SESSION['orders_id'] : $pOrder->getNextOrderId());
-				$_SESSION['orders_id'] = $pPaymentParams['orders_id'];
+				if( !empty( $pPaymentParams['payment_parent_ref_id'] ) ) {
+					// Parent transaction means we are referencing a previous order
+				} else {
+					// new transaction, Calculate the next expected order id
+					$pPaymentParams['orders_id'] = (!empty( $_SESSION['orders_id'] ) ? $_SESSION['orders_id'] : $pOrder->getNextOrderId());
+					$_SESSION['orders_id'] = $pPaymentParams['orders_id'];
+				}
 				$pPaymentParams['payment_currency'] = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
 				$pOrder->info['payment_number'] = $this->getParameter( $pPaymentParams, 'payment_number' );
 				$pOrder->info['payment_expires'] = $this->getPaymentExpires( $pPaymentParams );

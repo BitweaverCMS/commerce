@@ -11,7 +11,7 @@
  *
  */
 
-class CommercePaymentManager extends BitSingleton {
+class CommercePaymentManager extends BitBase {
 	private $selected_module;
 	private $mPaymentObjects = array();
 
@@ -20,6 +20,8 @@ class CommercePaymentManager extends BitSingleton {
 	// class constructor
 	function __construct($pPaymentModule = '') {
 		global $gCommerceSystem;
+
+		parent::__construct();
 
 		$this->mPaymentObjects = $gCommerceSystem->scanModules( 'payment', TRUE );
 		
@@ -54,7 +56,7 @@ class CommercePaymentManager extends BitSingleton {
 		return !empty( $this->mPaymentObjects[$pModuleName] );
 	}
 
-	// class methods
+	// {{{ PAYMENT CLASS METHODS
 	/* The following method is needed in the checkout_confirmation.php page
 	 due to a chicken and egg problem with the payment class and order class.
 	 The payment modules needs the order destination data for the dynamic status
@@ -126,21 +128,6 @@ class CommercePaymentManager extends BitSingleton {
 		return $ret;
 	}
 
-	function verifyPayment( $pOrder, &$pPaymentParams ) {
-		$ret = FALSE;
-		if( $pOrder->hasPaymentDue( $pPaymentParams ) ) {	
-			if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
-				if( !($ret = $this->mPaymentObjects[$this->selected_module]->verifyPayment( $pOrder, $pPaymentParams )) ) {
-					$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
-				}
-			}
-		} else {
-			$ret = TRUE;
-		}
-
-		return $ret;
-	}
-
 	function confirmation( $pPaymentParams = NULL ) {
 		if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
 			return $this->mPaymentObjects[$this->selected_module]->confirmation( $pPaymentParams );
@@ -151,38 +138,6 @@ class CommercePaymentManager extends BitSingleton {
 		if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
 			return $this->mPaymentObjects[$this->selected_module]->process_button( $pPaymentParams );
 		}
-	}
-
-	function processPayment( $pOrder, &$pPaymentParams ) {
-		global $gBitProduct;
-		$ret = NULL;
-
-		$gBitProduct->invokeServices( 'commerce_pre_purchase_function', $pOrder );
-		if( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
-			if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $pOrder, $pPaymentParams ) ) {
-				$pPaymentParams['initial_orders_status_id'] = $this->mPaymentObjects[$this->selected_module]->getProcessedOrdersStatus();
-				if( isset( $_SESSION['orders_id'] ) ) {
-					unset( $_SESSION['orders_id'] );
-				}
-			} else {
-				$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
-			}
-		}
-
-		return $ret;
-	}
-
-	function after_order_create( $zf_order_id, $pOrder ) {
-		global $gBitUser, $gBitProduct, $gCommerceSystem;
-		$ret = NULL;
-		if( round( $pOrder->getField( 'total', 2 ) ) > 0 && ($groupId = $gCommerceSystem->getConfig( 'CUSTOMERS_PURCHASE_GROUP' )) ) {
-			$gBitUser->addUserToGroup( $gBitUser->mUserId, $groupId );
-		}
-		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $pOrder );
-		if (!empty($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) && (method_exists($this->mPaymentObjects[$this->selected_module], 'after_order_create'))) {
-			return $this->mPaymentObjects[$this->selected_module]->after_order_create($zf_order_id);
-		}
-		return $ret;
 	}
 
 	function admin_notification($zf_order_id) {
@@ -201,5 +156,288 @@ class CommercePaymentManager extends BitSingleton {
 			return $this->mPaymentObjects[$this->selected_module]->get_error();
 		}
 	}
+
+	function after_order_create( $zf_order_id, $pOrder ) {
+		global $gBitUser, $gBitProduct, $gCommerceSystem;
+		$ret = NULL;
+		if( round( $pOrder->getField( 'total', 2 ) ) > 0 && ($groupId = $gCommerceSystem->getConfig( 'CUSTOMERS_PURCHASE_GROUP' )) ) {
+			$gBitUser->addUserToGroup( $gBitUser->mUserId, $groupId );
+		}
+		$gBitProduct->invokeServices( 'commerce_post_purchase_function', $pOrder );
+		if (!empty($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) && (method_exists($this->mPaymentObjects[$this->selected_module], 'after_order_create'))) {
+			return $this->mPaymentObjects[$this->selected_module]->after_order_create($zf_order_id);
+		}
+		return $ret;
+	}
+	// }}}
+
+	// {{{ PAYMENT PROCESSING
+	function verifyPayment( $pOrder, &$pPaymentParams ) {
+		$ret = FALSE;
+		if( $pOrder->hasPaymentDue( $pPaymentParams ) ) {	
+			if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
+				if( !($ret = $this->mPaymentObjects[$this->selected_module]->verifyPayment( $pOrder, $pPaymentParams )) ) {
+					$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
+				}
+			}
+		} else {
+			$ret = TRUE;
+		}
+
+		return $ret;
+	}
+
+	function processPayment( $pOrder, &$pPaymentParams ) {
+		global $gBitProduct;
+		$ret = NULL;
+
+		$gBitProduct->invokeServices( 'commerce_pre_purchase_function', $pOrder );
+		if( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
+			if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $pOrder, $pPaymentParams ) ) {
+				$pPaymentParams['initial_orders_status_id'] = $this->mPaymentObjects[$this->selected_module]->getProcessedOrdersStatus();
+			} else {
+				$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
+			}
+		}
+
+		return $ret;
+	}
+	// }}}
+
+	// {{{ PAYMENT LOGGING
+	private function verifyOrdersPayment( &$pParamHash, $pOrder ) {
+		$ret = FALSE;
+
+		global $gBitUser;
+		$pParamHash['payment_store']['user_id'] = $gBitUser->mUserId;
+		$pParamHash['payment_store']['customers_id'] = $pOrder->customer['customers_id'];
+		$pParamHash['payment_store']['ip_address'] = $_SERVER['REMOTE_ADDR'];
+
+		$columns = array( 
+//			'address_street_address' => 'address_street', 
+			'orders_id', 
+			'payment_ref_id', 
+			'payment_result', 
+			'payment_auth_code', 
+			'payment_message', 
+			'payment_amount', 
+			'payment_date', 
+			'customers_id', 
+			'is_success', 
+			'customers_email', 
+			'payment_type', 
+			'payment_owner', 
+			'payment_number', 
+			'payment_expires', 
+			'transaction_date', 
+			'payment_module', 
+			'payment_mode', 
+			'payment_status', 
+			'trans_parent_ref_id', 
+			'payment_currency', 
+			'exchange_rate', 
+			'payment_parent_ref_id', 
+			'pending_reason', 
+			'first_name', 
+			'last_name', 
+			'address_company', 
+			'address_name', 
+			'address_suburb', 
+			'address_city', 
+			'address_postcode', 
+			'address_country', 
+			'num_cart_items' 
+		);
+
+
+		if( BitBase::verifyIdParameter( $pParamHash, 'country_id' ) ) {
+			$pParamHash['address_country'] = zen_get_country_name( $pParamHash['country_id'] );
+		}
+
+		if( empty( $pParamHash['payment_status'] ) ) {
+			$pParamHash['payment_status'] = ($pParamHash['is_success'] == 'y' ? 'PAID' : 'unsuccessful');
+		}
+
+		foreach( $columns as $colName ) {
+			if( isset( $pParamHash[$colName] ) ) {
+				$pParamHash['payment_store'][$colName] = $pParamHash[$colName];
+			}
+		}
+
+		// No bounds checking yet
+		$ret = TRUE;
+
+		return $ret;
+	}
+
+	public function storeOrdersPayment( &$pParamHash, $pOrder ) {
+		$ret = FALSE;
+		$sessionParams = array();
+
+		if( !empty( $pParamHash['adjust_total'] ) ) {
+			$ret = $pOrder->adjustOrder( $pParamHash, $sessionParams );
+		} else {
+			$ret = TRUE;
+			$this->mDb->StartTrans();
+			if( $this->verifyOrdersPayment( $pParamHash, $pOrder ) ) {
+				$ordersUpdate = array();
+				$this->mDb->associateInsert( TABLE_ORDERS_PAYMENTS, $pParamHash['payment_store'] );
+			
+				$statusHash['comments'] = trim( "New Payment Recorded:" . $pParamHash['payment_number'] . "\n\n" . BitBase::getParameter( $pParamHash, 'comments', NULL ) );
+				$statusHash['status'] = BitBase::getParameter( $pParamHash, 'status' );
+				$pOrder->updateStatus( $statusHash );
+			} else {
+bit_error_log( $pParamHash, $this->mErrors );
+			}
+			$this->mDb->CompleteTrans();
+		}
+
+		return $ret;
+	}
+	// }}}
+
+	// {{{ INVOICE PAYMENTS
+	private function prepGetDueList(&$pListHash){
+		// keep a copy of user_id for later...
+		$userId = parent::getParameter( $pListHash, 'user_id' );
+		parent::prepGetList($pListHash);
+	}
+
+	public function getDueOrders( $pListHash = array() ) {
+		global $gBitUser;
+
+		$ret = array();
+		$whereSql = '';
+		$bindVars = array();
+
+		$this->prepGetDueList( $pListHash );
+		if( !$gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
+			$whereSql .= ' AND co.`customers_id`=? ';
+			$bindVars[] = $gBitUser->mUserId;
+		} elseif( $userId = BitBase::verifyIdParameter( $_REQUEST, 'customers_id' ) ) {
+			$whereSql .= ' AND co.`customers_id`=? ';
+			$bindVars[] = $userId;
+		}
+
+		if( !empty( $pListHash['payment_number'] ) ) {
+			$whereSql .= ' AND cop.`payment_number`=? ';
+			$bindVars[] = $pListHash['payment_number'];
+		}
+
+		if( $rs = $this->mDb->query( "SELECT * FROM " . TABLE_ORDERS . " co INNER JOIN " . TABLE_ORDERS_PAYMENTS . " cop ON (co.`orders_id`=cop.`orders_id`) WHERE co.`orders_status_id` > 0 AND co.`amount_due` > 0 $whereSql ORDER BY cop.`payment_number`", $bindVars ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$ret[$row['customers_id']][$row['payment_number']]['orders'][] = $row;
+				if( empty( $ret[$row['customers_id']][$row['payment_number']]['totals'] ) ) {
+					$ret[$row['customers_id']][$row['payment_number']]['totals'] = array( 'count' => 0, 'due' => 0.0 );
+				}
+				$ret[$row['customers_id']][$row['payment_number']]['totals']['count']++;
+				$ret[$row['customers_id']][$row['payment_number']]['totals']['due'] += $row['order_total'];
+			}
+		}
+
+		return $ret;
+	}
+
+	public function payInvoice( $pParamHash ) {
+		global $currencies;
+
+		if( !empty( $pParamHash['invoice'] ) ) {
+			// ['invoice'] = array( user_id => po_string )
+			foreach( $pParamHash['invoice'] as $userId => $invoiceStrings ) {
+				foreach( $invoiceStrings as $invoiceString ) {
+					if( $dueOrders = $this->getDueOrders( array( 'customers_id' => $userId, 'payment_number' => $invoiceString ) ) ) {
+						foreach( $dueOrders as $userId => $userOrders ) {
+							foreach( $userOrders as $paymentNumber => $paymentOrders ) {
+								$amountPaid = 0.00;
+								$ordersPaid = 0;
+
+								$paymentAmount = (string)BitBase::getParameter( $pParamHash, 'payment_amount' );
+								// cast to string because of floating point precision WARNING here https://www.php.net/manual/en/language.types.float.php
+								if( (string)$paymentOrders['totals']['due'] != $paymentAmount ) {
+									$this->mErrors['errors'][] = tra( 'Charge amount does not equal invoice amount.' ).' ('.(string)$paymentOrders['totals']['due'].' != '.$paymentAmount.')';
+								}
+								if( !empty( $pParamHash['payment_method'] ) ) {
+
+									// Fill out hashes and objects to process payment using payment modules that expect an order
+									$tempOrder = new CommerceOrder();
+									$pParamHash['charge_amount'] = $paymentAmount;
+									foreach( array( 
+										'name' => 'payment_owner',
+										'company' => 'address_company',
+										'street_address' => 'address_street_address', 
+										'suburb' => 'address_suburb', 
+										'city' => 'address_city',
+										'state' => 'address_state', 
+										'postcode' => 'address_postcode',
+										'countries_id' => 'country_id' ) as $orderKey => $formKey ) {
+										$tempOrder->billing[$orderKey] = $pParamHash[$formKey];
+									}
+
+									$tempOrder->customer['firstname'] = $tempOrder->billing['firstname'] = substr( $pParamHash['payment_owner'], 0, strpos( $pParamHash['payment_owner'], ' ' ) );
+									$tempOrder->customer['lastname'] = $tempOrder->billing['lastname'] = substr( $pParamHash['payment_owner'], strpos( $pParamHash['payment_owner'], ' ' ) + 1 );
+
+									if( $countryHash = zen_get_countries(	$tempOrder->billing['countries_id'] ) ) {
+										$tempOrder->billing = array_merge( $tempOrder->billing, $countryHash );
+									}
+									$tempOrder->delivery = $tempOrder->billing;
+
+									$tempOrder->customer['customers_id'] = $userId;
+									$tempOrder->info['currency_value'] = 1.0;
+									$tempOrder->info['currency'] = $pParamHash['charge_currency'];
+									if( $tempUser = BitUser::getUserObject( $tempOrder->customer['customers_id'] ) ) {
+										$tempOrder->customer['email_address'] = $tempUser->getField( 'email' );
+									} else {
+										$this->mErrors['errors'][] = tra( 'Could not load user.' ).' ('.$tempOrder->customer['customers_id'].')';
+									}
+
+									if( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
+										if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $tempOrder, $pParamHash ) ) {
+											$pParamHash['payment_ref_id'] = $tempOrder->info['payment_ref_id'];
+										} else {
+											$this->mErrors['errors'][] = tra( 'Payment Failed' ).': '.$pParamHash['result']['payment_result'];
+											break;
+										}
+									}
+								}
+								$masterPaymentHash = !empty( $pParamHash['result'] ) ? $pParamHash['result'] : $pParamHash;
+
+								$ordersCount = count( $paymentOrders['orders'] );
+								foreach( $paymentOrders['orders'] as $paymentOrderHash ) {
+									$this->mDb->StartTrans();
+									$order = new order( $paymentOrderHash['orders_id'] );
+									if( $amountDue = $order->getField( 'amount_due' ) ) {
+										$ordersPaid++;
+										$amountPaid += $amountDue;
+										$paymentHash = $masterPaymentHash;
+										if( empty( $pParamHash['status'] ) && $order->getField( 'orders_status_id' ) < DEFAULT_ORDERS_STATUS_ID ) {
+											// invoiced purchase orders can default to a lower initial status like PENDING, move to default paid status like NEW
+											$paymentHash['status'] = DEFAULT_ORDERS_STATUS_ID;
+										}
+										$paymentHash['orders_id'] = $paymentOrderHash['orders_id'];
+										$paymentHash['payment_amount'] = $amountDue;
+										if( $ordersCount > 1 ) {
+											$paymentHash['comments'] = trim( "PAID $ordersPaid of $ordersCount, ". $currencies->format( $amountPaid, FALSE, '', '', FALSE ) ." of " . $currencies->format( $pParamHash['payment_amount'], FALSE, '', '', FALSE ) . "\n\n" . BitBase::getParameter( $pParamHash, 'comments' ) );
+										}
+										if( $this->storeOrdersPayment( $paymentHash, $order ) ) {
+											if( $order->getField( 'amount_due' ) ) {
+												$amountDue = ($order->getField( 'amount_due' ) - $paymentHash['payment_amount']);
+												$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `amount_due` = ? WHERE `orders_id` = ?", array( $amountDue, $paymentHash['orders_id'] ) );
+											}
+										}
+									}
+									$this->mDb->CompleteTrans();
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			$this->mErrors['invoice'] = 'No invoices selected';
+		}
+		return empty( $this->mErrors );
+	}
+	// }}}
+
 }
-?>
+

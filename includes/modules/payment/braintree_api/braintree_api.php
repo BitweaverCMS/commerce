@@ -132,7 +132,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
      * Display Credit Card Information Submission Fields on the Checkout Payment Page
      */
     function selection() {
-        global $order;
+        global $order, $gBitUser;
 
         $this->payment_type_check = 'var value = document.checkout_payment.bt_payment_type.value;' .
                 'if(value == "Solo" || value == "Maestro" || value == "Switch") {' .
@@ -167,40 +167,24 @@ class braintree_api extends CommercePluginPaymentCardBase {
         }
 
         $onFocus = ' onfocus="methodSelect(\'pmt-' . $this->code . '\')"';
-/*
-        $fieldsArray = array();
-        $fieldsArray[] = array(
-			'title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_FIRSTNAME' ),
-            'field' => zen_draw_input_field('bt_cc_firstname', $order->billing['firstname'], 'id="' . $this->code . '-cc-ownerf"' . $onFocus . ' autocomplete="off"') .
-            '<script type="text/javascript">function bt_payment_type_check() { ' . $this->payment_type_check . ' } </script>',
-            'tag' => $this->code . '-cc-ownerf');
-        $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_LASTNAME' ),
-            'field' => zen_draw_input_field('bt_cc_lastname', $order->billing['lastname'], 'id="' . $this->code . '-cc-ownerl"' . $onFocus . ' autocomplete="off"'),
-            'tag' => $this->code . '-cc-ownerl');
-        if (sizeof($this->cards) > 0)
-            $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_TYPE' ),
-                'field' => zen_draw_pull_down_menu('bt_payment_type', $this->cards, '', 'onchange="bt_payment_type_check();" onblur="bt_payment_type_check();"' . 'id="' . $this->code . '-cc-type"' . $onFocus),
-                'tag' => $this->code . '-cc-type');
-        $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_NUMBER' ),
-            'field' => zen_draw_input_field('payment_number', $ccnum, 'id="' . $this->code . '-cc-number"' . $onFocus . ' autocomplete="off"', 'tel'),
-            'tag' => $this->code . '-cc-number');
-        $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_EXPIRES' ),
-            'field' => zen_draw_pull_down_menu('payment_expires_month', $expires_month, strftime('%m'), 'id="' . $this->code . '-cc-expires-month"' . $onFocus) . '&nbsp;' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, '', 'id="' . $this->code . '-cc-expires-year"' . $onFocus),
-            'tag' => $this->code . '-cc-expires-month');
-        $fieldsArray[] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_CHECKNUMBER' ),
-            'field' => zen_draw_input_field('payment_cvv', '', 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="off"', 'tel') . '&nbsp;<small>' . $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_CHECKNUMBER_LOCATION' ) . '</small><script type="text/javascript">bt_payment_type_check();</script>',
-            'tag' => $this->code . '-cc-cvv');
-*/
+
+		$defaultName = BitBase::getParameter( $_SESSION, 'payment_owner' );
+		if( !empty( $order->billing['firstname'] ) && !empty( $order->billing['lastname'] ) ) {
+			$defaultName = $order->billing['firstname'].' '.$order->billing['lastname'];
+		} else {
+			$defaultName = $gBitUser->getField( 'real_name' );
+		}
+
 		$selection = array('id' => $this->code,
 						 'module' => $this->title,
 						 'fields' => array(
 							array(	'title' => tra( 'Name On Card' ),
-									'field' => '<div class="row"><div class="col-sm-12">' . zen_draw_input_field('payment_owner', BitBase::getParameter( $_SESSION, 'payment_owner', $order->billing['firstname'].' '.$order->billing['lastname'] ), 'id="' . $this->code . '-payment-owner"' . $onFocus . ' autocomplete="off"') . '</div></div>',
+									'field' => '<div class="row"><div class="col-sm-12">' . zen_draw_input_field('payment_owner', $defaultName, 'id="' . $this->code . '-payment-owner"' . $onFocus . ' autocomplete="off"') . '</div></div>',
 							),
-							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), 'id="' . $this->code . '-cc-number"' . $onFocus . ' autocomplete="off"', 'tel') . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="fa fal fa-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('payment_cvv', BitBase::getParameter( $_SESSION, 'payment_cvv' ), 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="off"', 'tel')  . '</div></div>',
+							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-7"><label class="control-label"><i class="fa fal fa-credit-card"></i> '.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), 'id="' . $this->code . '-cc-number" inputmode="numeric" pattern="[0-9\s]{13,19}"' . $onFocus . ' autocomplete="cc-number"', 'tel') . '</div><div class="col-xs-4 col-sm-5"><label class="control-label">' . tra( 'CVC Code' ) . '</label>' . zen_draw_input_field('payment_cvv', BitBase::getParameter( $_SESSION, 'payment_cvv' ), 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="cc-csc"', 'tel')  . '</div></div>',
 							),
 							array(	'title' => tra( 'Expiration Date' ),
-									'field' => '<div class="row"><div class="col-xs-7 col-sm-9">' . zen_draw_pull_down_menu('payment_expires_month', $expires_month, BitBase::getParameter( $_SESSION, 'payment_expires_month', strftime('%m') ), 'id="' . $this->code . '-cc-expires-month" class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-3">' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, substr( BitBase::getParameter( $_SESSION, 'payment_expires_year', (date('Y') + 1) ), -2 ), 'id="' . $this->code . '-cc-expires-year" class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
+									'field' => '<div class="row"><div class="col-xs-7 col-sm-8 col-md-9">' . zen_draw_pull_down_menu('payment_expires_month', $expires_month, BitBase::getParameter( $_SESSION, 'payment_expires_month', strftime('%m') ), 'id="' . $this->code . '-cc-expires-month" class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-4 col-md-3">' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, substr( BitBase::getParameter( $_SESSION, 'payment_expires_year', (date('Y') + 1) ), -2 ), 'id="' . $this->code . '-cc-expires-year" class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
 							),
 						)
 					);
@@ -305,7 +289,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
 		if( self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
 
-			$logHash = $this->logTransactionPrep( $pOrder, $pPaymentParams );
+			$logHash = $this->prepPayment( $pOrder, $pPaymentParams );
 			$logHash['payment_mode'] = 'charge';
 
 			try {
@@ -393,7 +377,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 						$products_list = (strlen($products_list) > 255) ? substr($products_list, 0, 250) . ' ...' : $products_list;
 
 						$transHash['customFields']['products_purchased'] = $products_list;
-						$transHash['customFields']['orders_id'] = $pOrder->mDb->mName . '-' . $pPaymentParams['orders_id'];
+						$transHash['customFields']['orders_id'] = $pOrder->mDb->mName . '-' . BitBase::getParameter( $pPaymentParams, 'orders_id', BitBase::getParameter( $pPaymentParams, 'payment_parent_ref_id' ) );
 						$transHash['customFields']['customers_id'] = $pPaymentParams['payment_user_id'];
 					}
 
@@ -431,6 +415,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
 				$pPaymentParams['result'] = array();
 				if( $result->success ) {
+					$logHash['payment_result'] = $result->transaction->processorResponseCode;
 					$pnref = $result->transaction->id;
 					$this->payment_ref_id = $pnref;
 					$logHash['exchange_rate'] = 1.0;
@@ -438,7 +423,6 @@ class braintree_api extends CommercePluginPaymentCardBase {
 						$logHash['exchange_rate'] = $transExchange;
 					}
 					$logHash['payment_status'] = $result->transaction->status;
-					$logHash['payment_result'] = $result->transaction->processorResponseCode || 'Failure';
 					$logHash['payment_date'] = $result->transaction->createdAt->format('Y-m-d H:i:s+00');
 					$logHash['payment_amount'] = (float) urldecode( $result->transaction->amount );
 					if( $pPaymentParams['charge_amount'] < 0 ) {
@@ -451,61 +435,57 @@ class braintree_api extends CommercePluginPaymentCardBase {
 					$logHash['payment_parent_ref_id'] = $result->transaction->refundedTransactionId;
 //					$logHash['pending_reason'] = $this->pendingreason;
 					$logHash['address_company'] = $result->transaction->billingDetails->company;
-					$logHash['address_street'] = $result->transaction->shippingDetails->streetAddress;
+					$logHash['address_street_address'] = $result->transaction->shippingDetails->streetAddress;
 					$logHash['address_suburb'] = $result->transaction->shippingDetails->extendedAddress;
 					$logHash['address_city'] = $result->transaction->shippingDetails->locality;
 					$logHash['address_state'] = $result->transaction->shippingDetails->region;
 					$logHash['address_postcode'] = $result->transaction->shippingDetails->postalCode;
 					$logHash['address_country'] = $result->transaction->shippingDetails->countryName;
 
-					if ($result->success) {
-						$ret = TRUE;
-						$logHash['is_success'] = 'y';
+					$ret = TRUE;
+					$logHash['is_success'] = 'y';
 
-						$pOrder->info['payment_ref_id'] = $pnref;
-						//replace middle CC num with XXXX
-						if( !empty( $transHash['payment_number'] ) ) {
-							$pOrder->info['payment_number'] = substr($transHash['payment_number'], 0, 6) . str_repeat('X', (strlen($transHash['payment_number']) - 6)) . substr($transHash['payment_number'], -4);
-						}
-						
-						$logHash['payment_auth_code'] = $result->transaction->creditCardDetails->token;
-						$this->payment_type = $this->getModuleConfigValue( '_TEXT_TITLE' ) . '(' . $result->transaction->creditCardDetails->cardType . ')';
-						$this->mPaymentStatus = 'Completed';
-						$this->avs = $result->transaction->avsPostalCodeResponseCode;
-						$this->cvv2 = $result->transaction->cvvResponseCode;
-
-						$this->amt = $result->transaction->amount;
-						$this->transactiontype = 'cart';
-						$this->numitems = sizeof($pOrder->contents);
-
-					} else {
-
-						$logHash['payment_message'] .= ' '.$result->message;
-						$error_msg = 'Error processing transaction: ' . $result->message;
-
-						if (preg_match('/^1(\d+)/', $result->transaction->processorResponseCode)) {
-							// If it's a 1000 code it's Card Approved but since it didn't suceed above we assume it's Verification Failed.
-							// FROM " . TABLE_BRAINTREE . " : 1000 class codes mean the processor has successfully authorized the transaction; success will be true. However, the transaction could still be gateway rejected even though the processor successfully authorized the transaction if you have AVS and/or CVV rules set up and/or duplicate transaction checking is enabled and the transaction fails those validation.
-							$this->mErrors['process_payment'] = 'We were unable to process your credit card. Please make sure that your credit card and billing information is accurate and entered properly.';
-						} else if (preg_match('/^2(\d+)/', $result->transaction->processorResponseCode)) {
-							// If it's a 2000 code it's Card Declined
-							// FROM " . TABLE_BRAINTREE . " : 2000 class codes means the authorization was declined by the processor ; success will be false and the code is meant to tell you more about why the card was declined.                
-							if (defined('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode)) {
-								$this->mErrors['process_payment'] = constant('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode);
-							} else {
-								$this->mErrors['process_payment'] = 'Processor Decline - Please try another card. ('.$result->transaction->processorResponseCode.')';
-							}
-						} else if (preg_match('/^3(\d+)/', $result->transaction->processorResponseCode)) {
-							// If it's a 3000 code it's a processor failure
-							// FROM " . TABLE_BRAINTREE . " : 3000 class codes are problems with the back-end processing network, and dont necessarily mean a problem with the card itself.
-							$this->mErrors['process_payment'] = 'Processor Network Unavailable - Try Again.';
-						} else {
-							// This is the default error msg but technically it shouldn't be able to get here, Braintree in the future may add codes making it possible to not be a 1, 2, or 3k class code though.
-							$this->mErrors['process_payment'] = 'We were unable to process your credit card. Please make sure that your billing information is accurate and entered properly.';
-						}
-						$pPaymentParams['result'] = $logHash;
+					$pOrder->info['payment_ref_id'] = $pnref;
+					//replace middle CC num with XXXX
+					if( !empty( $transHash['payment_number'] ) ) {
+						$pOrder->info['payment_number'] = substr($transHash['payment_number'], 0, 6) . str_repeat('X', (strlen($transHash['payment_number']) - 6)) . substr($transHash['payment_number'], -4);
 					}
+					
+					$logHash['payment_auth_code'] = $result->transaction->creditCardDetails->token;
+					$this->payment_type = $this->getModuleConfigValue( '_TEXT_TITLE' ) . '(' . $result->transaction->creditCardDetails->cardType . ')';
+					$this->mPaymentStatus = 'Completed';
+					$this->avs = $result->transaction->avsPostalCodeResponseCode;
+					$this->cvv2 = $result->transaction->cvvResponseCode;
+
+					$this->amt = $result->transaction->amount;
+					$this->transactiontype = 'cart';
+					$this->numitems = sizeof($pOrder->contents);
+
 				} elseif( empty( $this->mErrors ) ) {
+					$logHash['payment_message'] .= ' '.$result->message;
+					$error_msg = 'Error processing transaction: ' . $result->message;
+
+					if (preg_match('/^1(\d+)/', $result->transaction->processorResponseCode)) {
+						// If it's a 1000 code it's Card Approved but since it didn't suceed above we assume it's Verification Failed.
+						// FROM " . TABLE_BRAINTREE . " : 1000 class codes mean the processor has successfully authorized the transaction; success will be true. However, the transaction could still be gateway rejected even though the processor successfully authorized the transaction if you have AVS and/or CVV rules set up and/or duplicate transaction checking is enabled and the transaction fails those validation.
+						$this->mErrors['process_payment'] = 'We were unable to process your credit card. Please make sure that your credit card and billing information is accurate and entered properly.';
+					} else if (preg_match('/^2(\d+)/', $result->transaction->processorResponseCode)) {
+						// If it's a 2000 code it's Card Declined
+						// FROM " . TABLE_BRAINTREE . " : 2000 class codes means the authorization was declined by the processor ; success will be false and the code is meant to tell you more about why the card was declined.                
+						if (defined('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode)) {
+							$this->mErrors['process_payment'] = constant('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode);
+						} else {
+							$this->mErrors['process_payment'] = 'Processor Decline - Please try another card. ('.$result->transaction->processorResponseCode.')';
+						}
+					} else if (preg_match('/^3(\d+)/', $result->transaction->processorResponseCode)) {
+						// If it's a 3000 code it's a processor failure
+						// FROM " . TABLE_BRAINTREE . " : 3000 class codes are problems with the back-end processing network, and dont necessarily mean a problem with the card itself.
+						$this->mErrors['process_payment'] = 'Processor Network Unavailable - Try Again.';
+					} else {
+						// This is the default error msg but technically it shouldn't be able to get here, Braintree in the future may add codes making it possible to not be a 1, 2, or 3k class code though.
+						$this->mErrors['process_payment'] = 'We were unable to process your credit card. Please make sure that your billing information is accurate and entered properly.';
+					}
+					$logHash['payment_result'] = 'Failure';
 					$this->mErrors['process_payment'] = $result->message;
 				}
 			} catch (Exception $e) {
@@ -517,6 +497,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 		} else {
 			$errorString = implode( $this->mErrors );
 			$this->mErrors = array( 'process_payment' => $errorString );
+eb( $this->mErrors, $pPaymentParams );
 		}
 
 		if( !empty( $this->mErrors['process_payment'] ) ) {
@@ -525,9 +506,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 			$ret = FALSE;
 		}
 
-		if( !empty( $logHash['payment_ref_id'] ) ) {
-			$this->logTransaction( $logHash, $pOrder );
-		}
+		$pPaymentParams['result'] = $logHash;
 
 		return $ret;
 	}

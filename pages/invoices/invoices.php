@@ -7,14 +7,26 @@ if (!$gBitUser->isRegistered() ) {
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php');
-require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderManager.php');
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
+$paymentManager = new CommercePaymentManager( BitBase::getParameter( $_REQUEST, 'payment_method') );
 
 global $gBitUser;
 $gBitUser->verifyRegistered();
 
+$countryId = BitBase::getParameter( $_REQUEST, 'country_id', STORE_COUNTRY );
+if( !$countryId && !$gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
+	if( $defaultAddress = $gBitCustomer->getAddress( $gBitCustomer->getDefaultAddressId() ) ) {
+		if( isset( $defaultAddress['countries_id'] ) ) {
+			$countryId = $defaultAddress['countries_id'];
+		} else {
+			$countryId = zen_get_country_id( $defaultAddress );
+		}
+	}
+}
+
 $payment = array();
-if( is_numeric( $editPayment ) ) {
+if( $editPayment = BitBase::getParameter( $_REQUEST, 'edit_payment' ) ) {
 	$payment = $gCommerceOrderManager->getPayment();
 }
 
@@ -29,6 +41,8 @@ $orderStatuses[''] = 'No Change';
 $gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId, 'required' ) );
 $gBitSmarty->assign( 'orderStatuses', $orderStatuses );
 
+$feedback = array( 'errors' => [] );
+
 if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
 	switch( $action ) {
 		case 'record_payment':
@@ -38,50 +52,26 @@ if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
 			}
 			break;
 		case 'save_payment':
-			$amountPaid = 0.00;
-			$ordersPaid = 0;
-
-			foreach( $_REQUEST['id'] as $optionId => $optionValueHash ) {
-				foreach( $optionValueHash as $optionValueId => $optionValue ) {
-					if( $dueOrders = $gCommerceOrderManager->getDueOrders( array( 'payment_number' => $optionValue ) ) ) {
-						foreach( $dueOrders as $userId => $userOrders ) {
-							foreach( $userOrders as $paymentNumber => $paymentOrders ) {
-								$ordersCount = count( $paymentOrders );
-								foreach( $paymentOrders as $paymentOrderHash ) {
-									$order = new order( $paymentOrderHash['orders_id'] );
-									if( $amountDue = $order->getField( 'amount_due' ) ) {
-										$ordersPaid++;
-										$amountPaid += $amountDue;
-										$paymentHash = $_REQUEST;
-										if( $ordersCount > 1 ) {
-											$paymentHash['oID'] = $paymentOrderHash['orders_id'];
-											$paymentHash['payment_amount'] = $amountDue;
-											$paymentHash['comments'] = trim( "PAID $ordersPaid of $ordersCount, ". $currencies->format( $amountPaid, FALSE, '', '', FALSE ) ." of " . $currencies->format( $_REQUEST['payment_amount'], FALSE, '', '', FALSE ) . "\n\n" . $paymentHash['comments'] );
-										}
-										if( $gCommerceOrderManager->storeOrdersPayment( $paymentHash, $order ) ) {
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+			if( $paymentManager->payInvoice( $_REQUEST ) ) {
+				bit_redirect( zen_get_page_url( 'invoices' ) );
+			} else {
+				$feedback = array_merge( $feedback, $gCommerceOrderManager->mErrors );
 			}
-			bit_redirect( zen_get_page_url( 'invoices' ) );
 			break;
 	}
 }
 
 $gBitThemes->loadJavascript( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/js/bootstrap-datepicker.js');
 
-$dueOrders = $gCommerceOrderManager->getDueOrders();
+$dueOrders = $paymentManager->getDueOrders();
 $gBitSmarty->assign_by_ref( 'dueOrders', $dueOrders );
-
-$_REQUEST['order_ids'] = array( $_REQUEST['oID'] );
 
 $paymentModules = $gCommerceSystem->scanModules( 'payment', TRUE );
 
+$gBitSmarty->assign( 'feedback', $feedback );
 $gBitSmarty->assign_by_ref( 'paymentModules', $paymentModules );
+
+$gBitSmarty->assign( 'paymentSelections', $paymentManager->selection() );
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_invoices.tpl' );
 

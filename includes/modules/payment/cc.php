@@ -105,7 +105,7 @@ class cc extends CommercePluginPaymentCardBase {
 	function processPayment( $pOrder, &$pPaymentParams ) {
 
 		if( $ret = self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
-			$logHash = $this->logTransactionPrep( $pOrder, $pPaymentParams );
+			$logHash = $this->prepPayment( $pOrder, $pPaymentParams );
 
 			$ret = TRUE;
 			$logHash['payment_result'] = '1';
@@ -123,7 +123,7 @@ class cc extends CommercePluginPaymentCardBase {
 				$pOrder->info['payment_number'] = $this->privatizePaymentNumber( $pPaymentParams['payment_number'] );
 			}
 
-			$this->logTransaction( $logHash );
+			$pPaymentParams['result'] = $logHash;
 		}
 		return $ret;
 	}

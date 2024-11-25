@@ -3,10 +3,8 @@
 </header>
 
 {$messageStack->output('address')}
-
-
-
-{form name='invoices' method='post' enctype='multipart/form-data'}
+{formfeedback hash=$feedback}
+{form name='invoices' method='post' enctype='multipart/form-data' autocomplete="on"}
 <input type="hidden" name="main_page" value="invoices" />
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 {foreach from=$dueOrders key=userId item=$customerHash name=dueorders}
@@ -23,12 +21,12 @@
 	<div class="payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""}">
 		{assign var=orderCount value=0}
 		{assign var=orderSum value=0}
-		{foreach from=$customerOrders item=orderHash name=customerOrders}
+		{foreach from=$customerOrders.orders item=orderHash name=customerOrders}
 			{assign var=orderCount value=$orderCount+1}
 			{assign var=orderSum value=$orderSum+$orderHash.amount_due}
 			{forminput label="checkbox"}
 			<div class="row">
-				<div class="col-xs-2 col-sm-1"><input type="checkbox" name="" value="" class="batch-checkbox" disabled> 
+				<div class="col-xs-2 col-sm-1"><input type="checkbox" name="" value="" class="batch-checkbox" disabled autocomplete="off"> 
 					{if $gBitUser->hasPermission( 'p_bitcommerce_admin' )}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderHash.orders_id}">{else} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}account_history_info?order_id={$orderHash.orders_id}">{/if}{$orderHash.orders_id}</a>
 				</div>
 				<div class="col-xs-2 col-sm-1">{$gCommerceCurrencies->format($orderHash.amount_due,true,$orderHash.currency,$orderHash.currency_value)}</div>
@@ -39,7 +37,7 @@
 		{/foreach}
 		{forminput label="checkbox"}
 			<div class="row" style="border-top:1px solid #ccc;padding-bottom:2em;">
-				<div class="col-xs-2 col-sm-1"><input class="batch-checkbox" type="checkbox" name="id[25][17]" value="{$paymentRefId}" onclick="selectInvoice('{$paymentRefId|escape:'quotes'}','{$orderSum}');toggleBatchCheckbox(this,'.user-{$userId} .payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""} .batch-checkbox');"> <tt>@{$orderCount}</tt> </div>
+				<div class="col-xs-2 col-sm-1"><input class="batch-checkbox" type="checkbox" name="invoice[{$userId}][]" value="{$paymentRefId}" onclick="selectInvoice('{$paymentRefId|escape:'quotes'}','{$orderSum}');toggleBatchCheckbox(this,'.user-{$userId} .payment-{$paymentRefId|regex_replace:"/[^[:alnum:]]/u":""} .batch-checkbox');" autocomplete="off"> <tt>@{$orderCount}</tt> </div>
 				<div class="col-xs-10">{$gCommerceCurrencies->format($orderSum,true,$orderHash.currency,$orderHash.currency_value)} <strong class="inline-block pl-2">{$paymentRefId}</strong></div>
 			</div>
 		{/forminput}
@@ -52,9 +50,8 @@
 {/foreach}
 </div>
 
-<div id="record-payment-block" style="display:none">
-	{include file="bitpackage:bitcommerce/order_payment_edit.tpl"}
-</div>
+{assign var=selection value=$paymentSelections|current}
+{include file="bitpackage:bitcommerce/order_payment_edit.tpl"}
 {/form}
 
 
@@ -77,11 +74,9 @@ function editPayment( pPayment ) {
 		}
 	})
 }
-function selectInvoice( pPaymentNumber, pPaymentAmount ) {
-	$('#record-payment-block').show();
-{/literal}{if $gBitUser->hasPermission('p_commerce_admin')}
-	$("input[name='payment_number']").val( pPaymentNumber );
-{/if}{literal}
+function selectInvoice( pPaymentRefId, pPaymentAmount ) {
+	$('#form-edit-payment').show();
+	$("input[name='payment_parent_ref_id']").val( pPaymentRefId );
 	$("input[name='payment_amount']").val( pPaymentAmount );
 }
 {/literal}</script>

@@ -89,7 +89,7 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				$countryId = NULL;
 			}
 			if( defined( 'ACCOUNT_STATE' ) && ACCOUNT_STATE == 'true' ) {
-				$statePullDown = zen_draw_input_field('state', $entry['state'] );
+				$statePullDown = zen_draw_input_field('address_state', $entry['state'] );
 				$gBitSmarty->assign( 'statePullDown', $statePullDown );
 			}
 

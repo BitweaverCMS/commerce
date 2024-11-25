@@ -35,144 +35,7 @@ class CommerceOrderManager extends BitSingleton {
 		return $ret;
 	}
 
-	private function verifyOrdersPayment( &$pParamHash, $pOrder ) {
-		$ret = FALSE;
-
-		global $gBitUser;
-		$pParamHash['payment_store']['user_id'] = $gBitUser->mUserId;
-		$pParamHash['payment_store']['customers_id'] = $pOrder->customer['customers_id'];
-		$pParamHash['payment_store']['ip_address'] = $_SERVER['REMOTE_ADDR'];
-
-		$columns = array( 
-			'oID' => 'orders_id', 
-			'orders_id' => 'orders_id', 
-			'payment_ref_id' => 'payment_ref_id', 
-			'payment_result' => 'payment_result', 
-			'payment_auth_code' => 'payment_auth_code', 
-			'payment_message' => 'payment_message', 
-			'payment_amount' => 'payment_amount', 
-			'payment_date' => 'payment_date', 
-			'customers_id' => 'customers_id', 
-			'is_success' => 'is_success', 
-			'customers_email' => 'customers_email', 
-			'payment_type' => 'payment_type', 
-			'payment_owner' => 'payment_owner', 
-			'payment_number' => 'payment_number', 
-			'payment_expires' => 'payment_expires', 
-			'transaction_date' => 'transaction_date', 
-			'payment_module' => 'payment_module', 
-			'payment_mode' => 'payment_mode', 
-			'payment_status' => 'payment_status', 
-			'trans_parent_ref_id' => 'trans_parent_ref_id', 
-			'payment_currency' => 'payment_currency', 
-			'exchange_rate' => 'exchange_rate', 
-			'payment_parent_ref_id' => 'payment_parent_ref_id', 
-			'pending_reason' => 'pending_reason', 
-			'first_name' => 'first_name', 
-			'last_name' => 'last_name', 
-			'address_company' => 'address_company', 
-			'address_name' => 'address_name', 
-			'address_street_address' => 'address_street', 
-			'address_suburb' => 'address_suburb', 
-			'address_city' => 'address_city', 
-			'state' => 'address_state', 
-			'address_postcode' => 'address_postcode', 
-			'address_country' => 'address_country', 
-			'num_cart_items' 
-		);
-
-
-		if( BitBase::verifyIdParameter( $pParamHash, 'country_id' ) ) {
-			$pParamHash['address_country'] = zen_get_country_name( $pParamHash['country_id'] );
-		}
-		if( empty( $pParamHash['payment_status'] ) ) {
-			$pParamHash['payment_status'] = ($pParamHash['is_success'] == 'y' ? 'PAID' : 'unsuccessful');
-		}
-
-		foreach( $columns as $inputKey => $colName ) {
-			if( isset( $pParamHash[$inputKey] ) ) {
-				$pParamHash['payment_store'][$colName] = $pParamHash[$inputKey];
-			}
-		}
-
-		// No bounds checking yet
-		$ret = TRUE;
-
-		return $ret;
-	}
-
-	public function storeOrdersPayment( &$pParamHash, $pOrder ) {
-		$ret = FALSE;
-		$sessionParams = array();
-
-		if( !empty( $pParamHash['adjust_total'] ) ) {
-			$ret = $pOrder->adjustOrder( $pParamHash, $sessionParams );
-		} else {
-			$ret = TRUE;
-			$this->mDb->StartTrans();
-			if( $this->verifyOrdersPayment( $pParamHash, $pOrder ) ) {
-				$ordersUpdate = array();
-				$this->mDb->associateInsert( TABLE_ORDERS_PAYMENTS, $pParamHash['payment_store'] );
-			
-				$statusHash['comments'] = trim( "New Payment Recorded:" . $pParamHash['payment_number'] . "\n\n" . BitBase::getParameter( $pParamHash, 'comments', NULL ) );
-				$statusHash['status'] = BitBase::getParameter( $pParamHash, 'status' );
-				$pOrder->updateStatus( $statusHash );
-
-				if( $pOrder->getField( 'amount_due' ) ) {
-					$amountDue = ($pOrder->getField( 'amount_due' ) - $pParamHash['payment_store']['payment_amount']);
-					$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `amount_due` = ? WHERE `orders_id` = ?", array( $amountDue, $pOrder->mOrdersId ) );
-				}
-			}
-			$this->mDb->CompleteTrans();
-		}
-
-		return $ret;
-	}
-
-	private function prepGetDueList(&$pListHash){
-		// keep a copy of user_id for later...
-		$userId = parent::getParameter( $pListHash, 'user_id' );
-		parent::prepGetList($pListHash);
-	}
-
-	public function getDueOrders( $pListHash = array() ) {
-		global $gBitUser;
-
-		$ret = array();
-		$whereSql = '';
-$this->prepGetDueList( $pListHash );
-		$bindVars = array();
-
-		if( !$gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
-			$whereSql .= ' AND co.`customers_id`=? ';
-			$bindVars[] = $gBitUser->mUserId;
-		}
-
-		if( !empty( $pListHash['payment_number'] ) ) {
-			$whereSql .= ' AND cop.`payment_number`=? ';
-			$bindVars[] = $pListHash['payment_number'];
-		}
-
-		if( $rs = $this->mDb->query( "SELECT * FROM " . TABLE_ORDERS . " co INNER JOIN " . TABLE_ORDERS_PAYMENTS . " cop ON (co.`orders_id`=cop.`orders_id`) WHERE co.`orders_status_id` > 0 AND co.`amount_due` > 0 $whereSql ORDER BY cop.`payment_number`", $bindVars ) ) {
-			while( $row = $rs->fetchRow() ) {
-				$ret[$row['customers_id']][$row['payment_number']][] = $row;
-			}
-		}
-
-		return $ret;
-	}
-
-	private function verifyPayment( &$pParamHash, $pOrder ) {
-		global $gBitUser;
-
-		$pParamHash['payment_store']['user_id'] = $gBitUser->mUserId;
-		$pParamHash['payment_store']['customers_id'] = $gOrder->getField( 'customers_id' );
-		$pParamHash['payment_store']['orders_id'] = $gOrder->getField( 'orders_id' );
-
-		return( empty( $pParamHash['payment_store']['errors'] ) );
-	}
-
-	function getProductHistory( $pListHash ) {
+	public function getProductHistory( $pListHash ) {
 		$whereSql = '';
 		$bindVars = array();
 		if( @BitBase::verifyId( $pListHash['products_id'] ) ) {
@@ -198,7 +61,7 @@ $this->prepGetDueList( $pListHash );
 		return $ret;
 	}
 
-	function getOrdersToAddress( $pAddress, $pFromStatusId ) {
+	public function getOrdersToAddress( $pAddress, $pFromStatusId ) {
 		$ret = array();
 
 		$addressHash = array();

@@ -339,7 +339,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 			curl_close($ch);
 
-			$logHash = $this->logTransactionPrep( $pOrder, $pPaymentParams );
+			$logHash = $this->prepPayment( $pOrder, $pPaymentParams );
 
 			if( $response ) {
 				$responseHash = $this->_parseNameValueList($response);
@@ -398,7 +398,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			$ret = FALSE;
 		}
 		if( !empty( $logHash ) ) {
-			$this->logTransaction( $logHash );
+			$pPaymentParams['result'] = $logHash;
 		}
 		return $ret;
 	}

@@ -68,7 +68,7 @@ class purchase_order extends CommercePluginPaymentBase {
 
 		if( $ret = self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
 			$pOrder->info['amount_due'] = $this->getParameter( $pPaymentParams, 'payment_amount' );
-			$logHash = $this->logTransactionPrep( $pOrder, $pPaymentParams );
+			$logHash = $this->prepPayment( $pOrder, $pPaymentParams );
 
 			$defaultCurrency = $this->getDefaultCurrency();
 
@@ -85,7 +85,7 @@ class purchase_order extends CommercePluginPaymentBase {
 			$logHash['payment_type'] = $this->getModuleConfigValue( '_TERMS' );
 			$logHash['payment_expires'] = NULL;
 
-			$this->logTransaction( $logHash );
+			$pPaymentParams['result'] = $logHash;
 		}
 
 		return $ret;

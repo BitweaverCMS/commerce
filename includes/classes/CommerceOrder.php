@@ -937,6 +937,9 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 		$paymentParams = array_merge( $pRequestParams, $pSessionParams );
 		if( !$this->hasPaymentDue( $paymentParams ) || (!empty( $paymentParams['payment_method'] ) && $paymentManager->processPayment( $this, $paymentParams )) ) {
 			$newOrderId = $this->create( $paymentParams );
+			$paymentParams['result']['orders_id'] = $this->mOrdersId;
+			$paymentManager->storeOrdersPayment( $paymentParams['result'], $this);
+				
 
 			$paymentManager->after_order_create( $newOrderId, $this );
 			$this->sendOrderEmail();
