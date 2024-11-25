@@ -137,7 +137,7 @@ $('.input-group.date').datepicker({
 		{/if*}
 		<div class="form-group">
 			{formfeedback error=$errors.payment_parent_ref_id}
-			{formlabel label="Payment Reference ID" for=""}
+			{formlabel label="Payment Reference ID" for=""}<acronym title="{tr}Required{/tr}">*</acronym>
 			{forminput}
 				<input class="form-control" type="text" maxlength="64" name="payment_parent_ref_id" value="{$payment.payment_parent_ref_id|default:$smarty.request.payment_parent_ref_id|escape:"htmlall"}" readonly required>
 			{/forminput}
@@ -173,7 +173,7 @@ $('.input-group.date').datepicker({
 			<fieldset>
 				<legend {if $selection}class="radio"{/if}>
 			{if $selection}
-				<input type="radio" name="payment_method" value="manual" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" /> 
+				<input type="radio" name="payment_method" value="manual" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" required/> 
 			{else}
 				<input type="hidden" name="payment_method" value="manual" />
 			{/if}
@@ -202,7 +202,7 @@ $('.input-group.date').datepicker({
 			<fieldset>
 				<legend {if $selection}class="radio"{/if}>
 			{if $selection && $gBitUser->hasPermission('p_commerce_admin')}
-				<input type="radio" name="payment_method" value="{$selection.id}" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" /> 
+				<input type="radio" name="payment_method" value="{$selection.id}" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" required/> 
 			{else}
 				<input type="hidden" name="payment_method" value="{$selection.id}" />
 			{/if}

@@ -47,11 +47,15 @@
 			</div>
 		</div>
 	</div>
+{foreachelse}
+<div class="alert alert-success">You have no outstanding invoices.</div>
 {/foreach}
 </div>
 
+{if $dueOrders}
 {assign var=selection value=$paymentSelections|current}
 {include file="bitpackage:bitcommerce/order_payment_edit.tpl"}
+{/if}
 {/form}
 
 
