@@ -462,31 +462,33 @@ class braintree_api extends CommercePluginPaymentCardBase {
 					$this->numitems = sizeof($pOrder->contents);
 
 				} elseif( empty( $this->mErrors ) ) {
-					$logHash['payment_message'] .= ' '.$result->message;
-					$error_msg = 'Error processing transaction: ' . $result->message;
+					$this->mErrors['process_payment'] = $result->message."\n\n";
 
-					if (preg_match('/^1(\d+)/', $result->transaction->processorResponseCode)) {
-						// If it's a 1000 code it's Card Approved but since it didn't suceed above we assume it's Verification Failed.
-						// FROM " . TABLE_BRAINTREE . " : 1000 class codes mean the processor has successfully authorized the transaction; success will be true. However, the transaction could still be gateway rejected even though the processor successfully authorized the transaction if you have AVS and/or CVV rules set up and/or duplicate transaction checking is enabled and the transaction fails those validation.
-						$this->mErrors['process_payment'] = 'We were unable to process your credit card. Please make sure that your credit card and billing information is accurate and entered properly.';
-					} else if (preg_match('/^2(\d+)/', $result->transaction->processorResponseCode)) {
-						// If it's a 2000 code it's Card Declined
-						// FROM " . TABLE_BRAINTREE . " : 2000 class codes means the authorization was declined by the processor ; success will be false and the code is meant to tell you more about why the card was declined.                
-						if (defined('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode)) {
-							$this->mErrors['process_payment'] = constant('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode);
+					if( !empty( $result->transaction->processorResponseCode ) ) {
+						if( preg_match('/^1(\d+)/', $result->transaction->processorResponseCode)) {
+							// If it's a 1000 code it's Card Approved but since it didn't suceed above we assume it's Verification Failed.
+							// FROM " . TABLE_BRAINTREE . " : 1000 class codes mean the processor has successfully authorized the transaction; success will be true. However, the transaction could still be gateway rejected even though the processor successfully authorized the transaction if you have AVS and/or CVV rules set up and/or duplicate transaction checking is enabled and the transaction fails those validation.
+							$this->mErrors['process_payment'] .= 'We were unable to process your credit card. Please make sure that your credit card and billing information is accurate and entered properly.';
+						} else if (preg_match('/^2(\d+)/', $result->transaction->processorResponseCode)) {
+							// If it's a 2000 code it's Card Declined
+							// FROM " . TABLE_BRAINTREE . " : 2000 class codes means the authorization was declined by the processor ; success will be false and the code is meant to tell you more about why the card was declined.                
+							if (defined('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode)) {
+								$this->mErrors['process_payment'] .= constant('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode);
+							} else {
+								$this->mErrors['process_payment'] .= 'Processor Decline - Please try another card. ('.$result->transaction->processorResponseCode.')';
+							}
+						} else if (preg_match('/^3(\d+)/', $result->transaction->processorResponseCode)) {
+							// If it's a 3000 code it's a processor failure
+							// FROM " . TABLE_BRAINTREE . " : 3000 class codes are problems with the back-end processing network, and dont necessarily mean a problem with the card itself.
+							$this->mErrors['process_payment'] .= 'Processor Network Unavailable - Try Again.';
 						} else {
-							$this->mErrors['process_payment'] = 'Processor Decline - Please try another card. ('.$result->transaction->processorResponseCode.')';
+							// This is the default error msg but technically it shouldn't be able to get here, Braintree in the future may add codes making it possible to not be a 1, 2, or 3k class code though.
+							$this->mErrors['process_payment'] .= 'We were unable to process your credit card. Please make sure that your billing information is accurate and entered properly.';
 						}
-					} else if (preg_match('/^3(\d+)/', $result->transaction->processorResponseCode)) {
-						// If it's a 3000 code it's a processor failure
-						// FROM " . TABLE_BRAINTREE . " : 3000 class codes are problems with the back-end processing network, and dont necessarily mean a problem with the card itself.
-						$this->mErrors['process_payment'] = 'Processor Network Unavailable - Try Again.';
-					} else {
-						// This is the default error msg but technically it shouldn't be able to get here, Braintree in the future may add codes making it possible to not be a 1, 2, or 3k class code though.
-						$this->mErrors['process_payment'] = 'We were unable to process your credit card. Please make sure that your billing information is accurate and entered properly.';
 					}
+
+					$logHash['payment_message'] = trim( $this->mErrors['process_payment'] );
 					$logHash['payment_result'] = 'Failure';
-					$this->mErrors['process_payment'] = $result->message;
 				}
 			} catch (Exception $e) {
 				if( !($msg = $e->getMessage()) ) {
