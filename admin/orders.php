@@ -93,7 +93,7 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				$gBitSmarty->assign( 'statePullDown', $statePullDown );
 			}
 
-			$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId ) );
+			$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('address_country_id', $countryId ) );
 			$gBitSmarty->assign_by_ref( 'address', $entry );
 
 			if( $editPayment = BitBase::getParameter( $_REQUEST, 'edit_payment' ) ) {
@@ -199,15 +199,15 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				$addressType = $_REQUEST['address_type'];
 				$statusMsg = 'Updated '.$addressType." address. Previously:\n\n".$order->getFormattedAddress( $addressType, "\n" );
 				$order->updateStatus( array( 'comments' => $statusMsg ) );
-				$saveAddress[$addressType.'_name'] = $_REQUEST['name'];
-				$saveAddress[$addressType.'_company'] = $_REQUEST['company'];
-				$saveAddress[$addressType.'_street_address'] = $_REQUEST['street_address'];
-				$saveAddress[$addressType.'_suburb'] = $_REQUEST['suburb'];
-				$saveAddress[$addressType.'_city'] = $_REQUEST['city'];
-				$saveAddress[$addressType.'_state'] = $_REQUEST['state'];
-				$saveAddress[$addressType.'_postcode'] = $_REQUEST['postcode'];
-				$saveAddress[$addressType.'_country'] = zen_get_country_name( $_REQUEST['country_id'] );
-				$saveAddress[$addressType.'_telephone'] = $_REQUEST['telephone'];
+				$saveAddress[$addressType.'_name'] = $_REQUEST['address_name'];
+				$saveAddress[$addressType.'_company'] = $_REQUEST['address_company'];
+				$saveAddress[$addressType.'_street_address'] = $_REQUEST['address_street_address'];
+				$saveAddress[$addressType.'_suburb'] = $_REQUEST['address_suburb'];
+				$saveAddress[$addressType.'_city'] = $_REQUEST['address_city'];
+				$saveAddress[$addressType.'_state'] = $_REQUEST['address_state'];
+				$saveAddress[$addressType.'_postcode'] = $_REQUEST['address_postcode'];
+				$saveAddress[$addressType.'_country'] = zen_get_country_name( $_REQUEST['address_country_id'] );
+				$saveAddress[$addressType.'_telephone'] = $_REQUEST['address_telephone'];
 				$gBitDb->StartTrans();
 				$gBitDb->associateUpdate( TABLE_ORDERS, $saveAddress, array( 'orders_id'=>$_REQUEST['oID'] ) ); 
 				$gBitDb->CompleteTrans();
