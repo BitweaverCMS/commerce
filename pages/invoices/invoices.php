@@ -38,7 +38,7 @@ $order = new CommerceOrder();
 $gBitSmarty->assign_by_ref( 'order', $order );
 $orderStatuses = commerce_get_statuses( TRUE );
 $orderStatuses[''] = 'No Change';
-$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId, 'required' ) );
+$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId, 'required' ), 'billing country-name' );
 $gBitSmarty->assign( 'orderStatuses', $orderStatuses );
 
 $feedback = array( 'errors' => [] );

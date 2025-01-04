@@ -5,33 +5,33 @@
 		<div class="form-group">
 			{formlabel label="Payment Owner" for=""}<acronym title="{tr}Required{/tr}">*</acronym>
 			{forminput}
-				<input class="form-control" type="text" maxlength="128" name="payment_owner" autocomplete="shipping payment_owner"value="{$payment.payment_owner|default:$smarty.request.payment_owner|default:$address.name|escape:"htmlall"}" />
+				<input class="form-control" type="text" maxlength="128" name="payment_owner" autocomplete="billing name" value="{$payment.payment_owner|default:$smarty.request.payment_owner|default:$address.name|escape:"htmlall"}" />
 			{/forminput}
 		</div>
 		<div class="form-group">
 			{formlabel label="Company" for=""}
 			{forminput}
-				<input class="form-control" type="text" maxlength="128" name="address_company" autocomplete="shipping address_company"value="{$address.company|default:$smarty.request.address_company|escape:"htmlall"}" />
+				<input class="form-control" type="text" maxlength="128" name="address_company" autocomplete="billing organization" value="{$address.company|default:$smarty.request.address_company|escape:"htmlall"}" />
 			{/forminput}
 		</div>
 		<div class="form-group">
 			{formfeedback error=$errors.street_address}
 			{formlabel label="Street Address" for=""}<acronym title="{tr}Required{/tr}">*</acronym>
 			{forminput}
-				<input class="form-control" type="text" maxlength="250" name="address_street_address" autocomplete="shipping address_street_address"value="{$address.street_address|default:$smarty.request.address_street_address|escape:"htmlall"}" required>
+				<input class="form-control" type="text" maxlength="250" name="address_street_address" autocomplete="billing address-line1" value="{$address.street_address|default:$smarty.request.address_street_address|escape:"htmlall"}" required>
 			{/forminput}
 		</div>
 		<div class="form-group">
 			{formlabel label="Address Line 2" for=""}
 			{forminput}
-				<input class="form-control" type="text" maxlength="64" name="address_suburb" autocomplete="shipping address_suburb"value="{$address.suburb|default:$smarty.request.address_suburb|escape:"htmlall"}" />
+				<input class="form-control" type="text" maxlength="64" name="address_suburb" autocomplete="billing address-line2" value="{$address.suburb|default:$smarty.request.address_suburb|escape:"htmlall"}" />
 			{/forminput}
 		</div>
 		<div class="form-group">
 			{formfeedback error=$errors.city}
 			{formlabel label="City" for=""}<acronym title="{tr}Required{/tr}">*</acronym>
 			{forminput}
-				<input class="form-control" type="text" maxlength="64" name="address_city" autocomplete="shipping address_city" value="{$address.city|default:$smarty.request.address_city|escape:"htmlall"}" required>
+				<input class="form-control" type="text" maxlength="64" name="address_city" autocomplete="billing address-level2" value="{$address.city|default:$smarty.request.address_city|escape:"htmlall"}" required>
 			{/forminput}
 		</div>
 <div class="row">
@@ -43,7 +43,7 @@
 				{if $statePullDown}
 				{$statePullDown}
 				{else}
-				<input class="form-control" type="text" name="address_state" autocomplete="shipping state" value="{$address.state|default:$smarty.request.address_state|escape:"htmlall"}" required>
+				<input class="form-control" type="text" name="address_state" autocomplete="billing address-level1" value="{$address.state|default:$smarty.request.address_state|escape:"htmlall"}" required>
 				{/if}	
 			{/forminput}
 		</div>
@@ -53,7 +53,7 @@
 			{formfeedback error=$errors.address_postcode}
 			{formlabel label="Postal Code" for=""}<acronym title="{tr}Required{/tr}">*</acronym>
 			{forminput}
-				<input class="form-control" type="text" maxlength="10" name="address_postcode" autocomplete="shipping address_postcode" value="{$address.postcode|default:$smarty.request.address_postcode|escape:"htmlall"}" required>
+				<input class="form-control" type="text" maxlength="10" name="address_postcode" autocomplete="billing postal-code" value="{$address.postcode|default:$smarty.request.address_postcode|escape:"htmlall"}" required>
 			{/forminput}
 		</div>
 	</div>
@@ -173,7 +173,7 @@ $('.input-group.date').datepicker({
 			<fieldset>
 				<legend {if $selection}class="radio"{/if}>
 			{if $selection}
-				<input type="radio" name="payment_method" value="manual" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" required/> 
+				<input required type="radio" name="payment_method" value="manual" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" required/> 
 			{else}
 				<input type="hidden" name="payment_method" value="manual" />
 			{/if}
@@ -183,14 +183,14 @@ $('.input-group.date').datepicker({
 				{formfeedback error=$errors.name}
 				{formlabel label="Payment Type" for=""}
 				{forminput}
-					{html_options class="form-control" name="payment_type" options=$paymentTypes}
+					{html_options class="form-control" name="manual[payment_type]" options=$paymentTypes}
 				{/forminput}
 			</div>
 			<div class="form-group">
-				{formfeedback error=$errors.payment_number}
+				{formfeedback error=$errors.manual_payment_number}
 				{formlabel label="Payment Number" for=""}
 				{forminput}
-					<input class="form-control" type="text" maxlength="64" name="payment_number" value="{$payment.payment_number|default:$smarty.request.payment_number|escape:"htmlall"}">
+					<input class="form-control" type="text" maxlength="64" name="manual[payment_number]" value="{$payment.payment_number|default:$smarty.request.manual.payment_number|escape:"htmlall"}">
 					{formhelp note="Check, Cash Deposit, or Credit Card Reference Number"}
 				{/forminput}
 			</div>
@@ -202,7 +202,7 @@ $('.input-group.date').datepicker({
 			<fieldset>
 				<legend {if $selection}class="radio"{/if}>
 			{if $selection && $gBitUser->hasPermission('p_commerce_admin')}
-				<input type="radio" name="payment_method" value="{$selection.id}" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" required/> 
+				<input required type="radio" name="payment_method" value="{$selection.id}" {if $smarty.foreach.payment_selection.iteration==1}checked="checked"{/if} onclick="$('.payment-selection').hide();$('#payment-{$selection.id}').show();" required/> 
 			{else}
 				<input type="hidden" name="payment_method" value="{$selection.id}" />
 			{/if}
