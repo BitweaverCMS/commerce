@@ -45,5 +45,7 @@ foreach( array( 'sendto', 'billto', 'shipping', 'payment', 'comments' ) as $key 
 	}
 }
 
+unset( $_SESSION['orders_id'] );
+
 zen_redirect(zen_href_link(FILENAME_CHECKOUT_SUCCESS, '', 'SSL'));
 
