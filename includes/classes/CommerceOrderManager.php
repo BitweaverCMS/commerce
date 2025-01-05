@@ -31,7 +31,7 @@ class CommerceOrderManager extends BitSingleton {
 
 	public function getPaymentTypes() {
 		$paymentTypes = $this->mDb->getCol( "SELECT DISTINCT payment_type FROM " . TABLE_ORDERS_PAYMENTS . " ORDER BY payment_type" );
-		$ret = array_merge( array( 'Check', 'Cash', 'Credit' ), $paymentTypes );
+		$ret = array_merge( array( '', 'Check', 'Cash', 'Credit' ), $paymentTypes );
 		return $ret;
 	}
 

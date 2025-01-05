@@ -379,6 +379,10 @@ class braintree_api extends CommercePluginPaymentCardBase {
 						$transHash['customFields']['products_purchased'] = $products_list;
 						$transHash['customFields']['orders_id'] = $pOrder->mDb->mName . '-' . BitBase::getParameter( $pPaymentParams, 'orders_id', BitBase::getParameter( $pPaymentParams, 'payment_parent_ref_id' ) );
 						$transHash['customFields']['customers_id'] = $pPaymentParams['payment_user_id'];
+						if( $poNumber = BitBase::getParameter( $pPaymentParams, 'purchase_order' ) ) {
+							$transHash['purchaseOrderNumber'] = $poNumber;
+						}
+
 					}
 
 					$result = Braintree_Transaction::sale($transHash);

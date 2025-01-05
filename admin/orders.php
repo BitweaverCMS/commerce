@@ -93,20 +93,10 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				$gBitSmarty->assign( 'statePullDown', $statePullDown );
 			}
 
-			$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('address_country_id', $countryId ) );
+			$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('address_country_id', $countryId, 'autocomplete="'.$addressType.' country-name" ' ) );
 			$gBitSmarty->assign_by_ref( 'address', $entry );
 
-			if( $editPayment = BitBase::getParameter( $_REQUEST, 'edit_payment' ) ) {
-				$payment = array();
-				if( is_numeric( $editPayment ) ) {
-					$payment = $gCommerceOrderManager->getPayment();
-				}
-				$paymentTypes = $gCommerceOrderManager->getPaymentTypes();
-				$gBitSmarty->assign( 'paymentTypes', array_combine( $paymentTypes, $paymentTypes ) );
-				$gBitSmarty->assign_by_ref( 'payment', $payment );
-				$gBitSmarty->assign_by_ref( 'gBitOrder', $order );
-				$gBitSmarty->display( 'bitpackage:bitcommerce/order_payment_edit.tpl' );
-			} elseif( !empty( $_REQUEST['address_type'] ) ) {
+			if( !empty( $_REQUEST['address_type'] ) ) {
 				$gBitSmarty->display( 'bitpackage:bitcommerce/order_address_edit.tpl' );
 			} else {
 				print "<span class='alert alert-danger'>Empty Option</span>";

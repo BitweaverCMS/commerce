@@ -85,5 +85,5 @@ $order->otProcess( $_REQUEST, $_SESSION );
 $gBitSmarty->assign( 'formActionUrl', $paymentManager->get_form_action_url() );
 $gBitSmarty->assign( 'paymentModules', $paymentManager );
 $gBitSmarty->assign( 'paymentConfirmation', $paymentManager->confirmation( $_SESSION ) );
-	
+
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_confirmation.tpl' );

@@ -283,7 +283,7 @@ class CommercePaymentManager extends BitBase {
 				$ordersUpdate = array();
 				$this->mDb->associateInsert( TABLE_ORDERS_PAYMENTS, $pParamHash['payment_store'] );
 			
-				$statusHash['comments'] = trim( "New Payment Recorded:" . $pParamHash['payment_number'] . "\n\n" . BitBase::getParameter( $pParamHash, 'comments', NULL ) );
+				$statusHash['comments'] = trim( BitBase::getParameter( $pParamHash, 'comments', NULL ) );
 				$statusHash['status'] = BitBase::getParameter( $pParamHash, 'status' );
 				$pOrder->updateStatus( $statusHash );
 			} else {
@@ -390,7 +390,11 @@ bit_error_log( $pParamHash, $this->mErrors );
 										$this->mErrors['errors'][] = tra( 'Could not load user.' ).' ('.$tempOrder->customer['customers_id'].')';
 									}
 
-									if( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
+									if( $pParamHash['payment_method'] == 'manual' ) {
+										$pParamHash['payment_number'] = $pParamHash['manual']['payment_number'];
+										$pParamHash['payment_type'] = $pParamHash['manual']['payment_type'];
+										$pParamHash['is_success'] = 'y';
+									} elseif( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
 										if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $tempOrder, $pParamHash ) ) {
 											$pParamHash['payment_ref_id'] = $tempOrder->info['payment_ref_id'];
 										} else {
@@ -400,7 +404,6 @@ bit_error_log( $pParamHash, $this->mErrors );
 									}
 								}
 								$masterPaymentHash = !empty( $pParamHash['result'] ) ? $pParamHash['result'] : $pParamHash;
-
 								$ordersCount = count( $paymentOrders['orders'] );
 								foreach( $paymentOrders['orders'] as $paymentOrderHash ) {
 									$this->mDb->StartTrans();
@@ -415,8 +418,9 @@ bit_error_log( $pParamHash, $this->mErrors );
 										}
 										$paymentHash['orders_id'] = $paymentOrderHash['orders_id'];
 										$paymentHash['payment_amount'] = $amountDue;
+										$paymentHash['comments'] = trim( "New Payment Recorded: " . $pParamHash['payment_number'] );
 										if( $ordersCount > 1 ) {
-											$paymentHash['comments'] = trim( "PAID $ordersPaid of $ordersCount, ". $currencies->format( $amountPaid, FALSE, '', '', FALSE ) ." of " . $currencies->format( $pParamHash['payment_amount'], FALSE, '', '', FALSE ) . "\n\n" . BitBase::getParameter( $pParamHash, 'comments' ) );
+											$paymentHash['comments'] .= "\n\n".trim( "PAID $ordersPaid of $ordersCount, ". $currencies->format( $amountPaid, FALSE, '', '', FALSE ) ." of " . $currencies->format( $pParamHash['payment_amount'], FALSE, '', '', FALSE ) . "\n\n" . BitBase::getParameter( $pParamHash, 'comments' ) );
 										}
 										if( $this->storeOrdersPayment( $paymentHash, $order ) ) {
 											if( $order->getField( 'amount_due' ) ) {
