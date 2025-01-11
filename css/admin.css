@@ -8,6 +8,7 @@ table.table tr.comments	td { border-top:none; font-size:80%; }
 	padding-left: 0px;
 }
 
+.admin.bitcommerce { margin-top:20px; }
 .admin.bitcommerce h1.page-header	{ font-size:16pt; }
 
 .admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
