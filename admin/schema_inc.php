@@ -752,7 +752,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products' => "
   orders_products_id I4 PRIMARY AUTO,
   orders_id I4 NOTNULL,
   products_id I4 NOTNULL,
-  products_model C(32),
+  products_model C(64),
   products_name C(64),
   products_version I4,
   products_price N(15,4),
