@@ -21,9 +21,7 @@
 //
   require('includes/application_top.php');
 
-  $gBitDb->Execute("update " . TABLE_PRODUCTS . "
-                set `products_date_available` = ''
-                where " . $gBitDb->mDb->sysTimeStamp . " > `products_date_available`");
+//  $gBitDb->Execute("UPDATE " . TABLE_PRODUCTS . " SET `products_date_available` = NULL WHERE " . $gBitDb->mDb->sysTimeStamp . " > `products_date_available`");
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>
@@ -59,7 +57,7 @@
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
-  $products_query_raw = "select pd.`products_id`, pd.`products_name`, p.`products_date_available` from " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS . " p where p.`products_id` = pd.`products_id` and p.`products_date_available` != '' and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' order by p.`products_date_available` DESC";
+  $products_query_raw = "select pd.`products_id`, pd.`products_name`, p.`products_date_available` from " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS . " p where p.`products_id` = pd.`products_id` and p.`products_date_available` != NULL and pd.`language_id` = '" . (int)$_SESSION['languages_id'] . "' order by p.`products_date_available` DESC";
   $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $products_query_raw, $products_query_numrows);
   $products = $gBitDb->Execute($products_query_raw);
   while (!$products->EOF) {

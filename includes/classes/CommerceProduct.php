@@ -1201,7 +1201,7 @@ If a special exist * 10+9
 		}
 		$dynamicParams = array ('page', 'max_records','sort_mode');
 		foreach ($_GET as $key=>$value){
-			if(!in_array($key,$dynamicParams)){
+			if(!in_array($key,$dynamicParams) && !is_array($value) ){
 				$pListHash['query_string'].= "&$key=$value";
 			}
 		}
@@ -1262,7 +1262,7 @@ If a special exist * 10+9
 			$whereSql .= " AND (p.`products_commission` IS NOT NULL AND p.`products_commission` > 0) ";
 		}
 
-		if( !empty( $pListHash['user_id'] ) ) {
+		if( self::verifyIdParameter( $pListHash, 'user_id' ) ) {
 			$whereSql .= " AND lc.`user_id` = ? ";
 			array_push( $bindVars, $pListHash['user_id'] );
 		}
@@ -1283,7 +1283,7 @@ If a special exist * 10+9
 			}
 		}
 
-		if( !empty( $pListHash['content_id_list'] ) ) { // you can use an array of titles
+		if( isset( $pListHash['content_id_list'] ) && is_array( $pListHash['content_id_list'] ) ) { // you can use an array of titles
 			$whereSql .= " AND p.`content_id` IN ( ".implode( ',', array_fill( 0,count( $pListHash['content_id_list'] ),'?' ) ).") ";
 			$bindVars = array_merge( $bindVars, $pListHash['content_id_list'] );
 		}
@@ -1311,7 +1311,7 @@ If a special exist * 10+9
 			array_push( $bindVars, (int)$_SESSION['languages_id'] );
 		}
 
-		if ( !empty( $pListHash['category_id'] ) ) {
+		if ( BitBase::verifyIdParameter( $pListHash, 'category_id' ) ) {
 			if( !is_numeric( $pListHash['category_id'] ) && strpos( $pListHash['category_id'], '_' ) ) {
 				$path = explode( '_', $pListHash['category_id'] );
 				end( $path );
@@ -1329,7 +1329,7 @@ If a special exist * 10+9
 		}
 
 		// This needs to go first since it puts a bindvar in the joinSql
-		array_push( $bindVars, !empty( $_SESSION['languages_id'] ) ? $_SESSION['languages_id'] : 1 );
+		array_push( $bindVars, BitBase::verifyIdParameter( $_SESSION, 'languages_id' ) ? $_SESSION['languages_id'] : 1 );
 		$whereSql .= ' AND pd.`language_id`=?';
 
 		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, NULL, $pListHash );
@@ -1345,6 +1345,7 @@ If a special exist * 10+9
 						INNER JOIN `" . BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
 					$joinSql
 					WHERE $whereSql ORDER BY ".$this->convertSortmode( $pListHash['sort_mode'] );
+
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			// if we returned fewer than the max, use size of our result set
 			if( ($rs->RecordCount() < $pListHash['max_records'] || $rs->RecordCount() == 1) && empty($pListHash['offset'])) {
