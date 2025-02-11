@@ -20,6 +20,7 @@
 // $Id$
 //
 
+  global $products_id_current;
   require(DIR_FS_MODULES . 'require_languages.php');
 
 // if customer authorization is on do not show discounts
@@ -74,10 +75,10 @@
     </tr>
   </table>
 <?php
-  } else {
+  } elseif( BitBase::verifyId( $products_id_current ) ) {
 // create products discount table
 
-  $products_discounts_query = $gBitDb->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` ='" . $products_id_current . "' and `discount_qty` !=0 " . " order by `discount_qty`");
+  $products_discounts_query = $gCommerceSystem->mDb->Execute("select * from " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " where `products_id` =? and `discount_qty` !=0 " . " order by `discount_qty`", array( $products_id_current ) );
 
   $discount_col_cnt = DISCOUNT_QUANTITY_PRICES_COLUMN;
 ?>
@@ -117,7 +118,7 @@
       $show_qty = '1';
       break;
     default:
-      $products_discount_query = $gBitDb->Execute("select `products_quantity_order_min` from " . TABLE_PRODUCTS . " where `products_id` ='" . $products_id_current . "'");
+      $products_discount_query = $gCommerceSystem->mDb->Execute( "select `products_quantity_order_min` from " . TABLE_PRODUCTS . " where `products_id` =?", array( $products_id_current ) );
       $show_qty = $products_discount_query->fields['products_quantity_order_min'] . '-' . number_format($products_discounts_query->fields['discount_qty']-1);
       break;
   }

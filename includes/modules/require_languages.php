@@ -20,6 +20,7 @@
 // $Id$
 //
 
+global $gBitCustomer, $gCommerceSystem, $current_page_base;
 $language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/';
 
 // determine language or template language file
