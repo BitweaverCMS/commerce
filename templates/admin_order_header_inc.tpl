@@ -68,6 +68,7 @@ function editAddress( pAddress ) {
 		<form method="post" action="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID}">
 			<div id="record-payment-block" style=""></div>
 		</form>
+{if $order->mPayments}
 <table class="table table-condensed">
 <tr>
 	<th>{tr}Date{/tr}</th>
@@ -97,6 +98,9 @@ function editAddress( pAddress ) {
 </tr>
 {/foreach}
 </table>
+{else}
+<div class="alert alert-warning">{booticon iname="fa-triangle-exclamation"} {tr}This order has no payment record.{/tr}</div>
+{/if}
 	</div>
 </div>
 
