@@ -31,15 +31,21 @@ abstract class CommerceOrderBase extends BitBase {
 
 	// can take a productsKey or a straight productsId
 	function getProductObject( $pProductsMixed ) {
-		$productsId = zen_get_prid( $pProductsMixed );
-		if( BitBase::verifyId( $productsId ) ) {
-			if( !isset( $this->mProductObjects[$productsId] ) ) {
-				if( $this->mProductObjects[$productsId] = bc_get_commerce_product( $productsId ) ) {
+		$ret = NULL;
+
+		if( $productsId = zen_get_prid( $pProductsMixed ) ) {
+			if( BitBase::verifyId( $productsId ) ) {
+				if( !isset( $this->mProductObjects[$productsId] ) ) {
+					if( $this->mProductObjects[$productsId] = bc_get_commerce_product( $productsId ) ) {
+					}
+				}
+				if( !empty( $this->mProductObjects[$productsId] ) ) {
 					$ret = &$this->mProductObjects[$productsId];
 				}
 			}
 		}
-		return $this->mProductObjects[$productsId];
+
+		return $ret;
 	}
 
 	public function getBoxDimesions() {
