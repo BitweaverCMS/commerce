@@ -50,7 +50,7 @@ function zen_get_address_format_id($country_id) {
 
     if( ($address = $gBitDb->getRow($address_query, array( (int)$customers_id, (int)$address_id ) )) ) {
     	$format_id = zen_get_address_format_id($address['country_id']);
-	    $ret = zen_address_format($format_id, $address, $html, $boln, $eoln);
+	    $ret = zen_address_format( $address, $html, $boln, $eoln);
 	}
 	return $ret;
   }
