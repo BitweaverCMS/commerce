@@ -94,7 +94,7 @@
 			</fieldset>
 		{/foreach}
 
-		{foreach from=$testOrder->otCreditSelection( $smarty.session ) item=selection}
+		{foreach from=$quoteOrder->otCreditSelection( $smarty.session ) item=selection}
 			{if $selection}
 				{assign var=otCode value=$selection.id}
 			<fieldset>
@@ -137,7 +137,7 @@
 				</div>
 			{/fieldset}
 			<div class="mt-2">
-		{foreach from=$testOrder->otOutput() item=otOutput}
+		{foreach from=$quoteOrder->otOutput() item=otOutput}
 		<div class="row {$otOutput.code}">
 			<div class="col-sm-12">
 			<div class="col-xs-9 col-md-10 text-right">{$otOutput.title}</div>

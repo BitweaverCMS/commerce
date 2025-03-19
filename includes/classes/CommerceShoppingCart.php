@@ -155,11 +155,11 @@ class CommerceShoppingCart extends CommerceOrderBase {
 						break;
 				}
 			}
-	
+
 			// insert into database
 			$sql = "INSERT INTO " . TABLE_CUSTOMERS_BASKET . " (`$selectColumn`, `products_key`, `products_id`, `products_quantity`, `date_added`) values ( ?, ?, ?, ?, ? )";
 			$this->mDb->query( $sql, array( $selectValue, $cartItemKey, zen_get_prid( $cartItemKey ), $addQty, date('Ymd') ) );
-			$basketId = $this->mDb->GetOne( "SELECT MAX(`customers_basket_id`) FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_key`=? AND `$selectColumn`=?", array( $cartItemKey, $selectValue ) ); 
+			$basketId = $this->mDb->GetOne( "SELECT MAX(`customers_basket_id`) FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `products_key`=? AND `$selectColumn`=?", array( $cartItemKey, $selectValue ) );
 
 			if (is_array($attributes)) {
 				reset($attributes);
@@ -316,6 +316,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 				$this->mDb->query($sql, array( $basketId ) );
 				unset( $this->contents[$pProductsKey] );
 			}
+		} else {
+			unset( $this->contents[$pProductsKey] );
 		}
 		$this->calculate( TRUE );
 	}
@@ -711,4 +713,4 @@ class CommerceShoppingCart extends CommerceOrderBase {
 	}
 
 }
-?>
+

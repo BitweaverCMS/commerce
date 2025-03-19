@@ -27,16 +27,17 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'page_checkout_parameters_inc.php' );
 
 require(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
-$order = new order();
+global $gBitCustomer;
+$quoteOrder = CommerceOrder::orderFromCart( $gBitCustomer->mCart, $_SESSION );
 
 // load the before_process function from the payment modules
-if( !$order->process( $_REQUEST, $_SESSION ) ) {
+if( !$quoteOrder->process( $_REQUEST, $_SESSION ) ) {
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 }
 
 $gBitCustomer->mCart->reset(true);
 
-$order->otClearPosts( $_SESSION );
+$quoteOrder->otClearPosts( $_SESSION );
 
 // unregister session variables used during checkout
 foreach( array( 'sendto', 'billto', 'shipping', 'payment', 'comments' ) as $key ) {

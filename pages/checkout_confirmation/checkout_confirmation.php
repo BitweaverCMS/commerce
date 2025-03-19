@@ -31,7 +31,8 @@ if( isset( $_POST['payment_method'] ) ) {
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'page_checkout_parameters_inc.php' );
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
-$order = new order();
+global $gBitCustomer;
+$order = CommerceOrder::orderFromCart( $gBitCustomer->mCart, $_SESSION );
 
 if( $errors = $order->otCollectPosts( $_REQUEST, $_SESSION ) ) {
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'ot_error_encode=' . urlencode(serialize($errors)), 'SSL'));

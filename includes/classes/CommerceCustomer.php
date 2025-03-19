@@ -536,10 +536,10 @@ class CommerceCustomer extends CommerceBase {
 		return $ret;
 	}
 
-	function isValidAddress( $pAddressId ) {
+	function isValidAddress( $pAddressHash ) {
 		$ret = FALSE;
 		$errors = array();
-		if( !($ret = $this->verifyAddress( $pAddressId, $errors ) ) ) {
+		if( !($ret = $this->verifyAddress( $pAddressHash, $errors ) ) ) {
 			unset( $errors['customers_id'] );
 			unset( $errors['gender'] );
 			if( !count( $errors ) ) {

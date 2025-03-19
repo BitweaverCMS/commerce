@@ -60,6 +60,7 @@ class canadapost extends CommercePluginShippingBase {
 		parent::__construct();
 		$this->title			= tra( 'Canada Post' );
 		$this->description		= tra( 'Canada Post Parcel Service <p>You will need a Account Number, Username and Password from the <a href="https://www.canadapost.ca/cpotools/apps/drc/home?execution=e1s1">Developer Program</a></p>' );
+		$this->booticon				= 'fab fa-canadian-maple-leaf';
 	}
 
 	/**

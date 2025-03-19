@@ -8,8 +8,6 @@
 // | Portions Copyright (c) 2003 osCommerce                               |
 // +----------------------------------------------------------------------+
 
-require(DIR_FS_CLASSES . 'http_client.php');
-
 $gCommerceSystem->setHeadingTitle( tra( 'Checkout Shipping' ) );
 
 if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empty( $_REQUEST['save_address'] ) ) {
@@ -86,12 +84,12 @@ if( isset( $_REQUEST['change_address'] ) ) {
 
 		switch (MODULE_ORDER_TOTAL_SHIPPING_DESTINATION) {
 			case 'national':
-				if( $order->delivery['country_id'] == STORE_COUNTRY ) {
+				if( $gBitCustomer->mCart->delivery['country_id'] == STORE_COUNTRY ) {
 					$pass = true;
 				}
 				break;
 			case 'international':
-				if( $order->delivery['country_id'] != STORE_COUNTRY ) {
+				if( $gBitCustomer->mCart->delivery['country_id'] != STORE_COUNTRY ) {
 					$pass = true;
 				}
 				break;

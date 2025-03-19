@@ -17,7 +17,7 @@ if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empt
 			$process = true;
 			if( $gBitCustomer->storeAddress( $_REQUEST ) ) {
 				$_SESSION['billto'] = $_REQUEST['address'];
-				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT));
 			} else {
 				$gBitSmarty->assign( 'addressErrors', $gBitCustomer->mErrors );
 				$_REQUEST['change_address'] = TRUE;
@@ -26,7 +26,7 @@ if( !$gBitUser->isRegistered() || !empty( $_REQUEST['choose_address'] ) || !empt
 			if( empty( $_SESSION['billto'] ) || $_SESSION['billto'] != $_REQUEST['address'] ) {
 				if( $gBitCustomer->isAddressOwner( $_REQUEST['address'] ) ) {
 					$_SESSION['billto'] = $_REQUEST['address'];
-					zen_redirect( zen_href_link( FILENAME_CHECKOUT_PAYMENT, '', 'SSL' ) );
+					zen_redirect( zen_href_link( FILENAME_CHECKOUT_PAYMENT ) );
 				}
 			}
 		}
@@ -57,16 +57,12 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 }
 
 require_once(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
-$order = new order;
-$gBitSmarty->assign( 'order', $order );
 
 // if the no billing address, try to get one by default
-if( empty( $_SESSION['billto'] ) || empty( $order->billing ) || !$gBitCustomer->isValidAddress( $order->billing ) ) {
-	if( !empty( $_SESSION['sendto'] ) && $gBitCustomer->isValidAddress( $order->delivery ) ) {
-		$order->billing = $order->delivery;
+if( empty( $_SESSION['billto'] ) ) {
+	if( !empty( $_SESSION['sendto'] ) ) {
 		$_SESSION['billto'] = $_SESSION['sendto'];
 	} elseif( $defaultAddressId = $gBitCustomer->getDefaultAddressId() ) {
-		$order->billing = $gBitCustomer->getAddress( $defaultAddressId );
 		$_SESSION['billto'] =	$defaultAddressId;
 	}
 }
@@ -77,7 +73,9 @@ if( !empty( $_REQUEST['ot_error_encode'] ) ) {
 	}
 }
 
-if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $order->billing ) ) {
+$quoteOrder = CommerceOrder::orderFromCart( $gBitCustomer->mCart, $_SESSION );
+$gBitSmarty->assign( 'quoteOrder', $quoteOrder );
+if( isset( $_REQUEST['change_address'] ) ) {
 	if( $addresses = $gBitCustomer->getAddresses() ) {
 		$gBitSmarty->assign( 'addresses', $addresses );
 	}
@@ -97,9 +95,8 @@ if( isset( $_REQUEST['change_address'] ) || !$gBitCustomer->isValidAddress( $ord
 
 	$breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 	$breadcrumb->add(NAVBAR_TITLE_2);
-	$gBitSmarty->assign( 'order', $order );
 
-	$order->otProcess( $_REQUEST, $_SESSION );
+	$quoteOrder->otProcess( $_REQUEST, $_SESSION );
 }
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_payment.tpl' );
