@@ -3,7 +3,8 @@
 
 <section class="body">
 
-{if !$gBitUser->isRegistered() || !$order->billing || $changeAddress}
+{if !$gBitUser->isRegistered() || !$gBitCustomer->mCart->billing || $changeAddress}
+{$changeAddress}
 	<div class="alert alert-info">{tr}The billing address should match the address on your credit card statement.{/tr}</div>
 
 	{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_payment"}
@@ -18,7 +19,7 @@
 			{if count( $addresses )}
 			<div class="col-md-6">
 				{fieldset legend="Choose Billing Address"}
-					{include file="bitpackage:bitcommerce/address_list_inc.tpl"}
+					{include file="bitpackage:bitcommerce/address_list_inc.tpl" sendToAddressId=$smarty.session.billto}
 				{/fieldset}
 				<div class="form-group clear">
 					<input type="submit" class="btn btn-primary" name="choose_address" value="Continue" /> <input type="submit" class="btn btn-default" name="" value="Cancel" />
@@ -93,7 +94,7 @@
 			</fieldset>
 		{/foreach}
 
-		{foreach from=$order->otCreditSelection( $smarty.session ) item=selection}
+		{foreach from=$testOrder->otCreditSelection( $smarty.session ) item=selection}
 			{if $selection}
 				{assign var=otCode value=$selection.id}
 			<fieldset>
@@ -136,7 +137,7 @@
 				</div>
 			{/fieldset}
 			<div class="mt-2">
-		{foreach from=$order->otOutput() item=otOutput}
+		{foreach from=$testOrder->otOutput() item=otOutput}
 		<div class="row {$otOutput.code}">
 			<div class="col-sm-12">
 			<div class="col-xs-9 col-md-10 text-right">{$otOutput.title}</div>
