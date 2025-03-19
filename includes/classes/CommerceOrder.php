@@ -31,9 +31,6 @@ class order extends CommerceOrder {
 		if( self::verifyId( $pOrdersId ) ) {
 			$this->mOrdersId = $pOrdersId;
 			$this->load();
-		} else {
-			global $gBitCustomer;
-			$this->orderFromCart( $gBitCustomer->mCart, $_SESSION );
 		}
 	}
 }
@@ -41,8 +38,6 @@ class order extends CommerceOrder {
 class CommerceOrder extends CommerceOrderBase {
 	public $mOrdersId;
 	public $info, $totals, $customer, $content_type, $email_low_stock, $products_ordered_attributes, $products_ordered_email, $mPayments = array();
-
-	private $mNextOrdersId;
 
 	function __construct() {
 		parent::__construct();
@@ -410,21 +405,6 @@ class CommerceOrder extends CommerceOrderBase {
 		return $ret;
 	}
 
-	// Default implementation assumes all products are capable of expediting
-	function isExpeditable() {
-		$ret = TRUE;
-		if( !empty( $this->contents ) ) {
-			foreach( array_keys( $this->contents ) as $productsKey ) {
-				// $productsKey will be orders_products_id for an order
-				$prid = $this->contents[$productsKey]['products_id'];
-				if( $product = $this->getProductObject( $prid ) ) {
-					$ret &= $product->isExpeditable( $this, $productsKey );
-				}
-			}
-		}
-		return $ret;
-	}
-
 	function hasViewPermission() {
 		global $gBitUser;
 		$ret = FALSE;
@@ -492,7 +472,7 @@ class CommerceOrder extends CommerceOrderBase {
 		$ret = NULL;
 
 		if( BitBase::verifyId( $this->mOrdersId ) ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			if ($pRestock == 'on') {
 				if( $products = $this->mDb->getAssoc("SELECT `products_id`, `products_quantity` FROM " . TABLE_ORDERS_PRODUCTS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) ) ) {
 					foreach( $products AS $productsId=>$productsQuantity	) {
@@ -511,7 +491,7 @@ class CommerceOrder extends CommerceOrderBase {
 			$this->mDb->query("DELETE FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
 			$this->mDb->query("DELETE FROM " . TABLE_ORDERS . " WHERE `orders_id` = ?", array( $this->mOrdersId ) );
 
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 			$ret = TRUE;
 		}
 
@@ -563,163 +543,27 @@ class CommerceOrder extends CommerceOrderBase {
 	}
 
 	function orderFromHash( &$pOrderHash ) {
-		global $currencies, $gBitUser, $gBitCustomer;
+		$ret = FALSE;
 
-		$hashCart = new CommerceShoppingCart();
+		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceTemporaryCart.php');
 
-		if( $defaultAddress = $gBitCustomer->getAddress( $gBitCustomer->getDefaultAddressId() ) ) {
-			$this->customer = array('firstname' => $defaultAddress['entry_firstname'],
-									'lastname' => $defaultAddress['entry_lastname'],
-									'customers_id' => $defaultAddress['customers_id'],
-									'user_id' => $defaultAddress['customers_id'],
-									'company' => $defaultAddress['entry_company'],
-									'street_address' => $defaultAddress['entry_street_address'],
-									'suburb' => $defaultAddress['entry_suburb'],
-									'city' => $defaultAddress['entry_city'],
-									'postcode' => $defaultAddress['entry_postcode'],
-									'state' => (!empty( $defaultAddress['entry_state'] ) ? $defaultAddress['entry_state'] : NULL),
-									'zone_id' => $defaultAddress['entry_zone_id'],
-									'countries_name' => $defaultAddress['countries_name'],
-									'countries_id' => $defaultAddress['countries_id'],
-									'countries_iso_code_2' => $defaultAddress['countries_iso_code_2'],
-									'countries_iso_code_3' => $defaultAddress['countries_iso_code_3'],
-									'address_format_id' => $defaultAddress['address_format_id'],
-									// Needed for orderFromCart
-									'address_format_id' => $defaultAddress['address_format_id'],
-									'telephone' => $defaultAddress['entry_telephone'],
-									'email_address' => $gBitUser->getField( 'email' )
-									 );
-		} else {
-			$this->customer = array('firstname' => $gBitCustomer->getField( 'customers_firstname' ),
-									'lastname' => $gBitCustomer->getField( 'customers_lastname' ),
-									'user_id' => $gBitCustomer->getField( 'customers_id' ),
-									'email_address' => $gBitCustomer->getField('customers_email_address' ),
-									'customers_id' => $gBitCustomer->mCustomerId
-									);
-		}
-		$hashCart->customer = $this->customer;
-
-		foreach( array( 'billing', 'delivery' ) as $addressType ) {
-			$addressHash = array();
-			foreach( array(
-				'city' => 'city',
-				'country_iso2' => 'countries_iso_code_2',
-				'name' => 'name',
-				'company' => 'company',
-				'postcode' => 'postcode',
-				'state' => 'state',
-				'street_address1' => 'street_address',
-				'street_address2' => 'suburb',
-				'telephone' => 'telephone',
-			) as $hashPostfix => $addressKey ) {
-				$hashKey = $addressType.'_'.$hashPostfix;
-				$hashValue = BitBase::getParameter( $pOrderHash, $hashKey, NULL );
-				switch( $hashPostfix ) {
-					case 'country_iso2':
-						if( $countryHash = zen_get_countries( $hashValue ) ) {
-							$addressHash['countries_id'] = $countryHash['countries_id'];
-							$addressHash['country_id'] = $countryHash['countries_id'];
-							$addressHash['countries_name'] = $countryHash['countries_name'];
-							$addressHash['countries_iso_code_2'] = $countryHash['countries_iso_code_2'];
-							$addressHash['countries_iso_code_3'] = $countryHash['countries_iso_code_3'];
-							$addressHash['address_format_id'] = $countryHash['address_format_id'];
-						}
-						break;
-					case 'state':
-						$addressHash['zone_id'] = zen_get_zone_id( $addressHash['countries_id'], $pOrderHash[$hashKey] );
-						$addressHash[$addressKey] = $hashValue;
-						break;
-
-					case 'name':
-						$firstSpace = strpos( $hashValue, ' ' );
-						$addressHash['firstname'] = substr( $hashValue, 0, $firstSpace );
-						$addressHash['lastname'] = substr( $hashValue, $firstSpace + 1 );
-						$addressHash[$addressKey] = $hashValue;
-//				$this->billing = array('firstname' => $billingAddress['firstname'],
-//										'lastname' => $billingAddress['lastname'],
-						break;
-					default:
-						$addressHash[$addressKey] = $hashValue;
-						break;
-				}	
-				$hashCart->$addressType = $addressHash;
-				$this->$addressType = $addressHash;
-			}
-		}
-/*
-This is all done in orderFromCart called below
-
-		$this->info = array('orders_status_id' => DEFAULT_ORDERS_STATUS_ID,
-							'currency' => !empty( $pOrderHash['currency'] ) ? $pOrderHash['currency'] : NULL,
-							'currency_value' => !empty( $pOrderHash['currency'] ) ? $currencies->currencies[$pOrderHash['currency']]['currency_value'] : NULL,
-							'payment_method' => '',
-							'payment_module_code' => '',
-							'coupon_code' => !empty( $pOrderHash['dc_redeem_code'] ) ? $pOrderHash['dc_redeem_code'] : NULL,
-							'shipping_cost' => !empty( $pOrderHash['shipping']['cost'] ) ? $pOrderHash['shipping']['cost'] : 0,
-							'estimated_ship_date' => !empty( $pOrderHash['shipping']['ship_date'] ) ? $pOrderHash['shipping']['ship_date'] : NULL,
-							'estimated_arrival_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL,
-							'subtotal' => 0,
-							'tax' => 0,
-							'total' => 0,
-							'tax_groups' => array(),
-							'comments' => $this->getParameter( $pOrderHash, 'comments' ),
-							'deadline_date' => $this->getParameter( $pOrderHash, 'deadline_date' ),
-							'ip_address' => $_SERVER['REMOTE_ADDR']
-							);
-
-		if( !empty( $pOrderHash['shipping_method'] ) ) {
-			// load all enabled shipping modules
-			require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
-			global $gCommerceShipping;
-			list($module, $method) = explode('_', $pOrderHash['shipping_method'], 2);
-			$this->info['shipping_method'] = $pOrderHash['shipping_method'];
-			$this->info['shipping_method_code'] = $method;
-			$this->info['shipping_module_code'] = $module;
-		}
-
-		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pOrderHash, 'payment_method' ) ) ) {
-			$this->info['payment_method'] = $paymentModule->title;
-			$this->info['payment_module_code'] = $paymentModule->code;
-			if( !empty( $paymentModule->orders_status ) && is_numeric( $paymentModule->orders_status ) && $paymentModule->orders_status > 0 ) {
-				$this->info['orders_status_id'] = $paymentModule->orders_status;
-			}
-		}
-*/
-
-		if( !empty( $pOrderHash['cart'] ) ) {
-			$lineItemStrings = explode( ';', $pOrderHash['cart'] );
-			foreach( $lineItemStrings as $lineItemString ) {
-				list( $productId, $productString ) = explode( '@', $lineItemString );
-				list( $quantity, $optionString ) = explode( ':', $productString );
-				if( $apiProduct = CommerceProduct::getCommerceObject( $productId ) ) {
-					if( $apiProduct->isValid() ) {
-						$apiProduct->verifyViewPermission();
-					}
-					$povidHash = array();
-					if( $optionString ) {
-						if( $povidList = explode( ',', $optionString ) ) {
-							foreach( $povidList as $povid ) {
-								if( $optionId = $this->mDb->GetOne( "SELECT `products_options_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_options_values_id`=?", array( $povid ), FALSE, FALSE, BIT_QUERY_CACHE_TIME ) ) {
-									$povidHash[$optionId][$povid] = $povid;
-								}
-							}
-						}
-					}
-					$hashCart->addToCart( $apiProduct->mProductsId, $quantity, $povidHash );
-				} else {
-					$this->mErrors['product'] = 'Product ID does not exist: '.$productId;
-				}
+		if( $hashCart = CommerceTemporaryCart::cartFromHash( $pOrderHash ) ) {
+			if( empty( $hashCart->mErrors ) ) {
+				$ret = empty( $this->mErrors );
 			}
 		}
 
-		if( empty( $this->mErrors ) ) {
-			$this->orderFromCart( $hashCart, $pOrderHash );
-		}
-
-		return empty( $this->mErrors );
+		return $ret;
 	}
 
-	protected function orderFromCart( $pCart, &$pSessionHash ) {
+
+	public static function orderFromCart( $pCart, &$pSessionHash ) {
+		$ret = new order();
+		$ret->loadFromCart( $pCart, $pSessionHash );
+		return $ret;
+	}
+
+	private function loadFromCart( $pCart, $pSessionHash ) {
 		global $currencies, $gBitUser, $gBitCustomer;
 		$this->content_type = $pCart->get_content_type();
 
@@ -824,7 +668,7 @@ This is all done in orderFromCart called below
 									'city' => $shippingAddress['city'],
 									'postcode' => $shippingAddress['postcode'],
 									'state' => (!empty( $shippingAddress['state'] ) ? $shippingAddress['state'] : NULL),
-									'zone_id' => $shippingAddress['zone_id'],
+									'zone_id' => BitBase::getParameter( $shippingAddress, 'zone_id', NULL),
 									'countries_id' => $shippingAddress['countries_id'],
 									'countries_name' => $shippingAddress['countries_name'],
 									'countries_iso_code_2' => $shippingAddress['countries_iso_code_2'],
@@ -854,52 +698,54 @@ This is all done in orderFromCart called below
 		}
 
 		foreach( array_keys( $pCart->contents ) as $cartItemKey ) {
-			$this->contents[$cartItemKey] = $pCart->getProductHash( $cartItemKey );
-			if( !empty( $taxAddress ) ) {
-				$this->contents[$cartItemKey]['tax'] = zen_get_tax_rate( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['country_id'], $taxAddress['zone_id'] );
-				$this->contents[$cartItemKey]['tax_description'] = zen_get_tax_description( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['country_id'], $taxAddress['zone_id'] );
-			}
+			if( $productHash = $pCart->getProductHash( $cartItemKey ) ) {
+				$this->contents[$cartItemKey] = $productHash;
+				if( !empty( $taxAddress ) ) {
+					$this->contents[$cartItemKey]['tax'] = zen_get_tax_rate( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['country_id'], $taxAddress['zone_id'] );
+					$this->contents[$cartItemKey]['tax_description'] = zen_get_tax_description( $this->contents[$cartItemKey]['tax_class_id'], $taxAddress['country_id'], $taxAddress['zone_id'] );
+				}
 
-			if ( !empty( $this->contents[$cartItemKey]['attributes'] ) ) {
-				$attributes	= $this->contents[$cartItemKey]['attributes'];
-				$this->contents[$cartItemKey]['attributes'] = array();
-				$subindex = 0;
-				foreach( $attributes as $optionKey=>$valueHash ) {
-					list( $optionId, $keyValueId ) = explode( '=', $optionKey );
-					$this->contents[$cartItemKey]['attributes'][$subindex] = zen_get_option_value( $optionId, (int)$valueHash['products_options_values_id'] );
-					// Determine if attribute is a text attribute and change products array if it is.
-if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name'] ) ) { eb( 'EMTPY', $attributes,  $this->contents[$cartItemKey]['attributes']  ); }
-					$attrValue = $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name']; 
-					if( !empty( $valueHash['products_options_values_text'] ) ) {
-						$this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_text'] = $valueHash['products_options_values_text'];
+				if ( !empty( $this->contents[$cartItemKey]['attributes'] ) ) {
+					$attributes	= $this->contents[$cartItemKey]['attributes'];
+					$this->contents[$cartItemKey]['attributes'] = array();
+					$subindex = 0;
+					foreach( $attributes as $optionKey=>$valueHash ) {
+						list( $optionId, $keyValueId ) = explode( '=', $optionKey );
+						$this->contents[$cartItemKey]['attributes'][$subindex] = zen_get_option_value( $optionId, (int)$valueHash['products_options_values_id'] );
+						// Determine if attribute is a text attribute and change products array if it is.
+	if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name'] ) ) { eb( 'EMTPY', $attributes,  $this->contents[$cartItemKey]['attributes']  ); }
+						$attrValue = $this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_name']; 
+						if( !empty( $valueHash['products_options_values_text'] ) ) {
+							$this->contents[$cartItemKey]['attributes'][$subindex]['products_options_values_text'] = $valueHash['products_options_values_text'];
+						}
+						$this->contents[$cartItemKey]['attributes'][$subindex]['value'] = $attrValue;
+						$subindex++;
 					}
-					$this->contents[$cartItemKey]['attributes'][$subindex]['value'] = $attrValue;
-					$subindex++;
 				}
-			}
 
-			$shown_price = (zen_add_tax($this->contents[$cartItemKey]['final_price'], $this->contents[$cartItemKey]['tax']) * $this->contents[$cartItemKey]['products_quantity'])
-							+ zen_add_tax($this->contents[$cartItemKey]['onetime_charges'], $this->contents[$cartItemKey]['tax']);
-			$this->subtotal += $shown_price;
+				$shown_price = (zen_add_tax($this->contents[$cartItemKey]['final_price'], $this->contents[$cartItemKey]['tax']) * $this->contents[$cartItemKey]['products_quantity'])
+								+ zen_add_tax($this->contents[$cartItemKey]['onetime_charges'], $this->contents[$cartItemKey]['tax']);
+				$this->subtotal += $shown_price;
 
-			$products_tax = $this->contents[$cartItemKey]['tax'];
-			$products_tax_description = $this->contents[$cartItemKey]['tax_description'];
-			if (DISPLAY_PRICE_WITH_TAX == 'true') {
-				$this->info['tax'] += $shown_price - ($shown_price / (($products_tax < 10) ? "1.0" . str_replace('.', '', $products_tax) : "1." . str_replace('.', '', $products_tax)));
-				if (isset($this->info['tax_groups']["$products_tax_description"])) {
-					$this->info['tax_groups']["$products_tax_description"] += $shown_price - ($shown_price / (($products_tax < 10) ? "1.0" . str_replace('.', '', $products_tax) : "1." . str_replace('.', '', $products_tax)));
+				$products_tax = $this->contents[$cartItemKey]['tax'];
+				$products_tax_description = $this->contents[$cartItemKey]['tax_description'];
+				if (DISPLAY_PRICE_WITH_TAX == 'true') {
+					$this->info['tax'] += $shown_price - ($shown_price / (($products_tax < 10) ? "1.0" . str_replace('.', '', $products_tax) : "1." . str_replace('.', '', $products_tax)));
+					if (isset($this->info['tax_groups']["$products_tax_description"])) {
+						$this->info['tax_groups']["$products_tax_description"] += $shown_price - ($shown_price / (($products_tax < 10) ? "1.0" . str_replace('.', '', $products_tax) : "1." . str_replace('.', '', $products_tax)));
+					} else {
+						$this->info['tax_groups']["$products_tax_description"] = $shown_price - ($shown_price / (($products_tax < 10) ? "1.0" . str_replace('.', '', $products_tax) : "1." . str_replace('.', '', $products_tax)));
+					}
 				} else {
-					$this->info['tax_groups']["$products_tax_description"] = $shown_price - ($shown_price / (($products_tax < 10) ? "1.0" . str_replace('.', '', $products_tax) : "1." . str_replace('.', '', $products_tax)));
+					$this->info['tax'] += ($products_tax / 100) * $shown_price;
+					if (isset($this->info['tax_groups']["$products_tax_description"])) {
+						$this->info['tax_groups']["$products_tax_description"] += ($products_tax / 100) * $shown_price;
+					} else {
+						$this->info['tax_groups']["$products_tax_description"] = ($products_tax / 100) * $shown_price;
+					}
 				}
-			} else {
-				$this->info['tax'] += ($products_tax / 100) * $shown_price;
-				if (isset($this->info['tax_groups']["$products_tax_description"])) {
-					$this->info['tax_groups']["$products_tax_description"] += ($products_tax / 100) * $shown_price;
-				} else {
-					$this->info['tax_groups']["$products_tax_description"] = ($products_tax / 100) * $shown_price;
-				}
+				$this->info['tax'] = zen_round($this->info['tax'],2);
 			}
-			$this->info['tax'] = zen_round($this->info['tax'],2);
 		}
 
 		$this->info['total'] = (double)$this->subtotal + $this->getField( 'shipping_cost', 0.0 );
@@ -910,10 +756,13 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 	}
 
 	public function getNextOrderId() {
-		if( empty( $this->mNextOrdersId ) ) {
-			$this->mNextOrdersId = $this->mDb->GenID( 'com_orders_orders_id_seq' );
-		}
-		return $this->mNextOrdersId;
+		$ret = NULL;
+
+		do {
+			$ret = $this->mDb->GenID( 'com_orders_orders_id_seq' );
+		} while( $this->mDb->getOne( "SELECT * FROM " . TABLE_ORDERS . " WHERE orders_id=?", array( $ret ) ) );
+
+		return $ret;
 	}
 
 	function getPaymentModule() {
@@ -935,7 +784,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 		$this->otProcess( $pRequestParams, $pSessionParams );
 		// Mush together request and Session data and send it for payment processing
 		$paymentParams = array_merge( $pRequestParams, $pSessionParams );
-		if( !$this->hasPaymentDue( $paymentParams ) || (!empty( $paymentParams['payment_method'] ) && $paymentManager->processPayment( $this, $paymentParams )) ) {
+		if( !$this->hasPaymentDue( $paymentParams ) || (!empty( $paymentParams['payment_method'] ) && $paymentManager->processPayment( $this, $paymentParams, $pSessionParams )) ) {
 			$newOrderId = $this->create( $paymentParams );
 			$paymentParams['result']['orders_id'] = $this->mOrdersId;
 			if( $this->hasPaymentDue( $paymentParams ) ) {
@@ -943,7 +792,10 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 			}
 
 			$paymentManager->after_order_create( $newOrderId, $this );
-			$this->sendOrderEmail();
+
+			if( empty( $pRequestParams['no_order_email'] ) ) {
+				$this->sendOrderEmail();
+			}
 /*
 				global $currencies;
 				$paymentModule = $this->getPaymentModule();
@@ -986,12 +838,13 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 	function create( $pPaymentParams ) {
 		global $gBitCustomer;
 
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		if( !empty( $_SESSION['shipping_method'] ) && $_SESSION['shipping_method'] == 'free_free') {
 			$this->info['shipping_module_code'] = $_SESSION['shipping_method'];
 		}
 
 		$this->mOrdersId =  (!empty( $pPaymentParams['orders_id'] ) ? $pPaymentParams['orders_id'] : $this->getNextOrderId());
+
 		$sql_data_array = array('orders_id' => $this->mOrdersId,
 							'customers_id' => $gBitCustomer->mCustomerId,
 /* TOODO 2016-DEC-15 - spiderr - data is unpopulated
@@ -1076,13 +929,13 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 */
 		$this->mDb->associateInsert(TABLE_ORDERS, $sql_data_array);
 
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		$this->otApplyCredit( $_SESSION );
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 
 		foreach( array_keys( $this->mOtProcessModules ) as $key ) {
 			if( $this->mOtProcessModules[$key]['code'] == 'ot_total' ) {
@@ -1116,7 +969,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 				$addProduct->productPurchased( $this, $this->contents[$cartItemKey] );
 			}
 		}
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 
 		return( $this->mOrdersId );
 	}
@@ -1137,7 +990,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 //					$pPaymentParams['payment_ref_id'] = $this->info['payment_ref_id'];
 					// Mush together request and Session data and send it for payment processing
 					$paymentParams = array_merge( $pPaymentParams, $pSessionParams );
-					if( $paymentModule->processPayment( $this, $paymentParams ) ) {
+					if( $paymentModule->processPayment( $this, $paymentParams, $pSessionParams ) ) {
 						$statusMsg .= "\n\n".tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
 						$adjustmentText .= ' - '.tra( 'Transaction ID:' )." ".$paymentModule->getTransactionReference();
 						$pPaymentParams['comments'] = (!empty( $pPaymentParams['comments'] ) ? $pPaymentParams['comments']."\n\n" : '').$statusMsg;
@@ -1430,18 +1283,18 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 //addresses area: Delivery
 		$emailVars['HEADING_ADDRESS_INFORMATION']= tra( 'Address Information' );
 		$emailVars['ADDRESS_DELIVERY_TITLE']		 = EMAIL_TEXT_DELIVERY_ADDRESS;
-		$emailVars['ADDRESS_DELIVERY_DETAIL']		= ($this->content_type != 'virtual') ? zen_address_format($this->delivery['format_id'], $this->delivery, true, '', "<br />") : 'n/a';
+		$emailVars['ADDRESS_DELIVERY_DETAIL']		= ($this->content_type != 'virtual') ? zen_address_format( $this->delivery, true, '', "<br />") : 'n/a';
 		$emailVars['SHIPPING_METHOD_TITLE']			= HEADING_SHIPPING_METHOD;
 		$emailVars['SHIPPING_METHOD_DETAIL']		 = (!empty( $this->info['shipping_method'] ) ? $this->info['shipping_method'] : 'n/a');
 
 		if ($this->content_type != 'virtual') {
-			$email_order .= "\n" . EMAIL_TEXT_DELIVERY_ADDRESS . "\n" .	EMAIL_SEPARATOR . "\n" . zen_address_format($this->delivery['format_id'], $this->delivery, FALSE, '', "\n" ) . "\n\n";
+			$email_order .= "\n" . EMAIL_TEXT_DELIVERY_ADDRESS . "\n" .	EMAIL_SEPARATOR . "\n" . zen_address_format( $this->delivery, FALSE, '', "\n" ) . "\n\n";
 		}
 
 		//addresses area: Billing
-		$email_order .= "\n" . EMAIL_TEXT_BILLING_ADDRESS . "\n" .	EMAIL_SEPARATOR . "\n" . zen_address_format($this->billing['format_id'], $this->billing, FALSE, '', "\n" ) . "\n\n";
+		$email_order .= "\n" . EMAIL_TEXT_BILLING_ADDRESS . "\n" .	EMAIL_SEPARATOR . "\n" . zen_address_format( $this->billing, FALSE, '', "\n" ) . "\n\n";
 		$emailVars['ADDRESS_BILLING_TITLE']	 = EMAIL_TEXT_BILLING_ADDRESS;
-		$emailVars['ADDRESS_BILLING_DETAIL']	= zen_address_format($this->billing['format_id'], $this->billing, true, '', "<br />");
+		$emailVars['ADDRESS_BILLING_DETAIL']	= zen_address_format( $this->billing, true, '', "<br />");
 
 		$emailVars['PAYMENT_METHOD_TITLE'] = $emailVars['PAYMENT_METHOD_DETAIL'] = $emailVars['PAYMENT_METHOD_FOOTER'] = '';
 		if( $paymentModule = $this->getPaymentModule() ) {
@@ -1493,7 +1346,7 @@ if( empty( $this->contents[$cartItemKey]['attributes'][$subindex]['products_opti
 		$ret = '';
 		if( $this->isValid() ) {
 			$isHtml = strpos( '<', $pBreak ) !== FALSE;
-			$ret = zen_address_format( BitBase::getParameter( $this->$pAddressHash, 'format_id', 2 ), $this->$pAddressHash, $isHtml, '', $pBreak );
+			$ret = zen_address_format( $this->$pAddressHash, $isHtml, '', $pBreak );
 		}
 		return $ret;
 	}
