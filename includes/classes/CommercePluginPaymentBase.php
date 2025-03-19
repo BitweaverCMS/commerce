@@ -137,7 +137,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		return $this->getModuleConfigValue( '_ORDERS_STATUS_ID', DEFAULT_ORDERS_STATUS_ID );
 	}
 
-	public function verifyPayment( $pOrder, &$pPaymentParams ) {
+	public function verifyPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 
 		global $gBitUser, $currencies;
 		$pPaymentParams['payment_email'] = BitBase::getParameter( $pOrder->customer, 'email_address', $gBitUser->getField('email') );
@@ -170,9 +170,9 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 				if( !empty( $pPaymentParams['payment_parent_ref_id'] ) ) {
 					// Parent transaction means we are referencing a previous order
 				} else {
-					// new transaction, Calculate the next expected order id
-					$pPaymentParams['orders_id'] = (!empty( $_SESSION['orders_id'] ) ? $_SESSION['orders_id'] : $pOrder->getNextOrderId());
-					$_SESSION['orders_id'] = $pPaymentParams['orders_id'];
+					// new transaction, Calculate the next expected order id, keep orders_id in SESSION so failed orders reuse the same sequence number
+					$pPaymentParams['orders_id'] = (!empty( $pSessionParams['orders_id'] ) ? $pSessionParams['orders_id'] : $pOrder->getNextOrderId());
+					$pSessionParams['orders_id'] = $pPaymentParams['orders_id'];
 				}
 				$pPaymentParams['payment_currency'] = BitBase::getParameter( $pOrder->info, 'currency', DEFAULT_CURRENCY );
 				$pOrder->info['payment_number'] = $this->getParameter( $pPaymentParams, 'payment_number' );
@@ -227,14 +227,14 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 			$this->saveSessionDetails();
 
 			if( $this->mErrors ) {
-				$_SESSION[$this->code.'_error'] = $this->mErrors;
+				$pSessionParams[$this->code.'_error'] = $this->mErrors;
 			}
 		}
 
 		return count( $this->mErrors ) === 0;
 	}
 
-	function processPayment( $pOrder, &$pPaymentParams ) {
+	public function processPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 		$this->mErrors['process_payment'] = 'This modules has not implemented the ::processPayment method. ('.$this->code.')';
 		return FALSE;
 	}

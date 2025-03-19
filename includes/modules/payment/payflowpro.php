@@ -95,7 +95,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 		return $ret;
 	}
 
-	function processPayment( $pOrder, &$pPaymentParams ) {
+	public function processPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 		global $messageStack, $response, $gBitDb, $gBitUser, $currencies;
 
 		$postFields = array();
@@ -360,10 +360,10 @@ class payflowpro extends CommercePluginPaymentCardBase {
 					if( BitBase::getParameter( $responseHash, 'DUPLICATE' ) == 2 ) {
 						$duplicateError = 'Duplicate Order ( '.$responseHash['ORDERID'].' )';
 						$this->mErrors['process_payment'] = $duplicateError;
-						$_SESSION[$this->code.'_error']['number'] = $duplicateError;
+						$pSessionParams[$this->code.'_error']['number'] = $duplicateError;
 					} elseif( $this->result ) {
 						$this->mErrors['process_payment'] = $responseHash['RESPMSG'].' ('.$this->result.')';
-						$_SESSION[$this->code.'_error']['number'] = $responseHash['RESPMSG'];
+						$pSessionParams[$this->code.'_error']['number'] = $responseHash['RESPMSG'];
 					} else {
 						$this->clearSessionDetails();
 					}

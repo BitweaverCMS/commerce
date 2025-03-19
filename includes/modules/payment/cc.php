@@ -62,10 +62,10 @@ class cc extends CommercePluginPaymentCardBase {
 		return $js;
 	}
 
-	function verifyPayment( $pOrder, &$pPaymentParams ) {
-		if( parent::verifyPayment( $pOrder, $pPaymentParams ) ) {
+	public function verifyPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
+		if( parent::verifyPayment( $pOrder, $pPaymentParams, $pSessionParams ) ) {
 			foreach( array( 'payment_owner', 'payment_number', 'payment_expires_month', 'payment_expires_year', 'payment_cvv' ) as $key ) {
-				$_SESSION[$key] = BitBase::getParameter( $pPaymentParams, $key );
+				$pSessionParams[$key] = BitBase::getParameter( $pPaymentParams, $key );
 			}
 		}
 		return (count( $this->mErrors ) === 0);
@@ -102,9 +102,9 @@ class cc extends CommercePluginPaymentCardBase {
 		return $process_button_string;
 	}
 
-	function processPayment( $pOrder, &$pPaymentParams ) {
+	public function processPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 
-		if( $ret = self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
+		if( $ret = self::verifyPayment ( $pOrder, $pPaymentParams, $pSessionParams ) ) {
 			$logHash = $this->prepPayment( $pOrder, $pPaymentParams );
 
 			$ret = TRUE;

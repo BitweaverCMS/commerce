@@ -101,9 +101,9 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 		return $selection;
 	}
 
-	public function verifyPayment( $pOrder, &$pPaymentParams ) {
+	public function verifyPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 		global $gCommerceSystem;
-		unset( $_SESSION[$this->code.'_error'] );
+		unset( $pSessionParams[$this->code.'_error'] );
 
 		if( !empty( $pPaymentParams['payment_ref_id'] ) ) {
 			// reference transation
@@ -119,11 +119,11 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 			}
 		} 
 
-		if( parent::verifyPayment( $pOrder, $pPaymentParams ) ) {
+		if( parent::verifyPayment( $pOrder, $pPaymentParams, $pSessionParams ) ) {
 			$pOrder->info['payment_cvv'] = $this->getParameter( $pPaymentParams, 'payment_cvv' );
 			// payment is fully verified
 			if( $this->mErrors ) {
-				$_SESSION[$this->code.'_error'] = $this->mErrors;
+				$pSessionParams[$this->code.'_error'] = $this->mErrors;
 			}
 		}
 

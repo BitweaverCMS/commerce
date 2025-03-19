@@ -275,7 +275,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
     /**
      * Prepare and submit the final authorization to Braintree via the appropriate means as configured
      */
-	function processPayment( $pOrder, &$pPaymentParams ) {
+	public function processPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 		global $gCommerceSystem;
 
 		$postFields = array();
@@ -507,7 +507,7 @@ eb( $this->mErrors, $pPaymentParams );
 		}
 
 		if( !empty( $this->mErrors['process_payment'] ) ) {
-			$_SESSION[$this->code.'_error']['number'] = $this->mErrors['process_payment'];
+			$pSessionParams[$this->code.'_error']['number'] = $this->mErrors['process_payment'];
 			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, $result->errors, 'RESPONSE' => $responseHash ) );
 			$ret = FALSE;
 		}

@@ -187,13 +187,13 @@ class CommercePaymentManager extends BitBase {
 		return $ret;
 	}
 
-	function processPayment( $pOrder, &$pPaymentParams ) {
+	function processPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 		global $gBitProduct;
 		$ret = NULL;
 
 		$gBitProduct->invokeServices( 'commerce_pre_purchase_function', $pOrder );
 		if( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
-			if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $pOrder, $pPaymentParams ) ) {
+			if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $pOrder, $pPaymentParams, $pSessionParams ) ) {
 				$pPaymentParams['initial_orders_status_id'] = $this->mPaymentObjects[$this->selected_module]->getProcessedOrdersStatus();
 			} else {
 				$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
@@ -395,7 +395,8 @@ bit_error_log( $pParamHash, $this->mErrors );
 										$pParamHash['payment_type'] = $pParamHash['manual']['payment_type'];
 										$pParamHash['is_success'] = 'y';
 									} elseif( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
-										if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $tempOrder, $pParamHash ) ) {
+										$sessionParams = array();
+										if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $tempOrder, $pParamHash, $sessionParams ) ) {
 											$pParamHash['payment_ref_id'] = $tempOrder->info['payment_ref_id'];
 										} else {
 											$this->mErrors['errors'][] = tra( 'Payment Failed' ).': '.$pParamHash['result']['payment_result'];

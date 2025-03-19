@@ -112,7 +112,7 @@ class paypal extends CommercePluginPaymentBase {
 		return $process_button_string;
 	}
 
-	function processPayment( $pOrder, &$pPaymentParameters ) {
+	public function processPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 		// now just need to check here whether we are here because of IPN or auto-return, we cn use the referer variable for that
 		// If we have come from auto return, check to see wether the order has been created by IPN and if not create it now.
 		if ($pPaymentParameters['referer'] == 'paypal') {

@@ -64,9 +64,9 @@ class purchase_order extends CommercePluginPaymentBase {
 		return $confirmation;
 	}
 
-	function processPayment( $pOrder, &$pPaymentParams ) {
+	public function processPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 
-		if( $ret = self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
+		if( $ret = self::verifyPayment ( $pOrder, $pPaymentParams, $pSessionParams ) ) {
 			$pOrder->info['amount_due'] = $this->getParameter( $pPaymentParams, 'payment_amount' );
 			$logHash = $this->prepPayment( $pOrder, $pPaymentParams );
 

@@ -109,7 +109,7 @@ class authorizenet_aim extends CommercePluginPaymentCardBase {
 
 
 	// Evaluates the Credit Card Type for acceptance and the validity of the Credit Card Number & Expiration Date
-	public function verifyPayment( $pOrder, &$pPaymentParams ) {
+	public function verifyPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 
 		include(DIR_WS_CLASSES . 'cc_validation.php');
 
@@ -186,10 +186,10 @@ function process_button( $pPaymentParameters ) {
 	return false;
 	}
 
-function processPayment( $pOrder, &$pPaymentParameters ) {
-	global $response, $gBitDb, $order;
+	public function processPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
+		global $response, $gBitDb, $order;
 
-	if (MODULE_PAYMENT_AUTHORIZENET_AIM_STORE_NUMBER == 'True') {
+		if (MODULE_PAYMENT_AUTHORIZENET_AIM_STORE_NUMBER == 'True') {
 			$order->info['cc_number'] = $pPaymentParams['cc_number'];
 		}
 		$order->info['cc_expires'] = $pPaymentParams['cc_expires'];
@@ -197,145 +197,146 @@ function processPayment( $pOrder, &$pPaymentParameters ) {
 		$order->info['cc_owner'] = $pPaymentParams['cc_owner'];
 		$order->info['cc_cvv'] = $pPaymentParams['cc_cvv'];
 
-	// DATA PREPARATION SECTION
+		// DATA PREPARATION SECTION
 		unset($submit_data);  // Cleans out any previous data stored in the variable
 
-	// Create a string that contains a listing of products ordered for the description field
-	$description = '';
-	foreach( array_keys( $order->contents ) as $opid ) {
-		$description .= $order->contents[$opid]['name'] . '(qty: ' . $order->contents[$opid]['quantity'] . ') + ';
-	}
-	// Remove the last "\n" from the string
-	$description = substr($description, 0, -2);
+		// Create a string that contains a listing of products ordered for the description field
+		$description = '';
+		foreach( array_keys( $order->contents ) as $opid ) {
+			$description .= $order->contents[$opid]['name'] . '(qty: ' . $order->contents[$opid]['quantity'] . ') + ';
+		}
+		// Remove the last "\n" from the string
+		$description = substr($description, 0, -2);
 
-	// Create a variable that holds the order time
-	$order_time = date("F j, Y, g:i a");
+		// Create a variable that holds the order time
+		$order_time = date("F j, Y, g:i a");
 
-	// Calculate the next expected order id
-	$last_order_id = $gBitDb->getOne("select * from " . TABLE_ORDERS . " order by `orders_id` desc");
-	$new_order_id = $last_order_id->fields['orders_id'];
-	$new_order_id = ($new_order_id + 1);
+		// Calculate the next expected order id
+		$last_order_id = $gBitDb->getOne("select * from " . TABLE_ORDERS . " order by `orders_id` desc");
+		$new_order_id = $last_order_id->fields['orders_id'];
+		$new_order_id = ($new_order_id + 1);
 
-	// Populate an array that contains all of the data to be sent to Authorize.net
-	$submit_data = array(
-	x_login => MODULE_PAYMENT_AUTHORIZENET_AIM_LOGIN, // The login name is assigned by authorize.net
-	x_tran_key => MODULE_PAYMENT_AUTHORIZENET_AIM_TXNKEY,  // The Transaction Key is generated through the merchant interface
-	x_relay_response => 'FALSE', // AIM uses direct response, not relay response
-	x_delim_data => 'TRUE', // The default delimiter is a comma
-	x_version => '3.1',  // 3.1 is required to use CVV codes
-	x_type => MODULE_PAYMENT_AUTHORIZENET_AIM_AUTHORIZATION_TYPE == 'Authorize' ? 'AUTH_ONLY': 'AUTH_CAPTURE',
-	x_method => 'CC', //MODULE_PAYMENT_AUTHORIZENET_AIM_METHOD == 'Credit Card' ? 'CC' : 'ECHECK',
-	x_amount => number_format($order->info['total'], 2),
-	x_card_num => $pPaymentParams['cc_number'],
-	x_exp_date => $pPaymentParams['cc_expires'],
-	x_card_code => $pPaymentParams['cc_cvv'],
-	x_email_customer => MODULE_PAYMENT_AUTHORIZENET_AIM_EMAIL_CUSTOMER == 'True' ? 'TRUE': 'FALSE',
-	x_email_merchant => MODULE_PAYMENT_AUTHORIZENET_AIM_EMAIL_MERCHANT == 'True' ? 'TRUE': 'FALSE',
-	x_cust_id => $_SESSION['customer_id'],
-	x_invoice_num => $new_order_id,
-	x_first_name => $order->billing['firstname'],
-	x_last_name => $order->billing['lastname'],
-	x_company => $order->billing['company'],
-	x_address => $order->billing['street_address'],
-	x_city => $order->billing['city'],
-	x_state => $order->billing['state'],
-	x_zip => $order->billing['postcode'],
-	x_country => $order->billing['title'],
-	x_phone => $order->customer['telephone'],
-	x_email => $order->customer['email_address'],
-	x_ship_to_first_name => $order->delivery['firstname'],
-	x_ship_to_last_name => $order->delivery['lastname'],
-	x_ship_to_address => $order->delivery['street_address'],
-	x_ship_to_city => $order->delivery['city'],
-	x_ship_to_state => $order->delivery['state'],
-	x_ship_to_zip => $order->delivery['postcode'],
-	x_ship_to_country => $order->delivery['title'],
-	x_description => $description,
-	// Merchant defined variables go here
-	Date => $order_time,
-	IP => $_SERVER['REMOTE_ADDR'],
-	Session => session_id());
+		// Populate an array that contains all of the data to be sent to Authorize.net
+		$submit_data = array(
+			x_login => MODULE_PAYMENT_AUTHORIZENET_AIM_LOGIN, // The login name is assigned by authorize.net
+			x_tran_key => MODULE_PAYMENT_AUTHORIZENET_AIM_TXNKEY,  // The Transaction Key is generated through the merchant interface
+			x_relay_response => 'FALSE', // AIM uses direct response, not relay response
+			x_delim_data => 'TRUE', // The default delimiter is a comma
+			x_version => '3.1',  // 3.1 is required to use CVV codes
+			x_type => MODULE_PAYMENT_AUTHORIZENET_AIM_AUTHORIZATION_TYPE == 'Authorize' ? 'AUTH_ONLY': 'AUTH_CAPTURE',
+			x_method => 'CC', //MODULE_PAYMENT_AUTHORIZENET_AIM_METHOD == 'Credit Card' ? 'CC' : 'ECHECK',
+			x_amount => number_format($order->info['total'], 2),
+			x_card_num => $pPaymentParams['cc_number'],
+			x_exp_date => $pPaymentParams['cc_expires'],
+			x_card_code => $pPaymentParams['cc_cvv'],
+			x_email_customer => MODULE_PAYMENT_AUTHORIZENET_AIM_EMAIL_CUSTOMER == 'True' ? 'TRUE': 'FALSE',
+			x_email_merchant => MODULE_PAYMENT_AUTHORIZENET_AIM_EMAIL_MERCHANT == 'True' ? 'TRUE': 'FALSE',
+			x_cust_id => $pSessionParams['customer_id'],
+			x_invoice_num => $new_order_id,
+			x_first_name => $order->billing['firstname'],
+			x_last_name => $order->billing['lastname'],
+			x_company => $order->billing['company'],
+			x_address => $order->billing['street_address'],
+			x_city => $order->billing['city'],
+			x_state => $order->billing['state'],
+			x_zip => $order->billing['postcode'],
+			x_country => $order->billing['title'],
+			x_phone => $order->customer['telephone'],
+			x_email => $order->customer['email_address'],
+			x_ship_to_first_name => $order->delivery['firstname'],
+			x_ship_to_last_name => $order->delivery['lastname'],
+			x_ship_to_address => $order->delivery['street_address'],
+			x_ship_to_city => $order->delivery['city'],
+			x_ship_to_state => $order->delivery['state'],
+			x_ship_to_zip => $order->delivery['postcode'],
+			x_ship_to_country => $order->delivery['title'],
+			x_description => $description,
+			// Merchant defined variables go here
+			Date => $order_time,
+			IP => $_SERVER['REMOTE_ADDR'],
+			Session => session_id()
+		);
 
-	if(MODULE_PAYMENT_AUTHORIZENET_AIM_TESTMODE == 'Test') {
-		$submit_data['x_test_request'] = 'TRUE';
-	}
+		if(MODULE_PAYMENT_AUTHORIZENET_AIM_TESTMODE == 'Test') {
+			$submit_data['x_test_request'] = 'TRUE';
+		}
 
-	// concatenate the submission data and put into variable $data
-	while(list($key, $value) = each($submit_data)) {
-		$data .= $key . '=' . urlencode(str_replace(',', '', $value)) . '&';
-	}
-
-	// Remove the last "&" from the string
-	$data = substr($data, 0, -1);
-
-
-	// SEND DATA BY CURL SECTION
-	// Post order info data to Authorize.net, make sure you have curl installed
-
-	unset($response);
-
-	// The commented line below is an alternate connection method
-	//exec("/usr/bin/curl -d \"$data\" https://secure.authorize.net/gateway/transact.dll", $response);
-
-	$url = 'https://secure.authorize.net/gateway/transact.dll';
-
-		$ch = curl_init();
-
-		curl_setopt($ch, CURLOPT_URL,$url);
-
-		curl_setopt($ch, CURLOPT_VERBOSE, 0);
-
-		curl_setopt($ch, CURLOPT_POST, 1);
-
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-
-		$authorize = curl_exec($ch);
-
-		curl_close ($ch);
-
-		$response = split('\,', $authorize);
-
-
-		// DATABASE SECTION
-	// Insert the send and receive response data into the database.
-	// This can be used for testing or for implementation in other applications
-	// This can be turned on and off if the Admin Section
-	if (MODULE_PAYMENT_AUTHORIZENET_AIM_STORE_DATA == 'True'){
-
-		// Create a string from all of the response data for insertion into the database
-		while(list($key, $value) = each($response)) {
-			$response_list .= ($key +1) . '=' . urlencode(ereg_replace(',', '', $value)) . '&';
+		// concatenate the submission data and put into variable $data
+		while(list($key, $value) = each($submit_data)) {
+			$data .= $key . '=' . urlencode(str_replace(',', '', $value)) . '&';
 		}
 
 		// Remove the last "&" from the string
-		$response_list = substr($response_list, 0, -1);
+		$data = substr($data, 0, -1);
 
 
+		// SEND DATA BY CURL SECTION
+		// Post order info data to Authorize.net, make sure you have curl installed
+
+		unset($response);
+
+		// The commented line below is an alternate connection method
+		//exec("/usr/bin/curl -d \"$data\" https://secure.authorize.net/gateway/transact.dll", $response);
+
+		$url = 'https://secure.authorize.net/gateway/transact.dll';
+
+			$ch = curl_init();
+
+			curl_setopt($ch, CURLOPT_URL,$url);
+
+			curl_setopt($ch, CURLOPT_VERBOSE, 0);
+
+			curl_setopt($ch, CURLOPT_POST, 1);
+
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+
+			$authorize = curl_exec($ch);
+
+			curl_close ($ch);
+
+			$response = split('\,', $authorize);
+
+
+			// DATABASE SECTION
+		// Insert the send and receive response data into the database.
+		// This can be used for testing or for implementation in other applications
+		// This can be turned on and off if the Admin Section
+		if (MODULE_PAYMENT_AUTHORIZENET_AIM_STORE_DATA == 'True'){
+
+			// Create a string from all of the response data for insertion into the database
+			while(list($key, $value) = each($response)) {
+				$response_list .= ($key +1) . '=' . urlencode(ereg_replace(',', '', $value)) . '&';
+			}
+
+			// Remove the last "&" from the string
+			$response_list = substr($response_list, 0, -1);
+
+
+			$response_code = explode(',', $response[0]);
+			$response_text = explode(',', $response[3]);
+			$transaction_id = explode(',', $response[6]);
+			$authorization_type = explode(',', $response[11]);
+
+			$db_response_code = $response_code[0];
+			$db_response_text = $response_text[0];
+			$db_transaction_id = $transaction_id[0];
+			$db_authorization_type = $authorization_type[0];
+			$db_session_id = session_id();
+
+
+			// Insert the data into the database
+			$gBitDb->Execute("INSERT INTO " . TABLE_AUTHORIZENET . "  (`id`, `customer_id`, `order_id`, `response_code`, `response_text`, `authorization_type`, `transaction_id`, `sent`, `received`, `az_time`, `session_id`) VALUES ('', '" . $pSessionParams['customer_id'] . "', '" . $new_order_id . "', '" . $db_response_code . "', '" . $db_response_text . "', '" . $db_authorization_type . "', '" . $db_transaction_id . "', '" . $data . "', '" . $response_list . "', '" . $order_time . "', '" . $db_session_id . "')");
+		}
+
+		// Parse the response code and text for custom error display
 		$response_code = explode(',', $response[0]);
 		$response_text = explode(',', $response[3]);
-		$transaction_id = explode(',', $response[6]);
-		$authorization_type = explode(',', $response[11]);
-
-		$db_response_code = $response_code[0];
-		$db_response_text = $response_text[0];
-		$db_transaction_id = $transaction_id[0];
-		$db_authorization_type = $authorization_type[0];
-		$db_session_id = session_id();
-
-
-		// Insert the data into the database
-		$gBitDb->Execute("INSERT INTO " . TABLE_AUTHORIZENET . "  (`id`, `customer_id`, `order_id`, `response_code`, `response_text`, `authorization_type`, `transaction_id`, `sent`, `received`, `az_time`, `session_id`) VALUES ('', '" . $_SESSION['customer_id'] . "', '" . $new_order_id . "', '" . $db_response_code . "', '" . $db_response_text . "', '" . $db_authorization_type . "', '" . $db_transaction_id . "', '" . $data . "', '" . $response_list . "', '" . $order_time . "', '" . $db_session_id . "')");
-	}
-
-	// Parse the response code and text for custom error display
-	$response_code = explode(',', $response[0]);
-	$response_text = explode(',', $response[3]);
-	$x_response_code = $response_code[0];
-	$x_response_text = $response_text[0];
-		// If the response code is not 1 (approved) then redirect back to the payment page with the appropriate error message
-	if ($x_response_code != '1') {
+		$x_response_code = $response_code[0];
+		$x_response_text = $response_text[0];
+			// If the response code is not 1 (approved) then redirect back to the payment page with the appropriate error message
+		if ($x_response_code != '1') {
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $x_response_text . ' - ' . urlencode(MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_DECLINED_MESSAGE), 'SSL', true, false));
 		}
 	}

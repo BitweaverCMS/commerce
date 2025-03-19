@@ -164,16 +164,16 @@ class authorizenet extends CommercePluginPaymentCardBase {
 		return $selection;
 	}
 
-	public function verifyPayment( $pOrder, &$pPaymentParams ) {
+	public function verifyPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 		if( empty( $pPaymentParams['authorizenet_cc_number'] ) ) {
 			$error = tra( 'Please enter a credit card number.' );
 		} elseif( $this->verifyCreditCard( $pPaymentParams['authorizenet_cc_number'], $pPaymentParams['authorizenet_cc_expires_month'], $pPaymentParams['authorizenet_cc_expires_year'], $pPaymentParams['authorizenet_cc_cvv'] ) ) {
 			$ret = TRUE;
 		} else {
 			foreach( array( 'authorizenet_cc_owner', 'authorizenet_cc_number', 'authorizenet_cc_expires_month', 'authorizenet_cc_expires_year', 'authorizenet_cc_cvv' ) as $key ) {
-				$_SESSION[$key] = BitBase::getParameter( $pPaymentParams, $key );
+				$pSessionParams[$key] = BitBase::getParameter( $pPaymentParams, $key );
 			}
-			$_SESSION['pfp_error'] = $this->mErrors;
+			$pSessionParams['pfp_error'] = $this->mErrors;
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 		}
 		return $ret;
@@ -231,7 +231,7 @@ class authorizenet extends CommercePluginPaymentCardBase {
 		return $process_button_string;
 	}
 
-	function processPayment( $pOrder, &$pPaymentParams ) {
+	public function processPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 
 		if ($pPaymentParams['x_response_code'] == '1') return;
 		if ($pPaymentParams['x_response_code'] == '2') {
