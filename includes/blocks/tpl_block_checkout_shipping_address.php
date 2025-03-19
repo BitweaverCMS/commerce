@@ -33,7 +33,7 @@
         <td class="main" align="right"><?php echo zen_draw_radio_field('address', $addresses->fields['address_book_id'], ($addresses->fields['address_book_id'] == $_SESSION['sendto'])); ?></td>
       </tr>
       <tr>
-        <td class="main"><?php echo zen_address_format($format_id, $addresses->fields, true, ' ', ', '); ?></td>
+        <td class="main"><?php echo zen_address_format( $addresses->fields, ' ', ', '); ?></td>
       </tr>
     </table></td>
   </tr>

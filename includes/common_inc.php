@@ -427,89 +427,101 @@ function zen_get_languages() {
 ////
 // Return a formatted address
 // TABLES: address_format
-  function zen_address_format($address_format_id, $address, $html, $boln, $eoln, $pAddressPrefix='') {
-    global $gBitDb;
-    $address_format_query = "SELECT `address_format` AS `format` FROM " . TABLE_ADDRESS_FORMAT . " WHERE `address_format_id` = ?";
-    $address_format = $gBitDb->query($address_format_query, array( (int)$address_format_id ) );
-    $company = zen_output_string_protected($address[$pAddressPrefix.'company']);
-    if ( !empty( $address[$pAddressPrefix.'firstname'] ) ) {
-      $firstname = zen_output_string_protected($address[$pAddressPrefix.'firstname']);
-      $lastname = zen_output_string_protected($address[$pAddressPrefix.'lastname']);
-    } elseif( !empty( $address[$pAddressPrefix.'name'] ) ) {
-      $firstname = zen_output_string_protected($address[$pAddressPrefix.'name']);
-      $lastname = '';
-    } else {
-      $firstname = '';
-      $lastname = '';
-    }
-    $street = zen_output_string_protected($address[$pAddressPrefix.'street_address']);
-    $suburb = zen_output_string_protected($address[$pAddressPrefix.'suburb']);
-    $city = zen_output_string_protected($address[$pAddressPrefix.'city']);
-    $state = zen_output_string_protected($address[$pAddressPrefix.'state']);
-    $telephone = (isset( $address[$pAddressPrefix.'telephone'] ) ? zen_output_string_protected($address[$pAddressPrefix.'telephone']) : NULL);
-    if ( !empty( $address[$pAddressPrefix.'country_id'] ) ) {
-      $country = zen_get_country_name($address[$pAddressPrefix.'country_id']);
+function zen_address_format( $address, $html, $boln, $eoln, $pAddressPrefix='') {
+	global $gBitDb;
 
-      if ( !empty( $address[$pAddressPrefix.'zone_id'] ) ) {
-        $state = zen_get_zone_code($address[$pAddressPrefix.'country_id'], $address[$pAddressPrefix.'zone_id'], $state);
-      }
-    } elseif( !empty( $address[$pAddressPrefix.'countries_name'])) {
-      $country = zen_output_string_protected($address[$pAddressPrefix.'countries_name']);
-    } elseif( !empty( $address[$pAddressPrefix.'country'])) {
-      $country = zen_output_string_protected($address[$pAddressPrefix.'country']);
-    } else {
-      $country = '';
-    }
-    $postcode = zen_output_string_protected($address[$pAddressPrefix.'postcode']);
-    $zip = $postcode;
+	$company = zen_output_string_protected($address[$pAddressPrefix.'company']);
+	if ( !empty( $address[$pAddressPrefix.'firstname'] ) ) {
+		$firstname = zen_output_string_protected($address[$pAddressPrefix.'firstname']);
+		$lastname = zen_output_string_protected($address[$pAddressPrefix.'lastname']);
+	} elseif( !empty( $address[$pAddressPrefix.'name'] ) ) {
+		$firstname = zen_output_string_protected($address[$pAddressPrefix.'name']);
+		$lastname = '';
+	} else {
+		$firstname = '';
+		$lastname = '';
+	}
 
-    if ($html) {
+	$street = zen_output_string_protected($address[$pAddressPrefix.'street_address']);
+	$suburb = zen_output_string_protected($address[$pAddressPrefix.'suburb']);
+	$city = zen_output_string_protected($address[$pAddressPrefix.'city']);
+	$state = zen_output_string_protected($address[$pAddressPrefix.'state']);
+	$telephone = (isset( $address[$pAddressPrefix.'telephone'] ) ? zen_output_string_protected($address[$pAddressPrefix.'telephone']) : NULL);
+	if ( !empty( $address[$pAddressPrefix.'country_id'] ) ) {
+		$country = zen_get_country_name($address[$pAddressPrefix.'country_id']);
+
+		if ( !empty( $address[$pAddressPrefix.'zone_id'] ) ) {
+			$state = zen_get_zone_code($address[$pAddressPrefix.'country_id'], $address[$pAddressPrefix.'zone_id'], $state);
+		}
+	} elseif( !empty( $address[$pAddressPrefix.'countries_name'])) {
+		$country = zen_output_string_protected($address[$pAddressPrefix.'countries_name']);
+	} elseif( !empty( $address[$pAddressPrefix.'country'])) {
+		$country = zen_output_string_protected($address[$pAddressPrefix.'country']);
+	} else {
+		$country = '';
+	}
+	$postcode = zen_output_string_protected($address[$pAddressPrefix.'postcode']);
+	$zip = $postcode;
+
+	if ($html) {
 // HTML Mode
-      $HR = '<hr />';
-      $hr = '<hr />';
-      if ( empty( $boln ) && ($eoln == "\n") ) { // Values not specified, use rational defaults
-        $CR = '<br />';
-        $cr = '<br />';
-        $eoln = $cr;
-      } else { // Use values supplied
-        $CR = $eoln . $boln;
-        $cr = $CR;
-      }
-    } else {
+		$HR = '<hr />';
+		$hr = '<hr />';
+		if ( empty( $boln ) && ($eoln == "\n") ) { // Values not specified, use rational defaults
+			$CR = '<br />';
+			$cr = '<br />';
+			$eoln = $cr;
+		} else { // Use values supplied
+			$CR = $eoln . $boln;
+			$cr = $CR;
+		}
+	} else {
 // Text Mode
-      $CR = $eoln;
-      $cr = $CR;
-      $HR = '----------------------------------------';
-      $hr = '----------------------------------------';
-    }
+		$CR = $eoln;
+		$cr = $CR;
+		$HR = '----------------------------------------';
+		$hr = '----------------------------------------';
+	}
 
-    $statecomma = '';
-    $streets = $street;
-    if ($suburb != '') $streets = $street . $cr . $suburb;
-    if ($state != '') $statecomma = $state . ', ';
+	$statecomma = '';
+	$streets = $street;
+	if ($suburb != '') $streets = $street . $cr . $suburb;
+	if ($state != '') $statecomma = $state . ', ';
 
-    $fmt = $address_format->fields['format'];
-    eval("\$address_out = \"$fmt\";");
-    if( !empty( $telephone ) ) {
-    	$address_out .= $cr . $telephone;
-    }
+	$lookupColumn = 'caf.`address_format_id`';
+	$lookupValue = 2;
+	if( $formatId = (int)BitBase::getParameter( $address, $pAddressPrefix.'format_id' ) ) {
+		$lookupValue = $formatId;
+	} elseif( $countryLookup = BitBase::getParameter( $address, $pAddressPrefix.'countries_name', BitBase::getParameter( $address, $pAddressPrefix.'country' ) ) ) {
+		if( strlen( $countryLookup ) == 2 ) {
+			$lookupColumn = 'ccou.`countries_iso_code_2`';
+			$lookupValue = strtoupper( $countryLookup );
+		} elseif( strlen( $countryLookup ) == 3 ) {
+			$lookupColumn = 'ccou.`countries_iso_code_3`';
+			$lookupValue = strtoupper( $countryLookup );
+		} else {
+			$lookupColumn = 'UPPER( ccou.`countries_name` )';
+			$lookupValue = strtoupper( $countryLookup );
+		}
+	}
 
-    if ( (ACCOUNT_COMPANY == 'true') && (zen_not_null($company)) ) {
-		$address_out = preg_replace( "`$cr`", "$cr$company$cr", $address_out, 1 );
-    }
+	$addressFormat = $gBitDb->getOne( "SELECT `address_format` FROM " . TABLE_ADDRESS_FORMAT . " caf INNER JOIN " . TABLE_COUNTRIES . " ccou ON ( caf.`address_format_id` = ccou.`address_format_id` ) WHERE $lookupColumn = ?", array( $lookupValue ) );
 
-    return $address_out;
-  }
+	eval("\$address_out = \"$addressFormat\";");
+	if( !empty( $telephone ) ) {
+		$address_out .= $cr . $telephone;
+	}
 
+	if ( (ACCOUNT_COMPANY == 'true') && (zen_not_null($company)) ) {
+	$address_out = preg_replace( "`$cr`", "$cr$company$cr", $address_out, 1 );
+	}
+
+	return $address_out;
+}
 
 // }}}
+
 // {{{ -=-=-=-=-=-=-=-=-= PRICING FUNCITONS
-
-
-
-
-
-
 
 ////
 // computes products_price + option groups lowest attributes price of each group when on
