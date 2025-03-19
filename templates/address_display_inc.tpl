@@ -2,7 +2,7 @@
 	{assign var=addressLinebreak value='<br/>'}
 {/if}
 <div class="bitcommerce-address">
-	<h4 class="no-margin">{$address.firstname} {$address.lastname}{if $address.company}, {$address.company}{/if}</h4>
+	<h4 class="no-margin">{$selectionHtml}{$address.firstname} {$address.lastname}{if $address.company}, {$address.company}{/if}</h4>
 	{$address.street_address}
 	{if $address.suburb}
 		{$addressLinebreak} {$address.suburb}
