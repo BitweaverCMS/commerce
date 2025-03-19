@@ -121,10 +121,11 @@ ul.products li .thumb { padding-right:20px; }
 .row.ot_adjustment,
 .row.ot_total	{ padding-bottom:20px; border-top:1px solid #dddddd; }
 
-#shippingquotes img.shipper-logo {max-height:90px;}
+#shippingquotes img.shipper-logo {max-height:20px;}
 #shippingquotes .row.quote { border-top:1px solid #dedede; padding-top: 5px;}
-#shippingquotes .fa.shipper-icon { font-size:6rem;}
-#shippingquotes .fa.fab.shipper-icon { font-size:8rem;}
+#shippingquotes .fa.shipper-icon { font-size:1rem;}
+#shippingquotes h3 { font-size:2rem;}
+#shippingquotes .fa.fab.shipper-icon { font-size:1.5rem;}
 
 /*Checkout CSS Bar*/
 .shopping-cart .cart-item {border-bottom:0px solid transparent; }
