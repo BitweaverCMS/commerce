@@ -190,6 +190,21 @@ abstract class CommerceOrderBase extends BitBase {
 		return current( $fulfillmentPriority );
 	}
 
+	// Default implementation assumes all products are capable of expediting
+	function isExpeditable() {
+		$ret = TRUE;
+		if( !empty( $this->contents ) ) {
+			foreach( array_keys( $this->contents ) as $productsKey ) {
+				// $productsKey will be orders_products_id for an order
+				$prid = $this->contents[$productsKey]['products_id'];
+				if( $product = $this->getProductObject( $prid ) ) {
+					$ret &= $product->isExpeditable( $this, $productsKey );
+				}
+			}
+		}
+		return $ret;
+	}
+
 	function commerce_order_sort_fulfillers( $a, $b ) {
 		$ret = 0;
 		if ($a['priority'] == $b['priority']) {
