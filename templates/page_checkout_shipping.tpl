@@ -47,9 +47,8 @@
 				<input type="hidden" name="main_page" value="checkout_shipping" />
 				<div class="pull-right text-right">
 					{if $gBitUser->hasPermission('p_bitcommerce_bulk_ordering')}
-					<div class="btn-group" data-toggle="buttons">
-						<label class="btn btn-default btn-xs" onclick="$('.ship-address-bulk').toggle();$('.ship-address-direct').toggle();"><input type="checkbox" name="options" id="option2">{tr}Bulk{/tr} {booticon iname="fa-boxes-stacked"}</label>
-					</div>
+						<span class="btn btn-default btn-sm ship-address-direct" onclick="$('.ship-address-bulk').toggle();$('.ship-address-direct').toggle();">{tr}Drop Ship{/tr} {booticon iname="fa-boxes-stacked"}</span>
+						<span class="btn btn-default btn-sm ship-address-bulk display-none" onclick="$('.ship-address-bulk').toggle();$('.ship-address-direct').toggle();">{tr}Single Shipment{/tr} {booticon iname="fa-box"}</span>
 					{/if}
 				</div>
 
@@ -60,17 +59,9 @@
 				</div>
 				{if $gBitUser->hasPermission('p_bitcommerce_bulk_ordering')}
 				<div class="ship-address-bulk" style="display:none">
-					{formlabel label="Bulk Shipping" for="bulk"}
+					{formlabel label="Drop Shipping" for="dropship"}
 
-					<p>If you have would like to have the same cart mailed to multiple recipients, upload a <a href="{$smarty.const.BITCOMMERCE_PKG_URL}pub/bulk_order.csv">bulk order CSV</a> file with your addresses. A unique order with unique shipping charges will be made for each entry in the CSV file.</p>
-					<div class="form-inline">
-						<div class="form-group">
-							<div class="input-group">
-								<div class="input-group-addon">{booticon iname="fa-address-book"}</div>
-								<input type="file" name="bulk_csv" class="form-control"></input>
-							</div>
-						</div>
-					</div>
+					<p>If you have would like to have the same cart mailed to multiple recipients, use our <a href="{$smarty.const.BITCOMMERCE_PKG_URL}dropship">Drop Ship feature</a>. A unique order with unique shipping charges will be made for each entry in the CSV file.</p>
 				</div>
 				{/if}
 			</fieldset>
