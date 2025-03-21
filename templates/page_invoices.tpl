@@ -26,12 +26,12 @@
 			{assign var=orderSum value=$orderSum+$orderHash.amount_due}
 			{forminput label="checkbox"}
 			<div class="row">
-				<div class="col-xs-2 col-sm-1"><input type="checkbox" name="" value="" class="batch-checkbox" disabled autocomplete="off"> 
+				<div class="col-xs-2 col-sm-1"><input type="checkbox" name="" value="" class="batch-checkbox" autocomplete="off"> 
 					{if $gBitUser->hasPermission( 'p_bitcommerce_admin' )}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderHash.orders_id}">{else} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}account_history_info?order_id={$orderHash.orders_id}">{/if}{$orderHash.orders_id}</a>
 				</div>
 				<div class="col-xs-2 col-sm-1">{$gCommerceCurrencies->format($orderHash.amount_due,true,$orderHash.currency,$orderHash.currency_value)}</div>
-				<div class="col-xs-8 col-sm-5"><span class="date">{$orderHash.date_purchased|strtotime|date_format:"%Y-%m-%d %H:%m"}</span> {$orderHash.delivery_name}, {$orderHash.delivery_city}, {$orderHash.delivery_state}</div>
-				<div class="col-xs-8 col-sm-3">{$orderHash.payment_method}: {$orderHash.payment_number}</div>
+				<div class="col-xs-8 col-sm-6"><span class="date">{$orderHash.date_purchased|strtotime|date_format:"%Y-%m-%d %H:%m"}</span> {$orderHash.delivery_name}, {$orderHash.delivery_city}, {$orderHash.delivery_state}</div>
+				<div class="col-xs-8 col-sm-4">{$orderHash.payment_method}: {$orderHash.payment_number}</div>
 			</div>
 			{/forminput}
 		{/foreach}
