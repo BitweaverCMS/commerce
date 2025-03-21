@@ -390,7 +390,7 @@ abstract class CommerceOrderBase extends BitBase {
 		foreach( $this->mOtClasses as $class=>&$otObject ) {
 			$postVar = 'c' . $otObject->code;
 			if( isset( $pSessionParams[$postVar] ) ) {
-				unset( $pSessionParams[$post_var] );
+				unset( $pSessionParams[$postVar] );
 			}
 			$otObject->clearSessionDetails();
 		}
