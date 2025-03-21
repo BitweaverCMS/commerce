@@ -42,9 +42,9 @@
 										<span class="inline-block pull-right">({$quotes[ix].methods[jx].transit_time})</span>
 									{/if}
 									{if empty($noradio) && ($smarty.section.ix.total > 1 || $smarty.section.jx.total > 1)}
-										<input type="radio" name="shipping_method" value="{$quoteMethodId}" {if $checked}checked="checked"{/if}/>
+										<input type="radio" name="shipping_quote" value="{$quoteMethodId}" {if $checked}checked="checked"{/if}/>
 									{else}
-										<input type="hidden" name="shipping_method" value="{$quoteMethodId}" />
+										<input type="hidden" name="shipping_quote" value="{$quoteMethodId}" />
 									{/if}
 									{if $quotes[ix].booticon}
 										{booticon iname=$quotes[ix].booticon class="shipper-icon"}
