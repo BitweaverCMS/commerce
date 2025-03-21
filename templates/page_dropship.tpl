@@ -2,7 +2,7 @@
 	<h1>{tr}Drop Ship{/tr}</h1>
 </header>
 
-{if $gBitUser->hasPermission('p_bitcommerce_bulk_ordering')}
+{if $gBitUser->hasPermission('p_bitcommerce_dropship')}
 	{form name='dropship' action="`$smarty.const.BITCOMMERCE_PKG_URL`dropship" method='post' enctype='multipart/form-data'}
 		<div class="drop-ship">
 			{formlabel label="Drop Shipping" for="drop-ship"}
