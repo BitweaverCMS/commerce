@@ -287,7 +287,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 		$result = new stdClass();
 		$result->errors = array();
 
-		if( self::verifyPayment ( $pOrder, $pPaymentParams ) ) {
+		if( self::verifyPayment ( $pOrder, $pPaymentParams, $pSessionParams ) ) {
 
 			$logHash = $this->prepPayment( $pOrder, $pPaymentParams );
 			$logHash['payment_mode'] = 'charge';

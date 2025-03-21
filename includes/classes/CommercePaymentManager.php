@@ -172,11 +172,11 @@ class CommercePaymentManager extends BitBase {
 	// }}}
 
 	// {{{ PAYMENT PROCESSING
-	function verifyPayment( $pOrder, &$pPaymentParams ) {
+	function verifyPayment( $pOrder, &$pPaymentParams, &$pSessionParams ) {
 		$ret = FALSE;
 		if( $pOrder->hasPaymentDue( $pPaymentParams ) ) {	
 			if ( !empty( $this->mPaymentObjects[$this->selected_module] ) && is_object($this->mPaymentObjects[$this->selected_module]) && ($this->mPaymentObjects[$this->selected_module]->enabled) ) {
-				if( !($ret = $this->mPaymentObjects[$this->selected_module]->verifyPayment( $pOrder, $pPaymentParams )) ) {
+				if( !($ret = $this->mPaymentObjects[$this->selected_module]->verifyPayment( $pOrder, $pPaymentParams, $pSessionParams )) ) {
 					$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
 				}
 			}
@@ -197,6 +197,12 @@ class CommercePaymentManager extends BitBase {
 				$pPaymentParams['initial_orders_status_id'] = $this->mPaymentObjects[$this->selected_module]->getProcessedOrdersStatus();
 			} else {
 				$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
+			}
+		} else {
+			if( !empty( $this->selected_module ) ) {
+				$this->mErrors['payment_method'] = 'Unknown payment method ( ' . $this->selected_module . ' )';
+			} else {
+				$this->mErrors['payment_method'] = 'No payment method specified.';
 			}
 		}
 

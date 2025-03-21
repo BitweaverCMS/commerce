@@ -130,13 +130,14 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 	}
 
 	function apply_credit( &$pSessionParams ) {
-		$cc_id = $pSessionParams['cc_id'];
-		if( !empty( $this->deduction ) ) {
-			$bindVars = array( $cc_id, $_SERVER['REMOTE_ADDR'],  $this->mOrder->customer['customers_id'], $this->mOrder->mOrdersId );
-			$this->mDb->query( "INSERT INTO " . TABLE_COUPON_REDEEM_TRACK . " (redeem_date, coupon_id, redeem_ip, customer_id, order_id) VALUES ( now(), ?, ?, ?, ?)", $bindVars );
+		if( $cc_id = BitBase::getParameter( $pSessionParams, 'cc_id' ) ) {
+			if( !empty( $this->deduction ) ) {
+				$bindVars = array( $cc_id, $_SERVER['REMOTE_ADDR'],  $this->mOrder->customer['customers_id'], $this->mOrder->mOrdersId );
+				$this->mDb->query( "INSERT INTO " . TABLE_COUPON_REDEEM_TRACK . " (redeem_date, coupon_id, redeem_ip, customer_id, order_id) VALUES ( now(), ?, ?, ?, ?)", $bindVars );
+			}
+			$pSessionParams['cc_id'] = "";
+			$pSessionParams['dc_redeem_code'] = "";
 		}
-		$pSessionParams['cc_id'] = "";
-		$pSessionParams['dc_redeem_code'] = "";
 	}
 
 	function getOrderDeduction( $pOrder, &$pSessionParams ) {

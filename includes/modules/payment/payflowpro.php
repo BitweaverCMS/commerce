@@ -102,7 +102,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 		$responseHash = array();
 		$this->result = NULL;
 
-		if( self::verifyPayment( $pOrder, $pPaymentParams ) ) {
+		if( self::verifyPayment( $pOrder, $pPaymentParams, $pSessionParams ) ) {
 
 			/* === Core Credit Card Parameters ===
 
