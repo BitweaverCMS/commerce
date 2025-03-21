@@ -47,7 +47,7 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 	// if the customer is not logged on, redirect them to the login page
 	$_SESSION['navigation']->set_snapshot(array('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_PAYMENT));
 	zen_redirect(FILENAME_LOGIN);
-} elseif( empty( $_SESSION['shipping_method'] )  && ($gBitCustomer->mCart->get_content_type() != 'virtual') ) {
+} elseif( empty( $_SESSION['shipping_quote'] )  && ($gBitCustomer->mCart->get_content_type() != 'virtual') ) {
 	// if no shipping method has been selected, redirect the customer to the shipping method selection page
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 } elseif( !$gBitCustomer->mCart->verifyCheckout() ) {

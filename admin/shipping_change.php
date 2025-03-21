@@ -13,8 +13,8 @@ require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
 $order->calculate();
 
 // get all available shipping quotes
-if( !empty( $_REQUEST['change_shipping'] ) && !empty( $_REQUEST['shipping_method'] ) ) {
-	list($module, $method) = explode('_', $_REQUEST['shipping_method'], 2);
+if( !empty( $_REQUEST['change_shipping'] ) && !empty( $_REQUEST['shipping_quote'] ) ) {
+	list($module, $method) = explode('_', $_REQUEST['shipping_quote'], 2);
 	$fulfillmentModules = $gCommerceSystem->scanModules( 'fulfillment' );
 	global $gCommerceShipping;
 	if( $shipModule = $gCommerceShipping->getShippingModule( $module ) ) {

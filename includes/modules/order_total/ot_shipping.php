@@ -83,7 +83,7 @@ class ot_shipping extends CommercePluginOrderTotalBase {
 					if (DISPLAY_PRICE_WITH_TAX == 'true') $this->mOrder->info['shipping_cost'] += zen_calculate_tax($this->mOrder->info['shipping_cost'], $shipping_tax);
 				}
 
-				if ($pSessionParams['shipping_method'] == 'free_free') {
+				if ($pSessionParams['shipping_quote'] == 'free_free') {
 					$this->mOrder->info['shipping_method'] = FREE_SHIPPING_TITLE;
 				}
 

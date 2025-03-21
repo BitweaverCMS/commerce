@@ -48,7 +48,7 @@ require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'page_checkout_parameters_inc.php' );
 
 // if the order contains only virtual products, forward the customer to the delivery page as a shipping address is not needed
 if( $gBitCustomer->mCart->get_content_type() == 'virtual') {
-	$_SESSION['shipping_method'] = false;
+	$_SESSION['shipping_quote'] = false;
 	$_SESSION['shipping'] = false;
 	$_SESSION['sendto'] = false;
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT));
@@ -115,23 +115,23 @@ eb( "BULK CSV not implemented", $_REQUEST, $_FILES );
 		}
 
 		if ( ($gCommerceShipping->isShippingAvailable() > 0) || ($free_shipping == true) ) {
-			if ( (isset($_POST['shipping_method'])) && (strpos($_POST['shipping_method'], '_')) ) {
-				$_SESSION['shipping_method'] = $_POST['shipping_method'];
-				if ($_SESSION['shipping_method'] == 'freeshipper_free' || ($free_shipping == true) ) {
+			if ( (isset($_POST['shipping_quote'])) && (strpos($_POST['shipping_quote'], '_')) ) {
+				$_SESSION['shipping_quote'] = $_POST['shipping_quote'];
+				if ($_SESSION['shipping_quote'] == 'freeshipper_free' || ($free_shipping == true) ) {
 					$quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
 					$quote[0]['methods'][0]['cost'] = 0;
 					$quote[0]['methods'][0]['id'] = 'free';
 					$quote[0]['id'] = 'free';
 					$quote[0]['module'] = 'freeshipper';
-				} elseif( !empty( $_SESSION['shipping_method'] ) ) {
-					list($module, $method) = explode('_', $_SESSION['shipping_method'], 2);
+				} elseif( !empty( $_SESSION['shipping_quote'] ) ) {
+					list($module, $method) = explode('_', $_SESSION['shipping_quote'], 2);
 					$quote = $gCommerceShipping->quote( $gBitCustomer->mCart, $method, $module);
 				}
 
 				if( !isset( $quote['error'] ) && $gCommerceShipping->quoteToSession( $quote ) ) {
 					zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT));
 				} else {
-					$_SESSION['shipping_method'] = '';
+					$_SESSION['shipping_quote'] = '';
 					$_SESSION['shipping'] = array();
 					$gBitSmarty->assign( 'errors', array( 'Shipping method could not be calculated.', $quote[0]['methods'][0]['title'] ) );
 				}
