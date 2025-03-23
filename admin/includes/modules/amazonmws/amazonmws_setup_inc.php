@@ -298,7 +298,6 @@ function amazon_process_order( $pAmazonOrderId ) {
 
 					$_SESSION['sendto'] = NULL;
 					$_SESSION['shipping'] = $shipping;
-					unset( $_SESSION['cot_gv'] );
 					$order->otPreConfirmationCheck();
 					require_once( DIR_WS_MODULES.'payment/amazonmws.php' );
 					$amazon = new amazonmws( $azOrder->getAmazonOrderId() );
