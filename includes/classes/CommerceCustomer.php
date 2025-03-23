@@ -92,7 +92,6 @@ class CommerceCustomer extends CommerceBase {
 				'shipping_method' => 'shipping_method',
 				'discount_code' => 'discount_code',
 				'file_name' => 'file_name',
-				'shipping_method' => 'shipping_method',
 				'product_id' => 'product_id',
 				'option_id' => 'option_id',
 			);
@@ -222,26 +221,14 @@ class CommerceCustomer extends CommerceBase {
 		return $ret;
 	}
 
-	function getOrdersHistory() {
+	function getOrdersHistory( $pListHash = array() ) {
 		$ret = array();
 		if( $this->isValid() ) {
-			$ret = static::getOrdersHistoryById( $this->mCustomerId );
+			require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
+			$pListHash['user_id'] =$this->mCustomerId;
+			$ret = CommerceOrder::getList( $pListHash );
 		}
 		return $ret;
-	}
-
-	public static function getOrdersHistoryById( $pCustomerId ) {
-		global $gBitDb;
-		if( static::verifyId( $pCustomerId ) ) {
-			$query =   "SELECT o.`orders_id` AS `hash_key`, o.*, ot.`text` as `order_total`, s.`orders_status_name`
-						FROM   " . TABLE_ORDERS . " o 
-							INNER JOIN " . TABLE_ORDERS_TOTAL . "  ot ON (o.`orders_id` = ot.`orders_id`) 
-							INNER JOIN " . TABLE_ORDERS_STATUS . " s ON (o.`orders_status_id` = s.`orders_status_id`)
-						WHERE o.`customers_id` = ? AND ot.`class` = 'ot_total' AND s.`language_id` = ?
-						ORDER BY `orders_id` DESC";
-
-			return $gBitDb->getAssoc( $query, array( $pCustomerId, (int)$_SESSION['languages_id'] ) ); 
-		}
 	}
 
 	public static function getPurchaseStats( $pCustomerId ) {
