@@ -25,29 +25,35 @@ if( BitBase::getParameter( $_POST, 'dropship_upload' ) ) {
 } elseif( BitBase::getParameter( $_POST, 'dropship_process' ) ) {
 	$outputHash = array();
 
-//vvd( $_SESSION );
+	$sessionCopy = $_SESSION;
+	unset( $_SESSION['orders_id'] );
+
 	foreach( $_REQUEST['dropship_order'] as $orderIdx ) {
-		if( !empty( $_SESSION['dropship'] ) && $dropShipHash = BitBase::getParameter( $_SESSION['dropship'], $orderIdx ) ) {
+		if( !empty( $_SESSION['dropship'] ) && $checkoutHash = BitBase::getParameter( $_SESSION['dropship'], $orderIdx ) ) {
 			if( empty( $_REQUEST['notify'] ) ) {
-				$dropShipHash['no_order_email'] = TRUE;
+				$checkoutHash['no_order_email'] = TRUE;
 			}
 
-			$dropSession = $dropShipHash;
-			
-			$dropSession['shipping_method'] = BitBase::getParameter( $dropShipHash, 'shipping_method' ).'_'.BitBase::getParameter( $dropShipHash, 'shipping_method_code' );
-			if( $dropShipCart = bc_dropship_cart( $dropShipHash ) ) {
+			// Some payment parameters are expected in request, and some in session during browser checkout. Merge hash and session and them all in under the session
+			$dropSession = array_merge( $sessionCopy, $checkoutHash );
+			$dropSession['shipping_quote'] = BitBase::getParameter( $checkoutHash, 'shipping_method' ).'_'.BitBase::getParameter( $checkoutHash, 'shipping_method_code' );
 
-				$dropShipOrder = CommerceOrder::orderFromCart( $dropShipCart, $dropSession );
-				// Some payment parameters are expected in request, and some in session. Send them all in
-				if( $errors = $dropShipOrder->otCollectPosts( $dropShipHash, $dropSession ) ) {
+			// These next two lines are a hack for ot_expedite, which needs to be cleaned up
+			$_REQUEST['main_page'] = 'checkout_process';
+			$_REQUEST['ot_expedite'] = $_SESSION['ot_expedite'] = BitBase::getParameter( $checkoutHash, 'ot_expedite' );
+
+			if( $dropShipCart = bc_dropship_cart( $checkoutHash ) ) {
+				$order = CommerceOrder::orderFromCart( $dropShipCart, $dropSession );
+				if( $errors = $order->otCollectPosts( $checkoutHash, $dropSession ) ) {
 					$outputStatusCode = HttpStatusCodes::HTTP_NOT_ACCEPTABLE;
-					$outputHash['order'] = array( 'errors' => $errors );;
+					$outputHash['order'] = array( 'errors' => $errors );
+bit_error_email( 'Dropship Order Failure '.$outputStatusCode, $dropShipCart, $outputHash['order'] );
 				} else {
 					// load the selected payment module
-					if( !$dropShipOrder->process( $dropSession, $dropShipHash ) ) {
-						$outputHash = array_merge( $outputHash, $dropShipOrder->mErrors );
+					if( !$order->process( $checkoutHash, $dropSession ) ) {
+						$outputHash = array_merge( $outputHash, $order->mErrors );
 						$outputStatusCode = HttpStatusCodes::HTTP_NOT_ACCEPTABLE;
-eb( $outputHash, $dropShipHash, $dropSession );
+bit_error_email( 'Dropship Order Failure', $dropShipCart, $outputHash, $checkoutHash, $dropSession );
 					} else {
 						unset( $_SESSION['dropship'][$orderIdx] );
 						$outputStatusCode = HttpStatusCodes::HTTP_OK;
