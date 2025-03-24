@@ -549,7 +549,7 @@ class CommerceOrder extends CommerceOrderBase {
 
 		if( $hashCart = CommerceTemporaryCart::cartFromHash( $pOrderHash ) ) {
 			if( empty( $hashCart->mErrors ) ) {
-				$ret = empty( $this->mErrors );
+				$ret = $hashCart;
 			}
 		}
 
@@ -557,14 +557,14 @@ class CommerceOrder extends CommerceOrderBase {
 	}
 
 
-	public static function orderFromCart( $pCart, &$pSessionHash ) {
+	public static function orderFromCart( $pCart, &$pSessionParams ) {
 		$ret = new order();
-		$ret->loadFromCart( $pCart, $pSessionHash );
+		$ret->loadFromCart( $pCart, $pSessionParams );
 		return $ret;
 	}
 
-	private function loadFromCart( $pCart, $pSessionHash ) {
-		global $currencies, $gBitUser, $gBitCustomer;
+	private function loadFromCart( $pCart, &$pSessionParams ) {
+		global $currencies, $gBitUser, $gBitCustomer, $gCommerceSystem;
 		$this->content_type = $pCart->get_content_type();
 
 		$shippingAddress = $pCart->getDelivery();
@@ -573,61 +573,57 @@ class CommerceOrder extends CommerceOrderBase {
 		$taxAddress = zen_get_tax_locations();
 
 		$coupon_code = NULL;
-		if( !empty( $pSessionHash['cc_id'] ) ) {
+		if( !empty( $pSessionParams['cc_id'] ) ) {
 			$coupon_code_query = "SELECT `coupon_code` FROM " . TABLE_COUPONS . " WHERE `coupon_id` = ?";
-			$coupon_code = $this->mDb->GetOne($coupon_code_query, array( (int)$pSessionHash['cc_id'] ) );
-		} elseif( !empty( $pSessionHash['dc_redeem_code'] ) ) {
-			$coupon_code = $pSessionHash['dc_redeem_code'];
+			$coupon_code = $this->mDb->GetOne($coupon_code_query, array( (int)$pSessionParams['cc_id'] ) );
+		} elseif( !empty( $pSessionParams['dc_redeem_code'] ) ) {
+			$coupon_code = $pSessionParams['dc_redeem_code'];
 		}
 
-		if( !empty( $pSessionHash['shipping_method'] ) ) {
+		if( !empty( $pSessionParams['shipping_quote'] ) ) {
 			// load all enabled shipping modules
 			require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
 			global $gCommerceShipping;
-			list($module, $method) = explode('_', $pSessionHash['shipping_method'], 2);
+			list($module, $method) = explode('_', $pSessionParams['shipping_quote'], 2);
 			$quote = $gCommerceShipping->quote( $pCart, $method, $module);
 
 			if( isset( $quote['error'] ) || !($quoteHash = $gCommerceShipping->quoteToHash( $quote )) ) {
-				$pSessionHash['shipping'] = '';
-				$this->mErrors['shipping'] = 'Could not quote shipping method: '.$pSessionHash['shipping_method'];
+				$pSessionParams['shipping'] = '';
+				$this->mErrors['shipping'] = 'Could not quote shipping method: '.$pSessionParams['shipping_quote'];
 			} else {
-				$pSessionHash['shipping'] = $quoteHash;
+				$pSessionParams['shipping'] = $quoteHash;
 			}
 		}
 
 		$this->info = array('orders_status_id' => DEFAULT_ORDERS_STATUS_ID, // may be adjusted below
-							'currency' => !empty( $pSessionHash['currency'] ) ? $pSessionHash['currency'] : NULL,
-							'currency_value' => !empty( $pSessionHash['currency'] ) ? $currencies->currencies[$pSessionHash['currency']]['currency_value'] : NULL,
+							'currency' => !empty( $pSessionParams['currency'] ) ? $pSessionParams['currency'] : NULL,
+							'currency_value' => !empty( $pSessionParams['currency'] ) ? $currencies->currencies[$pSessionParams['currency']]['currency_value'] : NULL,
 							'payment_method' => '',
 							'payment_module_code' => '',
 							'coupon_code' => $coupon_code,
-							'shipping_method' => !empty( $pSessionHash['shipping']['title'] ) ? $pSessionHash['shipping']['title'] : '',
-							'shipping_method_code' => !empty( $pSessionHash['shipping']['code'] ) ? $pSessionHash['shipping']['code'] : '',
-							'shipping_module_code' => !empty( $pSessionHash['shipping']['id'] ) ? $pSessionHash['shipping']['id'] : '',
-							'shipping_cost' => !empty( $pSessionHash['shipping']['cost'] ) ? $pSessionHash['shipping']['cost'] : 0,
-							'estimated_ship_date' => !empty( $pSessionHash['shipping']['ship_date'] ) ? $pSessionHash['shipping']['ship_date'] : NULL,
+							'shipping_method' => !empty( $pSessionParams['shipping']['title'] ) ? $pSessionParams['shipping']['title'] : '',
+							'shipping_method_code' => !empty( $pSessionParams['shipping']['code'] ) ? $pSessionParams['shipping']['code'] : '',
+							'shipping_module_code' => !empty( $pSessionParams['shipping']['id'] ) ? $pSessionParams['shipping']['id'] : '',
+							'shipping_cost' => !empty( $pSessionParams['shipping']['cost'] ) ? $pSessionParams['shipping']['cost'] : 0,
+							'estimated_ship_date' => !empty( $pSessionParams['shipping']['ship_date'] ) ? $pSessionParams['shipping']['ship_date'] : NULL,
 							'estimated_arrival_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL,
-							'deadline_date' => $this->getParameter( $pSessionHash, 'deadline_date', NULL ),
+							'deadline_date' => $this->getParameter( $pSessionParams, 'deadline_date', NULL ),
 							'subtotal' => 0,
 							'tax' => 0,
 							'total' => 0,
 							'tax_groups' => array(),
-							'comments' => $this->getParameter( $pSessionHash, 'comments' ),
+							'comments' => $this->getParameter( $pSessionParams, 'comments' ),
 							'ip_address' => $_SERVER['REMOTE_ADDR']
 							);
 
-		if ($this->info['total'] == 0) {
-			if (DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID == 0) {
-				$this->info['orders_status_id'] =  DEFAULT_ORDERS_STATUS_ID;
-			} else {
-				$this->info['orders_status_id'] = DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID;
-			}
-		}
-
-		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pSessionHash, 'payment_method' ) ) ) {
+		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pSessionParams, 'payment_method' ) ) ) {
 			$this->info['payment_method'] = $paymentModule->title;
 			$this->info['payment_module_code'] = $paymentModule->code;
 			$this->info['orders_status_id'] = $paymentModule->getProcessedOrdersStatus();
+		}
+
+		if ($this->info['total'] == 0 && ($zeroBalanceStatusId = $gCommerceSystem->getConfig( 'DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID' )) ) {
+			$this->info['orders_status_id'] = $zeroBalanceStatusId ;
 		}
 
 		if( $defaultAddress = $gBitCustomer->getAddress( $gBitCustomer->getDefaultAddressId() ) ) {
@@ -785,7 +781,7 @@ class CommerceOrder extends CommerceOrderBase {
 		// Mush together request and Session data and send it for payment processing
 		$paymentParams = array_merge( $pRequestParams, $pSessionParams );
 		if( !$this->hasPaymentDue( $paymentParams ) || (!empty( $paymentParams['payment_method'] ) && $paymentManager->processPayment( $this, $paymentParams, $pSessionParams )) ) {
-			$newOrderId = $this->create( $paymentParams );
+			$newOrderId = $this->create( $paymentParams, $pSessionParams );
 			$paymentParams['result']['orders_id'] = $this->mOrdersId;
 			if( $this->hasPaymentDue( $paymentParams ) ) {
 				$paymentManager->storeOrdersPayment( $paymentParams['result'], $this);
@@ -835,12 +831,13 @@ class CommerceOrder extends CommerceOrderBase {
 		return $ret;
 	}
 
-	function create( $pPaymentParams ) {
+	protected function create( $pPaymentParams, $pSessionParams ) {
 		global $gBitCustomer;
 
 		$this->StartTrans();
-		if( !empty( $_SESSION['shipping_method'] ) && $_SESSION['shipping_method'] == 'free_free') {
-			$this->info['shipping_module_code'] = $_SESSION['shipping_method'];
+
+		if( !empty( $pSessionParams['shipping_quote'] ) && $pSessionParams['shipping_quote'] == 'free_free') {
+			$this->info['shipping_module_code'] = $pSessionParams['shipping_quote'];
 		}
 
 		$this->mOrdersId =  (!empty( $pPaymentParams['orders_id'] ) ? $pPaymentParams['orders_id'] : $this->getNextOrderId());
@@ -898,7 +895,7 @@ class CommerceOrder extends CommerceOrderBase {
 							'ip_address' => $_SERVER['REMOTE_ADDR']
 							);
 
-		if( $deadlineDate = BitBase::getParameter( $pPaymentParams, 'deadline_date', BitBase::getParameter( $_SESSION, 'deadline_date', NULL ) ) ) {
+		if( $deadlineDate = BitBase::getParameter( $pPaymentParams, 'deadline_date', BitBase::getParameter( $pSessionParams, 'deadline_date', NULL ) ) ) {
 			$sql_data_array['deadline_date'] = $deadlineDate;
 		}
 
@@ -932,7 +929,7 @@ class CommerceOrder extends CommerceOrderBase {
 		$this->CompleteTrans();
 
 		$this->StartTrans();
-		$this->otApplyCredit( $_SESSION );
+		$this->otApplyCredit( $pSessionParams );
 		$this->CompleteTrans();
 
 		$this->StartTrans();
@@ -1654,3 +1651,4 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 
 
 }
+
