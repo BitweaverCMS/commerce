@@ -26,13 +26,6 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 				$this->mExpediteFlag = TRUE;
 			}
 		}
-
-		$this->mExpediteFlag = $this->getParameter( $_SESSION, 'ot_expedite' );
-
-		if( isset( $_REQUEST['ot_expedite'] ) ) {
-			$this->setExpedite( $_REQUEST['ot_expedite'] == 1 );
-			bit_redirect( $_SERVER['HTTP_REFERER'] );
-		}
 	}
 
 	protected function hasExpedite() {
@@ -60,9 +53,12 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 
 		if( $this->isEnabled() ) {
 			if( $this->mOrder->isExpeditable() ) {
-				if( !empty( $pSessionParams['ot_expedite'] ) ) {
-					$this->setExpedite( $pSessionParams['ot_expedite'] == (int)1 );
+				if( isset( $pPaymentParams['ot_expedite'] ) ) {
+					$this->setExpedite( (int)$pPaymentParams['ot_expedite'] == 1 );
+				} elseif( isset( $pSessionParams['ot_expedite'] ) ) {
+					$this->setExpedite( (int)$pSessionParams['ot_expedite'] == 1 );
 				}
+
 				if( strpos( MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE, '%' ) ) {
 					$expediteMultiplier = (float)MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE / 100;
 					$exepditeDisplay = MODULE_ORDER_TOTAL_EXPEDITE_ORDER_FEE;
@@ -81,12 +77,18 @@ class ot_expedite extends CommercePluginOrderTotalBase {
 				}
 				$expediteCost = $this->mOrder->info['total'] * $expediteMultiplier;
 				$expediteFormatted = $currencies->format($expediteCost, true,	$this->mOrder->info['currency'], $this->mOrder->info['currency_value']);
+
+				$queryHash = array(); parse_str( $_SERVER['QUERY_STRING'], $queryHash );
+				$queryHash['ot_expedite'] = NULL; // unset ot_expedite of current query, so toggle can be set in Expedited Text
+				$queryString = http_build_query( $queryHash, '', '&amp;' );
+
 				if( $this->hasExpedite() ) {
 					$this->mOrder->info['total'] += $expediteCost;
-					$expediteText = ' <a class="btn btn-primary btn-xs" href="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&amp;ot_expedite=0"><i class="fa fal fa-circle-minus"></i> '.$expediteFormatted.'</a>';
+					$expediteText = ' <a class="btn btn-primary btn-xs" href="'.$_SERVER['PHP_SELF'].'?'.$queryString.'&amp;ot_expedite=0"><i class="fa fal fa-circle-minus"></i> '.$expediteFormatted.'</a>';
 				} else {
-					$expediteText = '<a class="btn btn-primary btn-xs" href="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'&amp;ot_expedite=1"><i class="fa fal fa-circle-plus"></i> '.$expediteFormatted.'</a>';
+					$expediteText = '<a class="btn btn-primary btn-xs" href="'.$_SERVER['PHP_SELF'].'?'.$queryString.'&amp;ot_expedite=1"><i class="fa fal fa-circle-plus"></i> '.$expediteFormatted.'</a>';
 				}
+
 			} else {
 				$expediteTitle = "Expedited order processing is not available for 1 or more items in your cart.";
 				$expediteText = '';
