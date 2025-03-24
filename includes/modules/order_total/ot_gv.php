@@ -117,6 +117,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 
 	public function getOrderDeduction( $pOrder, &$pSessionParams ) {
 		$ret = null;
+
 		if( !empty( $pSessionParams['cot_gv'] ) ) {
 			if (preg_match('#[^0-9/.]#', trim($pSessionParams['cot_gv']))) {
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'credit_class_error_code=' . $this->code . '&credit_class_error=' . urlencode(TEXT_INVALID_REDEEM_AMOUNT), 'SSL',true, false));
@@ -127,6 +128,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 				$ret = $this->getDiscount( $pSessionParams['cot_gv'], $pSessionParams );
 			}
 		}
+
 		return $ret;
 	}
 
@@ -213,6 +215,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 
 		if ( !empty( $pRequestParams['cot_gv'] ) && is_numeric( $pRequestParams['cot_gv'] ) && $pRequestParams['cot_gv'] > 0 ) {
 			$pSessionParams['cot_gv'] = $pRequestParams['cot_gv'];
+			$_SESSION['cot_gv'] = $pRequestParams['cot_gv'];
 		} elseif( isset( $pSessionParams['cot_gv'] ) ) {
 			unset( $pSessionParams['cot_gv'] );
 		}
