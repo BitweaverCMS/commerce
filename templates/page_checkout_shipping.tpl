@@ -4,7 +4,7 @@
 <section class="body">
 {assign var=cartDelivery value=$gBitCustomer->mCart->getDelivery()}
 {if !$gBitUser->isRegistered() || $changeAddress || !$cartDelivery}
-	{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_shipping"}
+	{form name='checkout_address' action=checkout_shipping|zen_href_link}
 		<input type="hidden" name="main_page" value="checkout_shipping" />
 		<div class="row">
 			{if !$gBitUser->isRegistered()}
@@ -105,7 +105,7 @@
 		<h3>{tr}Continue to Step 2{/tr}</h3>
 		<!--<p>{tr}Payment Method{/tr}</p>-->
 		<div class="form-group submit">
-			<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=shopping_cart" class="btn btn-default"><i class="fa fal fa-arrow-left"></i> {tr}Back{/tr}</a> <button class="btn btn-primary pull-right" value="Continue"/>{tr}Continue{/tr} <i class='fa fal fa-arrow-right'></i></button>
+			<a href="{"shopping_cart"|zen_href_link}" class="btn btn-default"><i class="fa fal fa-arrow-left"></i> {tr}Back{/tr}</a> <button class="btn btn-primary pull-right" value="Continue"/>{tr}Continue{/tr} <i class='fa fal fa-arrow-right'></i></button>
 		</div>
 	</div>
 	{/form}

@@ -29,7 +29,7 @@
 		{formlabel label="Mailing Address"}
 		{forminput}
 			{html_options class="form-control" name="commissions_check_address" options=$addressList selected=$defaultAddressId}
-		<div style="padding:10px"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=address_book">{tr}Add Address{/tr}</a></div>
+		<div style="padding:10px"><a href="{"address_book"|zen_href_link}">{tr}Add Address{/tr}</a></div>
 		{/forminput}
 	</div>
 

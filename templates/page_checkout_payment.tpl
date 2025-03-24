@@ -7,7 +7,7 @@
 {$changeAddress}
 	<div class="alert alert-info">{tr}The billing address should match the address on your credit card statement.{/tr}</div>
 
-	{form name='checkout_address' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_payment"}
+	{form name='checkout_address' action=checkout_confirmation|zen_href_link }
 		<input type="hidden" name="main_page" value="checkout_payment" />
 		<div class="row">
 			{if !$gBitUser->isRegistered()}
@@ -40,8 +40,9 @@
 
 	{/form}
 {else}
+
 	{include file="bitpackage:bitcommerce/page_checkout_message_top_inc.tpl" step=$checkoutStep}
-{form name='checkout_payment' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=checkout_confirmation" onsubmit="return check_form();" secure="y"}
+{form name='checkout_payment' action=checkout_confirmation|zen_href_link onsubmit="return check_form();" secure="y"}
 
 {if $messageStack->size('checkout_payment')}
 {$messageStack->output('checkout_payment')}
@@ -155,7 +156,7 @@
 		<h3>{tr}Continue to Step 3{/tr}</h3>
 		<!--<p>{tr}Confirm your order{/tr} </p>-->
 		<div class="form-group submit">
-			<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=checkout_shipping" class="btn btn-default"><i class="fa fal fa-arrow-left"></i> {tr}Back{/tr}</a>
+			<a href="{"checkout_shipping"|zen_href_link}" class="btn btn-default"><i class="fa fal fa-arrow-left"></i> {tr}Back{/tr}</a>
 			<button class="btn btn-primary pull-right" value="Continue"/>{tr}Continue{/tr} <i class='fa fal fa-arrow-right'></i></button>
 		</div>
 	</div>

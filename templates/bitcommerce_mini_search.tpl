@@ -6,7 +6,7 @@
 		<input name="keyword" size="18" maxlength="100" style="width: 120px;"  type="text" />
 		<input value="Search" style="width: 50px;"  type="submit" />
 		<br />
-		<a href="{$smarty.const.BITCOMMERCE_PKG_URL}index.php?main_page=advanced_search">Detailed Search</a>
+		<a href="{"advanced_search"|zen_href_link}">Detailed Search</a>
 	</div>
 {/form}
 {/strip}

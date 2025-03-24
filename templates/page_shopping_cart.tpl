@@ -15,7 +15,7 @@
 </header>
 
 <div class="body shopping-cart">
-	{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=shopping_cart"}
+	{form name='cart_quantity' action=shopping_cart|zen_href_link}
 	{if $cartHasContents}
 		{if $gBitCustomer->mCart->mErrors.checkout}
 			{formfeedback error=$gBitCustomer->mCart->mErrors.checkout}

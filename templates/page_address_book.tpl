@@ -27,7 +27,7 @@
 	{/if}
 	
 	<div class="col-md-6">
-		{form action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?main_page=address_book"}
+		{form action=address_book|zen_href_link}
 			{legend legend=$formTitle}
 				{include file="bitpackage:bitcommerce/address_edit_inc.tpl" address=$editAddress sectionName="shipping"}
 				<div class="form-group clear">
