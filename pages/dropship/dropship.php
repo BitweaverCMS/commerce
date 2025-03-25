@@ -61,7 +61,7 @@ bit_error_email( 'Dropship Order Failure', $order->mErrors, $outputHash, $checko
 					} else {
 						unset( $_SESSION['dropship'][$orderIdx] );
 						$outputStatusCode = HttpStatusCodes::HTTP_OK;
-						$feedback['success'][] = tra( 'Order Created:' ).' '.$order->mOrdersId.' '.tra( 'to' ).' '.$deliveryString;
+						$feedback['success'][] = tra( 'Order Created:' ).' <a href="'.zen_href_link( 'account_history_info', 'order_id='.$order->mOrdersId ).'">'.$order->mOrdersId.'</a> '.tra( 'to' ).' '.$deliveryString;
 					}
 				}
 			}
