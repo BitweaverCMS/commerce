@@ -20,6 +20,8 @@
 		</div>
 	{/form}
 
+	{formfeedback hash=$feedback}
+
 	{if $smarty.session.dropship}
 	<h2>{tr}Drop Ship Orders{/tr}</h2>
 	{form name='dropship' action="`$smarty.const.BITCOMMERCE_PKG_URL`dropship" method='post' enctype='multipart/form-data'}

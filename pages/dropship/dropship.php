@@ -16,6 +16,8 @@ $paymentManager = new CommercePaymentManager( BitBase::getParameter( $_REQUEST, 
 global $gBitUser;
 $gBitUser->verifyRegistered();
 
+$feedback = array( 'success' => array(), 'error' => array() );
+
 if( BitBase::getParameter( $_POST, 'dropship_upload' ) ) {
 	if( !empty( $_FILES['drop_csv'] ) ) {
 		if( $csvData = parseCSVToHash( $_FILES['drop_csv']['tmp_name'] ) ) {
@@ -44,25 +46,30 @@ if( BitBase::getParameter( $_POST, 'dropship_upload' ) ) {
 
 			if( $dropShipCart = bc_dropship_cart( $checkoutHash ) ) {
 				$order = CommerceOrder::orderFromCart( $dropShipCart, $dropSession );
+				$deliveryString = zen_address_format( $order->delivery, FALSE, ' ', ',' );
 				if( $errors = $order->otCollectPosts( $checkoutHash, $dropSession ) ) {
 					$outputStatusCode = HttpStatusCodes::HTTP_NOT_ACCEPTABLE;
-					$outputHash['order'] = array( 'errors' => $errors );
-bit_error_email( 'Dropship Order Failure '.$outputStatusCode, $dropShipCart, $outputHash['order'] );
+					$feedback['error'][] = tra( 'Order Error' ).' '.tra( 'to' ).' '.$deliveryString;
+					$feedback['error'][] = implode( "<br>", $errors );
+bit_error_email( 'Dropship Order Failure '.$outputStatusCode, $deliveryString."\n\n".implode( "\n", array_merge( $errors, $checkoutHash )), $gBitUser->mInfo );
 				} else {
 					// load the selected payment module
 					if( !$order->process( $checkoutHash, $dropSession ) ) {
 						$outputHash = array_merge( $outputHash, $order->mErrors );
 						$outputStatusCode = HttpStatusCodes::HTTP_NOT_ACCEPTABLE;
-bit_error_email( 'Dropship Order Failure', $dropShipCart, $outputHash, $checkoutHash, $dropSession );
+bit_error_email( 'Dropship Order Failure', $order->mErrors, $outputHash, $checkoutHash, $dropSession );
 					} else {
 						unset( $_SESSION['dropship'][$orderIdx] );
 						$outputStatusCode = HttpStatusCodes::HTTP_OK;
+						$feedback['success'][] = tra( 'Order Created:' ).' '.$order->mOrdersId.' '.tra( 'to' ).' '.$deliveryString;
 					}
 				}
 			}
 		}
 	}
 }
+
+$gBitSmarty->assign_by_ref( 'feedback', $feedback );
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_dropship.tpl' );
 
