@@ -8,7 +8,7 @@ if( count( $_GET ) > 2 || count( $_POST ) > 2 ) {
 	$gBitUser->verifyTicket();
 }
 
-$commissionManager = new CommerceCommission();
+$commissionManager = new CommerceProductCommission();
 
 if( !empty( $_REQUEST['save_commission_settings'] ) ) {
 	$gBitUser->storePreference( 'commissions_payment_method', $_REQUEST['commissions_payment_method'] );
@@ -17,7 +17,7 @@ if( !empty( $_REQUEST['save_commission_settings'] ) ) {
 	}
 }
 
-$gBitSmarty->assign_by_ref( 'commissionList', $commissionManager->getHistory( array( 'user_id' => $gBitCustomer->mCustomerId ) ) );
+$gBitSmarty->assign( 'commissionList', $commissionManager->getUserHistory( array( 'user_id' => $gBitCustomer->mCustomerId ) ) );
 if( $addresses = $gBitCustomer->getAddresses() ) {
 	foreach( $addresses AS $addrId=>$addr ) {
 		$addressList[$addr['address_book_id']] = zen_address_format( $addr, 0, ' ', ' ' );
