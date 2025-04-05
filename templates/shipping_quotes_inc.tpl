@@ -26,9 +26,9 @@
 			</div>
 			{if $quotes[ix].methods}
 				{section name=jx loop=$quotes[ix].methods}
-					<div class="row quote">
+					{assign var=quoteMethodId value="`$quotes[ix].id`_`$quotes[ix].methods[jx].id`"}
+					<div class="row quote" id="quote-{$quoteMethodId}">
 						<div class="col-xs-9">
-							{assign var=quoteMethodId value="`$quotes[ix].id`_`$quotes[ix].methods[jx].id`"}
 							{* set the radio button to be checked if it is the method chosen *}
 							{if $quoteMethodId == $sessionShippingId}
 								{assign var=checked value=1}
@@ -61,15 +61,15 @@
 						<div class="col-xs-3">
 							<div class="price floatright">{$quotes[ix].methods[jx].format_add_tax}</div>
 						</div>
-					</div>
-					<div class="mt-0">
-						<div class="help-block">
-						{if $quotes[ix].methods[jx].delivery_date}
-							{assign var=deliveryDate value=$quotes[ix].methods[jx].delivery_date|strtotime}
-							{tr}Estimated Arrival{/tr} <strong>{$deliveryDate|bit_long_date}</strong>
-						{else}
-							<div>{tr}Exact delivery day cannot be estimated. Do not use if you are on a tight deadline.{/tr}</div>
-						{/if}
+						<div class="col-xs-12">
+							<div class="help-block">
+							{if $quotes[ix].methods[jx].delivery_date}
+								{assign var=deliveryDate value=$quotes[ix].methods[jx].delivery_date|strtotime}
+								{tr}Estimated Arrival{/tr} <strong>{$deliveryDate|bit_long_date}</strong>
+							{else}
+								<div>{tr}Exact delivery day cannot be estimated. Do not use if you are on a tight deadline.{/tr}</div>
+							{/if}
+							</div>
 						</div>
 					</div>
 				{/section}
@@ -79,3 +79,23 @@
 {/section}
 </ul>
 </div>
+{literal}
+<style>
+.highlight {
+    background-color: #e9eaeb; 
+    transition: background-color 0.3s ease; /* Smooth transition effect */
+}
+</style>
+<script>
+$(document).ready(function() {
+    // When a radio button changes
+    $('input[name="shipping_quote"]').change(function() {
+        // Remove highlight from all quote rows
+        $('.quote').removeClass('highlight');
+        
+        // Add highlight to the parent quote div of the selected radio
+        $(this).closest('.quote').addClass('highlight');
+    });
+});
+</script>
+{/literal}
