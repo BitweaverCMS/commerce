@@ -220,12 +220,11 @@ class ot_gv extends CommercePluginOrderTotalBase {
 			unset( $pSessionParams['cot_gv'] );
 		}
 		if ( !empty( $pRequestParams['gv_redeem_code'] ) ) {
-			if( $gvHash = $this->mDb->getRow( "SELECT `coupon_id`, `coupon_type`, `coupon_amount` FROM " . TABLE_COUPONS . " WHERE `coupon_code` = ?", array( $pRequestParams['gv_redeem_code'] ) ) ) {
-				$redeem_query = $this->mDb->Execute("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = '" . $gvHash['coupon_id'] . "'");
-				if ( ($redeem_query->RecordCount() > 0) && ($gvHash['coupon_type'] == 'G')	) {
+			if( $gvHash = $this->mDb->getRow( "SELECT `coupon_id`, `coupon_type`, `coupon_amount`, `coupon_active` FROM " . TABLE_COUPONS . " WHERE `coupon_type` = 'G' AND `coupon_code` = ?", array( $pRequestParams['gv_redeem_code'] ) ) ) {
+				$redemption = $this->mDb->getRow("select * from " . TABLE_COUPON_REDEEM_TRACK . " where coupon_id = ?", array( $gvHash['coupon_id'] ) );
+				if( $gvHash['coupon_active'] != 'Y' || (!empty( $redemption )) ) {
 					$retError = ERROR_NO_INVALID_REDEEM_GV;
-				}
-				if ($gvHash['coupon_type'] == 'G') {
+				} else {
 					$gv_amount = $gvHash['coupon_amount'];
 					// Things to set
 					// ip address of claimant
@@ -255,6 +254,7 @@ class ot_gv extends CommercePluginOrderTotalBase {
 				$retError = ERROR_NO_REDEEM_CODE.' '.$pRequestParams['gv_redeem_code'];
 			}
 	 	}
+
 		return $retError;
  	}
 
