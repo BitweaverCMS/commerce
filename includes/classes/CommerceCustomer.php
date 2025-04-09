@@ -343,10 +343,13 @@ class CommerceCustomer extends CommerceBase {
 		}
 
 		if( !empty( $pParamHash['postcode'] ) ) {
-			if( strlen( $pParamHash['postcode'] ) < ENTRY_POSTCODE_MIN_LENGTH ) {
+			$trimmedPostcode = trim( preg_replace( '/\s+/', ' ', preg_replace( "/[^-A-Z0-9 ]/", " ", strtoupper( $pParamHash['postcode'] ) ) ) );
+			if( strlen( $trimmedPostcode ) < ENTRY_POSTCODE_MIN_LENGTH ) {
 				$errorHash['postcode'] = tra( 'Your Post Code must contain a minimum of ' . ENTRY_POSTCODE_MIN_LENGTH . ' characters.' );
+			} elseif( strlen( $trimmedPostcode ) > 10 ) {
+				$errorHash['postcode'] = tra( 'Your Post Code must contain a maxium of 10 characters.' );
 			} else {
-				$pParamHash['address_store']['entry_postcode'] = trim( preg_replace( '/\s+/', ' ', preg_replace( "/[^-A-Z0-9 ]/", " ", strtoupper( $pParamHash['postcode'] ) ) ) );
+				$pParamHash['address_store']['entry_postcode'] = $trimmedPostcode;
 			}
 		}
 
