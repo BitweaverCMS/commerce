@@ -39,7 +39,7 @@ if( isset($_POST['action']) && (($_POST['action'] == 'process') || ($_POST['acti
 		$messageStack->add_session('addressbook', 'Your address book has been successfully updated.', 'success');
 		zen_redirect(zen_href_link( $redirectPage, '', 'SSL'));
 	} else {
-		if( BitBase::verifyIdParameter( $_REQUEST, 'address_book_id' ) {
+		if( BitBase::verifyIdParameter( $_REQUEST, 'address_book_id' ) ) {
 			$_REQUEST['address_store']['address_book_id'] =  $_REQUEST['address_book_id'];
 		}
 		$gBitSmarty->assign( 'editAddress', $_REQUEST['address_store'] );
