@@ -616,16 +616,6 @@ class CommerceOrder extends CommerceOrderBase {
 							'ip_address' => $_SERVER['REMOTE_ADDR']
 							);
 
-		if( $paymentModule = $this->loadPaymentModule( BitBase::getParameter( $pSessionParams, 'payment_method' ) ) ) {
-			$this->info['payment_method'] = $paymentModule->title;
-			$this->info['payment_module_code'] = $paymentModule->code;
-			$this->info['orders_status_id'] = $paymentModule->getProcessedOrdersStatus();
-		}
-
-		if ($this->info['total'] == 0 && ($zeroBalanceStatusId = $gCommerceSystem->getConfig( 'DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID' )) ) {
-			$this->info['orders_status_id'] = $zeroBalanceStatusId ;
-		}
-
 		if( $defaultAddress = $gBitCustomer->getAddress( $gBitCustomer->getDefaultAddressId() ) ) {
 			$this->customer = array('firstname' => $defaultAddress['entry_firstname'],
 									'lastname' => $defaultAddress['entry_lastname'],
@@ -749,6 +739,11 @@ class CommerceOrder extends CommerceOrderBase {
 		if (DISPLAY_PRICE_WITH_TAX != 'true') {
 			$this->info['total'] += $this->info['tax'];
 		}
+
+		if ($this->info['total'] == 0 && ($zeroBalanceStatusId = $gCommerceSystem->getConfig( 'DEFAULT_ZERO_BALANCE_ORDERS_STATUS_ID' )) ) {
+			$this->info['orders_status_id'] = $zeroBalanceStatusId ;
+		}
+
 	}
 
 	public function getNextOrderId() {
@@ -781,6 +776,11 @@ class CommerceOrder extends CommerceOrderBase {
 		// Mush together request and Session data and send it for payment processing
 		$paymentParams = array_merge( $pRequestParams, $pSessionParams );
 		if( !$this->hasPaymentDue( $paymentParams ) || (!empty( $paymentParams['payment_method'] ) && $paymentManager->processPayment( $this, $paymentParams, $pSessionParams )) ) {
+			// Set Payment status
+			$this->info['payment_method'] = $paymentParams['payment_method'];
+			$this->info['payment_module_code'] = $paymentParams['payment_module_code'];
+			$this->info['orders_status_id'] = $paymentParams['processed_orders_status_id'];
+
 			$newOrderId = $this->create( $paymentParams, $pSessionParams );
 			$paymentParams['result']['orders_id'] = $this->mOrdersId;
 			if( $this->hasPaymentDue( $paymentParams ) ) {

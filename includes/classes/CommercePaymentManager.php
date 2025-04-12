@@ -194,7 +194,9 @@ class CommercePaymentManager extends BitBase {
 		$gBitProduct->invokeServices( 'commerce_pre_purchase_function', $pOrder );
 		if( !empty( $this->mPaymentObjects[$this->selected_module] ) && !empty( $this->mPaymentObjects[$this->selected_module]->enabled ) ) {
 			if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $pOrder, $pPaymentParams, $pSessionParams ) ) {
-				$pPaymentParams['initial_orders_status_id'] = $this->mPaymentObjects[$this->selected_module]->getProcessedOrdersStatus();
+				$pPaymentParams['payment_method'] = $this->mPaymentObjects[$this->selected_module]->title;
+				$pPaymentParams['payment_module_code'] = $this->mPaymentObjects[$this->selected_module]->code;
+				$pPaymentParams['processed_orders_status_id'] = $this->mPaymentObjects[$this->selected_module]->getProcessedOrdersStatus();
 			} else {
 				$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
 			}
