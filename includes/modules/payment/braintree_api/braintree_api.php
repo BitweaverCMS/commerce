@@ -168,11 +168,12 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
         $onFocus = ' onfocus="methodSelect(\'pmt-' . $this->code . '\')"';
 
-		$defaultName = BitBase::getParameter( $_SESSION, 'payment_owner' );
-		if( !empty( $order->billing['firstname'] ) && !empty( $order->billing['lastname'] ) ) {
-			$defaultName = $order->billing['firstname'].' '.$order->billing['lastname'];
-		} else {
-			$defaultName = $gBitUser->getField( 'real_name' );
+		if( !($defaultName = BitBase::getParameter( $_SESSION, 'payment_owner' )) ) {
+			if( !empty( $order->billing['firstname'] ) && !empty( $order->billing['lastname'] ) ) {
+				$defaultName = $order->billing['firstname'].' '.$order->billing['lastname'];
+			} else {
+				$defaultName = $gBitUser->getField( 'real_name' );
+			}
 		}
 
 		$selection = array('id' => $this->code,

@@ -7,7 +7,7 @@
 {$changeAddress}
 	<div class="alert alert-info">{tr}The billing address should match the address on your credit card statement.{/tr}</div>
 
-	{form name='checkout_address' action=checkout_confirmation|zen_href_link }
+	{form name='checkout_address' action=checkout_payment|zen_href_link }
 		<input type="hidden" name="main_page" value="checkout_payment" />
 		<div class="row">
 			{if !$gBitUser->isRegistered()}
