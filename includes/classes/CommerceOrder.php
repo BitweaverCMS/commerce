@@ -526,13 +526,13 @@ class CommerceOrder extends CommerceOrderBase {
 		$this->mHistory = array();
 		if( $this->isValid() ) {
 			$sql = "SELECT *
-					FROM	 " . TABLE_ORDERS_STATUS . " os
-						INNER JOIN " . TABLE_ORDERS_STATUS_HISTORY . " osh ON( osh.`orders_status_id` = os.`orders_status_id` )
+					FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh 
+						INNER JOIN " . TABLE_ORDERS_STATUS . " os ON( osh.`orders_status_id` = os.`orders_status_id` )
 						LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=osh.`user_id` )
-					WHERE osh.`orders_id` = ? AND os.`language_id` = ?
+					WHERE osh.`orders_id` = ?
 					ORDER BY osh.`date_added`";
 
-			if( $rs = $this->mDb->query($sql, array( $this->mOrdersId, $_SESSION['languages_id'] ) ) ) {
+			if( $rs = $this->mDb->query($sql, array( $this->mOrdersId ) ) ) {
 				while( !$rs->EOF ) {
 					array_push( $this->mHistory, $rs->fields );
 					$rs->MoveNext();
@@ -1398,7 +1398,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 		// a semaphore can be passed in to prevent two different people from updating the same order behind each other's back
 		$statusCleared = TRUE;
 		if( !empty( $pParamHash['last_status_id'] ) ) {
-			$lastStatusId = $this->mDb->getOne( "SELECT `orders_status_history_id` FROM " . TABLE_ORDERS_STATUS_HISTORY . " WHERE `orders_id` = ? ORDER BY `orders_status_history_id` DESC", array( $this->mOrdersId ) );
+			$lastStatusId = $this->mDb->getOne( "SELECT `orders_status_history_id` FROM " . TABLE_ORDERS_STATUS_HISTORY . " WHERE `orders_id` = ? ORDER BY `date_added` DESC", array( $this->mOrdersId ) );
 			if( !($statusCleared = ($lastStatusId == $pParamHash['last_status_id'])) ) {
 				$this->mErrors['status'] = 'The status of this order has changed since it was opened. Please verify what has changed.';
 			}

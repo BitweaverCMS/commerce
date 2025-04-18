@@ -739,7 +739,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders' => "
   deadline_date T,
   estimated_ship_date T,
   estimated_arrival_date T,
-  orders_status_id I4,
+  orders_status_id I4 NOTNULL,
   currency C(3),
   currency_value N(14,6),
   order_total N(14,2),
@@ -827,7 +827,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_expires' => "
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_status' => "
   orders_status_id I4 PRIMARY,
   language_id I4 NOTNULL default '1',
-  orders_status_name C(32)
+  orders_status_name C(32) NOTNULL
 ",
 
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_payments' => "
@@ -873,7 +873,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_status_history' => "
   orders_status_history_id I4 PRIMARY AUTO,
   user_id I4 NOTNULL,
   orders_id I4 NOTNULL,
-  orders_status_id I4,
+  orders_status_id I4 NOTNULL,
   date_added T,
   customer_notified I1 default '0',
   comments X
