@@ -542,15 +542,15 @@ class CommerceOrder extends CommerceOrderBase {
 		return( count( $this->mHistory ) );
 	}
 
-	function orderFromHash( &$pOrderHash ) {
+	public static function orderFromHash( &$pOrderHash, $pSessionParams ) {
 		$ret = FALSE;
 
 		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceTemporaryCart.php');
 
-		if( $hashCart = CommerceTemporaryCart::cartFromHash( $pOrderHash ) ) {
-			if( empty( $hashCart->mErrors ) ) {
-				$ret = $hashCart;
-			}
+		$hashCart = new CommerceTemporaryCart();
+		$hashCart->loadFromHash( $pOrderHash );
+		if( empty( $hashCart->mErrors ) ) {
+			$ret = static::orderFromCart( $hashCart, $pSessionParams );
 		}
 
 		return $ret;
@@ -667,9 +667,9 @@ class CommerceOrder extends CommerceOrderBase {
 		if( !empty( $billingAddress ) ) {
 			$this->billing = array('firstname' => $billingAddress['firstname'],
 									'lastname' => $billingAddress['lastname'],
-									'company' => $billingAddress['company'],
+									'company' => $this->getParameter( $billingAddress, 'company', NULL ),
 									'street_address' => $billingAddress['street_address'],
-									'suburb' => $billingAddress['suburb'],
+									'suburb' => $this->getParameter( $billingAddress, 'suburb', NULL ),
 									'city' => $billingAddress['city'],
 									'postcode' => $billingAddress['postcode'],
 									'state' => (!empty( $billingAddress['state'] ) ? $billingAddress['state'] : ''),
