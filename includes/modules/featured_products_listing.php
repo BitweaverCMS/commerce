@@ -26,7 +26,7 @@
   $group_id = zen_get_configuration_key_value('PRODUCT_FEATURED_LIST_GROUP_ID');
 
   if ($featured_products_split->number_of_rows > 0) {
-    $featured_products = $gBitDb->query($featured_products_split->sql_query, NULL, MAX_DISPLAY_PRODUCTS_FEATURED_PRODUCTS, $offset );
+    $featured_products = $gBitDb->query($featured_products_split->sql_query, array(), MAX_DISPLAY_PRODUCTS_FEATURED_PRODUCTS, $offset );
 
     while (!$featured_products->EOF) {
 
