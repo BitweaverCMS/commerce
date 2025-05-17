@@ -332,7 +332,7 @@ bit_error_log( $pParamHash, $this->mErrors );
 			$bindVars[] = $pListHash['payment_number'];
 		}
 
-		if( $rs = $this->mDb->query( "SELECT * FROM " . TABLE_ORDERS . " co INNER JOIN " . TABLE_ORDERS_PAYMENTS . " cop ON (co.`orders_id`=cop.`orders_id`) WHERE co.`orders_status_id` > 0 AND co.`amount_due` > 0 $whereSql ORDER BY cop.`payment_number`", $bindVars ) ) {
+		if( $rs = $this->mDb->query( "SELECT * FROM " . TABLE_ORDERS . " co INNER JOIN " . TABLE_ORDERS_PAYMENTS . " cop ON (co.`orders_id`=cop.`orders_id`) WHERE co.`orders_status_id` > 0 AND co.`amount_due` > 0 $whereSql ORDER BY co.`orders_id`, cop.`payment_number`", $bindVars ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$ret[$row['customers_id']][$row['payment_number']]['orders'][] = $row;
 				if( empty( $ret[$row['customers_id']][$row['payment_number']]['totals'] ) ) {
