@@ -65,7 +65,7 @@ if( isset($_POST['action']) && (($_POST['action'] == 'process') || ($_POST['acti
 	}
 } elseif (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
 	if( !($editAddress = $gBitCustomer->getAddress( $_GET['edit'] )) ) {
-		$messageStack->add_session('addressbook', ERROR_NONEXISTING_ADDRESS_BOOK_ENTRY);
+		$messageStack->add_session('addressbook', 'This address does not exist');
 		zen_redirect(zen_href_link( $redirectPage, '', 'SSL' ) );
 	}
 	$gBitSmarty->assign( 'editAddress', $editAddress );
