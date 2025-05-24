@@ -39,7 +39,7 @@ function shippingQuoteUpdate( pForm ) {
 		<div class="col-xs-12">
 			<select class="form-control" onchange="shippingQuoteAddressChange( this.form );" name="address_id" id="addressid">
 			{foreach from=$addresses item=addr}
-				<option value="{$addr.address_book_id}" {if $smarty.session.sendto == $addr.address_book_id}{assign var=selAddr value=$addr}selected="selected"{/if}>{$addr|zen_address_format:$addr.address_format_id:0:' ':' '}</option>
+				<option value="{$addr.address_book_id}" {if $smarty.session.sendto == $addr.address_book_id}{assign var=selAddr value=$addr}selected="selected"{/if}>{$addr|zen_address_format:$addr.address_format_id:0:' '}</option>
 			{/foreach}
 				<optgroup label="----------"></optgroup>
 				<option value="custom" {if $smarty.session.sendto == "custom"}selected="selected"{/if}>{tr}Enter Country and Postal Code...{/tr}</option>
