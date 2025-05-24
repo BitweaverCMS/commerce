@@ -1,6 +1,7 @@
 {strip}
 <div class="floaticon">{bithelp}</div>
 <div class="edit bitcommerce">
+	{if $newOrdersId}
 	<div class="heading">
 		<h1>{tr}Order Complete!{/tr} {tr}Your Order Number is{/tr}:<a href="{'account_history_info'|zen_get_page_url}?order_id={$newOrdersId}">{$newOrdersId}</a></h1>
 	</div>
@@ -27,5 +28,6 @@
 	</form>
 	{include file="bitpackage:bitcommerce/page_checkout_success_inc.tpl"}
 	{include file="bitpackage:bitcommerce/order_invoice_contents_inc.tpl" order=$newOrder}
+	{/if}
 </div>
 {/strip}

@@ -21,11 +21,14 @@
 //
 
 global $newOrdersId;
-$newOrdersId = $gBitDb->getOne( "select `orders_id` from " . TABLE_ORDERS . " where `customers_id` = ? order by `date_purchased` desc", array( $_SESSION['customer_id'] ) );
 require(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
-$newOrder = new order( $newOrdersId );
-$gBitSmarty->assign( 'newOrdersId', $newOrdersId );
-$gBitSmarty->assign( 'newOrder', $newOrder );
+if( BitBase::verifyIdParameter( $_SESSION, 'customer_id' ) && ($newOrdersId = $gBitDb->getOne( "select `orders_id` from " . TABLE_ORDERS . " where `customers_id` = ? order by `date_purchased` desc", array( $_SESSION['customer_id'] ) )) ) {
+	$newOrder = new order( $newOrdersId );
+	$gBitSmarty->assign( 'newOrdersId', $newOrdersId );
+	$gBitSmarty->assign( 'newOrder', $newOrder );
+} else {
+	bit_redirect( zen_get_page_url( 'shopping_cart' ) );
+}
 
 if (isset($_GET['action']) && ($_GET['action'] == 'update')) {
 	$notify_string = 'action=notify&';
