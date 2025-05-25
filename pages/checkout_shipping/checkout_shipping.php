@@ -187,7 +187,7 @@ eb( "BULK CSV not implemented", $_REQUEST, $_FILES );
 
 		$gBitSmarty->assign( 'shippingModules', TRUE );
 		$gBitSmarty->assign( 'quotes', $quotes );
-		$gBitSmarty->register_object('currencies', $currencies, array(), true, array('formatAddTax'));
+		$gBitSmarty->registerObject('currencies', $currencies, array(), true, array('formatAddTax'));
 		$gBitSmarty->assign( 'freeShipping', $free_shipping );
 		$gBitSmarty->assign( 'sessionShippingId', BitBase::getParameter( $_SESSION, 'shipping' ) );
 	}

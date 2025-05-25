@@ -1,5 +1,5 @@
 {strip}
-{include_php file="`$smarty.const.BITCOMMERCE_PKG_ADMIN_PATH`includes/header_navigation.php"}
+{include file="bitpackage:bitcommerce/mod_admin_header_navigation.tpl"}
 
 <div class="admin bitcommerce">
 	<div class="body">

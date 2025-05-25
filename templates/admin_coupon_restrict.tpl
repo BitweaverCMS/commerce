@@ -1,8 +1,5 @@
-
 {include file="bitpackage:bitcommerce/admin_header_inc.tpl"}
-{include_php file="`$smarty.const.BITCOMMERCE_PKG_ADMIN_PATH`includes/header_navigation.php"}
 
-{formfeedback hash=$feedback}
 {strip}
 <div class="admin bitcommerce coupons">
 	<div class="page-header">

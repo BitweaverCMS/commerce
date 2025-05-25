@@ -56,7 +56,7 @@ function zen_get_address_format_id($country_id) {
   }
 	// This is a common smarty function and needs to be easily available
 	global $gBitSmarty;
-	$gBitSmarty->register_modifier('zen_address_label', 'zen_address_label');
+	$gBitSmarty->registerPlugin( 'modifier', 'zen_address_label', 'zen_address_label');
 
   function zen_count_customer_orders($id = '', $check_session = true) {
     global $gBitDb;
