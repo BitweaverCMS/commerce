@@ -19,7 +19,7 @@
 // +----------------------------------------------------------------------+
 // $Id$
 //
-  if (!$_SESSION['customer_id']) {
+  if( empty( $_SESSION['customer_id'] ) ) {
     $_SESSION['navigation']->set_snapshot();
     zen_redirect(FILENAME_LOGIN);
   }
