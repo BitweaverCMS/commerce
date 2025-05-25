@@ -137,7 +137,7 @@ while (!$ordersStatus->EOF) {
 	if (DEFAULT_ORDERS_STATUS_ID == $ordersStatus->fields['orders_status_id']) {
 		echo ' <strong>(' . tra( 'Default' ) . ')</strong>';
 	}
-	if (COMBINE_ORDERS_STATUS_ID == $ordersStatus->fields['orders_status_id']) {
+	if ($gCommerceSystem->getConfig( 'COMBINE_ORDERS_STATUS_ID' )  == $ordersStatus->fields['orders_status_id']) {
 		echo ' <strong>(' . tra( 'Combine' ) . ')</strong>';
 	}
 	echo "</td>\n";
