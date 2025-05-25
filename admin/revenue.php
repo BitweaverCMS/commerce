@@ -33,7 +33,7 @@ if( isset( $_REQUEST['compare'] ) && is_array( $_REQUEST['compare'] ) ) {
 $stats = new CommerceStatistics();
 if( !empty( $_REQUEST['interests_id'] ) ) {
 	$interests = $gBitCustomer->getInterests();
-	$gBitSmarty->assign_by_ref( 'interestsList', $interests );
+	$gBitSmarty->assignByRef( 'interestsList', $interests );
 	$gBitSmarty->assign( 'interestsName', $interests[$_REQUEST['interests_id']] );
 	$_REQUEST['orders_products'] = TRUE;
 	$_REQUEST['orders_status_comparison'] = '>';
@@ -51,13 +51,13 @@ if( !empty( $_REQUEST['interests_id'] ) ) {
 	$_REQUEST['listInfo']['block_pages'] = 3;
 	$_REQUEST['listInfo']['item_name'] = 'coupons';
 	$_REQUEST['listInfo']['page_records'] = count( $statsByReferer['hosts'] );
-	$gBitSmarty->assign_by_ref( 'listInfo', $_REQUEST['listInfo'] );
+	$gBitSmarty->assignByRef( 'listInfo', $_REQUEST['listInfo'] );
 
 	$gBitSmarty->assign( 'statsByReferer', $stats->getRevenueByReferer( $_REQUEST ) );
 	$gBitSystem->display( 'bitpackage:bitcommerce/admin_revenue_referer.tpl', 'Revenue By Referer' , array( 'display_mode' => 'admin' ));
 } elseif( !empty( $_REQUEST['timeframe'] ) ) {
 	$statsByType = $stats->getRevenueByType( $_REQUEST );
-	$gBitSmarty->assign_by_ref( 'statsByType', $statsByType );
+	$gBitSmarty->assignByRef( 'statsByType', $statsByType );
 	$statsByOption = $stats->getRevenueByOption( $_REQUEST );
 	foreach( $statsByOption as $stat ) {
 		@$statsByOptionTotalUnits[$stat['products_options_id']] += $stat['total_units'];

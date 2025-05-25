@@ -65,7 +65,7 @@ if( @BitBase::verifyId( $_REQUEST['user_id'] ) ) {
 $listHash['orders_products'] = TRUE;
 
 $orders = order::getList( $listHash );
-$gBitSmarty->assign_by_ref( 'listOrders', $orders );
+$gBitSmarty->assignByRef( 'listOrders', $orders );
 $statuses['all'] = 'All';
 
 foreach( commerce_get_statuses( TRUE ) as $statusId=>$statusName ) {
@@ -78,7 +78,7 @@ $productTypes = CommerceProduct::getTypes();
 foreach( $productTypes as $typeId=>$typeHash ) {
 	$types[$typeId] = $typeHash['type_name'].' &raquo; '.$typeHash['type_class'];
 }
-$gBitSmarty->assign_by_ref( 'commerceProductTypes', $types );
+$gBitSmarty->assignByRef( 'commerceProductTypes', $types );
 
 $gBitSmarty->display( 'bitpackage:bitcommerce/admin_list_orders.tpl' );
 

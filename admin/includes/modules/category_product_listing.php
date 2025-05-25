@@ -34,8 +34,8 @@ $prodListHash = $_REQUEST;
 $prodListHash['all_status'] = 1;
 $prodListHash['category_id'] = $current_category_id;
 if( $prodList = $product->getList( $prodListHash ) ) {
-	$gBitSmarty->assign_by_ref( 'prodList', $prodList );
-	$gBitSmarty->assign_by_ref( 'prodListHash', $prodListHash );
+	$gBitSmarty->assignByRef( 'prodList', $prodList );
+	$gBitSmarty->assignByRef( 'prodListHash', $prodListHash );
 	$gBitSmarty->assign( 'prodCount', count( $prodList ) );
 }
 

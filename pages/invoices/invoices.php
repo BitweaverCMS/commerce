@@ -33,9 +33,9 @@ if( $editPayment = BitBase::getParameter( $_REQUEST, 'edit_payment' ) ) {
 $paymentTypes = $gCommerceOrderManager->getPaymentTypes();
 sort( $paymentTypes );
 $gBitSmarty->assign( 'paymentTypes', array_combine( $paymentTypes, $paymentTypes ) );
-$gBitSmarty->assign_by_ref( 'payment', $payment );
+$gBitSmarty->assignByRef( 'payment', $payment );
 $order = new CommerceOrder();
-$gBitSmarty->assign_by_ref( 'order', $order );
+$gBitSmarty->assignByRef( 'order', $order );
 $orderStatuses = commerce_get_statuses( TRUE );
 $orderStatuses[''] = 'No Change';
 $gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId, 'required' ) );
@@ -64,12 +64,12 @@ if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
 $gBitThemes->loadJavascript( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/js/bootstrap-datepicker.js');
 
 $dueOrders = $paymentManager->getDueOrders();
-$gBitSmarty->assign_by_ref( 'dueOrders', $dueOrders );
+$gBitSmarty->assignByRef( 'dueOrders', $dueOrders );
 
 $paymentModules = $gCommerceSystem->scanModules( 'payment', TRUE );
 
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSmarty->assign_by_ref( 'paymentModules', $paymentModules );
+$gBitSmarty->assignByRef( 'paymentModules', $paymentModules );
 
 $gBitSmarty->assign( 'paymentSelections', $paymentManager->selection() );
 

@@ -27,13 +27,13 @@ if( $gBitProduct->isValid() ) {
 	$editTpl = 'bitpackage:bitcommerce/admin_products_options_map_inc.tpl';
 } elseif( empty( $_REQUEST['cancel'] ) && !empty( $_REQUEST['products_options_id'] ) ) {
 	if( BitBase::verifyId( $_REQUEST['products_options_id'] ) && $editOption = current( $productManager->getOptionsList( array( 'products_options_id' => $_REQUEST['products_options_id'] ) ) ) ) {
-		$gBitSmarty->assign_by_ref( 'editOption', $editOption );
+		$gBitSmarty->assignByRef( 'editOption', $editOption );
 	}
 	$gBitSmarty->assign( 'optionsTypes', $productManager->getOptionsTypes() );
 	$editTpl = 'bitpackage:bitcommerce/admin_products_options_edit_inc.tpl';
 } elseif( empty( $_REQUEST['cancel'] ) && !empty( $_REQUEST['products_options_values_id'] ) ) {
 	if( BitBase::verifyId( $_REQUEST['products_options_values_id'] ) && $editOptionsValue = current( $productManager->getOptionsList( array( 'products_options_values_id' => $_REQUEST['products_options_values_id'] ) ) ) ) {
-		$gBitSmarty->assign_by_ref( 'editValue', $editOptionsValue['values'][$_REQUEST['products_options_values_id']] );
+		$gBitSmarty->assignByRef( 'editValue', $editOptionsValue['values'][$_REQUEST['products_options_values_id']] );
 	}
 	$gBitSmarty->assign( 'optionsList', $productManager->getOptionsList() );
 	$editTpl = 'bitpackage:bitcommerce/admin_products_options_values_edit_inc.tpl';
@@ -76,10 +76,10 @@ $groupList[] = '';
 foreach( $groups as $group ) {
 	$groupList[$group['group_id']] = $group['group_name'];
 }
-$gBitSmarty->assign_by_ref( 'groupList', $groupList );
+$gBitSmarty->assignByRef( 'groupList', $groupList );
 
 if( !empty( $editTpl ) ) {
-	$gBitSmarty->assign_by_ref( 'editTpl', $editTpl );
+	$gBitSmarty->assignByRef( 'editTpl', $editTpl );
 }
 
 $gBitSystem->display( 'bitpackage:bitcommerce/admin_products_options.tpl', 'Product Options' , array( 'display_mode' => 'admin' ));

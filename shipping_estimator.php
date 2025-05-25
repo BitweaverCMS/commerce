@@ -21,7 +21,7 @@ global $gBitDb, $gBitUser, $gBitCustomer, $currencies;
 $shoppingCart = new CommerceShoppingCart();
 
 if( $gBitUser->isRegistered() &&  $addresses = $gBitCustomer->getAddresses() ) {
-	$gBitSmarty->assign_by_ref( 'addresses', $addresses );
+	$gBitSmarty->assignByRef( 'addresses', $addresses );
 }
 
 // Explicit country requested takes priority, even if registered.
@@ -52,7 +52,7 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 								);
 		// used as a check below for existence of states
 		$stateMenu = zen_get_country_zone_list( 'zone_id', $shoppingCart->delivery['countries_id'], !empty( $_SESSION['cart_zone_id'] ) ? $_SESSION['cart_zone_id'] : NULL );
-		$gBitSmarty->assign_by_ref( 'stateMenu', $stateMenu );
+		$gBitSmarty->assignByRef( 'stateMenu', $stateMenu );
 	}
 	// Check for form zip code
 	if( !empty( $_REQUEST['zip_code'] ) ) {

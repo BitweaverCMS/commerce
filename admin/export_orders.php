@@ -66,8 +66,8 @@ if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
 	}
 }
 
-$gBitSmarty->assign_by_ref( 'headerHash', $headerHash );
-$gBitSmarty->assign_by_ref( 'orders', $orders );
+$gBitSmarty->assignByRef( 'headerHash', $headerHash );
+$gBitSmarty->assignByRef( 'orders', $orders );
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_export_orders.tpl' );
 
 require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 

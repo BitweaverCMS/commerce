@@ -46,6 +46,6 @@ if( $rs = $gBitDb->query( $sql ) ) {
 		$couponList[$row['hash_key']] = $row;
 	}
 }
-$gBitSmarty->assign_by_ref( 'couponList', $couponList );
+$gBitSmarty->assignByRef( 'couponList', $couponList );
 
 $gBitSystem->display( 'bitpackage:bitcommerce/admin_gv_sent.tpl', 'Gift Vouchers Sent' , array( 'display_mode' => 'admin' ));

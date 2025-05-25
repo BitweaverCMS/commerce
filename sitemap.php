@@ -27,6 +27,6 @@ if( $productList = $gBitProduct->getList($listHash) ) {
 	}
 }
 
-$gBitSmarty->assign_by_ref( 'gSiteMapHash', $gSiteMapHash );
+$gBitSmarty->assignByRef( 'gSiteMapHash', $gSiteMapHash );
 $gBitThemes->setFormatHeader( 'xml' );
 print $gBitSmarty->display( 'bitpackage:kernel/sitemap.tpl' );

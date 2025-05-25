@@ -92,7 +92,7 @@ if( @BitBase::verifyId( $_REQUEST['orders_status_id'] ) ) {
 }
 
 $orders = order::getList( $listHash );
-$gBitSmarty->assign_by_ref( 'listOrders', $orders );
+$gBitSmarty->assignByRef( 'listOrders', $orders );
 
 ?>
 <div class="row">

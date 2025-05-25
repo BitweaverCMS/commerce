@@ -42,9 +42,9 @@ define('HEADING_TITLE', ( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST['oID'] :
 
 if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 	$gBitSmarty->assign( 'orderStatuses', commerce_get_statuses( TRUE ) );
-	$gBitSmarty->assign_by_ref( 'order', $order ); 
-	$gBitSmarty->assign_by_ref( 'currencies', $currencies ); 
-	$gBitSmarty->assign_by_ref( 'order', $order ); 
+	$gBitSmarty->assignByRef( 'order', $order ); 
+	$gBitSmarty->assignByRef( 'currencies', $currencies ); 
+	$gBitSmarty->assignByRef( 'order', $order ); 
 	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
 	$productManager = new CommerceProductManager();
 
@@ -94,7 +94,7 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 			}
 
 			$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('address_country_id', $countryId, 'autocomplete="'.$addressType.' country-name" ' ) );
-			$gBitSmarty->assign_by_ref( 'address', $entry );
+			$gBitSmarty->assignByRef( 'address', $entry );
 
 			if( !empty( $_REQUEST['address_type'] ) ) {
 				$gBitSmarty->display( 'bitpackage:bitcommerce/order_address_edit.tpl' );
@@ -114,7 +114,7 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 
 		$optionsList = $productManager->getOptions();
 		$optionsList[0] = "Add new order option...";
-		$gBitSmarty->assign_by_ref( 'optionsList', $optionsList );
+		$gBitSmarty->assignByRef( 'optionsList', $optionsList );
 
 		if( !empty( $_REQUEST['del_ord_prod_att_id'] ) ) {
 			$gBitDb->StartTrans();
@@ -307,7 +307,7 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 					}
 				}
 			}
-			$gBitSmarty->assign_by_ref( 'fulfillmentFiles', $fulfillmentFiles );
+			$gBitSmarty->assignByRef( 'fulfillmentFiles', $fulfillmentFiles );
 		}
 
 		$gBitSmarty->assign( 'customerStats', zen_get_customers_stats( $order->customer['customers_id'] ) );

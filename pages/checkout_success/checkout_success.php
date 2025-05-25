@@ -52,7 +52,7 @@ if( $gBitCustomer->getGlobalNotifications() != '1' ) {
 					   WHERE `orders_id` = ?
 					   ORDER BY `products_name`";
 	$products = $gBitDb->getAssoc($products_query, array($newOrdersId) );
-	$gBitSmarty->assign_by_ref( 'notifyProducts', $products );
+	$gBitSmarty->assignByRef( 'notifyProducts', $products );
 }
 
 $gv_query = "SELECT `amount` from " . TABLE_COUPON_GV_CUSTOMER . " WHERE `customer_id`=?";

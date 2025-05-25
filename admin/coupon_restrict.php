@@ -58,8 +58,8 @@ if(isset($_POST['cPath_prod'])) {
 
 $productsList = $gBitDb->getAssoc("select p.`products_id`, pd.`products_name` from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.`products_id` = pd.`products_id` and pd.`language_id` = ? and p.`products_id` = p2c.`products_id` and p2c.`categories_id` = ? order by pd.`products_name`", array( $_SESSION['languages_id'], $_POST['cPath_prod'] ) );
 
-$gBitSmarty->assign_by_ref( 'productsList', $productsList );
-$gBitSmarty->assign_by_ref( 'gCoupon', $gCoupon );
+$gBitSmarty->assignByRef( 'productsList', $productsList );
+$gBitSmarty->assignByRef( 'gCoupon', $gCoupon );
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
 $productManager = new CommerceProductManager();
@@ -69,7 +69,7 @@ $categoryTree = zen_get_category_tree();
 $gBitSmarty->assign( 'categorySelect', zen_draw_pull_down_menu('category_id', $categoryTree, $current_category_id) );
 $gBitSmarty->assign( 'productCategorySelect',  zen_draw_pull_down_menu('cPath_prod', $categoryTree, $current_category_id, 'onChange="this.form.submit();"') );
 $gBitSmarty->assign( 'productTypes', $productManager->getProductTypes() );
-$gBitSmarty->assign_by_ref( 'feedback', $feedback );
+$gBitSmarty->assignByRef( 'feedback', $feedback );
 $gBitSystem->display( 'bitpackage:bitcommerce/admin_coupon_restrict.tpl', HEADING_TITLE, array( 'display_mode' => 'admin' ));
 
 

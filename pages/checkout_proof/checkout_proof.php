@@ -16,7 +16,7 @@ foreach ( $order->contents as $itemKey => $item ){
 }
 
 if( !empty( $proofProducts ) ) {
-	$gBitSmarty->assign_by_ref( 'proofProducts', $proofProducts );
+	$gBitSmarty->assignByRef( 'proofProducts', $proofProducts );
 	//checkout_proof will loop through the array of includes and print them out, it has a next button at the bottom and a warnin
 	global $gBitSystem;
 	print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_checkout_proof.tpl' );

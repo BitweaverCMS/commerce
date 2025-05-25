@@ -33,12 +33,12 @@ $stats = new CommerceStatistics();
 
 $gBitSmarty->assign( 'statsByType', $stats->getRevenueByType( $_REQUEST ) );
 $statsByOption = $stats->getRevenueByOption( $_REQUEST );
-$gBitSmarty->assign_by_ref( 'statsByOption', $statsByOption );
+$gBitSmarty->assignByRef( 'statsByOption', $statsByOption );
 $statsByOptionTotalUnits = array();
 foreach( $statsByOption as $stat ) {
 	@$statsByOptionTotalUnits[$stat['products_options_id']] += $stat['total_units'];
 }
-$gBitSmarty->assign_by_ref( 'statsByOptionTotalUnits', $statsByOptionTotalUnits );
+$gBitSmarty->assignByRef( 'statsByOptionTotalUnits', $statsByOptionTotalUnits );
 
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_stats_products_types.tpl' );

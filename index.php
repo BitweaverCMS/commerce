@@ -33,7 +33,7 @@ if( empty( $_REQUEST['main_page'] ) ) {
 		// we are viewing a product, assume it is gContent if nothing else was created so services work
 		if( empty( $gContent ) ) {
 			$gContent = &$gBitProduct;
-			$gBitSmarty->assign_by_ref( 'gContent', $gContent );
+			$gBitSmarty->assignByRef( 'gContent', $gContent );
 		}
 	} else {
 		$_REQUEST['main_page'] = 'index';
@@ -51,7 +51,7 @@ $current_page_base = $current_page;
 $code_page_directory = DIR_FS_PAGES . $current_page_base;
 $page_directory = $code_page_directory;
 
-$gBitSmarty->assign_by_ref( 'current_page_base', $current_page_base );
+$gBitSmarty->assignByRef( 'current_page_base', $current_page_base );
 
 
 $language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/';
@@ -118,7 +118,7 @@ require($gCommerceSystem->get_template_dir('tpl_main_page.php',DIR_WS_TEMPLATE, 
 
 require(DIR_FS_INCLUDES . 'application_bottom.php');
 $content = ob_get_contents();
-$gBitSmarty->assign_by_ref( 'bitcommerceCenter', $content );
+$gBitSmarty->assignByRef( 'bitcommerceCenter', $content );
 ob_end_clean();
 
 if( !empty( $gCommercePopupTemplate ) ) {
@@ -131,7 +131,7 @@ if( !empty( $gCommercePopupTemplate ) ) {
 	} elseif( $current_page_base == 'index' && empty( $_REQUEST['cPath'] ) ) {
 		// Display the template
 		$gDefaultCenter = 'bitpackage:bitcommerce/default_index.tpl';
-		$gBitSmarty->assign_by_ref( 'gDefaultCenter', $gDefaultCenter );
+		$gBitSmarty->assignByRef( 'gDefaultCenter', $gDefaultCenter );
 		if( !empty( $_REQUEST['products_id'] ) && !$gBitProduct->isValid() ) {
 			$gBitSystem->setHttpStatus( HttpStatusCodes::HTTP_NOT_FOUND );
 		}

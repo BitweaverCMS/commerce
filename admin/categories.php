@@ -496,7 +496,7 @@ if (is_dir(DIR_FS_CATALOG_IMAGES)) {
 
 	$mid = 'bitpackage:bitcommerce/admin_categories.tpl';
 
-$gBitSmarty->assign_by_ref( 'feedback', $feedback );
+$gBitSmarty->assignByRef( 'feedback', $feedback );
 $gBitSmarty->display( $mid );
 
 

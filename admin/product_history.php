@@ -12,7 +12,7 @@ if( count( $_GET ) > 2 || count( $_POST ) > 2 ) {
 
 $history = $orderManager->getProductHistory( $_REQUEST );
 
-$gBitSmarty->assign_by_ref( 'productHistory', $history );
+$gBitSmarty->assignByRef( 'productHistory', $history );
 
 $gBitSystem->display( 'bitpackage:bitcommerce/admin_product_history.tpl', 'Product History' , array( 'display_mode' => 'admin' ));
 

@@ -69,7 +69,7 @@ bit_error_email( 'Dropship Order Failure', $order->mErrors, $outputHash, $checko
 	}
 }
 
-$gBitSmarty->assign_by_ref( 'feedback', $feedback );
+$gBitSmarty->assignByRef( 'feedback', $feedback );
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/page_dropship.tpl' );
 

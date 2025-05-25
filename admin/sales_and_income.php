@@ -27,11 +27,11 @@ require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceStatistics.php' );
 global $gCommerceStatistics;
 
 $currencies = new currencies();
-$gBitSmarty->assign_by_ref( 'currencies', $currencies ); 
+$gBitSmarty->assignByRef( 'currencies', $currencies ); 
 
 $listHash = array();
 $salesAndIncome = $gCommerceStatistics->getSalesAndIncome( $listHash );
-$gBitSmarty->assign_by_ref( 'salesAndIncome', $salesAndIncome );
+$gBitSmarty->assignByRef( 'salesAndIncome', $salesAndIncome );
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_sales_and_income.tpl' );
 

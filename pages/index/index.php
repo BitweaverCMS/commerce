@@ -152,7 +152,7 @@ while (!$show_display_category->EOF) {
 
 	$listProducts = $gBitProduct->getList( $_REQUEST );
 	$gBitSmarty->assign( 'listInfo', $_REQUEST );
-	$gBitSmarty->assign_by_ref( 'listProducts', $listProducts );
+	$gBitSmarty->assignByRef( 'listProducts', $listProducts );
 	$gBitSmarty->display( 'bitpackage:bitcommerce/list_products_inc.tpl' );
 
 

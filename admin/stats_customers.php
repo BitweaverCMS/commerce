@@ -24,9 +24,9 @@ if( !empty( $_REQUEST['period'] ) ) {
 $stats = new CommerceStatistics();
 
 $retainedCustomers = $stats->getRetainedCustomers( $_REQUEST );
-$gBitSmarty->assign_by_ref( 'retainedCustomers', $retainedCustomers );
+$gBitSmarty->assignByRef( 'retainedCustomers', $retainedCustomers );
 $abandonedCustomers = $stats->getAbandonedCustomers( $_REQUEST );
-$gBitSmarty->assign_by_ref( 'abandonedCustomers', $abandonedCustomers );
+$gBitSmarty->assignByRef( 'abandonedCustomers', $abandonedCustomers );
 
 $averageRetention = 100 * $retainedCustomers['totals']['customers'] / ($retainedCustomers['totals']['customers'] + $abandonedCustomers['totals']['customers']);
 $gBitSmarty->assign( 'averageRetention', $averageRetention );

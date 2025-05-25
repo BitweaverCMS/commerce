@@ -133,7 +133,7 @@ case 'report':
 	BitBase::postGetList( $_REQUEST );
 	$_REQUEST['listInfo']['total_pages'] = ceil( $_REQUEST['listInfo']['total_records'] / $_REQUEST['max_records']);
 
-	$gBitSmarty->assign_by_ref( 'redeemList', $redeemList );
+	$gBitSmarty->assignByRef( 'redeemList', $redeemList );
 	$title = tra( 'Coupon Report' ).' : '.$_REQUEST['cid'];
 	$mid = 'bitpackage:bitcommerce/admin_coupon_report.tpl';
 	break;
@@ -187,7 +187,7 @@ case 'new':
 default:
 	$couponList = CommerceVoucher::getList( $_REQUEST );
 	$_REQUEST['listInfo']['page_records'] = count( $couponList );
-	$gBitSmarty->assign_by_ref( 'couponList', $couponList );
+	$gBitSmarty->assignByRef( 'couponList', $couponList );
 	$title = HEADING_TITLE;
 	$mid = 'bitpackage:bitcommerce/admin_coupon_list.tpl';
 }
@@ -195,9 +195,9 @@ default:
 if( isset( $_REQUEST['listInfo'] ) ) {
 	$_REQUEST['listInfo']['block_pages'] = 3;
 	$_REQUEST['listInfo']['item_name'] = 'coupons';
-	$gBitSmarty->assign_by_ref( 'listInfo', $_REQUEST['listInfo'] );
+	$gBitSmarty->assignByRef( 'listInfo', $_REQUEST['listInfo'] );
 }
 
-$gBitSmarty->assign_by_ref( 'gCoupon', $gCoupon );
-$gBitSmarty->assign_by_ref( 'feedback', $feedback );
+$gBitSmarty->assignByRef( 'gCoupon', $gCoupon );
+$gBitSmarty->assignByRef( 'feedback', $feedback );
 $gBitSystem->display( $mid, $title, array( 'display_mode' => 'admin' ));

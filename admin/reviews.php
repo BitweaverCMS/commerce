@@ -25,13 +25,13 @@ switch ($getAction) {
 		break;
 	default:
 		if( $reviewsList = CommerceReview::getList( $_REQUEST ) ) {
-			$gBitSmarty->assign_by_ref( 'reviewsList', $reviewsList );
+			$gBitSmarty->assignByRef( 'reviewsList', $reviewsList );
 		}
 
 		if( isset( $_REQUEST['listInfo'] ) ) {
 			$_REQUEST['listInfo']['block_pages'] = 3;
 			$_REQUEST['listInfo']['item_name'] = 'coupons';
-			$gBitSmarty->assign_by_ref( 'listInfo', $_REQUEST['listInfo'] );
+			$gBitSmarty->assignByRef( 'listInfo', $_REQUEST['listInfo'] );
 		}
 
 		$mid = 'bitpackage:bitcommerce/admin_reviews_list.tpl';

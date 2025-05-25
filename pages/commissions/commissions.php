@@ -22,7 +22,7 @@ if( $addresses = $gBitCustomer->getAddresses() ) {
 	foreach( $addresses AS $addrId=>$addr ) {
 		$addressList[$addr['address_book_id']] = zen_address_format( $addr, 0, ' ', ' ' );
 	}
-	$gBitSmarty->assign_by_ref( 'addressList', $addressList );
+	$gBitSmarty->assignByRef( 'addressList', $addressList );
 	$gBitSmarty->assign( 'defaultAddressId', $gBitUser->getPreference( 'commissions_check_address', $gBitCustomer->getDefaultAddressId() ) );
 }
 

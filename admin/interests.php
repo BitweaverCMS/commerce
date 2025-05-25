@@ -54,7 +54,7 @@ die;
 	$gBitSystem->storeConfig( 'commerce_register_interests', !empty( $_REQUEST['commerce_register_interests'] ) ? 'y' : NULL );
 	bit_redirect( $_SERVER['SCRIPT_NAME'] );
 } elseif( !empty( $_REQUEST['uninterested'] ) ) {
-	$gBitSmarty->assign_by_ref( 'uninterestedCustomers', CommerceCustomer::getUninterestedCustomers() );
+	$gBitSmarty->assignByRef( 'uninterestedCustomers', CommerceCustomer::getUninterestedCustomers() );
 	$mid = 'bitpackage:bitcommerce/admin_uninterested_customers.tpl';
 }
 

@@ -15,7 +15,7 @@ $gContent = &$gBitProduct;
 if ( $gBitProduct->isAvailable() ) {
 
 	if( $productOptions = $gBitProduct->getProductOptions() ) {
-		$gBitSmarty->assign_by_ref( 'productOptions', $productOptions );
+		$gBitSmarty->assignByRef( 'productOptions', $productOptions );
 	}
 
 	$gCommerceSystem->setHeadingTitle( $gBitProduct->getTitle().' - '.tra( $gBitProduct->getField( 'products_model' ) ) );

@@ -193,7 +193,7 @@ require_once(DIR_WS_CLASSES . 'box.php');
 // initialize the message stack for output messages
 require_once(DIR_WS_CLASSES . 'message_stack.php');
 $messageStack = new messageStack;
-$gBitSmarty->assign_by_ref( 'messageStack', $messageStack );
+$gBitSmarty->assignByRef( 'messageStack', $messageStack );
 
 //	split-page-results
 //	require_once(DIR_FS_CATALOG . DIR_WS_CLASSES . 'split_page_results.php');

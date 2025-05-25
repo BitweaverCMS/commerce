@@ -17,8 +17,8 @@ $supportedTypes = ".csv";
 if( $isPhpOfficeInstalled = file_exists( $phpOfficeAutload ) ) {
 	$supportedTypes .= ",.xls,.xlsx";
 }
-$gBitSmarty->assign_by_ref( 'isPhpOfficeInstalled', $isPhpOfficeInstalled );
-$gBitSmarty->assign_by_ref( 'supportedTypes', $supportedTypes );
+$gBitSmarty->assignByRef( 'isPhpOfficeInstalled', $isPhpOfficeInstalled );
+$gBitSmarty->assignByRef( 'supportedTypes', $supportedTypes );
 
 if( !empty( $_POST ) && !empty( $_POST['action'] ) ) {
 	if( !empty( $_POST['batch_index'] ) && ($batchOrder = $gBitCustomer->getBatchOrder()) && !empty( $batchOrder[$_POST['batch_index']] ) ) {
@@ -111,7 +111,7 @@ eb( $batchHash['error'] );
 }
 
 if( $batchHash = $gBitCustomer->getBatchOrder() ) {
-	$gBitSmarty->assign_by_ref( 'batchHash', $batchHash );
+	$gBitSmarty->assignByRef( 'batchHash', $batchHash );
 }
 //eb( $_SESSION );
 $gBitSmarty->display( 'bitpackage:bitcommerce/page_batch_order.tpl' );

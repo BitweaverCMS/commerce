@@ -21,7 +21,7 @@
 //
 
 $obcontent = ob_get_contents();
-$gBitSmarty->assign_by_ref( 'bitcommerceAdmin', $obcontent );
+$gBitSmarty->assignByRef( 'bitcommerceAdmin', $obcontent );
 ob_end_clean();
 
 $gBitSystem->mLayout = array( 1 );

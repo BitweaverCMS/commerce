@@ -31,7 +31,7 @@ $gBitSmarty->assign( 'listProducts', $userProducts );
 $gBitSmarty->assign( 'listTitle', tra( 'Products by' ).' '.$gQueryUser->getDisplayName() );
 $gBitSmarty->assign( 'listInfo', $listHash );
 
-$gBitSmarty->assign_by_ref( 'gQueryUser', $gQueryUser );
+$gBitSmarty->assignByRef( 'gQueryUser', $gQueryUser );
 
 print $gBitSmarty->fetch( 'bitpackage:bitcommerce/list_products.tpl' );
 

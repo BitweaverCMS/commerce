@@ -292,7 +292,7 @@ class CommerceCustomer extends CommerceBase {
 			if( $gBitUser->login( $_REQUEST['email'], $_REQUEST['password'], FALSE, FALSE ) ) {
 				$_REQUEST['customers_id'] = $gBitUser->mUserId;
 			} else {
-				$gBitSmarty->assign_by_ref( 'userErrors', $newUser->mErrors );
+				$gBitSmarty->assignByRef( 'userErrors', $newUser->mErrors );
 			}
 		} else {
 			$newUser = new BitPermUser();
@@ -303,7 +303,7 @@ class CommerceCustomer extends CommerceBase {
 				$this->syncBitUser( $gBitUser->mInfo );
 				$this->load();
 			} else {
-				$gBitSmarty->assign_by_ref( 'userErrors', $newUser->mErrors );
+				$gBitSmarty->assignByRef( 'userErrors', $newUser->mErrors );
 			}
 		}
 		return( count( $gBitUser->mErrors ) == 0 );
