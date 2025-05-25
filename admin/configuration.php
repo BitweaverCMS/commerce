@@ -111,7 +111,7 @@
 ?>
 								<td class="dataTableContent"><?php echo $configuration->fields['configuration_title']; ?></td>
 								<td class="dataTableContent"><?php echo htmlspecialchars($cfgValue); ?></td>
-								<td class="dataTableContent" align="right"><?php if ( (isset($cInfo) && is_object($cInfo)) && ($configuration->fields['configuration_id'] == $cInfo->configuration_id) ) { echo '<i class="fa fal fa-circle-arrow-right"></i>'; } else { echo '<a href="' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $configuration->fields['configuration_id']) . '"><i class="fa fal fa-info-sign"></i></a>'; } ?>&nbsp;</td>
+								<td class="dataTableContent" align="right"><?php if ( (isset($cInfo) && is_object($cInfo)) && ($configuration->fields['configuration_id'] == $cInfo->configuration_id) ) { echo '<i class="fa fal fa-circle-arrow-right"></i>'; } else { echo '<a href="' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $configuration->fields['configuration_id']) . '"><i class="fa fal fa-info-circle"></i></a>'; } ?>&nbsp;</td>
 							</tr>
 <?php
 		$configuration->MoveNext();

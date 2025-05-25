@@ -73,40 +73,19 @@ if (zen_not_null($action)) {
 			break;
 	}
 }
-?>
-<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html <?php echo HTML_PARAMS; ?>>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
-<title><?php echo TITLE; ?></title>
-</head>
-<body>
-<!-- header //-->
-<?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
-<!-- header_eof //-->
 
-<!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-<tr>
-<!-- body_text //-->
-	<td width="100%" valign="top"><table>
-		<tr>
-			<td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-				<tr>
-					<td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-					<td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-				</tr>
-			</table></td>
-		</tr>
-		<tr>
-			<td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-				<tr>
-					<td valign="top"><table>
-						<tr class="dataTableHeadingRow">
-							<td class="dataTableHeadingContent"><?php echo TABLE_HEADING_COUNTRY_NAME; ?></td>
-							<td class="dataTableHeadingContent" align="center" colspan="2"><?php echo TABLE_HEADING_COUNTRY_CODES; ?></td>
-							<td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-						</tr>
+require(DIR_FS_ADMIN_INCLUDES . 'header.php');
+
+?>
+
+<div class="row">
+	<div class="col-md-8">
+		<table class="table table-hover">
+			<tr class="dataTableHeadingRow">
+				<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_COUNTRY_NAME; ?></th>
+				<th class="dataTableHeadingContent" align="center" colspan="2"><?php echo TABLE_HEADING_COUNTRY_CODES; ?></th>
+				<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
+			</tr>
 <?php
 	$countries_query_numrows = 20;
 	$countries_query_raw = "select `countries_id`, `countries_name`, `countries_iso_code_2`, `countries_iso_code_3`, `address_format_id` from " . TABLE_COUNTRIES . " order by `countries_name`";
@@ -125,7 +104,7 @@ if (zen_not_null($action)) {
 							<td class="dataTableContent"><?php echo $countries->fields['countries_name']; ?></td>
 							<td class="dataTableContent" align="center" width="40"><?php echo $countries->fields['countries_iso_code_2']; ?></td>
 							<td class="dataTableContent" align="center" width="40"><?php echo $countries->fields['countries_iso_code_3']; ?></td>
-							<td class="dataTableContent" align="right"><?php if (isset($cInfo) && is_object($cInfo) && ($countries->fields['countries_id'] == $cInfo->countries_id) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_COUNTRIES, 'cID=' . $countries->fields['countries_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+							<td class="dataTableContent" align="right"><?php if (isset($cInfo) && is_object($cInfo) && ($countries->fields['countries_id'] == $cInfo->countries_id) ) { echo '<i class="fa fal fa-circle-arrow-right"></i>'; } else { echo '<a href="' . zen_href_link_admin(FILENAME_COUNTRIES, 'cID=' . $countries->fields['countries_id']) . '"><i class="fa fal fa-info-circle"></i></a>'; } ?>&nbsp;</td>
 						</tr>
 <?php
 		$countries->MoveNext();
@@ -133,7 +112,9 @@ if (zen_not_null($action)) {
 ?>
 							</td>
 						</tr>
-					</table></td>
+					</table>
+	</div>
+	<div class="col-md-4">
 <?php
 $heading = array();
 $contents = array();
@@ -192,18 +173,13 @@ if ( (zen_not_null($heading)) && (zen_not_null($contents)) ) {
 }
 ?>
 				</tr>
-			</table></td>
-		</tr>
-	</table></td>
-<!-- body_text_eof //-->
-</tr>
-</table>
-<!-- body_eof //-->
+				</table>
+	</div>
+</div>
 
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
-<br>
 </body>
 </html>
 <?php require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); ?>
