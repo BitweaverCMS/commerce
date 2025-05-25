@@ -316,5 +316,5 @@ function commerce_country_select( $pParams ) {
 }
 
 global $gBitSmarty;
-$gBitSmarty->register_function( 'commerce_country_select', 'commerce_country_select' );
+$gBitSmarty->registerPlugin( 'function', 'commerce_country_select', 'commerce_country_select' );
 
