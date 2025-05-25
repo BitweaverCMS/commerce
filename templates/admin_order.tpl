@@ -234,20 +234,11 @@ function getShippingQuotes( pOrderId ) {
 	</td>
 </tr>
 {/if}
-{include_php file="`$smarty.const.DIR_WS_MODULES`orders_download.php"}
 </table>
 
-{jstabs}
-{php}
-	global $fulfillmentFiles;
+{include file="bitpackage:bitcommerce/mod_admin_order_download.tpl"}
+{include file="bitpackage:bitcommerce/mod_admin_order_fulfillment.tpl"}
 
-	if( !empty( $fulfillmentFiles ) ) {
-		foreach( $fulfillmentFiles as $fulfillmentFile )  {
-			include $fulfillmentFile;
-		}
-	}
-{/php}
-{/jstabs}
 
 
 <div class="row">
