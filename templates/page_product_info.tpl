@@ -82,7 +82,7 @@
 
 				{if $gBitProduct->getField('products_discount_type')}
 					<div class="form-group">
-						{include_php file=$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_path}
+						{*include_php file=$smarty.const.FILENAME_PRODUCTS_DISCOUNT_PRICES|zen_get_module_path*}
 					</div>
 				{/if}
 
@@ -111,7 +111,7 @@
 				</div>
 				{if $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '2' || $smarty.const.PRODUCT_INFO_PREVIOUS_NEXT == '3'}
 				<div class="form-group">
-					{include_php file="`$smarty.const.BITCOMMERCE_PKG_INCLUDE_PATH`templates/template_default/common/tpl_products_next_previous.php"}
+					{*include_php file="`$smarty.const.BITCOMMERCE_PKG_INCLUDE_PATH`templates/template_default/common/tpl_products_next_previous.php"*}
 				</div>
 				{/if}
 
