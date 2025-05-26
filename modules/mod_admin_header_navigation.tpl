@@ -40,7 +40,7 @@
 	</ul>
 
 	<div class="navbar-right hidden-sm">
-		<form action="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}admin/index.php" class="navbar-form form-search" role="search">
+		<form action="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}" class="navbar-form form-search" role="search">
 			<div class="input-group input-group-sm">
 				<input type="text" name="lookup_order_id" class="form-control" placeholder="Order #" name="srch-term" id="srch-term">
 				<div class="input-group-btn input-group-sm">
