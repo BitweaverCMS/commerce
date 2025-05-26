@@ -47,20 +47,60 @@ function getShippingQuotes( pOrderId ) {
 {strip}
 
 <header>
-	<div class="pull-right">
-		<span class="date inline-block">{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}</span>
-		{if $order->info.estimated_ship_date} &bull; <span class="date inline-block">{tr}Est Ship{/tr}: {$order->info.estimated_ship_date|substr:0:10}</span> {/if}
-		{if $order->info.estimated_arrival_date} &bull; <span class="date inline-block">{tr}Est Arrival{/tr}: {$order->info.estimated_arrival_date|substr:0:10}</span> {/if}
-		&bull; <span class="link" onclick="$('#new-deadline-block').toggle()">{if $order->info.deadline_date} <span class="badge alert-danger" >{tr}DEADLINE{/tr}: {$order->info.deadline_date|substr:0:10}</span> {else} <span class="btn btn-xs btn-default">{booticon iname="fa-plus"} Deadline</span> {/if}</span>
+	<div class="floaticon pull-right">
 		<div class="btn-group">
-			<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}">&laquo; {tr}Previous{/tr}</a></button>
-			<button class="btn btn-default"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}">{tr}Next{/tr} &raquo;</a></button>
+			<button class="btn btn-default btn-xs"><a class="link pointer" onclick="BitBase.toggleElementDisplay('combine-order-form','block'); return false;" title="{tr}Combine{/tr}">{booticon iname="fa-code-merge"}</a></button>
+			<button class="btn btn-default btn-xs"><a onclick="BitBase.toggleElementDisplay('email-receipt-form','block');return false;" title="{tr}Email Receipt{/tr}">{booticon iname="fa-paper-plane"}</a></button>
+			<button class="btn btn-default btn-xs"><a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}" title="{tr}Invoice{/tr}">{booticon iname="fa-file-invoice-dollar"}</a></button>
+			<button class="btn btn-default btn-xs"><a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}&amp;type=packing" title="{tr}Packing Slip{/tr}">{booticon iname="fa-file-invoice"}</a></button>
+			<button class="btn btn-default btn-xs"><a href="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php?oID={$smarty.request.oID}&amp;email_to={$order->customer.email_address|escape:'url'}" title="{tr}Send Gift Certificate{/tr}">{booticon iname="fa-gift"}</a></button>
+			<button class="btn btn-default btn-xs"><a href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete" title="{tr}Delete{/tr}">{booticon iname="fa-trash"}</a></button>
 		</div>
 	</div>
-	<h1 class="inline-block">{$smarty.const.HEADING_TITLE} {if $orderReviews}<span onclick="BitBase.toggleElementDisplay('order-review-{$order->mOrdersId}')" class="badge">{$orderReviews|count} @ {booticon iname="fa-star"} {foreach name=orderReviews from=$orderReviews.results item=$reviewHash}{$reviewHash.reviews_rating}{if !$smarty.foreach.orderReviews.last}, {/if}{/foreach}</span>{/if}</h1>
+	<h1 class="inline-block">
+			<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID-1}" title="{tr}Previous Order{/tr}" >&laquo;</a>{$smarty.const.HEADING_TITLE}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$smarty.request.oID+1}" title="{tr}Next Order{/tr}">&raquo;</a>
+
+{if $orderReviews}<span onclick="BitBase.toggleElementDisplay('order-review-{$order->mOrdersId}')" class="badge">{$orderReviews|count} @ {booticon iname="fa-star"} {foreach name=orderReviews from=$orderReviews.results item=$reviewHash}{$reviewHash.reviews_rating}{if !$smarty.foreach.orderReviews.last}, {/if}{/foreach}</span>{/if}</h1>
+	<div class="text-left">
+		<span class="link" onclick="$('#new-deadline-block').toggle()">{if $order->info.deadline_date} <span class="badge alert-danger" >{booticon iname="fa-calendar-day"} {tr}DEADLINE{/tr}: {$order->info.deadline_date|substr:0:10}</span> {else} <span class="btn btn-xs btn-default error" title="{tr}Order Deadline{/tr}">{booticon iname="fa-calendar-plus"}</span> {/if}</span>
+		&bull; <span class="date inline-block">{$order->info.date_purchased|date_format:'%Y-%m-%d %I:%M:%S %p'}</span>
+		{if $order->info.estimated_ship_date} &bull; <span class="date inline-block">{tr}Est Ship{/tr}: {$order->info.estimated_ship_date|substr:0:10}</span> {/if}
+		{if $order->info.estimated_arrival_date} &bull; <span class="date inline-block">{tr}Est Arrival{/tr}: {$order->info.estimated_arrival_date|substr:0:10}</span> {/if}
+	</div>
+
+		<div style="display:none" id="combine-order-form">
+		{form class="form-inline box" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
+			{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" class="form-control input-small"/> <label class="checkbox-inline">
+				<input type="checkbox" name="combine_notify" value="on" checked="checked"/> {tr}Notify Customer{/tr}
+			</label> <input class="btn btn-default btn-sm" type="submit" name="combine" value="{tr}Combine{/tr}"/>
+			<div><small>Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</small></div>
+		{/form}
+		</div>
+
+		{form id="email-receipt-form" class="box" style="display:none" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=email"}
+			<div class="form-group">
+				{formlabel label="Email Order Receipt"}
+				{forminput}
+					<input type="email" name="email" class="form-control input-small" id="recipient-list" placeholder="jane.doe@example.com" value="{$order->customer.email_address}">
+					{formhelp note="You can enter multiple addresses, separated by a comma."}
+				{/forminput}
+				<div class="radio">
+					<label>
+						<input type="radio" name="email_format" value="HTML" checked="checked">{tr}HTML{/tr}
+					</label>
+					<label class="radio">
+						<input type="radio" name="email_format" value="TEXT">{tr}Text{/tr}
+					</label>
+					{formhelp note="Email Format"}
+				</div>
+			</div>
+			<div class="form-group"> 
+				<button type="submit" class="btn btn-default btn-sm">Email Receipt</button>
+			</div>
+		{/form}
 
 <div id="new-deadline-block" class="form-inline" style="display:none">
-<form class="status" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;action=update_deadline" method="post"><div style="display:inline">
+<form class="status box" name="status" action="{$smarty.const.BITCOMMERCE_PKG_URL}/admin/orders.php?oID={$smarty.request.oID}&amp;action=update_deadline" method="post"><div style="display:inline">
 	{include file="bitpackage:bitcommerce/page_checkout_deadline_inc.tpl" deadline=$gBitOrder->info.deadline_date}
 <input class="btn btn-sm btn-default" type="submit" name="update_deadline" value="Update Deadline">
 </form>
@@ -237,58 +277,5 @@ function getShippingQuotes( pOrderId ) {
 </table>
 
 {include file="bitpackage:bitcommerce/mod_admin_order_download.tpl"}
-{include file="bitpackage:bitcommerce/mod_admin_order_fulfillment.tpl"}
-
-
-
-<div class="row">
-	<div class="col-xs-12">
-		<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}">{tr}Invoice{/tr}</a> <a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}invoice.php?oID={$smarty.request.oID}&amp;type=packing">{tr}Packing Slip{/tr}</a> <form class="form-inline inline" method="post" action="{$smarty.server.BITCOMMERCE_PKG_ADMIN_URI}gv_mail.php">
-			<input type="hidden" name="email_to" value="{$order->customer.email_address}" />
-			<input type="hidden" name="oID" value="{$smarty.request.oID}" />
-			<input class="btn btn-default" type="submit" name="Send" value="Send Gift Certificate" />
-		</form> 
-		<a class="btn btn-default" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URI}orders.php?oID={$smarty.request.oID}&amp;action=delete">{tr}Delete{/tr}</a>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12">
-		<span class="link pointer" onclick="BitBase.toggleElementDisplay('combine-order-form','block')">{tr}Combine this Order{/tr}</span>
-		<div style="display:none" id="combine-order-form">
-		{form class="form-inline box" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=combine"}
-			{tr}Combine with order{/tr}: <input type="text" name="combine_order_id" class="form-control input-small"/> <label class="checkbox-inline">
-				<input type="checkbox" name="combine_notify" value="on" checked="checked"/> {tr}Notify Customer{/tr}
-			</label> <input class="btn btn-default btn-sm" type="submit" name="combine" value="{tr}Combine{/tr}"/>
-			<div><small>Both orders must have status {$smarty.const.DEFAULT_ORDERS_STATUS_ID|zen_get_order_status_name}. This order will deleted.</small></div>
-		{/form}
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12">
-		<span class="link pointer" onclick="BitBase.toggleElementDisplay('email-receipt-form','block')">Email Receipt</span>
-		{form id="email-receipt-form" class="box" style="display:none" method="post" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`orders.php?oID=`$smarty.request.oID`&amp;action=email"}
-			<div class="form-group">
-				{formlabel label="Email Order Receipt"}
-				{forminput}
-					<input type="email" name="email" class="form-control input-small" id="recipient-list" placeholder="jane.doe@example.com" value="{$order->customer.email_address}">
-					{formhelp note="You can enter multiple addresses, separated by a comma."}
-				{/forminput}
-				<div class="radio">
-					<label>
-						<input type="radio" name="email_format" value="HTML" checked="checked">{tr}HTML{/tr}
-					</label>
-					<label class="radio">
-						<input type="radio" name="email_format" value="TEXT">{tr}Text{/tr}
-					</label>
-					{formhelp note="Email Format"}
-				</div>
-			</div>
-			<div class="form-group"> 
-				<button type="submit" class="btn btn-default btn-sm">Email Receipt</button>
-			</div>
-		{/form}
-	</div>
-</div>
 
 {/strip} 
