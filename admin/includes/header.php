@@ -129,9 +129,11 @@ SPIDERKILL for obvious reasons...
   }
 
 if( defined( 'HEADING_TITLE' ) ) {
+/*
+// Admin Pages need to handle their own TITLE as many have additional items in the <header> tag like icon toolbars, etc
 ?>
 <header>
 	<h1 class="page-header"><?php echo HEADING_TITLE; ?></h1>
 </header>
-<?php
+<?php*/
 }
