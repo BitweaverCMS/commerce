@@ -1,5 +1,3 @@
-{include file="bitpackage:bitcommerce/admin_header_inc.tpl"}
-
 {strip}
 <div class="admin bitcommerce coupons">
 	<header>
