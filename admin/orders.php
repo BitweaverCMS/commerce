@@ -319,20 +319,22 @@ if( $order_exists ) {
 	print '<div class="row">';
 	print '<div class="col-md-8">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order.tpl' );
 
-global $gBitUser;
-// only super admin's can monkey with 
-if( $gBitUser->hasPermission( 'p_admin' ) ) {
-	// scan fulfillment modules
-	$fulfillmentFiles = array();
-	$fulfillDir = DIR_FS_MODULES . 'fulfillment/';
-	if( is_readable( $fulfillDir ) && $fulfillHandle = opendir( $fulfillDir ) ) {
-		while( $ffFile = readdir( $fulfillHandle ) ) {
-			if( is_file( $fulfillDir.$ffFile.'/admin_order_inc.php' ) ) {
-				include( $fulfillDir.$ffFile.'/admin_order_inc.php' );
+	include( DIR_WS_MODULES."orders_download.php" );
+
+	global $gBitUser;
+	// only super admin's can monkey with 
+	if( $gBitUser->hasPermission( 'p_admin' ) ) {
+		// scan fulfillment modules
+		$fulfillmentFiles = array();
+		$fulfillDir = DIR_FS_MODULES . 'fulfillment/';
+		if( is_readable( $fulfillDir ) && $fulfillHandle = opendir( $fulfillDir ) ) {
+			while( $ffFile = readdir( $fulfillHandle ) ) {
+				if( is_file( $fulfillDir.$ffFile.'/admin_order_inc.php' ) ) {
+					include( $fulfillDir.$ffFile.'/admin_order_inc.php' );
+				}
 			}
 		}
 	}
-}
 
 	print '</div>';
 	print '<div class="col-md-4 pt-1">'.$gBitSmarty->fetch( 'bitpackage:bitcommerce/admin_order_status_history_inc.tpl' ).'</div>';

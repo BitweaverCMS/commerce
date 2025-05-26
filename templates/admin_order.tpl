@@ -275,7 +275,4 @@ function getShippingQuotes( pOrderId ) {
 </tr>
 {/if}
 </table>
-
-{include file="bitpackage:bitcommerce/mod_admin_order_download.tpl"}
-
 {/strip} 
