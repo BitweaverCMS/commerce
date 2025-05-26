@@ -159,10 +159,6 @@ function check_form(form_name) {
 {/literal}
 //--></script>
 
-{if $smarty.session.html_editor_preference_status=="FCKEDITOR"}{include_php file="`$smarty.const.DIR_WS_INCLUDES`fckeditor.php"}{/if}
-{if $smarty.session.html_editor_preference_status=="HTMLAREA"}{include_php file="`$smarty.const.DIR_WS_INCLUDES`htmlarea.php"}{/if}
-
-
 {form name="mail" action="`$smarty.const.BITCOMMERCE_PKG_ADMIN_URI`gv_mail.php?action=preview" method="post" onsubmit="return check_form(mail);"}
 <div class="form-group">
 	{formlabel label="Email To"}
