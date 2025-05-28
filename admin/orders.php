@@ -65,10 +65,11 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				}
 				if( !empty( $optionValuesList ) ) {
 					$gBitSmarty->loadPlugin( 'smarty_function_html_options' );
+					$nullTempalte = new Smarty_Internal_Template( "bitpackage:themes/null.tpl", $gBitSmarty );
 					print smarty_function_html_options(array( 'options'			=> $optionValuesList,
 																'name'			=> 'add_order_povid',
 																'class'			=> 'form-control',
-																'print_result'	=> FALSE ), $gBitSmarty );
+																'print_result'	=> FALSE ), $nullTempalte );
 				}
 				if( $optionValues[$_REQUEST['new_option_id']]['products_options_types_id'] == PRODUCTS_OPTIONS_TYPE_TEXT ) {
 					print '<input type="text" class="form-control" name="add_order_povid_text">';
