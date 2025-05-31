@@ -188,6 +188,6 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0 && !empty( $_REQUEST['products_id'] ) ) {
 <?php
 */
 		}
-// 		print $gBitSmarty->fetch( 'bitpackage:bitcommerce/commerce_nav.tpl' );
+// 		print $gBitSmarty->fetch( 'bitpackage:bitcommerce/commercenav.tpl' );
 
 }
