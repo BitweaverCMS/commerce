@@ -199,7 +199,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_configuration' => "
   configuration_id I4 PRIMARY AUTO,
   configuration_title C(255) NOTNULL,
   configuration_key C(255) UNIQUE,
-  configuration_value X2 NOTNULL,
+  configuration_value X2,
   configuration_description X2 NOTNULL,
   configuration_group_id I4,
   sort_order I2,
