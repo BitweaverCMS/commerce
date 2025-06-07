@@ -52,6 +52,7 @@ class CommerceTemporaryCart extends CommerceShoppingCart {
 				}
 			}
 		}
+		return empty( $this->mErrors );
 	}
 
 	protected function setupCartFromHash( &$pOrderHash ) {
