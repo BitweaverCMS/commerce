@@ -542,21 +542,6 @@ class CommerceOrder extends CommerceOrderBase {
 		return( count( $this->mHistory ) );
 	}
 
-	public static function orderFromHash( &$pOrderHash, $pSessionParams ) {
-		$ret = FALSE;
-
-		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceTemporaryCart.php');
-
-		$hashCart = new CommerceTemporaryCart();
-		$hashCart->loadFromHash( $pOrderHash );
-		if( empty( $hashCart->mErrors ) ) {
-			$ret = static::orderFromCart( $hashCart, $pSessionParams );
-		}
-
-		return $ret;
-	}
-
-
 	public static function orderFromCart( $pCart, &$pSessionParams ) {
 		$ret = new order();
 		$ret->loadFromCart( $pCart, $pSessionParams );
@@ -589,7 +574,7 @@ class CommerceOrder extends CommerceOrderBase {
 
 			if( isset( $quote['error'] ) || !($quoteHash = $gCommerceShipping->quoteToHash( $quote )) ) {
 				$pSessionParams['shipping'] = '';
-				$this->mErrors['shipping'] = 'Could not quote shipping method: '.$pSessionParams['shipping_quote'];
+				$this->mErrors['shipping'] = 'Could not quote shipping method: '.$pSessionParams['shipping_quote'].' ['.BitBase::getParameter( $quote, 'error', 'Unknown quote error' ).']';
 			} else {
 				$pSessionParams['shipping'] = $quoteHash;
 			}
@@ -744,6 +729,7 @@ class CommerceOrder extends CommerceOrderBase {
 			$this->info['orders_status_id'] = $zeroBalanceStatusId ;
 		}
 
+		return count( $this->mErrors ) == 0;
 	}
 
 	public function getNextOrderId() {
