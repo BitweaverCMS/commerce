@@ -25,7 +25,7 @@
 			<a data-toggle="dropdown" class="dropdown-toggle" href="#">{tr}Modules{/tr} <b class="caret"></b></a>
 			<ul class="dropdown-menu">
 				{foreach from=$moduleMenu item=$moduleSubMenu key=$moduleClass}
-				<li class="dropdown-submenu"><a tabindex="-1" href="{$smarty.const.FILENAME_MODULES|zen_href_link_admin:"set=`$file`"}">{tr}{"_"|str_replace:' ':$moduleClass|ucwords}{/tr}</a><ul class="dropdown-menu">
+				<li class="dropdown-submenu"><a tabindex="-1" href="{$smarty.const.FILENAME_MODULES|zen_href_link_admin:"set=`$moduleClass`"}">{tr}{"_"|str_replace:' ':$moduleClass|ucwords}{/tr}</a><ul class="dropdown-menu">
 					{foreach from=$moduleSubMenu item=$subMenu key=$moduleName}
 						<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}modules.php?set={$moduleClass}&amp;module={$subMenu.module_name}">{$subMenu.menu_title}</a></li>
 					{/foreach}
