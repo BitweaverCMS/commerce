@@ -27,21 +27,9 @@
 define('DATE_FORMAT_SHORT', '%m/%d/%Y');  // this is used for strftime()
 define('DATE_FORMAT_LONG', '%A %d %B, %Y'); // this is used for strftime()
 define('DATE_FORMAT', 'm/d/Y'); // this is used for date()
-define('PHP_DATE_TIME_FORMAT', 'm/d/Y H:i:s'); // this is used for date()
 define('DATE_TIME_FORMAT', DATE_FORMAT_SHORT . ' %H:%M:%S');
+define('PHP_DATE_TIME_FORMAT', 'm/d/Y H:i:s'); // this is used for date()
 define('DATE_FORMAT_SPIFFYCAL', 'MM/dd/yyyy');  //Use only 'dd', 'MM' and 'yyyy' here in any order
-
-////
-// Return date in raw format
-// $date should be in format mm/dd/yyyy
-// raw date is in format YYYYMMDD, or DDMMYYYY
-function zen_date_raw($date, $reverse = false) {
-  if ($reverse) {
-    return substr($date, 3, 2) . '.' . substr($date, 0, 2) . '.' . substr($date, 6, 4);
-  } else {
-    return substr($date, 6, 4) . '-' . substr($date, 0, 2) . '-' . substr($date, 3, 2);
-  }
-}
 
 // Global entries for the <html> tag
 define('HTML_PARAMS','dir="ltr" lang="en"');

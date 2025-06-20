@@ -287,7 +287,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 	function email_collect_extra_info($from, $email_from, $login, $login_email, $login_phone='') {
 
 // get host_address from either session or one time for both email types to save server load
-	if (!$_SESSION['customers_host_address']) {
+	if( empty( $_SESSION['customers_host_address'] ) ) {
 		if (SESSION_IP_TO_HOST_ADDRESS == 'true') {
 			$email_host_address = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 		} else {

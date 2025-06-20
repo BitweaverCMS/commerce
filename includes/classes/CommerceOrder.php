@@ -1183,7 +1183,7 @@ class CommerceOrder extends CommerceOrderBase {
 
 		$language_page_directory = DIR_WS_LANGUAGES . $gBitCustomer->getLanguage() . '/' ;
 		require_once( BITCOMMERCE_PKG_PATH . $language_page_directory . 'checkout_process.php' );
-		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'languages/en.php' );
+//		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'languages/en.php' );
 		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/functions_customers.php' );
 
 		if( empty( $pEmailRecipient ) ) {
@@ -1243,7 +1243,7 @@ class CommerceOrder extends CommerceOrderBase {
 							$currencies->display_price( $this->contents[$cartItemKey]['final_price'], $this->contents[$cartItemKey]['tax'], $this->contents[$cartItemKey]['products_quantity'], $this->getField( 'currency' ), $this->getField( 'currency_value' ) ) .
 							($this->contents[$cartItemKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$cartItemKey]['onetime_charges'], $this->contents[$cartItemKey]['tax'], 1) : '');
 			foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j ) {
-				$email_order .= "\n    + " . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['products_options_name']) . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['value']);
+				$email_order .= "\n    + " . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['products_options']) . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['products_options_values']);
 			}
 			$email_order .= "\n\n";
 		}

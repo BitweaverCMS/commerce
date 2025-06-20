@@ -226,7 +226,7 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				break;
 			case 'email':
 				if( validate_email_syntax( $_REQUEST['email'] ) ) {
-					$order->sendOrderEmail( $order->mOrdersId, $_REQUEST['email'], $_REQUEST['email_format'] );
+					$order->sendOrderEmail( $_REQUEST['email'], $_REQUEST['email_format'] );
 					$messageStack->add_session('Copy of receipt emailed to '.$_REQUEST['email'], 'success');
 					bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
 				}
