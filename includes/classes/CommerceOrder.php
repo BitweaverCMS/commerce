@@ -870,7 +870,7 @@ class CommerceOrder extends CommerceOrderBase {
 							'estimated_ship_date' => $this->info['estimated_ship_date'],
 							'coupon_code' => $this->info['coupon_code'],
 							'date_purchased' => $this->mDb->NOW(),
-							'orders_status_id' => $this->info['orders_status_id'],
+							'orders_status_id' => $this->getField( 'orders_status_id', DEFAULT_ORDERS_STATUS_ID ),
 							'order_total' => $this->info['total'],
 							'order_tax' => $this->info['tax'],
 							'amount_due' => BitBase::getParameter( $this->info, 'amount_due', NULL ),
