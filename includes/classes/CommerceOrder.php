@@ -201,7 +201,7 @@ class CommerceOrder extends CommerceOrderBase {
 							WHERE copa.`orders_id`=?";
 					$orderAttributes = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
 					foreach( array_keys( $orderAttributes ) as $ordersProductsAttId ) {
-						$ret[$row['orders_id']]['products'][$orderAttributes[$ordersProductsAttId]['orders_products_id']]['attributes'][$orderAttributes[$ordersProductsAttId]['products_options_values_id']] = $orderAttributes[$ordersProductsAttId]['products_options_values'];
+						$ret[$row['orders_id']]['products'][$orderAttributes[$ordersProductsAttId]['orders_products_id']]['attributes'][$orderAttributes[$ordersProductsAttId]['products_options_values_id']] = $orderAttributes[$ordersProductsAttId]['products_options_values_name'];
 						
 					}
 				}
@@ -385,8 +385,8 @@ class CommerceOrder extends CommerceOrderBase {
 						foreach( $attributes as $attribute ) {
 							$this->contents[$productsKey]['attributes'][] = array( 'products_options_id' => $attribute['products_options_id'],
 																					'products_options_values_id' => $attribute['products_options_values_id'],
-																					'products_options' => $attribute['products_options'],
-																					'products_options_values' => $attribute['products_options_values'],
+																					'products_options_name' => $attribute['products_options_name'],
+																					'products_options_values_name' => $attribute['products_options_values_name'],
 																					'price_prefix' => $attribute['price_prefix'],
 																					'final_price' => $this->getOrderAttributePrice( $attribute, $this->contents[$productsKey] ),
 																					'price' => $attribute['options_values_price'],
@@ -764,8 +764,8 @@ class CommerceOrder extends CommerceOrderBase {
 		if( !$this->hasPaymentDue( $paymentParams ) || (!empty( $paymentParams['payment_method'] ) && $paymentManager->processPayment( $this, $paymentParams, $pSessionParams )) ) {
 			// Set Payment status
 			$this->info['payment_method'] = $paymentParams['payment_method'];
-			$this->info['payment_module_code'] = $paymentParams['payment_module_code'];
-			$this->info['orders_status_id'] = $paymentParams['processed_orders_status_id'];
+			$this->info['payment_module_code'] = BitBase::getParameter( $paymentParams, 'payment_module_code' );
+			$this->info['orders_status_id'] = BitBase::getParameter( $paymentParams, 'processed_orders_status_id' );
 
 			$newOrderId = $this->create( $paymentParams, $pSessionParams );
 			$paymentParams['result']['orders_id'] = $this->mOrdersId;
@@ -1099,11 +1099,11 @@ class CommerceOrder extends CommerceOrderBase {
 					}
 
 					if( !empty( $attrHash['products_options_id'] ) ) {
-						//clr 030714 update insert query.	changing to use values form $order->contents for products_options_values.
+						//clr 030714 update insert query.	changing to use values form $order->contents for products_options_values_name.
 						$bindVars = array(  'orders_id' => $pOrdersId,
 											'orders_products_id' => $this->contents[$cartItemKey]['orders_products_id'],
-											'products_options' => $attrHash['products_options_name'],
-											'products_options_values' => $this->contents[$cartItemKey]['attributes'][$j]['value'],
+											'products_options_name' => $attrHash['products_options_name'],
+											'products_options_values_name' => $this->contents[$cartItemKey]['attributes'][$j]['value'],
 											'options_values_price' => $attrHash['options_values_price'],
 											'options_values_cogs' => $attrHash['options_values_cogs'],
 											'options_values_wholesale' => $attrHash['options_values_wholesale'],
@@ -1241,9 +1241,9 @@ class CommerceOrder extends CommerceOrderBase {
 		foreach( array_keys( $this->contents ) as $cartItemKey ) {
 			$email_order .=	$this->contents[$cartItemKey]['products_quantity'] . ' x ' . $this->contents[$cartItemKey]['name'] . ($this->contents[$cartItemKey]['model'] != '' ? ' (' . $this->contents[$cartItemKey]['model'] . ') ' : '') . ' = ' .
 							$currencies->display_price( $this->contents[$cartItemKey]['final_price'], $this->contents[$cartItemKey]['tax'], $this->contents[$cartItemKey]['products_quantity'], $this->getField( 'currency' ), $this->getField( 'currency_value' ) ) .
-							($this->contents[$cartItemKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$cartItemKey]['onetime_charges'], $this->contents[$cartItemKey]['tax'], 1) : '');
+			($this->contents[$cartItemKey]['onetime_charges'] !=0 ? "\n" . TEXT_ONETIME_CHARGES_EMAIL . $currencies->display_price($this->contents[$cartItemKey]['onetime_charges'], $this->contents[$cartItemKey]['tax'], 1) : '');
 			foreach( array_keys( $this->contents[$cartItemKey]['attributes'] ) as $j ) {
-				$email_order .= "\n    + " . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['products_options']) . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['products_options_values']);
+				$email_order .= "\n    + " . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['products_options_name']) . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['products_options_values_name']);
 			}
 			$email_order .= "\n\n";
 		}

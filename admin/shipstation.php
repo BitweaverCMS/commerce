@@ -198,7 +198,7 @@ switch( $_GET['action'] ) {
 						   echo "\t<Options>\n";
 
 						   foreach( $orderItem['attributes'] as $attr ) {
-							   echo "\t<Option><Name><![CDATA[" . $attr['products_options'] . "]]></Name><Value><![CDATA[" . $attr['products_options_values'] . "]]></Value></Option>\n";
+							   echo "\t<Option><Name><![CDATA[" . $attr['products_options'] . "]]></Name><Value><![CDATA[" . $attr['products_options_values_name'] . "]]></Value></Option>\n";
 						   }
 
 						   echo "\t</Options>\n";

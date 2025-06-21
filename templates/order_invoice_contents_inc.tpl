@@ -22,7 +22,7 @@
 		<ul class="">
 		{section loop=$ordersProduct.attributes name=a}
 			<li class="orders products attributes">
-				<small>{$ordersProduct.attributes[a].products_options}: {$ordersProduct.attributes[a].products_options_values}
+				<small>{$ordersProduct.attributes[a].products_options_name}: {$ordersProduct.attributes[a].products_options_values_name}
 					{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
 					{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$gCommerceCurrencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
 					{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert alert-warning">{tr}FREE{/tr}</span>{/if}

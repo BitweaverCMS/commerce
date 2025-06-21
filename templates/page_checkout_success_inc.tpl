@@ -25,7 +25,7 @@
 	{if $gBitSystem->getConfig('shopperapproved_site_id')}
 <script>{literal}
 	/* Include all products in the following object using the key value pairs: 'product id':'Product Name' */ 
-	var sa_products = { {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.products_options_id==1} '{$attr.products_options_values_id}':'{$attr.products_options_values}', {/if}{/foreach}{/foreach}{literal} };
+	var sa_products = { {/literal}{foreach from=$newOrder->contents item=product}{foreach from=$product.attributes item=attr}{if $attr.products_options_id==1} '{$attr.products_options_values_id}':'{$attr.products_options_values_name}', {/if}{/foreach}{/foreach}{literal} };
 	var sa_values = { {/literal}
 		"site":{$gBitSystem->getConfig('shopperapproved_site_id')}, 
 		"token":"{$gBitSystem->getConfig('shopperapproved_token')}", 

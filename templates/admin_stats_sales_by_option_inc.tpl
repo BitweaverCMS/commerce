@@ -11,7 +11,7 @@
 {foreach from=$statsByOption item=s key=typeId}
 	{assign var=productsOptionsId value=$s.products_options_id}
 	<tr>
-		<td class="item">{$s.products_options}: {$s.products_options_values_name}</td>
+		<td class="item">{$s.products_options_name}: {$s.products_options_values_name}</td>
 		<td class="item" style="text-align:right"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/list_orders.php?products_options_values_id={$s.products_options_values_id}{if $smarty.request.timeframe}&timeframe={$smarty.request.timeframe}&period={$smarty.request.period}{/if}">{$s.total_units}</a>
 		<td class="item">({math equation="round(units/tot,2) * 100" tot=$statsByOptionTotalUnits[$productsOptionsId] units=$s.total_units}%)</td>
 	</tr>

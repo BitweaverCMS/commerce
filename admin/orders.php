@@ -121,7 +121,7 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 			$gBitDb->StartTrans();
 			$delOption = $gBitDb->getRow( "SELECT * FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_products_attributes_id`=? AND `orders_id`=? ", array( $_REQUEST['del_ord_prod_att_id'], $_REQUEST['oID'] ) );
 			$rs = $gBitDb->query( "DELETE FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_products_attributes_id`=? AND `orders_id`=? ", array( $_REQUEST['del_ord_prod_att_id'], $_REQUEST['oID'] ) );
-			$order->updateStatus( array( 'comments' => 'Deleted Product Option: '.$delOption['products_options'].' => '.$delOption['products_options_values'].' ('.$_REQUEST['del_ord_prod_att_id'].')' ) );
+			$order->updateStatus( array( 'comments' => 'Deleted Product Option: '.$delOption['products_options_name'].' => '.$delOption['products_options_values_name'].' ('.$_REQUEST['del_ord_prod_att_id'].')' ) );
 			$gBitDb->CompleteTrans();
 			bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
 		}
@@ -135,8 +135,8 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				break;
 			case 'save_new_option':
 				$query = "SELECT 
-					cpo.`products_options_name` AS products_options,
-					cpa.`products_options_values_name` AS products_options_values,
+					cpo.`products_options_name`,
+					cpa.`products_options_values_name`,
 					options_values_price,
 					price_prefix,
 					product_attribute_is_free,
@@ -163,11 +163,11 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				$newOption['orders_id'] = $_REQUEST['oID'];
 				$newOption['orders_products_id'] = $_REQUEST['orders_products_id'];
 				if( !empty( trim( BitBase::getParameter( $_REQUEST, 'add_order_povid_text', NULL ) ) ) ) {
-					$newOption['products_options_values'] .= '~'.trim( $_REQUEST['add_order_povid_text'] );
+					$newOption['products_options_values_name'] .= '~'.trim( $_REQUEST['add_order_povid_text'] );
 				}
 
 				$gBitDb->associateInsert( TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $newOption );
-				$order->updateStatus( array( 'comments' => 'Added Product Option: '.$newOption['products_options'].' => '.$newOption['products_options_values'].' ('.$_REQUEST['add_order_povid'].')' ) );
+				$order->updateStatus( array( 'comments' => 'Added Product Option: '.$newOption['products_options_name'].' => '.$newOption['products_options_values_name'].' ('.$_REQUEST['add_order_povid'].')' ) );
 				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
 				break;
 			case 'save_new_product':

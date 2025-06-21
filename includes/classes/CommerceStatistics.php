@@ -187,14 +187,14 @@ class CommerceStatistics extends BitSingleton {
 			$bindVars[] = $pParamHash['delivery_country'];
 		}
 		
-		$sql = "SELECT $selectSql copa.`products_options_values_id` AS `hash_key`, copa.`products_options_values_id`, copa.`products_options_id`, copa.`products_options`, copa.`products_options_values` AS `products_options_values_name`, SUM(cop.`products_quantity` * copa.`options_values_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
+		$sql = "SELECT $selectSql copa.`products_options_values_id` AS `hash_key`, copa.`products_options_values_id`, copa.`products_options_id`, copa.`products_options_name`, copa.`products_options_values_name`, SUM(cop.`products_quantity` * copa.`options_values_price`) AS `total_revenue`, SUM(cop.`products_quantity`) AS `total_units`
 				FROM " . TABLE_ORDERS . " co
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS . " cop ON(co.`orders_id`=cop.`orders_id`)
 					INNER JOIN " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa ON(cop.`orders_products_id`=copa.`orders_products_id`)
 					INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
 				WHERE co.`orders_status_id` > 0 $whereSql
-				GROUP BY copa.`products_options_values_id`, copa.`products_options`, copa.`products_options_values`, copa.`products_options_id`
-				ORDER BY copa.`products_options`, SUM(cop.`products_quantity`) DESC, copa.`products_options_values`";
+				GROUP BY copa.`products_options_values_id`, copa.`products_options_name`, copa.`products_options_values_name`, copa.`products_options_id`
+				ORDER BY copa.`products_options_name`, SUM(cop.`products_quantity`) DESC, copa.`products_options_values_name`";
 
 		$ret = $this->mDb->getAll( $sql, $bindVars );
 		return $ret;
