@@ -58,14 +58,14 @@ if (zen_not_null($action)) {
 				}
 			}
 
-			zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $ordersStatusId));
+			zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'orders_status_id=' . $ordersStatusId));
 			break;
 		case 'deleteconfirm':
 			// demo active test
 			if (zen_admin_demo()) {
 				$_GET['action']= '';
 				$messageStack->add_session(ERROR_ADMIN_DEMO, 'caution');
-				zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page']));
+				zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS));
 			}
 			$ordersStatusId = zen_db_prepare_input($_GET['orders_status_id']);
 
@@ -78,7 +78,7 @@ if (zen_not_null($action)) {
 
 			$gBitDb->Execute("delete from " . TABLE_ORDERS_STATUS . " where orders_status_id = '" . zen_db_input($ordersStatusId) . "'");
 
-			zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page']));
+			zen_redirect(zen_href_link_admin(FILENAME_ORDERS_STATUS));
 			break;
 		case 'delete':
 			$ordersStatusId = zen_db_prepare_input($_GET['orders_status_id']);
@@ -114,13 +114,12 @@ if (zen_not_null($action)) {
 <div class="col-md-8">
 	<table class="table table-hover">
 		<tr class="dataTableHeadingRow">
-			<td class=""><?php echo tra( 'ID' ); if (empty($action)) { echo ' <a class="btn btn-default btn-xs" href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&action=new') . '">' . tra( 'New' ) . '</a>'; } ?></td>
+			<td class=""><?php echo tra( 'ID' ); if (empty($action)) { echo ' <a class="btn btn-default btn-xs" href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, '&action=new') . '">' . tra( 'New' ) . '</a>'; } ?></td>
 			<td><?php echo tra( 'Status Name' ); ?></td>
 			<td class="text-right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
 		</tr>
 <?php
 $ordersStatus_query_raw = "select `orders_status_id`, `orders_status_name` from " . TABLE_ORDERS_STATUS . " where `language_id` = '" . (int)$_SESSION['languages_id'] . "' order by `orders_status_id`";
-$ordersStatus_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $ordersStatus_query_raw, $ordersStatus_query_numrows);
 $ordersStatus = $gBitDb->Execute($ordersStatus_query_raw);
 while (!$ordersStatus->EOF) {
 	if ((!isset($_GET['orders_status_id']) || (isset($_GET['orders_status_id']) && ($_GET['orders_status_id'] == $ordersStatus->fields['orders_status_id']))) && !isset($oInfo) && (substr($action, 0, 3) != 'new')) {
@@ -128,9 +127,9 @@ while (!$ordersStatus->EOF) {
 	}
 
 	if (isset($oInfo) && is_object($oInfo) && ($ordersStatus->fields['orders_status_id'] == $oInfo->orders_status_id)) {
-		echo '									<tr id="defaultSelected" class="info" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id) . '\'">' . "\n";
+		echo '									<tr id="defaultSelected" class="info" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'orders_status_id=' . $oInfo->orders_status_id) . '\'">' . "\n";
 	} else {
-		echo '									<tr class="dataTableRow" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $ordersStatus->fields['orders_status_id']) . '\'">' . "\n";
+		echo '									<tr class="dataTableRow" onclick="document.location.href=\'' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'orders_status_id=' . $ordersStatus->fields['orders_status_id']) . '\'">' . "\n";
 	}
 
 	echo '<td class="dataTableContent currency">' . '#' . $ordersStatus->fields['orders_status_id'] . '</td><td class="dataTableContent">' . $ordersStatus->fields['orders_status_name'];
@@ -142,17 +141,13 @@ while (!$ordersStatus->EOF) {
 	}
 	echo "</td>\n";
 ?>
-			<td class="dataTableContent" align="right"><?php if (isset($oInfo) && is_object($oInfo) && ($ordersStatus->fields['orders_status_id'] == $oInfo->orders_status_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $ordersStatus->fields['orders_status_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+			<td class="dataTableContent" align="right"><?php if (isset($oInfo) && is_object($oInfo) && ($ordersStatus->fields['orders_status_id'] == $oInfo->orders_status_id)) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'orders_status_id=' . $ordersStatus->fields['orders_status_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
 						</tr>
 <?php
 	$ordersStatus->MoveNext();
 }
 ?>
 						</table>
-		<div class="row">
-			<div class="col-sm-6 text-left"><?php echo $ordersStatus_split->display_count($ordersStatus_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_ORDERS_STATUS); ?></div>
-							<div class="col-sm-6 text-right"><?php echo $ordersStatus_split->display_links($ordersStatus_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></div>
-					</div>
 </div>
 <div class="col-md-4">
 	<div class="panel-group">
@@ -164,7 +159,7 @@ switch ($action) {
 	case 'new':
 		$heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_NEW_ORDERS_STATUS . '</b>');
 
-		$contents = array('form' => zen_draw_form_admin('status', FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&action=insert'));
+		$contents = array('form' => zen_draw_form_admin('status', FILENAME_ORDERS_STATUS, 'action=insert'));
 		$contents[] = array('text' => TEXT_INFO_INSERT_INTRO);
 
 		$ordersStatus_inputs_string = '';
@@ -181,12 +176,12 @@ switch ($action) {
 		$contents[] = array('text' => '<label>'.tra( TEXT_INFO_ORDERS_STATUS_NAME ).'</label>' . $ordersStatus_inputs_string );
 		$contents[] = array('text' => '<label>'.tra( 'Status ID' ).'</label>'.zen_draw_input_field( 'orders_status_id', (int)BitBase::getParameter( $_REQUEST, 'orders_status_id' ), NULL, 'number' ) );
 		$contents[] = array('text' => zen_draw_selection_field( array( 'type' => 'checkbox', 'name'=>'new', 'label' => TEXT_SET_DEFAULT ) ) );
-		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_insert.gif', IMAGE_INSERT) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_insert.gif', IMAGE_INSERT) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 		break;
 	case 'edit':
 		$heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_EDIT_ORDERS_STATUS . '</b>');
 
-		$contents = array('form' => zen_draw_form_admin('status', FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id	. '&action=save'));
+		$contents = array('form' => zen_draw_form_admin('status', FILENAME_ORDERS_STATUS, 'orders_status_id=' . $oInfo->orders_status_id	. '&action=save'));
 		$contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
 
 		$ordersStatus_inputs_string = '';
@@ -206,21 +201,21 @@ switch ($action) {
 		if ($gCommerceSystem->getConfig( 'COMBINE_ORDERS_STATUS_ID' ) != $oInfo->orders_status_id) {
 			$contents[] = array('text' => '<br>' . zen_draw_selection_field( array( 'type' => 'checkbox', 'name'=>'combine', 'label' => 'Orders must have this status to be combined' ) ));
 		}
-		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'orders_status_id=' . $oInfo->orders_status_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 		break;
 	case 'delete':
 		$heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_ORDERS_STATUS . '</b>');
 
-		$contents = array('form' => zen_draw_form_admin('status', FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id	. '&action=deleteconfirm'));
+		$contents = array('form' => zen_draw_form_admin('status', FILENAME_ORDERS_STATUS, 'orders_status_id=' . $oInfo->orders_status_id	. '&action=deleteconfirm'));
 		$contents[] = array('text' => 'Are you sure you want to delete this order status?');
 		$contents[] = array('text' => '<br><b>' . $oInfo->orders_status_name . '</b>');
-		if ($remove_status) $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
+		if ($remove_status) $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'orders_status_id=' . $oInfo->orders_status_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 		break;
 	default:
 		if (isset($oInfo) && is_object($oInfo)) {
 			$heading[] = array('text' => '<b>' . $oInfo->orders_status_name . '</b>');
 
-			$contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'page=' . $_GET['page'] . '&orders_status_id=' . $oInfo->orders_status_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
+			$contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'orders_status_id=' . $oInfo->orders_status_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT) . '</a> <a href="' . zen_href_link_admin(FILENAME_ORDERS_STATUS, 'orders_status_id=' . $oInfo->orders_status_id . '&action=delete') . '">' . zen_image_button('button_delete.gif', IMAGE_DELETE) . '</a>');
 
 			$ordersStatus_inputs_string = '';
 			$languages = zen_get_languages();
@@ -242,8 +237,6 @@ if ( (zen_not_null($heading)) && (zen_not_null($contents)) ) {
 		</div>
 	</div>
 </div>
-asdfsda
-
 <!-- footer //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->

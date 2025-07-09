@@ -766,6 +766,12 @@ class CommerceOrder extends CommerceOrderBase {
 			$this->info['payment_method'] = $paymentParams['payment_method'];
 			$this->info['payment_module_code'] = BitBase::getParameter( $paymentParams, 'payment_module_code' );
 			$this->info['orders_status_id'] = BitBase::getParameter( $paymentParams, 'processed_orders_status_id' );
+			global $gBitUser, $gCommerceSystem;
+			if( $gBitUser->hasPermission( 'p_bitcommerce_auto_orders' ) ) {
+				if( $autoOrdersStatusId = $gCommerceSystem->getConfig( 'AUTOPROCESSING_ORDERS_STATUS_ID' ) ) {
+					$this->info['orders_status_id'] = $autoOrdersStatusId;
+				}
+			}
 
 			$newOrderId = $this->create( $paymentParams, $pSessionParams );
 			$paymentParams['result']['orders_id'] = $this->mOrdersId;

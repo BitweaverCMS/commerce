@@ -126,21 +126,23 @@
 
 	switch ($action) {
 		case 'edit':
-			$heading[] = array('text' => '<b>' . $cInfo->configuration_title . '</b>');
+			if (isset($cInfo) && is_object($cInfo)) {
+				$heading[] = array('text' => '<b>' . $cInfo->configuration_title . '</b>');
 
-			if ($cInfo->set_function) {
-				eval('$value_field = ' . $cInfo->set_function . '"' . htmlspecialchars($cInfo->configuration_value) . '");');
-			} else {
-				$value_field = zen_draw_input_field('configuration_value', $cInfo->configuration_value, 'size="60"');
-			}
+				if ($cInfo->set_function) {
+					eval('$value_field = ' . $cInfo->set_function . '"' . htmlspecialchars($cInfo->configuration_value) . '");');
+				} else {
+					$value_field = zen_draw_input_field('configuration_value', $cInfo->configuration_value, 'size="60"');
+				}
 
-			$contents = array('form' => zen_draw_form_admin('configuration', FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cInfo->configuration_id . '&action=save'));
-			if (ADMIN_CONFIGURATION_KEY_ON == 1) {
-				$contents[] = array('text' => '<strong>Key: ' . $cInfo->configuration_key . '</strong><br />');
+				$contents = array('form' => zen_draw_form_admin('configuration', FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cInfo->configuration_id . '&action=save'));
+				if (ADMIN_CONFIGURATION_KEY_ON == 1) {
+					$contents[] = array('text' => '<strong>Key: ' . $cInfo->configuration_key . '</strong><br />');
+				}
+				$contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
+				$contents[] = array('text' => '<br><b>' . $cInfo->configuration_title . '</b><br>' . $cInfo->configuration_description . '<br>' . $value_field);
+				$contents[] = array('align' => 'center', 'text' => zen_image_submit('button_update.gif', IMAGE_UPDATE) . '&nbsp;<a class="btn" href="' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cInfo->configuration_id) . '">' . tra( 'Cancel' ) . '</a>');
 			}
-			$contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
-			$contents[] = array('text' => '<br><b>' . $cInfo->configuration_title . '</b><br>' . $cInfo->configuration_description . '<br>' . $value_field);
-			$contents[] = array('align' => 'center', 'text' => zen_image_submit('button_update.gif', IMAGE_UPDATE) . '&nbsp;<a class="btn" href="' . zen_href_link_admin(FILENAME_CONFIGURATION, 'gID=' . $_GET['gID'] . '&cID=' . $cInfo->configuration_id) . '">' . tra( 'Cancel' ) . '</a>');
 			break;
 		default:
 			if (isset($cInfo) && is_object($cInfo)) {
