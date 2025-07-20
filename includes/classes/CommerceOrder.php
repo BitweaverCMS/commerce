@@ -766,6 +766,12 @@ class CommerceOrder extends CommerceOrderBase {
 			$this->info['payment_method'] = $paymentParams['payment_method'];
 			$this->info['payment_module_code'] = BitBase::getParameter( $paymentParams, 'payment_module_code' );
 			$this->info['orders_status_id'] = BitBase::getParameter( $paymentParams, 'processed_orders_status_id' );
+			global $gBitUser, $gCommerceSystem;
+			if( $gBitUser->hasPermission( 'p_bitcommerce_auto_orders' ) ) {
+				if( $autoOrdersStatusId = $gCommerceSystem->getConfig( 'AUTOPROCESSING_ORDERS_STATUS_ID' ) ) {
+					$this->info['orders_status_id'] = $autoOrdersStatusId;
+				}
+			}
 
 			$newOrderId = $this->create( $paymentParams, $pSessionParams );
 			$paymentParams['result']['orders_id'] = $this->mOrdersId;
@@ -1554,6 +1560,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 			$this->StartTrans();
 			// update new order with combined total and combined tax
 			$this->mDb->query( "UPDATE ". TABLE_ORDERS . " SET `order_total`=?, `order_tax`=? WHERE `orders_id`=?", array( ($sourceHash['order_total'] + $destHash['order_total']), ($sourceHash['order_tax'] + $destHash['order_tax']), $pParamHash['dest_orders_id'] ) );
+			$this->mDb->query( "UPDATE ". TABLE_ORDERS_PAYMENTS . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
 
 			// Move products and attributes over to new order
 			$this->mDb->query( "UPDATE ". TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );

@@ -74,7 +74,7 @@ class canadapost extends CommercePluginShippingBase {
 		$quotes = array();
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 			$methods = array();
-			$canadapostQuote = $this->_canadapostGetQuote( $pShipHash );
+			list( $responseCode, $canadapostQuote ) = $this->_canadapostGetQuote( $pShipHash );
 
 			// Example of using SimpleXML to parse xml response
 			libxml_use_internal_errors(true);
@@ -127,7 +127,9 @@ class canadapost extends CommercePluginShippingBase {
 				$this->sortQuoteMethods( $methods );
 				$quotes['methods'] = $methods;
 			} else {
-				if ($canadapostQuote != false) {
+				if( $responseCode != 200 ) {
+					$errmsg = $canadapostQuote;
+				} elseif ($canadapostQuote != false) {
 					$errmsg = tra( 'No shipping options are available for this delivery address using this shipping service.' );
 				} else {
 					$errmsg = tra( 'An unknown error occured with the Canada Post shipping calculations.' );
@@ -172,7 +174,7 @@ class canadapost extends CommercePluginShippingBase {
 			$response = '<?xml version="1.0" ?><eparcel><error><statusMessage>' . tra( 'Cannot reach Canada Post Server. You may reload this page in your browser to try again.' ). ($errno != 0 ? '<br /><strong>' . $errno . ' ' . $error . '</strong>' : '') . '</statusMessage></error></eparcel>';
 		}
 
-		return $response;
+		return array( $httpcode, $response );
 	}
 
 	/**

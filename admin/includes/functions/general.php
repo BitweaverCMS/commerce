@@ -1075,8 +1075,6 @@ bt(); die;
 	function zen_call_function($function, $parameter, $object = '') {
 		if ($object == '') {
 			return call_user_func($function, $parameter);
-		} elseif (PHP_VERSION < 4) {
-			return call_user_method($function, $object, $parameter);
 		} else {
 			return call_user_func(array($object, $function), $parameter);
 		}
@@ -1155,11 +1153,7 @@ bt(); die;
 
 // nl2br() prior PHP 4.2.0 did not convert linefeeds on all OSs (it only converted \n)
 	function zen_convert_linefeeds($from, $to, $string) {
-		if ((PHP_VERSION < "4.0.5") && is_array($from)) {
-			return ereg_replace('(' . implode('|', $from) . ')', $to, $string);
-		} else {
-			return str_replace($from, $to, $string);
-		}
+		return str_replace($from, $to, $string);
 	}
 
 	function zen_string_to_int($string) {

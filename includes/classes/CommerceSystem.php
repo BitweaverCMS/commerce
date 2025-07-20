@@ -75,7 +75,7 @@ class CommerceSystem extends BitSingleton {
 		}
 
 		if( $pConfigValue !== NULL ) {
-			if( isset( $this->mConfig[$pConfigKey] ) ) {
+			if( array_key_exists( $pConfigKey, $this->mConfig ) ) {
 				$this->mDb->query( "UPDATE " . TABLE_CONFIGURATION . " SET `configuration_value` = ?, `last_modified`='NOW' WHERE `configuration_key` = ?", array( $pConfigValue, $pConfigKey ) );
 			} else {
 				$defaultTitle = (!empty( $pDefaultTitle ) ? $pDefaultTitle : ucwords( strtolower( str_replace( '_', ' ', preg_replace( '/MODULE_[A-Z]*_/', '', $pConfigKey ) ) ) ));
