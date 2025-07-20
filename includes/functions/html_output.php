@@ -134,7 +134,7 @@ function zen_image($src, $alt = '', $width = '', $height = '', $parameters = '')
 	}
 
 
-	if (zen_not_null($width) && zen_not_null($height) and file_exists($srcPath) && is_file( $srcPath ) ) {
+	if (zen_not_null($width) && zen_not_null($height) and file_exists($srcPath) && is_file( $srcPath ) && filesize( $srcPath ) ) {
 //			$image .= ' width="' . zen_output_string($width) . '" height="' . zen_output_string($height) . '"';
 // proportional images
 		$image_size = getimagesize($srcPath);
