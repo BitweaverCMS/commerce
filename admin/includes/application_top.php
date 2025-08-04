@@ -52,6 +52,7 @@ ob_start();
 // Start the clock for the page parse time log
 define('PAGE_PARSE_START_TIME', microtime());
 
+chdir( BITCOMMERCE_PKG_ADMIN_PATH );
 
 // Set the local configuration parameters - mainly for developers
 if (file_exists('includes/local/configure.php')) include('includes/local/configure.php');
