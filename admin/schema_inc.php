@@ -1277,6 +1277,7 @@ $gBitInstaller->registerPackageInfo( BITCOMMERCE_PKG_NAME, array(
 $gBitInstaller->registerUserPermissions( BITCOMMERCE_PKG_NAME, array(
 	array('p_bitcommerce_root', 'Can administer webstore configuration', 'admin', 'bitcommerce'),
 	array('p_bitcommerce_admin', 'Can manage webstore orders', 'admin', 'bitcommerce'),
+	array('p_bitcommerce_oem', 'Can customize customer communication for shipping and emails', 'editors', 'bitcommerce'),
 	array('p_bitcommerce_product_view', 'Can view storefront products', 'basic', 'bitcommerce'),
 	array('p_bitcommerce_product_create', 'Can create storefront products', 'editors', 'bitcommerce'),
 	array('p_bitcommerce_product_update', 'Can update all storefront products', 'editors', 'bitcommerce'),
