@@ -82,7 +82,12 @@ function zen_get_countries( $pCountryMixed = '' ) {
 
     if (zen_not_null($pCountryMixed)) {
     	if( is_numeric( $pCountryMixed ) ) {
-    		$whereSql = ' WHERE `countries_id` = ? ';
+			if( BitBase::verifyId( $pCountryMixed ) ) {
+				$whereSql = ' WHERE `countries_id` = ? ';
+				$bindVars = (int)$pCountryMixed;
+			} else {
+				return $ret;
+			}
 		} elseif( is_string( $pCountryMixed ) ) {
 			$length = strlen( $pCountryMixed );
 			if( $length == 3 ) {
@@ -95,8 +100,6 @@ function zen_get_countries( $pCountryMixed = '' ) {
 				$pCountryMixed = strtoupper( $pCountryMixed );
 				$whereSql = ' WHERE UPPER( `countries_name` ) = ? ';
 			}
-		}
-		if( !empty( $whereSql ) ) {
 			$bindVars = array( $pCountryMixed );
 		}
 	}
