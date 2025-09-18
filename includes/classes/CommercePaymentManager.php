@@ -363,6 +363,7 @@ bit_error_log( $pParamHash, $this->mErrors );
 								// cast to string because of floating point precision WARNING here https://www.php.net/manual/en/language.types.float.php
 								if( (string)$paymentOrders['totals']['due'] != $paymentAmount ) {
 									$this->mErrors['errors'][] = tra( 'Charge amount does not equal invoice amount.' ).' ('.(string)$paymentOrders['totals']['due'].' != '.$paymentAmount.')';
+									break;
 								}
 								if( !empty( $pParamHash['payment_method'] ) ) {
 
