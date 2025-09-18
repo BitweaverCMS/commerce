@@ -41,7 +41,7 @@ $orderStatuses[''] = 'No Change';
 $gBitSmarty->assign( 'countryPullDown', zen_get_country_list('country_id', $countryId, 'required' ) );
 $gBitSmarty->assign( 'orderStatuses', $orderStatuses );
 
-$feedback = array( 'errors' => [] );
+$feedback = array( 'error' => [] );
 
 if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
 	switch( $action ) {
@@ -55,7 +55,7 @@ if( $action = BitBase::getParameter( $_REQUEST, 'action' ) ) {
 			if( $paymentManager->payInvoice( $_REQUEST ) ) {
 				bit_redirect( zen_get_page_url( 'invoices' ) );
 			} else {
-				$feedback = array_merge( $feedback, $gCommerceOrderManager->mErrors );
+				$feedback['error'] = array_merge( $feedback['error'], $paymentManager->mErrors );
 			}
 			break;
 	}
