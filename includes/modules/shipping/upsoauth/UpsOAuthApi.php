@@ -264,6 +264,15 @@ class UpsOAuthApi extends CommerceBase
 	//
 	protected function buildRateRequest( $pShipHash )
 	{
+		$shipZoneCode = $this->getParameter( $pShipHash['origin'], 'state' );
+ 		if( strlen( $shipZoneCode ) > 2 ) {
+			if( $shipZone = zen_get_zone_by_name( $pShipHash['origin']['countries_id'], $shipZoneCode ) ) {
+				$shipZoneCode = $shipZone['zone_code'];
+			}
+		}
+
+		$shipPostalCode = $this->getParameter( $pShipHash['origin'], 'postcode' );
+
 		$rate_request = [
 			'RateRequest' => [
 				'Request' => [
@@ -282,8 +291,8 @@ class UpsOAuthApi extends CommerceBase
 					'Shipper' => [
 						'Address' => [
 	//						'City' => (!empty($pShipHash['origin']['city'])) ? $pShipHash['origin']['city'] : '',
-							'StateProvinceCode' => zen_get_zone_code((int)$pShipHash['origin']['countries_id'], (int)$pShipHash['origin']['zone_id'], ''),
-							'PostalCode' => (!empty($pShipHash['origin']['postcode'])) ? $pShipHash['origin']['postcode'] : '',
+							'StateProvinceCode' => $shipZoneCode,
+							'PostalCode' => $shipPostalCode,
 							'CountryCode' => $pShipHash['origin']['countries_iso_code_2'],
 						],
 					],
@@ -295,8 +304,8 @@ class UpsOAuthApi extends CommerceBase
 						'Name' => STORE_NAME,
 						'Address' => [
 	//						'City' => (!empty($pShipHash['origin']['city'])) ? $pShipHash['origin']['city'] : '',
-							'StateProvinceCode' => zen_get_zone_code((int)$pShipHash['origin']['countries_id'], (int)$pShipHash['origin']['zone_id'], ''),
-							'PostalCode' => (!empty($pShipHash['origin']['postcode'])) ? $pShipHash['origin']['postcode'] : '',
+							'StateProvinceCode' => $shipZoneCode,
+							'PostalCode' => $shipPostalCode,
 							'CountryCode' => $pShipHash['origin']['countries_iso_code_2'],
 						]
 					],
