@@ -983,7 +983,7 @@ class upsxml extends CommercePluginShippingBase {
 			),
 			$this->getModuleKeyTrunk().'_CURRENCY_CODE' => array(
 				'configuration_title' => 'UPS Currency Code',
-				'configuration_value' => '" . DEFAULT_CURRENCY . "',
+				'configuration_value' => DEFAULT_CURRENCY,
 				'configuration_description' => 'Enter the 3 letter currency code for your country of origin. United States (USD)',
 			),
 			$this->getModuleKeyTrunk().'_INSURE' => array(
@@ -997,14 +997,14 @@ class upsxml extends CommercePluginShippingBase {
 				'configuration_value' => '0',
 				'configuration_description' => 'Use the following tax class on the shipping fee.',
 				'use_function' => "zen_get_tax_class_title",
-				'set_function' => "zen_cfg_pull_down_tax_classes(,",
+				'set_function' => "zen_cfg_pull_down_tax_classes(",
 			),
 			$this->getModuleKeyTrunk().'_RATES_ZONE' => array(
 				'configuration_title' => 'Shipping Zone',
 				'configuration_value' => '0',
 				'configuration_description' => 'If a zone is selected, only enable this shipping method for that zone.',
 				'use_function' => "zen_get_zone_class_title",
-				'set_function' => "zen_cfg_pull_down_zone_classes(,",
+				'set_function' => "zen_cfg_pull_down_zone_classes(",
 			),
 			$this->getModuleKeyTrunk().'_RATES_SORT_ORDER' => array(
 				'configuration_title' => 'Sort order of display.',
