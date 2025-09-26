@@ -4,11 +4,9 @@ require_once(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 
 $gCommerceSystem->setHeadingTitle( tra( 'Checkout Proof' ) );
 
-$order = new order; 
-
 $proofProducts = array();
-foreach ( $order->contents as $itemKey => $item ){
-	if( $itemObject = $order->getProductObject( $itemKey ) ) {
+foreach ( $gBitCustomer->mCart->contents as $itemKey => $item ){
+	if( $itemObject = $gBitCustomer->mCart->getProductObject( $itemKey ) ) {
 		if( $template = $itemObject->needsCheckoutReview( $item ) ){
 			$proofProducts[] = array( 'object' => $itemObject, 'template' => $template, 'cart_item' => $item );
 		}
