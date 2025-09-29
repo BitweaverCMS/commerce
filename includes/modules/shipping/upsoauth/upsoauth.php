@@ -40,7 +40,7 @@ class upsoauth extends CommercePluginShippingBase
 	function quote( $pShipHash ) {
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
 
-			$quoteError = NULL;
+			$quoteError = array();
 
 			$this->upsApi = new UpsOAuthApi($this->getModuleConfigValue( '_MODE' ), false, false);
 
@@ -52,11 +52,11 @@ class upsoauth extends CommercePluginShippingBase
 					// store owner know.
 					//
 					if (isset($oauth_token->response->errors)) {
-						$log_message = $quoteError = 'UPS error returned when requesting OAuth token:' . PHP_EOL;
+						$log_message = $quoteError['oauth'] = 'UPS error returned when requesting OAuth token:' . PHP_EOL;
 						foreach ($oauth_token->response->errors as $next_error) {
 							$log_message .= $next_error->code . ': ' . $next_error->message . PHP_EOL;
 							if ($next_error->code == 10401) {
-								$quoteError .= 'The \'Client ID\' and \'Client Secret\' you supplied are not recognized by UPS; the \'upsoauth\' shipping module has been automatically disabled.';
+								$quoteError['oauth'] .= '<br>The \'Client ID\' and \'Client Secret\' you supplied are not recognized by UPS; the \'upsoauth\' shipping module has been automatically disabled.';
 							}
 						}
 						$this->debugLog($log_message, true);
@@ -78,16 +78,16 @@ class upsoauth extends CommercePluginShippingBase
 				//
 				if( $all_ups_quotes = $this->upsApi->getAllUpsQuotes( $_SESSION['upsoauth_token'], $pShipHash ) ) {
 					if( !empty( $all_ups_quotes->response->errors) ) {
-						$quoteError = '';
+						$quoteError['response'] .= '';
 						foreach( $all_ups_quotes->response->errors as $alertObject ) {
-							$quoteError .= $alertObject->code .' : ' . $alertObject->message."<br/>\n";
+							$quoteError['response'] .= $alertObject->code .' : ' . $alertObject->message."<br/>\n";
 						}
 					}
 
 					if( !empty( $all_ups_quotes->RateResponse->Response->Alert ) ) {
-						$quoteError = '';
-						foreach( $all_ups_quotes->RateResponse->Response->Alert as $alertObject ) {
-							$quoteError .= $alertObject->Code .' : ' . $alertObject->Description."<br/>\n";
+						// Ignore 110971 : Your invoice may vary from the displayed reference rates
+						if( $all_ups_quotes->RateResponse->Response->Alert->Code != '110971' ) {
+							$quoteError['response'] = $all_ups_quotes->RateResponse->Response->Alert->Code .' : ' . $all_ups_quotes->RateResponse->Response->Alert->Description."<br/>\n";
 						}
 					}
 
@@ -115,7 +115,7 @@ class upsoauth extends CommercePluginShippingBase
 
 							$quotes['methods'] = $methods;
 						} else {
-							$quoteError .= "No available methods matching required '$pShipHash[method]'; no UPS quotes available. <br>";
+							$quoteError['rate'] = "No available methods matching required '$pShipHash[method]'; no UPS quotes available. <br>";
 						}
 					}
 				}
@@ -134,7 +134,10 @@ class upsoauth extends CommercePluginShippingBase
 				}
 			}
 			if( $quoteError ) {
-				$quotes['error'] = $quoteError;
+				$quotes['error'] = '';
+				foreach( $quoteError as $errorMessage) {
+					$quotes['error'] .= $errorMessage;
+				}
 			}
 			$quotes['icon'] = $this->icon;
 		}
