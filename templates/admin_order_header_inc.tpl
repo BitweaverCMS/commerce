@@ -80,7 +80,7 @@ function editAddress( pAddress ) {
 {foreach from=$order->mPayments item=paymentHash}
 <tr>
 	<td><span class="date">{$paymentHash.payment_date|date_format:'Y-m-d H:i'}</span></td>
-	<td>{$paymentHash.ip_address}{if $paymentHash.user_id!=$paymentHash.customers_id} {displayname hash=$paymentHash}{/if}</td>
+	<td><a href="https://www.iplocation.net/ip-lookup?query={$paymentHash.ip_address}" target=_new">{booticon iname="fa-globe fa-xs"}</a> <a href="{$smarty.const.USERS_PKG_URL}admin/?ip={$paymentHash.ip_address}" target="_new">{$paymentHash.ip_address}</a>{if $paymentHash.user_id!=$paymentHash.customers_id} {displayname hash=$paymentHash}{/if}</td>
 	<td>{if $paymentHash.payment_owner}{$paymentHash.payment_owner} {$paymentHash.address_company}{/if}</td>
 	<td>{if $paymentHash.payment_type && $paymentHash.payment_type!=$paymentHash.payment_module}{$paymentHash.payment_module|replace:'_':' '|ucwords} {$paymentHash.payment_type}: {/if}{if $paymentHash.payment_parent_ref_id}{$paymentHash.payment_parent_ref_id}{/if}{if $paymentHash.payment_number}<tt>{$paymentHash.payment_number}</tt>{/if}{if $paymentHash.payment_expires} <div class="inline-block">{tr}Expires{/tr}: <tt>{$paymentHash.payment_expires}</tt></div>{/if}
 		{if empty( $paymentHash.payment_ref_id)}
