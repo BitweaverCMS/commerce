@@ -264,7 +264,7 @@ class UpsOAuthApi extends CommerceBase
 	//
 	protected function buildRateRequest( $pShipHash )
 	{
-		$shipZoneCode = $this->getParameter( $pShipHash['origin'], 'state' );
+		$shipZoneCode = $this->getParameter( $pShipHash['origin'], 'state', $this->getParameter( $pShipHash['origin'], 'zone_code' ) );
  		if( strlen( $shipZoneCode ) > 2 ) {
 			if( $shipZone = zen_get_zone_by_name( $pShipHash['origin']['countries_id'], $shipZoneCode ) ) {
 				$shipZoneCode = $shipZone['zone_code'];

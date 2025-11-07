@@ -86,7 +86,7 @@ class upsoauth extends CommercePluginShippingBase
 
 					if( !empty( $all_ups_quotes->RateResponse->Response->Alert ) ) {
 						// Ignore 110971 : Your invoice may vary from the displayed reference rates
-						if( $all_ups_quotes->RateResponse->Response->Alert->Code != '110971' ) {
+						if( is_object( $all_ups_quotes->RateResponse->Response->Alert ) && $all_ups_quotes->RateResponse->Response->Alert->Code != '110971' ) {
 							$quoteError['response'] = $all_ups_quotes->RateResponse->Response->Alert->Code .' : ' . $all_ups_quotes->RateResponse->Response->Alert->Description."<br/>\n";
 						}
 					}
