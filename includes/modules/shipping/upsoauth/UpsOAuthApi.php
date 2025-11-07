@@ -409,54 +409,11 @@ class UpsOAuthApi extends CommerceBase
 		return (count($quotes) === 0) ? false : $quotes;
 	}
 
-	protected function getHandlingFee()
-	{
-		return ($this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_HANDLING_FEE' ) === '') ? '0' : $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_HANDLING_FEE' );
-	}
 	protected function getTransitWeightDisplayOptions()
 	{
 		return $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_OPTIONS' );
 	}
-	public function getShippingMethodsFromQuotes($ups_quotes, $method='')
-	{
-		// -----
-		// Any handling-fee can be represented as either a fixed or a percentage.  Determine which
-		// and set the fee's adder/multiplier value for use in the quote-generation loop below.
-		//
-		// Note that no checking of malformed values is performed; PHP Warnings and Notices will be
-		// issued if the value's not numeric or a percentage value doesn't end in %.
-		//
-		if (strpos($this->getHandlingFee(), '%') === false) {
-			$handling_fee_adder = $this->getHandlingFee() * $this->getFixedHandlingFeeMultiplier();
-			$handling_fee_multiplier = 1;
-		} else {
-			$handling_fee_adder = 0;
-			$handling_fee_multiplier = 1 + (rtrim($this->getHandlingFee(), '%') / 100);
-		}
 
-		// -----
-		// Create the array that maps the UPS service codes to their names.
-		//
-		$methods = [];
-
-		foreach ($ups_quotes as $service_code => $quote_info) {
-			$type = $quote_info['title'];
-			$cost = $quote_info['cost'];
-			if ($method === '' || $method === $type) {
-				$methods[] = array(
-					'id' => $type,
-					'title' => $type,
-					'cost' => ($handling_fee_multiplier * $cost) + $handling_fee_adder,
-				);
-			}
-		}
-		return $methods;
-	}
-	protected function getFixedHandlingFeeMultiplier()
-	{
-		global $shipping_num_boxes;
-		return ( $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_HANDLING_APPLIES' ) === 'Box' ? $shipping_num_boxes : 1 );
-	}
 	protected function getCurrentMethodQuote(array $quote_info, string $method, string $type, string $cost, $handling_fee_multiplier, $handling_fee_adder)
 	{
 		$title = $type;

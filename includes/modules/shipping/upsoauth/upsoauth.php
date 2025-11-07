@@ -102,7 +102,7 @@ class upsoauth extends CommercePluginShippingBase
 							return false;
 						}
 
-						if( $methods = $this->upsApi->getShippingMethodsFromQuotes( $ups_quotes, $pShipHash['method'] ) ) {
+						if( $methods = $this->getShippingMethodsFromQuotes( $ups_quotes, $pShipHash ) ) {
 							// -----
 							// Sort the shipping methods to be returned in ascending order of cost.
 							//
@@ -143,6 +143,62 @@ class upsoauth extends CommercePluginShippingBase
 		}
 
 		return $quotes;
+	}
+
+	private function getShippingMethodsFromQuotes($ups_quotes, $pShipHash ) {
+		// -----
+		// Any handling-fee can be represented as either a fixed or a percentage.  Determine which
+		// and set the fee's adder/multiplier value for use in the quote-generation loop below.
+		//
+		// Note that no checking of malformed values is performed; PHP Warnings and Notices will be
+		// issued if the value's not numeric or a percentage value doesn't end in %.
+		//
+		if (strpos($this->getHandlingFee(), '%') === false) {
+			$handling_fee_adder = $this->getHandlingFee() * $this->getFixedHandlingFeeMultiplier();
+			$handling_fee_multiplier = 1;
+		} else {
+			$handling_fee_adder = 0;
+			$handling_fee_multiplier = 1 + (rtrim($this->getHandlingFee(), '%') / 100);
+		}
+
+		// -----
+		// Create the array that maps the UPS service codes to their names.
+		//
+		$methods = [];
+
+		foreach ($ups_quotes as $service_code => $quote_info) {
+			$type = $quote_info['title'];
+			$cost = $quote_info['cost'];
+			$method = BitBase::getParameter( $pShipHash, 'method' );
+			if( empty( $method ) || $method === $type ) {
+				$newMethod = array(
+					'id' => $type,
+					'title' => $type,
+					'cost' => ($handling_fee_multiplier * $cost) + $handling_fee_adder,
+				);
+
+				$newMethod['code'] = $service_code;
+				if( $transitDays = BitBase::getParameter( $quote_info, 'business_days_in_transit' ) ) {
+					$transitTime = $transitDays.' '.($transitDays == '1' ? tra( 'Day' ) : tra( 'Days' ));
+					$shipDate = new DateTime( $this->getShippingDate( $pShipHash ) );
+					$shipDate->add( new DateInterval( 'P'.$transitDays.'D') );
+					$newMethod['delivery_date'] = $shipDate->format( 'Y-m-d' );
+					$newMethod['transit_days'] = $transitDays;
+					$newMethod['transit_time'] = $transitTime;
+				}
+				$methods[] = $newMethod;
+			}
+		}
+		return $methods;
+	}
+
+	protected function getHandlingFee() {
+		return ($this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_HANDLING_FEE' ) === '') ? '0' : $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_HANDLING_FEE' );
+	}
+
+	protected function getFixedHandlingFeeMultiplier() {
+		global $shipping_num_boxes;
+		return ( $this->getCommerceConfig( 'MODULE_SHIPPING_UPSOAUTH_HANDLING_APPLIES' ) === 'Box' ? $shipping_num_boxes : 1 );
 	}
 
 	protected function config() {
