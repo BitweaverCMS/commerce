@@ -177,7 +177,7 @@ class upsoauth extends CommercePluginShippingBase
 					'cost' => ($handling_fee_multiplier * $cost) + $handling_fee_adder,
 				);
 
-				$newMethod['code'] = $service_code;
+				$newMethod['code'] = $method;
 				if( $transitDays = BitBase::getParameter( $quote_info, 'business_days_in_transit' ) ) {
 					$transitTime = $transitDays.' '.($transitDays == '1' ? tra( 'Day' ) : tra( 'Days' ));
 					$shipDate = new DateTime( $this->getShippingDate( $pShipHash ) );
