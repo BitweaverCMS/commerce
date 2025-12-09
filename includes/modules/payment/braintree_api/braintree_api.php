@@ -504,7 +504,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 		} else {
 			$errorString = implode( $this->mErrors );
 			$this->mErrors = array( 'process_payment' => $errorString );
-eb( $this->mErrors, $pPaymentParams );
+			bit_error_email( 'PAYMENT ERROR: DID NOT VERIFY', 'verifyPayment failed', array( $this->mErrors, $pPaymentParams ) );
 		}
 
 		if( !empty( $this->mErrors['process_payment'] ) ) {
