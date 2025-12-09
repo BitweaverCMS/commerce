@@ -93,29 +93,32 @@ class CommerceShipping extends BitSingleton {
 				$paddingWeight = $paddingWeights[1];
 				$shipHash['shipping_num_boxes'] = 1; // at least one parcel shipping
 				foreach( $this->mShipModules as &$shipModule ) {
+					$quoteHash = $shipHash;
 					if( $shipModule->isUserEnabled() && (empty( $module ) || ($shipModule->code == $module)) ) {
-						$shipHash['shipping_weight_total'] = $orderTotalWeight;
-						if ($shipHash['shipping_weight_total'] > $shipModule->maxShippingWeight() ) { // Split into many boxes
-							$shipHash['shipping_num_boxes'] = ceil( $shipHash['shipping_weight_total'] / $shipModule->maxShippingWeight() );
-							$shipHash['shipping_weight_total'] += ($shipHash['shipping_weight_total'] * ($paddingPercent/100)) + $paddingWeight;
-							$shipHash['shipping_weight_box'] = $shipHash['shipping_weight_total'] / $shipHash['shipping_num_boxes'];
+						$quoteHash['shipping_weight_total'] = $orderTotalWeight;
+						if( ($quoteHash['shipping_weight_total'] > $shipModule->maxShippingWeight()) ) { // Split into many boxes
+							$quoteHash['shipping_num_boxes'] = ceil( $quoteHash['shipping_weight_total'] / $shipModule->maxShippingWeight() );
+							$quoteHash['shipping_weight_total'] += ($quoteHash['shipping_weight_total'] * ($paddingPercent/100)) + $paddingWeight;
+							$quoteHash['shipping_weight_box'] = $quoteHash['shipping_weight_total'] / $quoteHash['shipping_num_boxes'];
+							// if package has been split, adjust height that was cumulatively added in ::getBoxDimensions()
+							$quoteHash['box_height'] = round( $quoteHash['box_height'] / $quoteHash['shipping_num_boxes'], 2 );
 							
 							// large box add padding
 						} else {
-							$shipHash['shipping_num_boxes'] = 1;
+							$quoteHash['shipping_num_boxes'] = 1;
 							// add tare weight < large
-							$shipHash['shipping_weight_total'] += ($shipHash['shipping_weight_total'] * ($boxPercent/100)) + $boxWeight;
-							$shipHash['shipping_weight_box'] = $shipHash['shipping_weight_total'];
+							$quoteHash['shipping_weight_total'] += ($quoteHash['shipping_weight_total'] * ($boxPercent/100)) + $boxWeight;
+							$quoteHash['shipping_weight_box'] = $quoteHash['shipping_weight_total'];
 						}
 
-						if( $quotes = $shipModule->quote( $shipHash ) ) {
+						if( $quotes = $shipModule->quote( $quoteHash ) ) {
 							if( !empty( $quotes['methods'] ) ) {
 								foreach( array_keys( $quotes['methods'] ) as $j ) {
 									if( (empty( $method ) || $method == $quotes['methods'][$j]['id']) ) {
 										if( !empty( $quotes['methods'][$j]['cost'] ) ) {	
-											$quotes['methods'][$j]['shipping_num_boxes'] = $shipHash['shipping_num_boxes'];
-											$quotes['methods'][$j]['shipping_weight_box'] = $shipHash['shipping_weight_box'];
-											$quotes['methods'][$j]['shipping_weight_total'] = $shipHash['shipping_weight_total'];
+											$quotes['methods'][$j]['shipping_num_boxes'] = $quoteHash['shipping_num_boxes'];
+											$quotes['methods'][$j]['shipping_weight_box'] = $quoteHash['shipping_weight_box'];
+											$quotes['methods'][$j]['shipping_weight_total'] = $quoteHash['shipping_weight_total'];
 											$quotes['methods'][$j]['cost_add_tax'] = zen_add_tax($quotes['methods'][$j]['cost'], (isset($quotes['tax']) ? $quotes['tax'] : 0));
 											$quotes['methods'][$j]['format_add_tax'] = $currencies->format( $quotes['methods'][$j]['cost_add_tax'] );
 										}
@@ -123,15 +126,13 @@ class CommerceShipping extends BitSingleton {
 										unset( $quotes['methods'][$j] );
 									}
 								}
-								$quotes['origin'] = $shipHash['origin'];
+								$quotes['origin'] = $quoteHash['origin'];
 								$quotes['methods'] = array_values( $quotes['methods'] ); // reindex $quotes['methods'] in case any were unset above
 							}
 							$ret[] = $quotes;
 						}
 					}
 				}
-				// if package has been split, adjust height that was cumulatively added in ::getBoxDimensions()
-				$shipHash['box_height'] = round( $shipHash['box_height'] / $shipHash['shipping_num_boxes'], 2 );
 			}
 		}
 
