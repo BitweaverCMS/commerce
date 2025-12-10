@@ -35,7 +35,11 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		return $this->getModuleConfigValue( '_FINAL_ORDERS_STATUS_ID' );
 	}
 
-	protected function getOrignCountryCode() {
+	protected function getOriginZoneCode() {
+		return $this->getModuleConfigValue( '_ORIGIN_ZONE_CODE' );
+	}
+
+	protected function getOriginCountryCode() {
 		return $this->getModuleConfigValue( '_ORIGIN_COUNTRY_CODE' );
 	}
 
@@ -147,8 +151,13 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 	protected function getShippingOrigin() {
 		global $gCommerceSystem;
 
-		if( $fulfillmentCountryId = $gCommerceSystem->getConfig( $this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE' ) ) {
+		if( $fulfillmentCountryId = $this->getOriginCountryCode() ) {
 			if( $ret = zen_get_countries( $fulfillmentCountryId ) ) {
+				if( $zoneCode = $this->getOriginZoneCode() ) {
+					if( $zone = zen_get_zone_by_id( $ret['countries_id'], $zoneCode ) ) {
+						$ret = array_merge( $ret, $zone );
+					}
+				}
 				if( $ret['postcode'] = $this->getModuleConfigValue( '_ORIGIN_POSTAL_CODE' ) ) {
 				}
 			}
@@ -159,13 +168,14 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 			}
 		} elseif( $fulfillmentCountryId = $gCommerceSystem->getConfig( 'STORE_COUNTRY' ) ) {
 			if( $ret = zen_get_countries( $fulfillmentCountryId ) ) {
+				if( $zoneCode = $gCommerceSystem->getConfig( 'STORE_ZONE' ) ) {
+					if( $zone = zen_get_zone_by_id( $ret['countries_id'], $zoneCode ) ) {
+						$ret = array_merge( $ret, $zone );
+					}
+				}
 			}
 		}
-		if( !empty( $ret['countries_id'] ) && ($ret['zone_id'] = $gCommerceSystem->getConfig( 'STORE_ZONE' )) ) {
-			if( $zone = zen_get_zone_by_id( $ret['countries_id'], $ret['zone_id'] ) ) {
-				$ret = array_merge( $ret, $zone );
-			}
-		}
+
 		return $ret;
 	}
 
