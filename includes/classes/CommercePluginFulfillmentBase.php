@@ -134,7 +134,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 	function isIntraCountry( $pOrderBase ) {
 		global $gCommerceSystem;
 		//default is same as the store
-		$originCode = $this->getOrignCountryCode();
+		$originCode = $this->getOriginCountryCode();
 		$delivery = $pOrderBase->getDelivery();
 		if( !($ret = ($originCode == $delivery['countries_iso_code_2']) ) ) {
 			if( $delivery['countries_iso_code_3'] == 'PRI' || $delivery['countries_iso_code_3'] == 'VIR' || $delivery['countries_iso_code_3'] == 'UMI' || $delivery['countries_iso_code_3'] == 'GUM' ) {
