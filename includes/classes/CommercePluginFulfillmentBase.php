@@ -154,7 +154,7 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 		if( $fulfillmentCountryId = $this->getOriginCountryCode() ) {
 			if( $ret = zen_get_countries( $fulfillmentCountryId ) ) {
 				if( $zoneCode = $this->getOriginZoneCode() ) {
-					if( $zone = zen_get_zone_by_id( $ret['countries_id'], $zoneCode ) ) {
+					if( $zone = zen_get_zone_by_name( $ret['countries_id'], $zoneCode ) ) {
 						$ret = array_merge( $ret, $zone );
 					}
 				}
@@ -200,6 +200,11 @@ abstract class CommercePluginFulfillmentBase extends CommercePluginBase {
 			$this->getModuleKeyTrunk().'_ORIGIN_COUNTRY_CODE' => array(
 				'configuration_title' => 'Origin Country Code',
 				'configuration_description' => 'The ISO-2 country code where this fulfiller is located.',
+				'sort_order' => $i++,
+			),
+			$this->getModuleKeyTrunk().'_ORIGIN_ZONE_CODE' => array(
+				'configuration_title' => 'Origin State / Province Code',
+				'configuration_description' => 'The ISO abbreviated state/province code where this fulfiller is located.',
 				'sort_order' => $i++,
 			),
 			$this->getModuleKeyTrunk().'_ORIGIN_POSTAL_CODE' => array(
