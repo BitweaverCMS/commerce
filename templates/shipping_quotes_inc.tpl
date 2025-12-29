@@ -36,27 +36,27 @@
 								{assign var=checked value=0}
 							{/if}
 
-								<div class="radio mt-0">
-									<label>
-									{if $quotes[ix].methods[jx].transit_time}
-										<span class="inline-block pull-right">({$quotes[ix].methods[jx].transit_time})</span>
-									{/if}
-									{if empty($noradio) && ($smarty.section.ix.total > 1 || $smarty.section.jx.total > 1)}
-										<input type="radio" name="shipping_quote" value="{$quoteMethodId}" {if $checked}checked="checked"{/if}/>
-									{else}
-										<input type="hidden" name="shipping_quote" value="{$quoteMethodId}" />
-									{/if}
-									{if $quotes[ix].booticon}
-										{booticon iname=$quotes[ix].booticon class="shipper-icon"}
-									{else}
-										{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].module class="img-responsive shipper-logo"}
-									{/if}
-										{$quotes[ix].methods[jx].title} 
-									</label>
-								</div>
-								{if $quotes[ix].methods[jx].note}
-									{formhelp note=$quotes[ix].methods[jx].note}
+							<div class="radio mt-0">
+								<label>
+								{if $quotes[ix].methods[jx].transit_time}
+									<span class="inline-block pull-right">({$quotes[ix].methods[jx].transit_time})</span>
 								{/if}
+								{if empty($noradio) && ($smarty.section.ix.total > 1 || $smarty.section.jx.total > 1)}
+									<input type="radio" name="shipping_quote" value="{$quoteMethodId}" {if $checked}checked="checked"{/if}/>
+								{else}
+									<input type="hidden" name="shipping_quote" value="{$quoteMethodId}" />
+								{/if}
+								{if $quotes[ix].booticon}
+									{booticon iname=$quotes[ix].booticon class="shipper-icon"}
+								{else}
+									{biticon ipackage="bitcommerce" iname=$quotes[ix].icon iexplain=$quotes[ix].module class="img-responsive shipper-logo"}
+								{/if}
+									{$quotes[ix].methods[jx].title} 
+								</label>
+							</div>
+							{if $quotes[ix].methods[jx].note}
+								{formhelp note=$quotes[ix].methods[jx].note}
+							{/if}
 						</div>
 						<div class="col-xs-3">
 							<div class="price floatright">{$quotes[ix].methods[jx].format_add_tax}</div>
