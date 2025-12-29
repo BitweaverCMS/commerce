@@ -758,7 +758,7 @@ class usps extends CommercePluginShippingBase
 				}
 			}
     	}    
-var_dump( $quotes );
+
         return $quotes;
     }
 
@@ -1164,7 +1164,6 @@ var_dump( $quotes );
         if ($this->debug_enabled === true && (strpos($this->getModuleConfigValue( '_DEBUG_MODE' ), "Logs") !== FALSE)) {
             error_log(date('Y-m-d H:i:s') . ': ' . $message . PHP_EOL, 3, $this->debug_filename);
         }
-var_dump( $message );
     }
 
     protected function _getQuote( $pShipHash )
