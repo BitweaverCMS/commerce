@@ -322,7 +322,7 @@ class usps extends CommercePluginShippingBase
 
 					// Go through each of the $this->typeCheckboxesSelected and build a list.
 					$selected_methods = [];
-					$build_quotes = [];
+					$methods = [];
 					for ($i = 0; $i <= count($this->typeCheckboxesSelected) - 1; $i++) {
 						if (!is_numeric($this->typeCheckboxesSelected[$i]) && zen_not_null($this->typeCheckboxesSelected[$i])) {
 							// Fool proofing the entry of the two values.
@@ -542,7 +542,6 @@ class usps extends CommercePluginShippingBase
 						// If the $method_item['method'] is it the lookup, continue, otherwise, pass
 						if (isset($lookup[$method_item['method']])) {
 							
-							$quotes = [];
 							$match = TRUE;
 							$made_weight = FALSE;
 							$services_total = 0;
@@ -633,7 +632,7 @@ class usps extends CommercePluginShippingBase
 								$m++;
 
 								// If everything checks out... Add it to the 
-								$build_quotes[] = $quote;
+								$methods[] = $quote;
 							}	
 						} 
 					}
@@ -644,7 +643,7 @@ class usps extends CommercePluginShippingBase
 						$pattern = '/Ground Advantage/'; // There is no flat rate Ground Advantage, so you're dealing with the only two outcomes.
 
 						// Loop through the array to collect priority mail options
-						foreach ($build_quotes as $key => $option) {
+						foreach ($methods as $key => $option) {
 							if (preg_match($pattern, $option['title'])) {
 								$groundOptions[] = [
 									'key' => $key,
@@ -661,13 +660,13 @@ class usps extends CommercePluginShippingBase
 								: $groundOptions[1]['key'];
 
 							$removal_message = '';
-							$removal_message .= "\n" . 'SQUASHED option : ' . $build_quotes[$removeKey]['title'] . "\n";
+							$removal_message .= "\n" . 'SQUASHED option : ' . $methods[$removeKey]['title'] . "\n";
 
-							unset($build_quotes[$removeKey]);
+							unset($methods[$removeKey]);
 							$this->uspsrDebug($removal_message);
 						}
 
-						$build_quotes = array_values($build_quotes);
+						$methods = array_values($methods);
 					}
 
 					// Squash Priority Mail
@@ -676,7 +675,7 @@ class usps extends CommercePluginShippingBase
 						$pattern = '/^Priority Mail(?: Cubic)*$/';
 
 						// Loop through the array to collect priority mail options
-						foreach ($build_quotes as $key => $option) {
+						foreach ($methods as $key => $option) {
 							if (preg_match($pattern, $option['title'])) {
 								$priorityOptions[] = [
 									'key' => $key,
@@ -694,9 +693,9 @@ class usps extends CommercePluginShippingBase
 
 							// Removal Message for Debug
 							$removal_message = '';
-							$removal_message .= "\n" . 'SQUASHED option : ' . $build_quotes[$removeKey]['title'] . "\n";
+							$removal_message .= "\n" . 'SQUASHED option : ' . $methods[$removeKey]['title'] . "\n";
 
-							unset($build_quotes[$removeKey]);
+							unset($methods[$removeKey]);
 							$this->uspsrDebug($removal_message);
 						}
 					}
@@ -704,17 +703,17 @@ class usps extends CommercePluginShippingBase
 					// Okay we have our list of Build Quotes, so now... we need to sort pursurant to options
 					switch ($this->getModuleConfigValue( '_QUOTE_SORT' )) {
 						case 'Alphabetical':
-							usort($build_quotes, function ($a, $b) {
+							usort($methods, function ($a, $b) {
 								return $a['title'] <=> $b['title'];
 							});
 							break;
 						case 'Price-LowToHigh':
-							usort($build_quotes, function ($a, $b) {
+							usort($methods, function ($a, $b) {
 								return $a['cost'] <=> $b['cost'];
 							});
 							break;
 						case 'Price-HighToLow':
-							usort($build_quotes, function ($a, $b) {
+							usort($methods, function ($a, $b) {
 								return $b['cost'] <=> $a['cost'];
 							});
 							break;
@@ -723,20 +722,12 @@ class usps extends CommercePluginShippingBase
 							break;
 					}
 
-					if (count($build_quotes) > 0) {
+					if (count($methods) > 0) {
 						// Close off and make the final array.
-						$quotes = [
-							'id' => $this->code,
-							'booticon' => $this->booticon,
-							'module' => $this->title,
-							'methods' => $build_quotes,
-							'tax' => ($this->tax_class > 0) ? zen_get_tax_rate($this->tax_class, $pShipHash['destination']['countries_id'], $pShipHash['destination']['zone_id']) : null,
-						];
-						// Should there be a warning that the dates are estimations?
-
+						$quotes['methods'] = $methods;
 					}  // If we made it this far, there is no point in outputting an error message of any kind.
 				} else {
-					if ($this->debug_enabled === true && (strpos($this->getModuleConfigValue( '_DEBUG_MODE' ), "Error") !== FALSE) && empty($build_quotes)) {
+					if ($this->debug_enabled === true && (strpos($this->getModuleConfigValue( '_DEBUG_MODE' ), "Error") !== FALSE) && empty($methods)) {
 
 						// We have an error and error debugging is enabled, so output the error.
 						// (Can't show both errors and quotes at the same time.)
@@ -1209,17 +1200,21 @@ class usps extends CommercePluginShippingBase
 				$pShipHash['box_width'] = $box_dimensions[2];
 				$pShipHash['box_height'] = $box_dimensions[4];
 
-				$pShipHash['ltr_length'] = $ltr_dimensions[0];
-				$pShipHash['ltr_height'] = $ltr_dimensions[2];
-				$pShipHash['ltr_thickness'] = $ltr_dimensions[4];
+				if( $ltr_dimensions ) {
+					$pShipHash['ltr_length'] = $ltr_dimensions[0];
+					$pShipHash['ltr_height'] = $ltr_dimensions[2];
+					$pShipHash['ltr_thickness'] = $ltr_dimensions[4];
+				}
 			} else {
 				$pShipHash['box_length'] = $box_dimensions[1];
 				$pShipHash['box_width'] = $box_dimensions[3];
 				$pShipHash['box_height'] = $box_dimensions[5];
 
-				$pShipHash['ltr_length'] = $ltr_dimensions[1];
-				$pShipHash['ltr_height'] = $ltr_dimensions[3];
-				$pShipHash['ltr_thickness'] = $ltr_dimensions[5];
+				if( $ltr_dimensions ) {
+					$pShipHash['ltr_length'] = $ltr_dimensions[1];
+					$pShipHash['ltr_height'] = $ltr_dimensions[3];
+					$pShipHash['ltr_thickness'] = $ltr_dimensions[5];
+				}
 			}
 		}
    
@@ -1245,7 +1240,7 @@ class usps extends CommercePluginShippingBase
         // Prepare a Letters Query
         $ltr_body = [];
 
-		$isQuoteLetter = $pShipHash['shipping_weight_box'] < 1;
+		$isQuoteLetter = $pShipHash['shipping_weight_box'] < .25;
 
 		// US Domestic destinations
 		if( $this->isDomesticShipment( $pShipHash ) ) {
