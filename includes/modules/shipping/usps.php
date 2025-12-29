@@ -29,9 +29,9 @@
 class usps extends CommercePluginShippingBase
 {
 
-    protected $debug_enabled = FALSE, $typeCheckboxesSelected = [], $debug_filename, $bearerToken, $bearerExpiration = 0, $quote_weight, $_check, $machinable, $shipment_value = 0, $insured_value = 0, $uninsured_value = 0, $orders_tax = 0, $is_us_shipment, $is_apo_dest = FALSE, $usps_countries, $enable_media_mail;
+    protected $debug_enabled = FALSE, $typeCheckboxesSelected = [], $debug_filename, $bearerToken, $bearerExpiration = 0, $quote_weight, $_check, $machinable, $shipment_value = 0, $insured_value = 0, $uninsured_value = 0, $orders_tax = 0, $is_apo_dest = FALSE, $usps_countries, $enable_media_mail;
     protected $api_base = 'https://apis.usps.com/';
-    protected $ltrQuote, $pkgQuote, $uspsStandards, $uspsLetter, $dimensions = [], $errors = [];
+    protected $uspsLetter, $dimensions = [], $errors = [];
 
     protected $commError, $commErrNo, $commInfo;
 
@@ -235,61 +235,14 @@ class usps extends CommercePluginShippingBase
 			switch ($shippingUnits) {
 				case 'kgs':
 					// 1 kgs = 2.2046226218487758 lbs
-					$this->quote_weight = $pShipHash['shipping_weight_total'] * 2.2046226218487758;
+					$this->quote_weight = $pShipHash['shipping_weight_box'] * 2.2046226218487758;
 					break;
 				case 'lbs':
 				default:
 					// Since this is in pounds, no conversion is necessary.
 					// Additionally, this API doesn't want the weight in ounces and pounds, it only wants pounds and parts there of. So no changing.
-					$this->quote_weight = $pShipHash['shipping_weight_total'];
+					$this->quote_weight = $pShipHash['shipping_weight_box'];
 					break;
-			}
-
-			/**
-			 * Determine if package is machinable or not - Media Mail Only
-			 * API will either return both the machinable rate and non-machinable rate or one or the other.
-			 *
-			 * The store owner will choose a preference. If the preference can be met, show that rate. If it can't be met, but there is only
-			 * one rate available... show THAT rate.
-			 *
-			 * By definition, Media Mail Machinable parcels must weight less than 25lbs with no minimum. Additionally, a package to be machineable
-			 * cannot be more than 22 inches long, 18 inches wide, 15 inches high. The USPS considers the longest measurement given to the length, the
-			 * 2nd longest measurement is considered it's width, and the third longest it's height. (Actually it considers "length is the measurement of
-			 * the longest dimension and girth is the distance around the thickest part".)
-			 *
-			 * If all else fails, follow the module setting.
-			 *
-			 * For all other services, this is handled by the API.
-			 */
-
-			// Rebuild the dimmensions array
-			$pkg_dimensions = array_filter(explode(', ', $this->getModuleConfigValue( '_DIMMENSIONS' )));
-			array_walk($pkg_dimensions, function (&$value) {
-				$value = floatval(trim($value));
-			}); // Quickly remove white space
-
-			$ltr_dimensions = array_filter(explode(', ', $this->getModuleConfigValue( '_LTR_DIMMENSIONS' )));
-			array_walk($ltr_dimensions, function (&$value) {
-				$value = floatval(trim($value));
-			}); // Quickly remove white space
-
-			// Set the weight back 
-			if ($this->is_us_shipment) {
-				$this->dimensions['pkg_length'] = $pkg_dimensions[0];
-				$this->dimensions['pkg_width'] = $pkg_dimensions[2];
-				$this->dimensions['pkg_height'] = $pkg_dimensions[4];
-
-				$this->dimensions['ltr_length'] = $ltr_dimensions[0];
-				$this->dimensions['ltr_height'] = $ltr_dimensions[2];
-				$this->dimensions['ltr_thickness'] = $ltr_dimensions[4];
-			} else {
-				$this->dimensions['pkg_length'] = $pkg_dimensions[1];
-				$this->dimensions['pkg_width'] = $pkg_dimensions[3];
-				$this->dimensions['pkg_height'] = $pkg_dimensions[5];
-
-				$this->dimensions['ltr_length'] = $ltr_dimensions[1];
-				$this->dimensions['ltr_height'] = $ltr_dimensions[3];
-				$this->dimensions['ltr_thickness'] = $ltr_dimensions[5];
 			}
 
 			// Notifier: before request quotes
@@ -302,9 +255,9 @@ class usps extends CommercePluginShippingBase
 			 * $pShipHash['shipping_num_boxes'] = The calculated number of boxes
 			 * $this->dimensions an array containing the measurements: pkg is for packages, ltr is for letters.
 			 * -----------
-			 * $this->dimensions['pkg_length']
-			 * $this->dimensions['pkg_width']
-			 * $this->dimensions['pkg_height']
+			 * $this->dimensions['box_length']
+			 * $this->dimensions['box_width']
+			 * $this->dimensions['box_height']
 			 *
 			 * $this->dimensions['ltr_length']
 			 * $this->dimensions['ltr_height']
@@ -319,533 +272,493 @@ class usps extends CommercePluginShippingBase
 //			$this->quoteLogConfiguration();
 
 			// Create the main quotes (both letters and packages)
-			$this->_getQuote( $pShipHash );
+			if( $rateQuote = $this->_getQuote( $pShipHash ) ) {
+				// There are two quote fields being used a package
 
-			// There are two quote fields being used a package
+				// Start with package quote
+				$uspsQuote = json_decode($rateQuote['package'], TRUE);
 
-			// Start with package quote
-			$uspsQuote = json_decode($this->pkgQuote, TRUE);
-
-			if (!empty($uspsQuote['error'])) {
-				// There was an error with the package quote, so prefix the title with "Packages: "
-				$this->errors[] = [
-					'message' => "Packages: " . $uspsQuote['error']['message'],
-					'code' => $uspsQuote['error']['code']
-				];
-			}
-
-			// Take the Letters Quote and add it to a temp holder
-			$_letter = json_decode($this->ltrQuote, TRUE);
-
-			// If there isn't a quote in letters don't bother.
-			if (isset($_letter['rates'])) {
-				// Force the details of the Letter Request to match the other pieces from packages (adding a Mail Class to match Standards result, productName, and processingCategory)
-				$_letter['rates'][0]['mailClass'] .= "_" . strtoupper($this->getModuleConfigValue( '_LTR_PROCESSING' )); // This should yield something: FIRST-CLASS_MAIL_FLATS
-				$_letter['rates'][0]['productName'] = ($this->is_us_shipment ? 'First-Class Mail Letter' : 'First-Class Mail International Letter' );
-				$_letter['rates'][0]['processingCategory'] = $this->getModuleConfigValue( '_LTR_PROCESSING' );
-
-				# Bug fix for letters since the Domestic metered rate from the API is four cents off. (International seems to come through as normal.)
-				# @todo Maybe toggle if First Class Mail is metered or not?
-				if ($this->is_us_shipment) {
-					$_letter['rates'][0]['price'] += 0.04;
-					$_letter['totalBasePrice'] += 0.04;
+				if (!empty($uspsQuote['error'])) {
+					// There was an error with the package quote, so prefix the title with "Packages: "
+					$this->errors[] = [
+						'message' => "Packages: " . $uspsQuote['error']['message'],
+						'code' => $uspsQuote['error']['code']
+					];
 				}
 
-				$uspsQuote['rateOptions'][] = $_letter;
-			} else { // We likely have an error, so add that error to the list of errors.
+				// Take the Letters Quote and add it to a temp holder
+				if( !empty( $rateQuote['letter'] ) ) {
+					$_letter = json_decode($rateQuote['letter'], TRUE);
 
-				$this->errors[] = [
-					'message' => "Letters: " . $_letter['error']['message'],
-					'code' => $_letter['error']['code']
-				];
+					// If there isn't a quote in letters don't bother.
+					if (isset($_letter['rates'])) {
+						// Force the details of the Letter Request to match the other pieces from packages (adding a Mail Class to match Standards result, productName, and processingCategory)
+						$_letter['rates'][0]['code'] .= "_" . strtoupper($this->getModuleConfigValue( '_LTR_PROCESSING' )); // This should yield something: FIRST-CLASS_MAIL_FLATS
+						$_letter['rates'][0]['productName'] = ( $this->isDomesticShipment( $pShipHash ) ? 'First-Class Mail Letter' : 'First-Class Mail International Letter' );
+						$_letter['rates'][0]['processingCategory'] = $this->getModuleConfigValue( '_LTR_PROCESSING' );
 
-			}
-
-			if (isset($uspsQuote['rateOptions']) && is_array($uspsQuote['rateOptions'])) {
-
-				// Was a standards call made? If so, load it up.
-				if (zen_not_null($this->uspsStandards)) {
-					$uspsStandards = $this->uspsStandards;
-				} else $uspsStandards = [];
-
-				// ----
-				// Selected Methods Builder
-
-				// Go through each of the $this->typeCheckboxesSelected and build a list.
-				$selected_methods = [];
-				$build_quotes = [];
-				for ($i = 0; $i <= count($this->typeCheckboxesSelected) - 1; $i++) {
-					if (!is_numeric($this->typeCheckboxesSelected[$i]) && zen_not_null($this->typeCheckboxesSelected[$i])) {
-						// Fool proofing the entry of the two values.
-						$limits = [(float) $this->typeCheckboxesSelected[$i + 1], (float) $this->typeCheckboxesSelected[$i + 2]];
-
-						// Does this need to be converted into pounds?
-						if (defined('SHIPPING_WEIGHT_UNITS') && SHIPPING_WEIGHT_UNITS == 'kgs') {
-							$limits[0] *= 2.2046226218487758;
-							$limits[1] *= 2.2046226218487758;
-
-							// 1 kgs = 2.2046226218487758 lbs.
+						# Bug fix for letters since the Domestic metered rate from the API is four cents off. (International seems to come through as normal.)
+						# @todo Maybe toggle if First Class Mail is metered or not?
+						if( $this->isDomesticShipment( $pShipHash ) ) {
+							$_letter['rates'][0]['price'] += 0.04;
+							$_letter['totalBasePrice'] += 0.04;
 						}
 
-						$selected_methods[] = [
-							'min_weight' => min($limits),
-							'max_weight' => max($limits),
-							'method' => $this->typeCheckboxesSelected[$i],
-							'handling' => $this->typeCheckboxesSelected[$i + 3]
+						$uspsQuote['rateOptions'][] = $_letter;
+					} else { // We likely have an error, so add that error to the list of errors.
+
+						$this->errors[] = [
+							'message' => "Letters: " . $_letter['error']['message'],
+							'code' => $_letter['error']['code']
 						];
 
 					}
 				}
 
-				$message = '';
-				$message .= "\n" . '===============================================' . "\n";
-				$message .= 'Reviewing selected method options...' . "\n";
-				$message .= print_r($selected_methods, TRUE);
-				$this->uspsrDebug($message);
+				if (isset($uspsQuote['rateOptions']) && is_array($uspsQuote['rateOptions'])) {
 
-				
-				// Order Handling Costs
-				if ($pShipHash['destination']['countries_id'] === SHIPPING_ORIGIN_COUNTRY || $this->is_us_shipment === true) {
-					// domestic/national
-					$usps_handling_fee = (float) $this->getModuleConfigValue( '_HANDLING_DOMESTIC' );
-				} else {
-					// international
-					$usps_handling_fee = (float) $this->getModuleConfigValue( '_HANDLING_INTL' );
-				}
+					// ----
+					// Selected Methods Builder
 
-				// ----
-				// We have the new uni-quote (packages and letters)
-				// Now build the mapping array
-				$lookup = [];
+					// Go through each of the $this->typeCheckboxesSelected and build a list.
+					$selected_methods = [];
+					$build_quotes = [];
+					for ($i = 0; $i <= count($this->typeCheckboxesSelected) - 1; $i++) {
+						if (!is_numeric($this->typeCheckboxesSelected[$i]) && zen_not_null($this->typeCheckboxesSelected[$i])) {
+							// Fool proofing the entry of the two values.
+							$limits = [(float) $this->typeCheckboxesSelected[$i + 1], (float) $this->typeCheckboxesSelected[$i + 2]];
 
-				// Build lookup from rates
-				foreach ($uspsQuote['rateOptions'] as $opt) {
-					
-					// Base Price of the rate, more in a second.
-					$totalBasePrice = $opt['totalBasePrice'] ?? null; // get totalBasePrice if it exists
+							// Does this need to be converted into pounds?
+							if (defined('SHIPPING_WEIGHT_UNITS') && SHIPPING_WEIGHT_UNITS == 'kgs') {
+								$limits[0] *= 2.2046226218487758;
+								$limits[1] *= 2.2046226218487758;
 
-					// Main rates
-					foreach ($opt['rates'] as $rate) {
+								// 1 kgs = 2.2046226218487758 lbs.
+							}
 
-						// ---------------------------------------------
-						// Skip OPEN_AND_DISTRIBUTE rates, we don't use those.
-						// ---------------------------------------------
-						if ($rate['processingCategory'] === 'OPEN_AND_DISTRIBUTE') continue;
+							$selected_methods[] = [
+								'min_weight' => min($limits),
+								'max_weight' => max($limits),
+								'method' => $this->typeCheckboxesSelected[$i],
+								'handling' => $this->typeCheckboxesSelected[$i + 3]
+							];
 
-						// ---------------------------------------------
-						// Setup the key (if productName is blank, use description instead)
-						// ---------------------------------------------
-						if (!empty($rate['productName'])) $name = $rate['productName'];
-						else {
-							$name = $rate['description'];
-							$rate['productName'] = $rate['description'];
 						}
+					}
 
-						// ---------------------------------------------
-						// Trim the extra characters off (looking at you 'Connect Local Machinable DDU ')
-						// ---------------------------------------------
-						$name = trim($name);
-						
-						// ---------------------------------------------
-						// Test to see what the totalBasePrice 
-						// For Packages: This will be the base fee plus any special fees. Will not include any services.
-						// For Letters: This will automatically add any special fees but will NOT add services
-						// ---------------------------------------------
-						$rate['totalBasePrice'] = $totalBasePrice ?? $rate['price']; // default to price if null/unset
+					$message = '';
+					$message .= "\n" . '===============================================' . "\n";
+					$message .= 'Reviewing selected method options...' . "\n";
+					$message .= print_r($selected_methods, TRUE);
+					$this->uspsrDebug($message);
 
-						// ---------------------------------------------
-						// Possible outcomes from the rate listings
-						// Possible outcomes:
-						// Priority Mail: Machinable + SP or Nonstandard + SP/DR/DN
-						// Priority Mail Express: Machinable + SP or Nonstandard + PA/DR/DN
-						// Ground Advantage: Machinable + SP or Nonstandard + SP/DR/DN/LO
-						// Media Mail: Machinable / Nonstandard, both with SP
-						// Priority Mail Cubic: Machinable , CP or Px/Qx
-						// Ground Advantage Cubic: Machinable , CP or Px/Qx
-						// Connect Local: LC/LF/LL/LS/LO
-						//
-						// International shipments only have one class, regardless. So in total, this will ignore everything.
-						// ---------------------------------------------
+					$destCountryCode = $this->verifyCountryCode( $pShipHash['destination']['countries_iso_code_2'] );
+					// Order Handling Costs
+					if( $this->isDomesticShipment( $pShipHash ) ) {
+						// domestic/national
+						$usps_handling_fee = (float) $this->getModuleConfigValue( '_HANDLING_DOMESTIC' );
+					} else {
+						// international
+						$usps_handling_fee = (float) $this->getModuleConfigValue( '_HANDLING_INTL' );
+					}
+
+					// ----
+					// We have the new uni-quote (packages and letters)
+					// Now build the mapping array
+					$lookup = [];
+
+					// Build lookup from rates
+					foreach ($uspsQuote['rateOptions'] as $opt) {
 						
-						// ---------------------------------------------
-						// Media Mail
-						// ---------------------------------------------
-						if (strpos($name, "Media Mail") !== FALSE) {
-							// Only allow Single Piece (SP)
-							if ($rate['rateIndicator'] === "SP") {
-								if (($this->getModuleConfigValue( '_MEDIA_CLASS' ) == 'Nonstandard' && strpos($name, "Nonstandard") !== FALSE) ||
-									($this->getModuleConfigValue( '_MEDIA_CLASS' ) == 'Machinable' && strpos($name, "Machinable") !== FALSE)) {
-									$name = "Media Mail"; 
-									$rate['productName'] = "Media Mail"; // Have to add "Media Mail" as productName is otherwise blank.
+						// Base Price of the rate, more in a second.
+						$totalBasePrice = $opt['totalBasePrice'] ?? null; // get totalBasePrice if it exists
+
+						// Main rates
+						foreach ($opt['rates'] as $rate) {
+
+							// ---------------------------------------------
+							// Skip OPEN_AND_DISTRIBUTE rates, we don't use those.
+							// ---------------------------------------------
+							if ($rate['processingCategory'] === 'OPEN_AND_DISTRIBUTE') continue;
+
+							// ---------------------------------------------
+							// Setup the key (if productName is blank, use description instead)
+							// ---------------------------------------------
+							if (!empty($rate['productName'])) $name = $rate['productName'];
+							else {
+								$name = $rate['description'];
+								$rate['productName'] = $rate['description'];
+							}
+
+							// ---------------------------------------------
+							// Trim the extra characters off (looking at you 'Connect Local Machinable DDU ')
+							// ---------------------------------------------
+							$name = trim($name);
+							
+							// ---------------------------------------------
+							// Test to see what the totalBasePrice 
+							// For Packages: This will be the base fee plus any special fees. Will not include any services.
+							// For Letters: This will automatically add any special fees but will NOT add services
+							// ---------------------------------------------
+							$rate['totalBasePrice'] = $totalBasePrice ?? $rate['price']; // default to price if null/unset
+
+							// ---------------------------------------------
+							// Possible outcomes from the rate listings
+							// Possible outcomes:
+							// Priority Mail: Machinable + SP or Nonstandard + SP/DR/DN
+							// Priority Mail Express: Machinable + SP or Nonstandard + PA/DR/DN
+							// Ground Advantage: Machinable + SP or Nonstandard + SP/DR/DN/LO
+							// Media Mail: Machinable / Nonstandard, both with SP
+							// Priority Mail Cubic: Machinable , CP or Px/Qx
+							// Ground Advantage Cubic: Machinable , CP or Px/Qx
+							// Connect Local: LC/LF/LL/LS/LO
+							//
+							// International shipments only have one class, regardless. So in total, this will ignore everything.
+							// ---------------------------------------------
+							
+							// ---------------------------------------------
+							// Media Mail
+							// ---------------------------------------------
+							if (strpos($name, "Media Mail") !== FALSE) {
+								// Only allow Single Piece (SP)
+								if ($rate['rateIndicator'] === "SP") {
+									if (($this->getModuleConfigValue( '_MEDIA_CLASS' ) == 'Nonstandard' && strpos($name, "Nonstandard") !== FALSE) ||
+										($this->getModuleConfigValue( '_MEDIA_CLASS' ) == 'Machinable' && strpos($name, "Machinable") !== FALSE)) {
+										$name = "Media Mail"; 
+										$rate['productName'] = "Media Mail"; // Have to add "Media Mail" as productName is otherwise blank.
+									} else {
+										continue 2;
+									}
 								} else {
 									continue 2;
 								}
-							} else {
-								continue 2;
 							}
-						}
 
-						// ---------------------------------------------
-						// Cubic Options (Priority Mail Cubic / Ground Advantage Cubic)
-						// ---------------------------------------------
-						elseif (strpos($name, "Priority Mail Cubic") !== FALSE || strpos($name, "Ground Advantage Cubic") !== FALSE) {
-							if (preg_match('/^(CP|[CPQ]\d)$/', $rate['rateIndicator'])) {
-								if ($this->getModuleConfigValue( '_CUBIC_CLASS' ) == "Non-Soft" && $rate['rateIndicator'] !== "CP") continue 2;
-								if ($this->getModuleConfigValue( '_CUBIC_CLASS' ) == "Soft" && !preg_match('/^([PQ]\d)$/', $rate['rateIndicator'])) continue 2;
-							} else {
-								continue 2;
-							}
-						}
-
-						// ---------------------------------------------
-						// Nonstandard cases (Priority / Express / Ground / Connect Local)
-						// ---------------------------------------------
-						elseif ($rate['processingCategory'] === 'NONSTANDARD') {
-							// Priority Mail
-							if (strpos($name, "Priority Mail") !== FALSE && $rate['rateIndicator'] === "SP") {
-								// allow
-							}
-							// Priority Mail Express
-							elseif (strpos($name, "Priority Mail Express") !== FALSE && $rate['rateIndicator'] === "PA") {
-								// allow
-							}
-							// Ground Advantage
-							elseif (strpos($name, "Ground Advantage") !== FALSE && $rate['rateIndicator'] === "SP") {
-								// allow
-							}
-							// Ground Advantage OS
-							elseif (strpos($name, "Ground Advantage") !== FALSE && $rate['rateIndicator'] === "OS") {
-								// allow
-							}
-							// Connect Local LO
-							elseif (strpos($name, "Connect Local") !== FALSE && $rate['rateIndicator'] === "LO") {
-								$rate['productName'] = $rate['description'];
-								// otherwise allow
-							}
-							// Dimensional Class fallback (DR / DN)
-							elseif ($this->getModuleConfigValue( '_DIMENSIONAL_CLASS' ) == 'Rectangular' && $rate['rateIndicator'] !== 'DR') {
-								continue 2;
-							} elseif ($this->getModuleConfigValue( '_DIMENSIONAL_CLASS' ) == 'Nonrectangular' && $rate['rateIndicator'] !== 'DN') {
-								continue 2;
-							}
-						}
-
-						// ---------------------------------------------
-						// Machinable cases (Priority / Express / Ground)
-						// ---------------------------------------------
-						elseif ($rate['processingCategory'] === 'Machinable') {
-							// Priority Mail, Express, Ground → must be SP
-							if (($rate['rateIndicator'] !== "SP") &&
-								(strpos($name, "Priority Mail") !== FALSE ||
-								strpos($name, "Priority Mail Express") !== FALSE ||
-								strpos($name, "Ground Advantage") !== FALSE)) {
-								continue 2;
-							}
-						}
-
-						// ---------------------------------------------
-						// Connect Local: the "Product Names" do not appear in the API, force them in to match.
-						// ---------------------------------------------
-						if (strpos($name, "Connect Local") !== FALSE) $rate['productName'] = $rate['description'];
-
-						// ---------------------------------------------
-						// Default: All is OK, add it to the list
-						// ---------------------------------------------
-						$lookup[$name] = $rate;
-					}
-
-					// ---------------------------------------------
-					// Extra services: Tack that onto the main roster of returns.
-					// ---------------------------------------------
-					if (isset($opt['extraServices'])) {
-						foreach ($opt['extraServices'] as $svc) {
-							$lookup[$name]['extraService'][$svc['extraService']] = $svc;
-						}
-					}
-
-				} // Done with iterating the returned rates
-
-				$message = "\n";
-				$message .= '===============================================' . "\n";
-				$message .= 'Lookup lists' . "\n";
-				$message .= print_r($lookup, TRUE) . "\n";
-				$message .= '===============================================' . "\n";
-				// $this->uspsrDebug($message); // Hiding to reduce log file size
-
-				$m = 0; //Index for ZenCart quote builder (ie. "usps0")
-
-				// Extra Services
-				if ($this->is_us_shipment) {
-					$ltr_services = array_map('intval', explode(',', $this->getModuleConfigValue( '_DMST_LETTER_SERVICES' )));
-					$pkg_services = array_map('intval', explode(',', $this->getModuleConfigValue( '_DMST_SERVICES' )));
-				} else {
-					$ltr_services = array_map('intval', explode(',', $this->getModuleConfigValue( '_INTL_LETTER_SERVICES' )));
-					$pkg_services = array_map('intval', explode(',', $this->getModuleConfigValue( '_INTL_SERVICES' )));
-				}
-
-				// If either list has the insurance code (930), add the other one.
-				if (in_array(930, $ltr_services)) $ltr_services[] = 931;
-				if (in_array(930, $pkg_services)) $pkg_services[] = 931;
-				
-				// Now go through the list of SELECTED services from the configurator and do the work on THOSE
-				foreach ($selected_methods as $method_item) {
-
-					// If the $method_item['method'] is it the lookup, continue, otherwise, pass
-					if (isset($lookup[$method_item['method']])) {
-						
-						$quotes = [];
-						$match = TRUE;
-						$made_weight = FALSE;
-						$services_total = 0;
-
-						// If this package is NOT going to an APO/FPO/DPO, skip and continue to the next
-						// Currently this is the only rate which has a different rate for APO/FPO/DPO rates.
-						if (!$this->is_apo_dest && ($method_item['method'] === 'Priority Mail Large Flat Rate APO/FPO/DPO'))
-							continue;
-
-						$price = $lookup[$method_item['method']]['totalBasePrice'];
-						
-						// Go through and add up the appropriate amount as necessary.
-						$services = strpos($method_item['method'], "Letter") !== false ? $ltr_services : $pkg_services;
-
-						// For packages, cycle through and add the services. (For letters, the price is baked into the request and result. Don't do it.)
-						$servicesList = '';
-						$extraServices = 0;
-						if (strpos($method_item['method'], "First-Class") === FALSE) {
-							$method_name   = $method_item['method'];
-							$method_labels = [];        // tracks names of extra services
-
-							foreach ($services as $s) {
-								if (isset($lookup[$method_name]['extraService'][$s]['price'])) {
-									$method_price = $lookup[$method_name]['extraService'][$s]['price'];
-									$extraServices += $method_price;
-
-									// Add service name if available, otherwise fall back to the code
-									$label = $lookup[$method_name]['extraService'][$s]['name'] ?? $s;
-									$method_labels[] = $label . " (" . $currencies->format($method_price) . ")";
+							// ---------------------------------------------
+							// Cubic Options (Priority Mail Cubic / Ground Advantage Cubic)
+							// ---------------------------------------------
+							elseif (strpos($name, "Priority Mail Cubic") !== FALSE || strpos($name, "Ground Advantage Cubic") !== FALSE) {
+								if (preg_match('/^(CP|[CPQ]\d)$/', $rate['rateIndicator'])) {
+									if ($this->getModuleConfigValue( '_CUBIC_CLASS' ) == "Non-Soft" && $rate['rateIndicator'] !== "CP") continue 2;
+									if ($this->getModuleConfigValue( '_CUBIC_CLASS' ) == "Soft" && !preg_match('/^([PQ]\d)$/', $rate['rateIndicator'])) continue 2;
+								} else {
+									continue 2;
 								}
 							}
 
-							// Convert collected labels into a comma-separated string
-							$servicesList = implode(", ", $method_labels);
-						}
-
-						// Extra Services for method 
-						$price += $extraServices;
-
-						// Handling as defined per method
-						$price += $method_item['handling'];
-
-						// Multiply the quote times the number of shipping of boxes.
-						// ZenCart calculates the number of boxes by "weight" and as such, it divides the quote by weight.
-						// So this "restores" the quote to the full weight by multiplying the number of boxes.
-						$price *= $pShipHash['shipping_num_boxes'];
-
-						// Handling for using USPS as a whole.
-						$price += $usps_handling_fee * ($this->getModuleConfigValue( '_HANDLING_METHOD' ) === 'Box' ? $pShipHash['shipping_num_boxes'] : 1);
-						
-						// Final Math: Price = ((Method Quote + Method Services (ie. Certified Mail, etc.) + Method Handling (the box on the far right of the method)) * the number of boxes) + (Overall USPS Handling Fee * number of boxes OR 1)
-						// Holdover observer from original USPS module. Simple put:
-						// -----
-						// $method_item['method']  Contains the "Friendly Name" of the desired method, can be used to check
-						// $quotes['title'] Output Title, sent to ZenCart
-						// $quotes['cost']  Cost. Sent to ZenCart, should be a number. Not a currency.
-						
-						// If everything passes their checks (match, observer, make weight....) add it.
-						
-						// If $method is not empty, compare it to the $quotes id. If it matches, add it
-						if (!empty($method) && ($method !== $quotes['id'])) $match = FALSE;
-
-						// Did the order make weight?
-						if ($this->quote_weight >= $method_item['min_weight'] && $this->quote_weight <= $method_item['max_weight']) $made_weight = TRUE;
-
-						if ($match && $made_weight) {
-							global $currencies;
-							$transitTime = NULL;
-							$deliveryDate = NULL;
-							if ($this->is_us_shipment && isset($uspsStandards[$quotes['mailClass']])) { // Only do this for domestic shipments
-								// If there is a standards request, add that line:
-								switch ($this->getModuleConfigValue( '_DISPLAY_TRANSIT' )) 
-								{
-									case "Estimate Transit Time":
-										$transitTime = (int)$uspsStandards[$quotes['mailClass']]['serviceStandard'] + (int) $this->getModuleConfigValue( '_HANDLING_TIME' );
-										break;
-									case "Estimate Delivery":
-										$est_delivery_raw = new DateTime($uspsStandards[$quotes['mailClass']]['delivery']['scheduledDeliveryDateTime']);
-										$deliveryDate = $est_delivery_raw->format(DATE_FORMAT);
-										break;
+							// ---------------------------------------------
+							// Nonstandard cases (Priority / Express / Ground / Connect Local)
+							// ---------------------------------------------
+							elseif ($rate['processingCategory'] === 'NONSTANDARD') {
+								// Priority Mail
+								if (strpos($name, "Priority Mail") !== FALSE && $rate['rateIndicator'] === "SP") {
+									// allow
+								}
+								// Priority Mail Express
+								elseif (strpos($name, "Priority Mail Express") !== FALSE && $rate['rateIndicator'] === "PA") {
+									// allow
+								}
+								// Ground Advantage
+								elseif (strpos($name, "Ground Advantage") !== FALSE && $rate['rateIndicator'] === "SP") {
+									// allow
+								}
+								// Ground Advantage OS
+								elseif (strpos($name, "Ground Advantage") !== FALSE && $rate['rateIndicator'] === "OS") {
+									// allow
+								}
+								// Connect Local LO
+								elseif (strpos($name, "Connect Local") !== FALSE && $rate['rateIndicator'] === "LO") {
+									$rate['productName'] = $rate['description'];
+									// otherwise allow
+								}
+								// Dimensional Class fallback (DR / DN)
+								elseif ($this->getModuleConfigValue( '_DIMENSIONAL_CLASS' ) == 'Rectangular' && $rate['rateIndicator'] !== 'DR') {
+									continue 2;
+								} elseif ($this->getModuleConfigValue( '_DIMENSIONAL_CLASS' ) == 'Nonrectangular' && $rate['rateIndicator'] !== 'DN') {
+									continue 2;
 								}
 							}
-							// Okay, we have the methods, we have the quotes: start building.
-							$quote = [
-								'id' => $m,
-								'title' => uspsr_filter_gibberish($lookup[$method_item['method']]['productName']),
-								'cost' => $price,
-								'transit_time' => $transitTime,
-								'delivery_date' => $deliveryDate,
-								'code' => $lookup[$method_item['method']]['mailClass'],
-								'servicesAdded' => $servicesList, // For debugging
-							];
-							$m++;
 
-							// If everything checks out... Add it to the 
-							$build_quotes[] = $quote;
-						}	
-					} 
-				}
-
-				// Squash Ground Advantage
-				if (strpos($this->getModuleConfigValue( '_SQUASH_OPTIONS' ), "Ground Advantage") !== FALSE) {
-					$groundOptions = [];
-					$pattern = '/Ground Advantage/'; // There is no flat rate Ground Advantage, so you're dealing with the only two outcomes.
-
-					// Loop through the array to collect priority mail options
-					foreach ($build_quotes as $key => $option) {
-						if (preg_match($pattern, $option['title'])) {
-							$groundOptions[] = [
-								'key' => $key,
-								'cost' => $option['cost']
-							];
-						}
-					}
-
-					// If both variants exist, remove the more expensive one
-					if (count($groundOptions) == 2) {
-						//if (isset($groundOptions['Ground Advantage']) && isset($groundOptions['Ground Advantage Cubic'])) {
-						$removeKey = ($groundOptions[0]['cost'] > $groundOptions[1]['cost'])
-							? $groundOptions[0]['key']
-							: $groundOptions[1]['key'];
-
-						$removal_message = '';
-						$removal_message .= "\n" . 'SQUASHED option : ' . $build_quotes[$removeKey]['title'] . "\n";
-
-						unset($build_quotes[$removeKey]);
-						$this->uspsrDebug($removal_message);
-					}
-
-					$build_quotes = array_values($build_quotes);
-				}
-
-				// Squash Priority Mail
-				if (strpos($this->getModuleConfigValue( '_SQUASH_OPTIONS' ), "Priority Mail") !== FALSE) {
-					$priorityOptions = [];
-					$pattern = '/^Priority Mail(?: Cubic)*$/';
-
-					// Loop through the array to collect priority mail options
-					foreach ($build_quotes as $key => $option) {
-						if (preg_match($pattern, $option['title'])) {
-							$priorityOptions[] = [
-								'key' => $key,
-								'cost' => $option['cost']
-							];
-						}
-					}
-
-					// If both variants exist, remove the more expensive one
-					if (count($priorityOptions) == 2) {
-						//if (isset($priorityOptions['Priority Mail']) && isset($priorityOptions['Priority Mail Cubic'])) {
-						$removeKey = ($priorityOptions[0]['cost'] > $priorityOptions[1]['cost'])
-							? $priorityOptions[0]['key']
-							: $priorityOptions[1]['key'];
-
-						// Removal Message for Debug
-						$removal_message = '';
-						$removal_message .= "\n" . 'SQUASHED option : ' . $build_quotes[$removeKey]['title'] . "\n";
-
-						unset($build_quotes[$removeKey]);
-						$this->uspsrDebug($removal_message);
-					}
-				}
-
-				// Build Estimates Attachment
-				if (!empty($uspsStandards)) {
-					switch ($this->getModuleConfigValue( '_DISPLAY_TRANSIT' )) {
-						case "Estimate Transit Time":
-							foreach ($build_quotes as &$quote) {
-								if (isset($uspsStandards[$quote['mailClass']]['serviceStandard'])) $quote['title'] .= " [" . $this->getModuleConfigValue( '_TEXT_ESTIMATED' ) . " " . zen_uspsr_estimate_days($uspsStandards[$quote['mailClass']]['serviceStandard']) . "]";
-							}
-							break;
-						case "Estimate Delivery":
-							foreach ($build_quotes as &$quote) {
-
-								if (isset($uspsStandards[$quote['mailClass']]['delivery']['scheduledDeliveryDateTime'])) {
-									$est_delivery_raw = new DateTime($uspsStandards[$quote['mailClass']]['delivery']['scheduledDeliveryDateTime']);
-									$est_delivery = $est_delivery_raw->format(DATE_FORMAT);
-
-									$quote['title'] .= " [" . $this->getModuleConfigValue( '_TEXT_ESTIMATED_DELIVERY' ) . " " . $est_delivery . "]";
+							// ---------------------------------------------
+							// Machinable cases (Priority / Express / Ground)
+							// ---------------------------------------------
+							elseif ($rate['processingCategory'] === 'Machinable') {
+								// Priority Mail, Express, Ground → must be SP
+								if (($rate['rateIndicator'] !== "SP") &&
+									(strpos($name, "Priority Mail") !== FALSE ||
+									strpos($name, "Priority Mail Express") !== FALSE ||
+									strpos($name, "Ground Advantage") !== FALSE)) {
+									continue 2;
 								}
 							}
-							break;
+
+							// ---------------------------------------------
+							// Connect Local: the "Product Names" do not appear in the API, force them in to match.
+							// ---------------------------------------------
+							if (strpos($name, "Connect Local") !== FALSE) $rate['productName'] = $rate['description'];
+
+							// ---------------------------------------------
+							// Default: All is OK, add it to the list
+							// ---------------------------------------------
+							$lookup[$name] = $rate;
+						}
+
+						// ---------------------------------------------
+						// Extra services: Tack that onto the main roster of returns.
+						// ---------------------------------------------
+						if (isset($opt['extraServices'])) {
+							foreach ($opt['extraServices'] as $svc) {
+								$lookup[$name]['extraService'][$svc['extraService']] = $svc;
+							}
+						}
+
+					} // Done with iterating the returned rates
+
+					$message = "\n";
+					$message .= '===============================================' . "\n";
+					$message .= 'Lookup lists' . "\n";
+					$message .= print_r($lookup, TRUE) . "\n";
+					$message .= '===============================================' . "\n";
+					// $this->uspsrDebug($message); // Hiding to reduce log file size
+
+					$m = 0; //Index for ZenCart quote builder (ie. "usps0")
+
+					// Extra Services
+					if( $this->isDomesticShipment( $pShipHash ) ) {
+						$ltr_services = array_map('intval', explode(',', $this->getModuleConfigValue( '_DMST_LETTER_SERVICES' )));
+						$pkg_services = array_map('intval', explode(',', $this->getModuleConfigValue( '_DMST_SERVICES' )));
+					} else {
+						$ltr_services = array_map('intval', explode(',', $this->getModuleConfigValue( '_INTL_LETTER_SERVICES' )));
+						$pkg_services = array_map('intval', explode(',', $this->getModuleConfigValue( '_INTL_SERVICES' )));
 					}
-				}
 
-				// Okay we have our list of Build Quotes, so now... we need to sort pursurant to options
-				switch ($this->getModuleConfigValue( '_QUOTE_SORT' )) {
-					case 'Alphabetical':
-						usort($build_quotes, function ($a, $b) {
-							return $a['title'] <=> $b['title'];
-						});
-						break;
-					case 'Price-LowToHigh':
-						usort($build_quotes, function ($a, $b) {
-							return $a['cost'] <=> $b['cost'];
-						});
-						break;
-					case 'Price-HighToLow':
-						usort($build_quotes, function ($a, $b) {
-							return $b['cost'] <=> $a['cost'];
-						});
-						break;
-					case 'Unsorted':
-						// Do nothing, leave it as is
-						break;
-				}
-
-				$message = "\n";
-				$message .= '===============================================' . "\n";
-				$message .= 'Displayed options' . "\n";
-				$message .= 'Sorting the returned quotes by: ' . $this->getModuleConfigValue( '_QUOTE_SORT' ) . "\n";
-				$message .= print_r($build_quotes, TRUE) . "\n";
-				$message .= '===============================================' . "\n";
-
-				$this->uspsrDebug($message);
-
-				if (count($build_quotes) > 0) {
-					// Close off and make the final array.
-					$quotes = [
-						'id' => $this->code,
-						'icon' => zen_image($this->icon),
-						'module' => $this->title,
-						'methods' => $build_quotes,
-						'tax' => ($this->tax_class > 0) ? zen_get_tax_rate($this->tax_class, $pShipHash['destination']['countries_id'], $pShipHash['destination']['zone_id']) : null,
-					];
-					// Should there be a warning that the dates are estimations?
-
-				}  // If we made it this far, there is no point in outputting an error message of any kind.
-			} else {
-				if ($this->debug_enabled === true && (strpos($this->getModuleConfigValue( '_DEBUG_MODE' ), "Error") !== FALSE) && empty($build_quotes)) {
-
-					// We have an error and error debugging is enabled, so output the error.
-					// (Can't show both errors and quotes at the same time.)
-
-					$error_str = '';
-					foreach ($this->errors as $error) {
-						$error_str .= $error['message'] . " (Code: " . $error['code'] . ")<br>";
-					}
+					// If either list has the insurance code (930), add the other one.
+					if (in_array(930, $ltr_services)) $ltr_services[] = 931;
+					if (in_array(930, $pkg_services)) $pkg_services[] = 931;
 					
-					$quotes = [
-						'id' => $this->code,
-						'icon' => zen_image($this->icon),
-						'module' => $this->title,
-						'methods' => [],
-						'error' => '<pre style="white-space: pre-wrap;word-wrap: break-word;">' . $error_str . "</pre>",
-					];
+					// Now go through the list of SELECTED services from the configurator and do the work on THOSE
+					foreach ($selected_methods as $method_item) {
+
+						// If the $method_item['method'] is it the lookup, continue, otherwise, pass
+						if (isset($lookup[$method_item['method']])) {
+							
+							$quotes = [];
+							$match = TRUE;
+							$made_weight = FALSE;
+							$services_total = 0;
+
+							// If this package is NOT going to an APO/FPO/DPO, skip and continue to the next
+							// Currently this is the only rate which has a different rate for APO/FPO/DPO rates.
+							if (!$this->is_apo_dest && ($method_item['method'] === 'Priority Mail Large Flat Rate APO/FPO/DPO'))
+								continue;
+
+							$price = $lookup[$method_item['method']]['totalBasePrice'];
+							
+							// Go through and add up the appropriate amount as necessary.
+							$services = strpos($method_item['method'], "Letter") !== false ? $ltr_services : $pkg_services;
+
+							// For packages, cycle through and add the services. (For letters, the price is baked into the request and result. Don't do it.)
+							$servicesList = '';
+							$extraServices = 0;
+							if (strpos($method_item['method'], "First-Class") === FALSE) {
+								$method_name   = $method_item['method'];
+								$method_labels = [];        // tracks names of extra services
+
+								foreach ($services as $s) {
+									if (isset($lookup[$method_name]['extraService'][$s]['price'])) {
+										$method_price = $lookup[$method_name]['extraService'][$s]['price'];
+										$extraServices += $method_price;
+
+										// Add service name if available, otherwise fall back to the code
+										$label = $lookup[$method_name]['extraService'][$s]['name'] ?? $s;
+										$method_labels[] = $label . " (" . $currencies->format($method_price) . ")";
+									}
+								}
+
+								// Convert collected labels into a comma-separated string
+								$servicesList = implode(", ", $method_labels);
+							}
+
+							// Extra Services for method 
+							$price += $extraServices;
+
+							// Handling as defined per method
+							$price += $method_item['handling'];
+
+							// Multiply the quote times the number of shipping of boxes.
+							// ZenCart calculates the number of boxes by "weight" and as such, it divides the quote by weight.
+							// So this "restores" the quote to the full weight by multiplying the number of boxes.
+							$price *= $pShipHash['shipping_num_boxes'];
+
+							// Handling for using USPS as a whole.
+							$price += $usps_handling_fee * ($this->getModuleConfigValue( '_HANDLING_METHOD' ) === 'Box' ? $pShipHash['shipping_num_boxes'] : 1);
+							
+							// Final Math: Price = ((Method Quote + Method Services (ie. Certified Mail, etc.) + Method Handling (the box on the far right of the method)) * the number of boxes) + (Overall USPS Handling Fee * number of boxes OR 1)
+							// Holdover observer from original USPS module. Simple put:
+							// -----
+							// $method_item['method']  Contains the "Friendly Name" of the desired method, can be used to check
+							// $quotes['title'] Output Title, sent to ZenCart
+							// $quotes['cost']  Cost. Sent to ZenCart, should be a number. Not a currency.
+							
+							// If everything passes their checks (match, observer, make weight....) add it.
+							
+							// If $method is not empty, compare it to the $quotes id. If it matches, add it
+							if (!empty($method) && ($method !== $quotes['id'])) $match = FALSE;
+
+							// Did the order make weight?
+							if ($this->quote_weight >= $method_item['min_weight'] && $this->quote_weight <= $method_item['max_weight']) $made_weight = TRUE;
+
+							if ($match && $made_weight) {
+								global $currencies;
+								$transitTime = NULL;
+								$deliveryDate = NULL;
+
+								// Okay, we have the methods, we have the quotes: start building.
+								$quote = [
+									'id' => $m,
+									'title' => uspsr_filter_gibberish($lookup[$method_item['method']]['productName']),
+									'cost' => $price,
+									'transit_time' => $transitTime,
+									'delivery_date' => $deliveryDate,
+									'code' => $lookup[$method_item['method']]['mailClass'],
+									'servicesAdded' => $servicesList, // For debugging
+								];
+								if( $this->isDomesticShipment( $pShipHash ) && isset($rateQuote['standards'][$quote['code']])) { // Only do this for domestic shipments
+									$transitDays = (int)$rateQuote['standards'][$quote['code']]['serviceStandard'] + (int) $this->getModuleConfigValue( '_HANDLING_TIME' );
+									$quote['transit_days'] = $transitDays;
+									$quote['transit_time'] = $transitDays.' '.(($transitDays > 1)?'Days':'Day');
+									$est_delivery_raw = new DateTime($rateQuote['standards'][$quote['code']]['delivery']['scheduledDeliveryDateTime']);
+									$quote['delivery_date'] = $est_delivery_raw->format(DATE_FORMAT);
+								}
+								$m++;
+
+								// If everything checks out... Add it to the 
+								$build_quotes[] = $quote;
+							}	
+						} 
+					}
+
+					// Squash Ground Advantage
+					if (strpos($this->getModuleConfigValue( '_SQUASH_OPTIONS' ), "Ground Advantage") !== FALSE) {
+						$groundOptions = [];
+						$pattern = '/Ground Advantage/'; // There is no flat rate Ground Advantage, so you're dealing with the only two outcomes.
+
+						// Loop through the array to collect priority mail options
+						foreach ($build_quotes as $key => $option) {
+							if (preg_match($pattern, $option['title'])) {
+								$groundOptions[] = [
+									'key' => $key,
+									'cost' => $option['cost']
+								];
+							}
+						}
+
+						// If both variants exist, remove the more expensive one
+						if (count($groundOptions) == 2) {
+							//if (isset($groundOptions['Ground Advantage']) && isset($groundOptions['Ground Advantage Cubic'])) {
+							$removeKey = ($groundOptions[0]['cost'] > $groundOptions[1]['cost'])
+								? $groundOptions[0]['key']
+								: $groundOptions[1]['key'];
+
+							$removal_message = '';
+							$removal_message .= "\n" . 'SQUASHED option : ' . $build_quotes[$removeKey]['title'] . "\n";
+
+							unset($build_quotes[$removeKey]);
+							$this->uspsrDebug($removal_message);
+						}
+
+						$build_quotes = array_values($build_quotes);
+					}
+
+					// Squash Priority Mail
+					if (strpos($this->getModuleConfigValue( '_SQUASH_OPTIONS' ), "Priority Mail") !== FALSE) {
+						$priorityOptions = [];
+						$pattern = '/^Priority Mail(?: Cubic)*$/';
+
+						// Loop through the array to collect priority mail options
+						foreach ($build_quotes as $key => $option) {
+							if (preg_match($pattern, $option['title'])) {
+								$priorityOptions[] = [
+									'key' => $key,
+									'cost' => $option['cost']
+								];
+							}
+						}
+
+						// If both variants exist, remove the more expensive one
+						if (count($priorityOptions) == 2) {
+							//if (isset($priorityOptions['Priority Mail']) && isset($priorityOptions['Priority Mail Cubic'])) {
+							$removeKey = ($priorityOptions[0]['cost'] > $priorityOptions[1]['cost'])
+								? $priorityOptions[0]['key']
+								: $priorityOptions[1]['key'];
+
+							// Removal Message for Debug
+							$removal_message = '';
+							$removal_message .= "\n" . 'SQUASHED option : ' . $build_quotes[$removeKey]['title'] . "\n";
+
+							unset($build_quotes[$removeKey]);
+							$this->uspsrDebug($removal_message);
+						}
+					}
+
+					// Okay we have our list of Build Quotes, so now... we need to sort pursurant to options
+					switch ($this->getModuleConfigValue( '_QUOTE_SORT' )) {
+						case 'Alphabetical':
+							usort($build_quotes, function ($a, $b) {
+								return $a['title'] <=> $b['title'];
+							});
+							break;
+						case 'Price-LowToHigh':
+							usort($build_quotes, function ($a, $b) {
+								return $a['cost'] <=> $b['cost'];
+							});
+							break;
+						case 'Price-HighToLow':
+							usort($build_quotes, function ($a, $b) {
+								return $b['cost'] <=> $a['cost'];
+							});
+							break;
+						case 'Unsorted':
+							// Do nothing, leave it as is
+							break;
+					}
+
+					if (count($build_quotes) > 0) {
+						// Close off and make the final array.
+						$quotes = [
+							'id' => $this->code,
+							'booticon' => $this->booticon,
+							'module' => $this->title,
+							'methods' => $build_quotes,
+							'tax' => ($this->tax_class > 0) ? zen_get_tax_rate($this->tax_class, $pShipHash['destination']['countries_id'], $pShipHash['destination']['zone_id']) : null,
+						];
+						// Should there be a warning that the dates are estimations?
+
+					}  // If we made it this far, there is no point in outputting an error message of any kind.
+				} else {
+					if ($this->debug_enabled === true && (strpos($this->getModuleConfigValue( '_DEBUG_MODE' ), "Error") !== FALSE) && empty($build_quotes)) {
+
+						// We have an error and error debugging is enabled, so output the error.
+						// (Can't show both errors and quotes at the same time.)
+
+						$error_str = '';
+						foreach ($this->errors as $error) {
+							$error_str .= $error['message'] . " (Code: " . $error['code'] . ")<br>";
+						}
+						
+						$quotes = [
+							'id' => $this->code,
+							'module' => $this->title,
+							'methods' => [],
+							'error' => '<pre style="white-space: pre-wrap;word-wrap: break-word;">' . $error_str . "</pre>",
+						];
+
+					}
 
 				}
-
 			}
-		}
-        
+    	}    
+var_dump( $quotes );
         return $quotes;
     }
 
@@ -1248,109 +1161,10 @@ class usps extends CommercePluginShippingBase
      */
     protected function uspsrDebug($message)
     {
-        if ($this->debug_enabled === true && (strpos(MODULE_SHIPPING_USPS_DEBUG_MODE, "Logs") !== FALSE)) {
+        if ($this->debug_enabled === true && (strpos($this->getModuleConfigValue( '_DEBUG_MODE' ), "Logs") !== FALSE)) {
             error_log(date('Y-m-d H:i:s') . ': ' . $message . PHP_EOL, 3, $this->debug_filename);
         }
-    }
-
-    protected function adminInitializationChecks()
-    {
-        /**
-         * Is there an upgrade available?
-         *
-         * Make a call into the ZenCart Module DB and compare the returned result versus the number.
-         * Don't make this call if the current version is v0.0.0. (There will always be a "better" version than v0.0.0)
-         */
-        $check_for_new_version = plugin_version_check_for_updates(self::ZEN_CART_PLUGIN_ID, MODULE_SHIPPING_USPS_VERSION);
-
-        if (MODULE_SHIPPING_USPS_VERSION !== "v0.0.0" && $check_for_new_version) {
-            $messageStack->add_session(MODULE_SHIPPING_USPS_UPGRADE_AVAILABLE, 'caution');
-        }
-
-        /**
-         * Are you using 0.0.0? Proceed at your own risk.
-         * Starting in 1.5.0, -rc version will designate the release as a release candidate... Should be prepared for stuff to not work.
-         */
-        if (self::USPSR_CURRENT_VERSION === "v0.0.0" || strpos(self::USPSR_CURRENT_VERSION, "-rc") !== FALSE)
-            // If this version is v0.0.0 or contains -dev, this is a developmental release. Proceed with caution.
-            $messageStack->add_session(MODULE_SHIPPING_USPS_DEVELOPMENTAL, 'warning');
-    }
-
-    /**
-     * Common storefront/admin configuration checking.  Called from adminInitializationChecks
-     * and storefrontInitialization.  Will auto-disable the shipping method if either no services
-     * have been selected or the country-of-origin is not the US.
-     */
-    protected function checkConfiguration()
-    {
-        global $messageStack;
-
-        // Need to have at least one method enabled
-        $usps_shipping_methods_cnt = 0;
-        foreach ($this->typeCheckboxesSelected as $requested_type) {
-            if (is_numeric($requested_type)) {
-                continue;
-            }
-            $usps_shipping_methods_cnt++;
-        }
-
-        if ($usps_shipping_methods_cnt === 0) {
-            $this->enabled = false;
-            if (IS_ADMIN_FLAG === true) {
-                $messageStack->add_session(MODULE_SHIPPING_USPS_ERROR_NO_QUOTES, 'error');
-            }
-        }
-
-        // If the Origin Zip Code fails validation... stop.
-        if (!uspsr_validate_zipcode(SHIPPING_ORIGIN_ZIP)) {
-            $this->enabled = false;
-            if (IS_ADMIN_FLAG === true) {
-                $messageStack->add_session(MODULE_SHIPPING_USPS_ERROR_BAD_ORIGIN_ZIPCODE, 'error');
-            }
-        }
-
-        // If the origin country isn't the United States, you can't use USPS (APO/DPO/FPO counts as United States)... stop.
-        if (SHIPPING_ORIGIN_COUNTRY !== '223') {
-            $this->enabled = false;
-            if (IS_ADMIN_FLAG === true) {
-                $messageStack->add_session(MODULE_SHIPPING_USPS_ERROR_BAD_ORIGIN_COUNTRY, 'error');
-            }
-        }
-
-        // If either the API Key or Secret are blank, stop, you can't use USPS
-        if (!zen_not_null(MODULE_SHIPPING_USPS_API_KEY) || !zen_not_null(MODULE_SHIPPING_USPS_API_SECRET)) {
-            $this->enabled = false;
-            if (IS_ADMIN_FLAG === true) {
-                $messageStack->add_session(MODULE_SHIPPING_USPS_ERROR_BAD_CREDENTIALS, 'error');
-            }
-        }
-
-        // If either the API Key or Secret are duds, stop, you can't use USPS... you didn't provide proper access credentials.
-        if ((strtolower(MODULE_SHIPPING_USPS_API_KEY) == 'none') || strtolower(MODULE_SHIPPING_USPS_API_SECRET) == 'none') {
-            $this->enabled = false;
-            if (IS_ADMIN_FLAG === true) {
-                $messageStack->add_session(MODULE_SHIPPING_USPS_ERROR_NO_CREDENTIALS, 'error');
-            }
-        }
-
-        // If the Contract option is selected but either the Contract Type is set to None OR the Account Number is blank, stop.
-        if (MODULE_SHIPPING_USPS_PRICING == 'Contract' && (MODULE_SHIPPING_USPS_CONTRACT_TYPE == 'None' || !zen_not_null(MODULE_SHIPPING_USPS_ACCT_NUMBER))) {
-            $this->enabled = false;
-            if (IS_ADMIN_FLAG === true) {
-                $messageStack->add_session(MODULE_SHIPPING_USPS_ERROR_NO_CONTRACT, 'error');
-            }
-        }
-
-        // If the module is NOT able to get a Bearer Token, disable the module. Something is wrong.
-        if (((strtolower(MODULE_SHIPPING_USPS_API_KEY) != 'none') && (strtolower(MODULE_SHIPPING_USPS_API_KEY)) != 'none') && !zen_not_null($this->bearerToken)) {
-            $this->enabled = false;
-            if (IS_ADMIN_FLAG === true) {
-                $messageStack->add_session(MODULE_SHIPPING_USPS_ERROR_REJECTED_CREDENTIALS, 'error');
-            }
-
-        }
-
-        return $this->enabled;
+var_dump( $message );
     }
 
     protected function _getQuote( $pShipHash )
@@ -1358,11 +1172,62 @@ class usps extends CommercePluginShippingBase
         /**
          * Build array of shipping values
          */
-        
+     
+		$ret = array( 'package' => [], 'letter' => [] );
+
+		if( empty( $pShipHash['box_length'] ) && empty( $pShipHash['box_width'] ) && empty( $pShipHash['box_height'] )) {
+			/**
+			 * Determine if package is machinable or not - Media Mail Only
+			 * API will either return both the machinable rate and non-machinable rate or one or the other.
+			 *
+			 * The store owner will choose a preference. If the preference can be met, show that rate. If it can't be met, but there is only
+			 * one rate available... show THAT rate.
+			 *
+			 * By definition, Media Mail Machinable parcels must weight less than 25lbs with no minimum. Additionally, a package to be machineable
+			 * cannot be more than 22 inches long, 18 inches wide, 15 inches high. The USPS considers the longest measurement given to the length, the
+			 * 2nd longest measurement is considered it's width, and the third longest it's height. (Actually it considers "length is the measurement of
+			 * the longest dimension and girth is the distance around the thickest part".)
+			 *
+			 * If all else fails, follow the module setting.
+			 *
+			 * For all other services, this is handled by the API.
+			 */
+
+			// Rebuild the dimmensions array
+			$box_dimensions = array_filter(explode(', ', $this->getModuleConfigValue( '_DIMMENSIONS' )));
+			array_walk($box_dimensions, function (&$value) {
+				$value = floatval(trim($value));
+			}); // Quickly remove white space
+
+			$ltr_dimensions = array_filter(explode(', ', $this->getModuleConfigValue( '_LTR_DIMMENSIONS' )));
+			array_walk($ltr_dimensions, function (&$value) {
+				$value = floatval(trim($value));
+			}); // Quickly remove white space
+
+			if( $this->isDomesticShipment( $pShipHash ) ) {
+				// Set the weight back 
+				$pShipHash['box_length'] = $box_dimensions[0];
+				$pShipHash['box_width'] = $box_dimensions[2];
+				$pShipHash['box_height'] = $box_dimensions[4];
+
+				$pShipHash['ltr_length'] = $ltr_dimensions[0];
+				$pShipHash['ltr_height'] = $ltr_dimensions[2];
+				$pShipHash['ltr_thickness'] = $ltr_dimensions[4];
+			} else {
+				$pShipHash['box_length'] = $box_dimensions[1];
+				$pShipHash['box_width'] = $box_dimensions[3];
+				$pShipHash['box_height'] = $box_dimensions[5];
+
+				$pShipHash['ltr_length'] = $ltr_dimensions[1];
+				$pShipHash['ltr_height'] = $ltr_dimensions[3];
+				$pShipHash['ltr_thickness'] = $ltr_dimensions[5];
+			}
+		}
+   
         // Check if the measurement setting exists and if it does, check that it's in inches.
         // If it doesn't or if it is set to inches, do nothing.
         if (defined('SHIPPING_DIMENSION_UNITS') && SHIPPING_DIMENSION_UNITS !== "inches") {
-            foreach ($this->dimensions as &$dimmension) {
+            foreach ($pShipHash as &$dimmension) {
                 $dimmension = (float) $dimmension / 2.54;
             }
         }
@@ -1381,9 +1246,10 @@ class usps extends CommercePluginShippingBase
         // Prepare a Letters Query
         $ltr_body = [];
 
+		$isQuoteLetter = $pShipHash['shipping_weight_box'] < 1;
+
 		// US Domestic destinations
-		$destCountryCode = $this->verifyCountryCode( $pShipHash['destination']['countries_iso_code_2'] );
-		if( $destCountryCode == 'US' ) {
+		if( $this->isDomesticShipment( $pShipHash ) ) {
 
             // There are only three classes needed: Ground Advantage, Priority Mail, Priority Mail Express
             $mailClasses = [
@@ -1414,71 +1280,76 @@ class usps extends CommercePluginShippingBase
             $pkg_body = [
                 'originZIPCode' => uspsr_validate_zipcode(SHIPPING_ORIGIN_ZIP),
                 'destinationZIPCode' => $destination_zip,
-                'weight' => $pShipHash['shipping_weight_total'],
-                'length' => $this->dimensions['pkg_length'],
-                'width' => $this->dimensions['pkg_width'],
-                'height' => $this->dimensions['pkg_height'],
+                'weight' => (float)$pShipHash['shipping_weight_box'],
+                'length' => (float)$pShipHash['box_length'],
+                'width'  => (float)$pShipHash['box_width'],
+                'height' => (float)$pShipHash['box_height'],
                 'mailClasses' => $mailClasses,
-                'priceType' => strtoupper(MODULE_SHIPPING_USPS_PRICING),
-                'itemValue' => (MODULE_SHIPPING_USPS_DISPATCH_CART_TOTAL == "Yes" ? $this->shipment_value : 5),
+                'priceType' => strtoupper($this->getModuleConfigValue( '_PRICING' )),
+                'itemValue' => ($this->getModuleConfigValue( '_DISPATCH_CART_TOTAL' ) == "Yes" ? $this->shipment_value : 5),
             ];
 
-            // USPS Letters Services (still need to be attached to the Letter Request, Packages will be processed separately)
-            $services_ltr_dmst = array_filter(explode(', ', MODULE_SHIPPING_USPS_DMST_LETTER_SERVICES));
-            $services_ltr_intl = array_filter(explode(', ', MODULE_SHIPPING_USPS_INTL_LETTER_SERVICES));
-            
-            if (in_array(930, $services_ltr_dmst)) {
-                $services_ltr_dmst[] = 931;
-            }
+			if( $isQuoteLetter ) {
+				// USPS Letters Services (still need to be attached to the Letter Request, Packages will be processed separately)
+				$services_ltr_dmst = array_filter(explode(', ', $this->getModuleConfigValue( '_DMST_LETTER_SERVICES' )));
+				$services_ltr_intl = array_filter(explode(', ', $this->getModuleConfigValue( '_INTL_LETTER_SERVICES' )));
+				
+				if (in_array(930, $services_ltr_dmst)) {
+					$services_ltr_dmst[] = 931;
+				}
 
-            if (in_array(930, $services_ltr_intl)) {
-                $services_ltr_intl[] = 931;
-            }
+				if (in_array(930, $services_ltr_intl)) {
+					$services_ltr_intl[] = 931;
+				}
 
-            $services_ltr_dmst = array_values(array_filter(array_map('intval', $services_ltr_dmst), function ($service) {
-                return $service > 0; // Keep only positive integers
-            }));
+				$services_ltr_dmst = array_values(array_filter(array_map('intval', $services_ltr_dmst), function ($service) {
+					return $service > 0; // Keep only positive integers
+				}));
 
-            $services_ltr_intl = array_values(array_filter(array_map('intval', $services_ltr_intl), function ($service) {
-                return $service > 0; // Keep only positive integers
-            }));
+				$services_ltr_intl = array_values(array_filter(array_map('intval', $services_ltr_intl), function ($service) {
+					return $service > 0; // Keep only positive integers
+				}));
 
-            $services_ltr = $this->is_us_shipment ? $services_ltr_dmst : $services_ltr_intl;
+				$services_ltr = $this->isDomesticShipment( $pShipHash ) ? $services_ltr_dmst : $services_ltr_intl;
 
 
-            // Letter Request Body
-            $ltr_body = [
-                "weight" => $pShipHash['shipping_weight_total'] * 16, // The cart weight is in pounds, the letters API takes the request in ounces
-                "length" => $this->dimensions['ltr_length'],
-                "height" => $this->dimensions['ltr_height'],
-                "thickness" => $this->dimensions['ltr_thickness'],
-                "processingCategory" => strtoupper(MODULE_SHIPPING_USPS_LTR_PROCESSING),
-                "nonMachinableIndicators" =>
-                [
-                    "isPolybagged" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "Polybagged") !== false,
-                    "hasClosureDevices" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "ClosureDevices") !== false,
-                    "hasLooseItems" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "LooseItems") !== false,
-                    "isRigid" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "Rigid") !== false,
-                    "isSelfMailer" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "SelfMailer") !== false,
-                    "isBooklet" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "Booklet") !== false,
-                ],
-                "extraServices" => $services_ltr,
-                "itemValue" => (MODULE_SHIPPING_USPS_DISPATCH_CART_TOTAL == "Yes" ? $this->shipment_value : 5),
-            ];
+				// Letter Request Body
+				$ltr_body = [
+					"weight" => $pShipHash['shipping_weight_box'] * 16, // The cart weight is in pounds, the letters API takes the request in ounces
+					"length" => (float)$pShipHash['ltr_length'],
+					"height" => (float)$pShipHash['ltr_height'],
+					"thickness" => (float)$pShipHash['ltr_thickness'],
+					"processingCategory" => strtoupper($this->getModuleConfigValue( '_LTR_PROCESSING' )),
+					"nonMachinableIndicators" =>
+					[
+						"isPolybagged" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "Polybagged") !== false,
+						"hasClosureDevices" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "ClosureDevices") !== false,
+						"hasLooseItems" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "LooseItems") !== false,
+						"isRigid" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "Rigid") !== false,
+						"isSelfMailer" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "SelfMailer") !== false,
+						"isBooklet" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "Booklet") !== false,
+					],
+					"extraServices" => $services_ltr,
+					"itemValue" => ($this->getModuleConfigValue( '_DISPATCH_CART_TOTAL' ) == "Yes" ? $this->shipment_value : 5),
+				];
+			}
 
             // Let's make a standards request now.
             $standards_query = [
                 'originZIPCode' => $pShipHash['origin']['postcode'],
                 'destinationZIPCode' => $destination_zip,
                 'mailClass' => 'ALL',
-                'weight' => $pShipHash['shipping_weight_total']
+                'weight' => $pShipHash['shipping_weight_box']
             ];
 
-            $todays_date = new DateTime();
-            $daystoadd = (int)$this->getModuleConfigValue( '_HANDLING_TIME', 0 );
+			if( !($shipDate = BitBase::getParameter( $pShipHash['origin'], 'ship_date' )) ) {
+				$todays_date = new DateTime();
+				$daystoadd = (int)$this->getModuleConfigValue( '_HANDLING_TIME', 0 );
 
-            $todays_date_plus = $todays_date->modify("+{$daystoadd} days");
-            $standards_query['acceptanceDate'] = $todays_date_plus->format('Y-m-d');
+				$todays_date_plus = $todays_date->modify("+{$daystoadd} days");
+				$shipDate = $todays_date_plus->format('Y-m-d');
+			}
+            $standards_query['acceptanceDate'] = $shipDate;
 
             $street_address = trim( $pShipHash['destination']['street_address'] );
 
@@ -1490,15 +1361,16 @@ class usps extends CommercePluginShippingBase
             }
 
             // If the Pricing is Contract, add the Contract Type and AccountNumber
-            if (MODULE_SHIPPING_USPS_PRICING == 'Contract') {
-                $pkg_body['accountType'] = $ltr_body['accountType'] = MODULE_SHIPPING_USPS_CONTRACT_TYPE;
-                $pkg_body['accountNumber'] = $ltr_body['accountNumber'] = MODULE_SHIPPING_USPS_ACCT_NUMBER;
+            if ($this->getModuleConfigValue( '_PRICING' ) == 'Contract') {
+                $pkg_body['accountType'] = $ltr_body['accountType'] = $this->getModuleConfigValue( '_CONTRACT_TYPE' );
+                $pkg_body['accountNumber'] = $ltr_body['accountNumber'] = $this->getModuleConfigValue( '_ACCT_NUMBER' );
             }
 
             // Send pkg_body to make pkgQuote.
-            $this->pkgQuote = $this->_makeQuotesCall($pkg_body, 'package-domestic');
-            $this->ltrQuote = $this->_makeQuotesCall($ltr_body, 'letters-domestic');
-
+            $ret['package'] = $this->_makeQuotesCall($pkg_body, 'package-domestic');
+			if( $isQuoteLetter ) {
+	            $ret['letter'] = $this->_makeQuotesCall($ltr_body, 'letters-domestic');
+			}
         } else { // It's not going to the US, so it's international
 
             $pkg_body = [
@@ -1506,63 +1378,71 @@ class usps extends CommercePluginShippingBase
                 "foreignPostalCode" => $pShipHash['destination']['postcode'],
                 "destinationCountryCode" => $pShipHash['destination']['countries_iso_code_2'],
                 "weight" => $shipping_weight,
-                'length' => $this->dimensions['pkg_length'],
-                'width' => $this->dimensions['pkg_width'],
-                'height' => $this->dimensions['pkg_height'],
-                "priceType" => strtoupper(MODULE_SHIPPING_USPS_PRICING),
+                'length' => (float)$pShipHash['box_length'],
+                'width' => (float)$pShipHash['box_width'],
+                'height' => (float)$pShipHash['box_height'],
+                "priceType" => strtoupper($this->getModuleConfigValue( '_PRICING' )),
                 "mailClass" => "ALL", // Do not change this. There is no "mailClasses" on the International API, so we have to pull all of them.
-                'itemValue' => (MODULE_SHIPPING_USPS_DISPATCH_CART_TOTAL == "Yes" ? $this->shipment_value : 5),
+                'itemValue' => ($this->getModuleConfigValue( '_DISPATCH_CART_TOTAL' ) == "Yes" ? $this->shipment_value : 5),
             ];
 
-            // Letter Request Body
-            $ltr_body = [
-                "weight" => $shipping_weight,
-                "length" => $this->dimensions['ltr_length'],
-                "height" => $this->dimensions['ltr_height'],
-                "thickness" => $this->dimensions['ltr_thickness'],
-                "processingCategory" => strtoupper(MODULE_SHIPPING_USPS_LTR_PROCESSING),
-                "nonMachinableIndicators" =>
-                [
-                    "isPolybagged" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "Polybagged") !== false,
-                    "hasClosureDevices" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "ClosureDevices") !== false,
-                    "hasLooseItems" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "LooseItems") !== false,
-                    "isRigid" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "Rigid") !== false,
-                    "isSelfMailer" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "SelfMailer") !== false,
-                    "isBooklet" => strpos(MODULE_SHIPPING_USPS_LTR_MACHINEABLE_FLAGS, "Booklet") !== false,
-                ],
-                "itemValue" => (MODULE_SHIPPING_USPS_DISPATCH_CART_TOTAL == "Yes" ? $this->shipment_value : 5),
-                "destinationCountryCode" => $pShipHash['destination']['countries_iso_code_2'],
-            ];
+			if( $isQuoteLetter ) {
+				// Letter Request Body
+				$ltr_body = [
+					"weight" => $shipping_weight,
+					"length" => (float)$pShipHash['ltr_length'],
+					"height" => (float)$pShipHash['ltr_height'],
+					"thickness" => (float)$pShipHash['ltr_thickness'],
+					"processingCategory" => strtoupper($this->getModuleConfigValue( '_LTR_PROCESSING' )),
+					"nonMachinableIndicators" =>
+					[
+						"isPolybagged" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "Polybagged") !== false,
+						"hasClosureDevices" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "ClosureDevices") !== false,
+						"hasLooseItems" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "LooseItems") !== false,
+						"isRigid" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "Rigid") !== false,
+						"isSelfMailer" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "SelfMailer") !== false,
+						"isBooklet" => strpos($this->getModuleConfigValue( '_LTR_MACHINEABLE_FLAGS' ), "Booklet") !== false,
+					],
+					"itemValue" => ($this->getModuleConfigValue( '_DISPATCH_CART_TOTAL' ) == "Yes" ? $this->shipment_value : 5),
+					"destinationCountryCode" => $pShipHash['destination']['countries_iso_code_2'],
+				];
+			}
 
             // If the Pricing is Contract, add the Contract Type and AccountNumber
-            if (MODULE_SHIPPING_USPS_PRICING == 'Contract') {
-                $pkg_body['accountType'] = $ltr_body['accountType'] = MODULE_SHIPPING_USPS_CONTRACT_TYPE;
-                $pkg_body['accountNumber'] = $ltr_body['accountNumber'] = MODULE_SHIPPING_USPS_ACCT_NUMBER;
+            if ($this->getModuleConfigValue( '_PRICING' ) == 'Contract') {
+                $pkg_body['accountType'] = $ltr_body['accountType'] = $this->getModuleConfigValue( '_CONTRACT_TYPE' );
+                $pkg_body['accountNumber'] = $ltr_body['accountNumber'] = $this->getModuleConfigValue( '_ACCT_NUMBER' );
             }
 
 
             // Send pkg_body to make pkgQuote.
-            $this->pkgQuote = $this->_makeQuotesCall($pkg_body, 'package-intl');
-            $this->ltrQuote = $this->_makeQuotesCall($ltr_body, 'letters-intl');
-
+            $ret['package'] = $this->_makeQuotesCall($pkg_body, 'package-intl');
+			if( $isQuoteLetter ) {
+	            $ret['letter'] = $this->_makeQuotesCall($ltr_body, 'letters-intl');
+			}
         }
 
         // Okay we have our request body ready.
 
         // Are we looking up the time frames? If not, don't send the request for Standards
-        if (defined('MODULE_SHIPPING_USPS_DISPLAY_TRANSIT') && MODULE_SHIPPING_USPS_DISPLAY_TRANSIT !== 'No' && $this->is_us_shipment) {
+        if( $this->getModuleConfigValue( '_DISPLAY_TRANSIT' ) !== 'No' && $this->isDomesticShipment( $pShipHash ) ) {
             $standards_response = json_decode($this->_makeStandardsCall($standards_query), TRUE);
-            
             if (is_array($standards_response)) {
                 foreach ($standards_response as $item) {
                     if (is_array($item) && isset($item['mailClass'])) {
-                        $this->uspsStandards[$item['mailClass']] = $item;
+                        $ret['standards'][$item['mailClass']] = $item;
                     }
                 }
             }
-
         }
+
+		return $ret;
     }
+
+	protected function isDomesticShipment( $pShipHash ) {
+		$destCountryCode = $this->verifyCountryCode( $pShipHash['destination']['countries_iso_code_2'] );	
+		return $destCountryCode == 'US';
+	}
 
     protected function _makeStandardsCall($query)
     {
@@ -1584,17 +1464,17 @@ class usps extends CommercePluginShippingBase
         $ch = curl_init();
         $curl_options = [
             CURLOPT_URL => $this->api_base . 'service-standards/v3/estimates?' . $paramsBuild,
-            CURLOPT_REFERER => ($request_type == 'SSL') ? (HTTPS_SERVER . DIR_WS_HTTPS_CATALOG) : (HTTP_SERVER . DIR_WS_CATALOG),
+            CURLOPT_REFERER => BITCOMMERCE_PKG_URI,
             CURLOPT_FRESH_CONNECT => 1,
             CURLOPT_HEADER => 0,
             CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'Authorization: Bearer ' . $this->bearerToken],
             CURLOPT_VERBOSE => 0,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_TIMEOUT => 15,
-            CURLOPT_USERAGENT => 'ZenCart v' . PROJECT_VERSION_MAJOR . "." . PROJECT_VERSION_MINOR . " + USPSr Module " . MODULE_SHIPPING_USPS_VERSION,
+            CURLOPT_USERAGENT => BITCOMMERCE_PKG_NAME,
         ];
 
-        if (CURL_PROXY_REQUIRED === 'True') {
+		if( $this->isCommerceConfigActive( 'CURL_PROXY_REQUIRED' ) ) {
             $curl_options[CURLOPT_HTTPPROXYTUNNEL] = !defined('CURL_PROXY_TUNNEL_FLAG') || strtoupper(CURL_PROXY_TUNNEL_FLAG) !== 'FALSE';
             $curl_options[CURLOPT_PROXYTYPE] = CURLPROXY_HTTP;
             $curl_options[CURLOPT_PROXY] = CURL_PROXY_SERVER_DETAILS;
@@ -1708,17 +1588,17 @@ class usps extends CommercePluginShippingBase
     {
 
         $call_body = [
-            'client_id'     => MODULE_SHIPPING_USPS_API_KEY,
-            'client_secret' => MODULE_SHIPPING_USPS_API_SECRET,
+            'client_id'     => $this->getModuleConfigValue( '_API_KEY' ),
+            'client_secret' => $this->getModuleConfigValue( '_API_SECRET' ),
             'scope'       => 'domestic-prices addresses international-prices service-standards international-service-standard shipments'
         ];
         
         // If there is a refresh token, check to see if it's still valid.
-        if (defined('MODULE_SHIPPING_USPS_REFRESH_TOKEN') && zen_not_null(MODULE_SHIPPING_USPS_REFRESH_TOKEN) && $this->checkToken(MODULE_SHIPPING_USPS_REFRESH_TOKEN_EXPIRATION)) {
+        if( $this->checkToken($this->getModuleConfigValue( '_REFRESH_TOKEN_EXPIRATION' )) ) {
             
             // It's valid, so use it to get a refreshed bearer token.
             $call_body['grant_type'] = 'refresh_token';
-            $call_body['refresh_token'] = MODULE_SHIPPING_USPS_REFRESH_TOKEN;
+            $call_body['refresh_token'] = $this->getModuleConfigValue( '_REFRESH_TOKEN' );
 
         } else {
             // Otherwise, there is no refresh token, so get a new bearer token.
@@ -1918,7 +1798,7 @@ class usps extends CommercePluginShippingBase
         $this->insured_value = $this->shipment_value - $this->uninsured_value;
 
         // Breakout the category of exemptions for Media Mail
-        $key_values = preg_split('/[\s+]/', MODULE_SHIPPING_USPS_MEDIA_MAIL_EXCLUDE);
+        $key_values = preg_split('/[\s+]/', $this->getModuleConfigValue( '_MEDIA_MAIL_EXCLUDE' ));
 
         // Iterate over all the items in the order. If an item is flagged as products_virtual, that means the whole order is excluded.
         // Additionally deduct the value of the non-shipped item from the shipment_value
@@ -2622,33 +2502,3 @@ function uspsr_get_connect_zipcodes($data)
     }
 }
 
-function zen_uspsr_estimate_days($data)
-{
-    $output = '';
-
-    if (!defined('MODULE_SHIPPING_USPS_HANDLING_TIME')) {
-        return $data;
-    }
-
-    $daystoadd = (int) MODULE_SHIPPING_USPS_HANDLING_TIME;
-
-    // Simply put, put the number before the word.
-    if (preg_match("/\d+\-\d+/", $data)) {
-
-        // Split the range of days off and add the handling time to each end.
-        $days = explode('-', $data);
-        foreach ($days as &$day) {
-            $day = (int)$day + $daystoadd;
-        }
-        $data = implode('-', $days); // Collapse the array back into a - string. (This should still only have two values)
-        $output = $data . " " . MODULE_SHIPPING_USPS_TEXT_DAYS;
-
-    } elseif (is_numeric($data) && ($data > 1 || $data == 0)) {
-        $output = (int)$data + $daystoadd . " " . MODULE_SHIPPING_USPS_TEXT_DAYS;
-    } else {
-        $days = (int)$data + $daystoadd;
-        $output = "~" . $days . " " . ($days == 1 ? MODULE_SHIPPING_USPS_TEXT_DAY : MODULE_SHIPPING_USPS_TEXT_DAYS);
-    }
-
-    return $output;
-}
