@@ -204,7 +204,8 @@ eb( "MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP Not fixed for bitcommerce");
 					
 							$transitDays = 0;
 							$transitTime = '';
-							$deliveryDate = '';
+							$deliveryDateString = '';
+							$shipDateString = '';
 							if( !empty( $rateReply->DeliveryTimestamp ) ) {
 								$deliveryDate = (new DateTime( $rateReply->DeliveryTimestamp ))->format( 'Y-m-d' );
 
@@ -241,6 +242,7 @@ eb( "MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP Not fixed for bitcommerce");
 								}
 								if( $transitDays ) {
 									$shipDate = new DateTime( $this->getShippingDate( $pShipHash ) );
+									$shipDateString = $shipDate->format( 'Y-m-d' );
 									$shipDate->add( new DateInterval( 'P'.$transitDays.'D') );
 									$deliveryDate = $shipDate->format( 'Y-m-d' );
 								}
@@ -254,7 +256,8 @@ eb( "MODULE_SHIPPING_FEDEXWEBSERVICES_READY_TO_SHIP Not fixed for bitcommerce");
 												'code' => $this->types[$rateReply->ServiceType]['code'],
 												'transit_days' => $transitDays,
 												'transit_time' => $transitTime,
-												'delivery_date' => $deliveryDate,
+												'ship_date' => $shipDateString,
+												'delivery_date' => $deliveryDateString,
 											  );
 						}
 					}

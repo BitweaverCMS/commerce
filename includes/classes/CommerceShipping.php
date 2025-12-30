@@ -147,13 +147,15 @@ class CommerceShipping extends BitSingleton {
 
 	function quoteToHash( $quote ) {
 		$ret = array();
+
 		if( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) && isset( $quote[0]['id'] ) ) {
 			$ret = array(
 				'id' => $quote[0]['id'].'_'.$quote[0]['methods'][0]['id'],
 				'title' => (($quote[0]['module'] == $quote[0]['methods'][0]['title']) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
 				'cost' => $quote[0]['methods'][0]['cost'],
 				'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
-				'ship_date' => !empty( $quote[0]['methods'][0]['ship_date'] ) ? $quote[0]['origin']['ship_date'] : NULL
+				'ship_date' => !empty( $quote[0]['methods'][0]['ship_date'] ) ? $quote[0]['methods'][0]['ship_date'] : NULL,
+				'delivery_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL
 				);
 		}
 		return $ret;

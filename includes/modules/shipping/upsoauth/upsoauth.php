@@ -181,6 +181,7 @@ class upsoauth extends CommercePluginShippingBase
 				if( $transitDays = BitBase::getParameter( $quote_info, 'business_days_in_transit' ) ) {
 					$transitTime = $transitDays.' '.($transitDays == '1' ? tra( 'Day' ) : tra( 'Days' ));
 					$shipDate = new DateTime( $this->getShippingDate( $pShipHash ) );
+					$newMethod['ship_date'] = $shipDate->format( 'Y-m-d' );
 					$shipDate->add( new DateInterval( 'P'.$transitDays.'D') );
 					$newMethod['delivery_date'] = $shipDate->format( 'Y-m-d' );
 					$newMethod['transit_days'] = $transitDays;

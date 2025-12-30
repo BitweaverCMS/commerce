@@ -207,6 +207,9 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 					if( !empty( $this->booticon ) ) {
 						$quoteBase['booticon'] = $this->booticon;
 					}
+					if( $shipDate = $this->getShippingDate( $pShipHash ) ) {
+						$quoteBase['ship_date'] = $shipDate;
+					}
 				}
 			}
 		}

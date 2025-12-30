@@ -12,8 +12,8 @@
 				{/if}
 				{if $quotes[ix].origin}
 				<div class="">
-					{assign var=shipDate value=$quotes[ix].origin.ship_date|strtotime}
-					<div class="help-block">{tr}Ships from{/tr} {$quotes[ix].origin.countries_name} {*if $quotes[ix].origin.ship_date}{tr}on{/tr} {$shipDate|bit_long_date}{/if*}</div>
+					{assign var=shipDate value=$quotes[ix].origin.ship_date|strtotime+43200}{*+ 12:00PM to avoid timezone/date shift*}
+					<div class="help-block">{tr}Ships from{/tr} {$quotes[ix].origin.countries_name} {if $quotes[ix].origin.ship_date}{tr}on{/tr} {$shipDate|bit_long_date}{/if}</div>
 				</div>
 				{/if}
 				{if $quotes[ix].note}
@@ -64,7 +64,7 @@
 						<div class="col-xs-12">
 							<div class="help-block">
 							{if $quotes[ix].methods[jx].delivery_date}
-								{assign var=deliveryDate value=$quotes[ix].methods[jx].delivery_date|strtotime}
+								{assign var=deliveryDate value=$quotes[ix].methods[jx].delivery_date|strtotime+43200}
 								{tr}Estimated Arrival{/tr} <strong>{$deliveryDate|bit_long_date}</strong>
 							{else}
 								<div>{tr}Exact delivery day cannot be estimated. Do not use if you are on a tight deadline.{/tr}</div>
