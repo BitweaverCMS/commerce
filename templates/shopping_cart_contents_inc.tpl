@@ -28,7 +28,7 @@
 		<div class="small nowrap">{$cartProductHash.quantity_discount}%&nbsp;{tr}Discount{/tr}</div>
 	{/if}
 		</div>
-		{forminput label="checkbox inline-block"}
+		{forminput label="checkbox inline-block" style="vertical-align:top;margin-top:0"}
 			<input type="checkbox" name="cart_delete[]" value="{$cartProductsKey}">
 			<a href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=shopping_cart&remove_product={$cartProductsKey}">{booticon iname="fa-trash" class="fa-large" iexplain="Remove from cart"}</a>
 		{/forminput}
