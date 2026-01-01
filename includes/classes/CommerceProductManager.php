@@ -189,8 +189,10 @@ class CommerceProductManager extends BitBase {
 			}
 			$ret = TRUE;
 			if( !empty( $pFiles['attributes_image']['tmp_name'] ) ) {
-vd( $_FILES );
-die;
+				global $gBitSystem;
+				$attrPath = $this->getOptionsValueImagesPath( $povid ).'.'.$gBitSystem->getMimeExtension( $pFiles['attributes_image']['type'] );
+				mkdir_p( dirname( $attrPath ) );
+				move_uploaded_file( $pFiles['attributes_image']['tmp_name'], $attrPath);
 			}
 		}
 
@@ -201,10 +203,11 @@ die;
 	function getOptionsValueImages( $pOptionsValuesId ) {
 		$ret = array();
 		$path = $this->getOptionsValueImagesPath( $pOptionsValuesId );
+		$images = glob( $path.'*' );
 		if( is_dir( $path ) ) {
 			
 		}
-		return $ret;
+		return $images;
 	}
 
 	function getOptionsValueImagesPath( $pOptionsValuesId ) {
