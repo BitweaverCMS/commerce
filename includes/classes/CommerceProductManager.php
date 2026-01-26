@@ -177,6 +177,14 @@ class CommerceProductManager extends BitBase {
 				$exists = (int)$this->mDb->getOne( "SELECT `products_options_values_id` FROM " . TABLE_PRODUCTS_ATTRIBUTES . ' WHERE `products_options_values_id`=?', array( $povid ) );
 			}
 
+			if( !empty( $pFiles['attributes_image']['tmp_name'] ) ) {
+				global $gBitSystem;
+				$attrFile = $this->getOptionsValueImagesPath( $povid ).'.'.$gBitSystem->getMimeExtension( $pFiles['attributes_image']['type'] );
+				mkdir_p( dirname( $attrFile ) );
+				move_uploaded_file( $pFiles['attributes_image']['tmp_name'], $attrFile);
+				$pParamHash['options_values_store']['attributes_image'] = basename( $attrFile );
+			}
+
 			if( $exists ) {
 				$this->mDb->associateUpdate( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['options_values_store'], array( 'products_options_values_id' => $pParamHash['products_options_values_id'] ) );
 			} else {
@@ -188,12 +196,6 @@ class CommerceProductManager extends BitBase {
 				$this->mDb->associateInsert( TABLE_PRODUCTS_ATTRIBUTES, $pParamHash['options_values_store'] );
 			}
 			$ret = TRUE;
-			if( !empty( $pFiles['attributes_image']['tmp_name'] ) ) {
-				global $gBitSystem;
-				$attrPath = $this->getOptionsValueImagesPath( $povid ).'.'.$gBitSystem->getMimeExtension( $pFiles['attributes_image']['type'] );
-				mkdir_p( dirname( $attrPath ) );
-				move_uploaded_file( $pFiles['attributes_image']['tmp_name'], $attrPath);
-			}
 		}
 
 		$this->CompleteTrans();
@@ -210,8 +212,16 @@ class CommerceProductManager extends BitBase {
 		return $images;
 	}
 
+	public static function getOptionsValueImagesUrl() {
+		return STORAGE_PKG_URL.BITCOMMERCE_PKG_NAME.'/attr/';
+	}
+
+	public static function getOptionsValueImagesDir() {
+		return STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/attr/';
+	}
+
 	function getOptionsValueImagesPath( $pOptionsValuesId ) {
-		return STORAGE_PKG_PATH.BITCOMMERCE_PKG_NAME.'/attr/'.$pOptionsValuesId;
+		return self::getOptionsValueImagesDir().$pOptionsValuesId;
 	}
 
 	function genOptionsValuesId() {
