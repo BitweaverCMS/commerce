@@ -1800,6 +1800,7 @@ If a special exist * 10+9
 	function getProductOptions( $pSelectedId = NULL, $pCart = NULL, &$productSettings = NULL ) {
 		global $currencies;
 		require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'functions/html_output.php' );
+		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );	
 		$productOptions = array();
 
 		if ( $this->loadAttributes() ) {
@@ -1950,7 +1951,7 @@ If a special exist * 10+9
 							$optionsValuesHtml .= zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute, $this->mOptions[$optionsId]['products_options_html_attrib'], 
 								"<span class='title'>$vals[products_options_values_name]</span>"
 								. (!empty( $products_options_details_noname ) ? " <span class='details'>$products_options_details_noname</span>" : '') 
-								. (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', '') : '')
+								. (!empty( $vals['attributes_image'] ) ? zen_image(CommerceProductManager::getOptionsValueImagesUrl() . $vals['attributes_image'], '', '', '', '') : '')
 							 );
 						}
 
@@ -2129,11 +2130,15 @@ If a special exist * 10+9
 
 						$productOptions[$optionsId]['option_values'][$valId]['value_name'] = $vals['products_options_values_name'];
 						$productOptions[$optionsId]['option_values'][$valId]['value_price'] = $vals['value_price'];
+						if( !empty( $vals['attributes_image'] ) ) {
+							$productOptions[$optionsId]['option_values'][$valId]['attributes_image'] = CommerceProductManager::getOptionsValueImagesUrl().$vals['attributes_image'];
+						}
 
 						// default
 						// find default attribute if set to for default dropdown
 						if ($vals['attributes_default']=='1') {
 							$selected_attribute = $vals['products_options_values_id'];
+							$productOptions[$optionsId]['option_values'][$valId]['attributes_default'] = '1';
 						}
 
 						if( $vals['products_options_values_comment'] ) {

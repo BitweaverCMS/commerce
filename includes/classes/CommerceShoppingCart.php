@@ -86,7 +86,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			foreach( $products as $basketId=>$basketProduct ) {
 				$this->contents[$basketProduct['products_key']] = $basketProduct;
 
-				$query = "SELECT cba.`products_options_id`||'='||cba.`products_options_values_id` AS `hash_key`, cba.`products_options_id`, cba.`products_options_values_id`, cba.`products_options_values_text`, cpa.`products_options_values_name`
+				$query = "SELECT cba.`products_options_id`||'='||cba.`products_options_values_id` AS `hash_key`, cba.`products_options_id`, cba.`products_options_values_id`, cba.`products_options_values_text`, cpa.`products_options_values_name`, cpo.`products_options_name`
 						  FROM " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " cba
 							INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON ( cba.products_options_values_id=cpa.products_options_values_id )
 							LEFT JOIN " . TABLE_PRODUCTS_OPTIONS . " cpo ON( cba.products_options_id=cpo.products_options_id )
