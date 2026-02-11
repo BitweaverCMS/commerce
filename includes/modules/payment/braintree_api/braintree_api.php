@@ -504,12 +504,12 @@ class braintree_api extends CommercePluginPaymentCardBase {
 		} else {
 			$errorString = implode( $this->mErrors );
 			$this->mErrors = array( 'process_payment' => $errorString );
-			bit_error_email( 'PAYMENT ERROR: DID NOT VERIFY', 'verifyPayment failed', array( $this->mErrors, $pPaymentParams ) );
+			bit_error_email( 'PAYMENT ERROR: DID NOT VERIFY', 'verifyPayment failed'."\n\n".bit_error_string(), array( $this->mErrors, $pPaymentParams ) );
 		}
 
 		if( !empty( $this->mErrors['process_payment'] ) ) {
 			$pSessionParams[$this->code.'_error']['number'] = $this->mErrors['process_payment'];
-			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, $result->errors, 'RESPONSE' => $responseHash ) );
+			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), BitBase::getParameter( $this->mErrors, 'process_payment' )."\n\n".bit_error_string(), array( 'mErrors' => $this->mErrors, $result->errors, 'RESPONSE' => $responseHash ) );
 			$ret = FALSE;
 		}
 
