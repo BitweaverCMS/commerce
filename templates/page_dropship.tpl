@@ -7,7 +7,7 @@
 		<div class="drop-ship">
 			{formlabel label="Drop Shipping" for="drop-ship"}
 
-			<p>If you have would like to have the same cart mailed to multiple recipients, upload a <a href="{$smarty.const.BITCOMMERCE_PKG_URL}pub/dropship.csv" download="{$gBitSystem->getSiteTitle()} Drop Ship Example.csv">drop ship CSV</a> file with your addresses. A unique order with unique shipping charges will be made for each entry in the CSV file.</p>
+			<p>If you have would like to have the same cart mailed to multiple recipients, upload a <a href="{$smarty.const.BITCOMMERCE_PKG_URL}pub/drop_ship.csv" download="{$gBitSystem->getSiteTitle()} Drop Ship Example.csv">drop ship CSV</a> file with your addresses. A unique order with unique shipping charges will be made for each entry in the CSV file.</p>
 			<div class="form-inline">
 				<div class="form-group">
 					<div class="input-group">
