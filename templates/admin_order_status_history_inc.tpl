@@ -30,7 +30,7 @@
 </select>
 			<div class="input-group">
 				{if $leftSymbol}<span class="input-group-addon">{$leftSymbol}</span>{/if}
-				<input class="form-control input-sm text-right" type="text" name="charge_amount" value="{$smarty.request.charge_amount}"/>
+				<input class="form-control input-sm text-right" type="number" name="charge_amount" value="{$smarty.request.charge_amount}" step="{$gCommerceCurrencies->getInputStep($gBitOrder->getField('currency'))}"/>
 				{if $rightSymbol}<span class="input-group-addon">{$rightSymbol}</span>{/if}
 				<span class="input-group-addon">
 				</span>
