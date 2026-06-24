@@ -24,7 +24,7 @@
 */
   function zen_output_string($string, $translate = false, $protected = false) {
     if ($protected == true) {
-      return htmlspecialchars($string);
+      return htmlspecialchars($string ?? '');
     } else {
       if ($translate == false) {
         return zen_parse_input_field_data($string, array('"' => '&quot;'));
@@ -763,7 +763,7 @@ function zen_address_format( $address, $html, $boln, $eoln, $pAddressPrefix='') 
 ////
 // return attributes_qty_prices or attributes_qty_prices_onetime based on qty
   function zen_get_attributes_qty_prices_onetime($string, $qty) {
-      $attribute_qty = preg_split("/[:,]/" , $string);
+      $attribute_qty = preg_split("/[:,]/" , $string ?? '');
       $size = sizeof($attribute_qty);
       for ($i=0, $n=$size; $i<$n; $i+=2) {
         $new_price = isset( $attribute_qty[$i+1] ) ? $attribute_qty[$i+1] : 0;
@@ -1111,7 +1111,7 @@ function zen_get_page_uri( $pTarget=NULL, $pParams=NULL ) {
 ////
 // Wrapper function for round()
   function zen_round($number, $precision) {
-	return round( $number, $precision );
+	return round( $number ?? 0, $precision );
   }
 
 

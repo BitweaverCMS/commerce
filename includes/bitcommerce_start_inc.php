@@ -13,7 +13,7 @@ if (file_exists(BITCOMMERCE_PKG_INCLUDE_PATH.'configure.php')) {
 }
 
 // include the list of extra configure files
-if ($za_dir = @dir(DIR_WS_INCLUDES . 'extra_configures')) {
+if (is_dir(DIR_WS_INCLUDES . 'extra_configures') && $za_dir = @dir(DIR_WS_INCLUDES . 'extra_configures')) {
 	while ($zv_file = $za_dir->read()) {
 		if (strstr($zv_file, '.php')) {
 			require_once(DIR_WS_INCLUDES . 'extra_configures/' . $zv_file);

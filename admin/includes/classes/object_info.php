@@ -26,8 +26,7 @@
     function __construct($object_array) {
 //this line should be added, but should be tested first:
 //      if (!is_array($object_array)) return;
-      reset($object_array);
-      while (list($key, $value) = each($object_array)) {
+      foreach ($object_array as $key => $value) {
         $this->$key = zen_db_prepare_input($value);
       }
     }

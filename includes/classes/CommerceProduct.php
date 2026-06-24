@@ -1225,7 +1225,7 @@ If a special exist * 10+9
 		$joinSql = '';
 		$whereSql = '';
 
-		if( @BitBase::verifyId( $pListHash['content_status_id'] ) ) {
+		if( BitBase::verifyId( $pListHash['content_status_id'] ?? null ) ) {
 			$bindVars[] = $pListHash['content_status_id'];
 			$whereSql = ' lc.`content_status_id` = ? ';
 		} elseif( $gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
@@ -1574,7 +1574,7 @@ If a special exist * 10+9
 
 		// 'title' trumps all
 		if( !empty( $pParamHash['title'] ) ) {
-			$pParamHash['products_name'][1] = substr( preg_replace( '/:space:+/m', ' ', trim( filter_var( $pParamHash['title'], FILTER_SANITIZE_STRING ) ) ), 0, BIT_CONTENT_MAX_TITLE_LEN );
+			$pParamHash['products_name'][1] = substr( preg_replace( '/:space:+/m', ' ', trim( strip_tags( $pParamHash['title'] ) ) ), 0, BIT_CONTENT_MAX_TITLE_LEN );
 		} elseif( !empty( $pParamHash['products_name'] ) ) {
 			if( is_array( $pParamHash['products_name'] ) ) {
 				$pParamHash['title'] = current( $pParamHash['products_name'] );
