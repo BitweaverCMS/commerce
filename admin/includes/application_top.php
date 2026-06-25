@@ -149,6 +149,7 @@ if ( (GZIP_LEVEL == '1') && ($ext_zlib_loaded = extension_loaded('zlib')) && (PH
 require_once(DIR_WS_FUNCTIONS . 'general.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceVoucher.php' );
 require_once(DIR_WS_FUNCTIONS . 'html_output.php');
+bitsmarty_register_function( 'zen_href_link_admin', 'zen_href_link_admin' );
 require_once(DIR_FS_CATALOG . DIR_WS_FUNCTIONS . 'functions_email.php');
 
 // include the list of extra functions
