@@ -225,3 +225,11 @@ $gBitSmarty->assign( 'runNormal', zen_run_normal() );
 
 $gBitThemes->loadCss( BITCOMMERCE_PKG_PATH.'css/bitcommerce.css' );
 
+bitsmarty_register_function( 'zen_get_country_name', 'zen_get_country_name' );
+bitsmarty_register_function( 'zen_date_short', 'zen_date_short' );
+bitsmarty_register_function( 'zen_href_link', 'zen_href_link' );
+bitsmarty_register_function( 'zen_get_order_status_name', 'zen_get_order_status_name' );
+bitsmarty_register_function( 'zen_get_page_url', 'zen_get_page_url' );
+bitsmarty_register_function( 'zen_display_tax_value', 'zen_display_tax_value' );
+bitsmarty_register_function( 'zen_add_tax', 'zen_add_tax' );
+

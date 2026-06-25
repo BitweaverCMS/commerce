@@ -24,7 +24,7 @@
 {assign var=storeCountryName value=$smarty.const.STORE_COUNTRY|zen_get_country_name}
 {foreach from=$listOrders key=orderId item=order}
 	{assign var=grossTotal value=$grossTotal+$order.order_total}
-	{assign var=displayName value=BitUser::getDisplayNameFromHash($order)}
+	{assign var=displayName value=$order|getDisplayNameFromHash}
 	<tr>		
 		<td colspan="6"><div class="pull-left">{if $order.orders_status_id == $smarty.const.DEFAULT_ORDERS_STATUS_ID}<a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URL}orders.php?oID={$orderId}&action=process">{tr}Process{/tr}</a> {/if}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink"><strong>{$orderId}</strong> - {$displayName}</A><BR><SPAN CLASS="SMALL">{$ORDER.ORDERS_STATUS_NAME}</SPAN></DIV><DIV CLASS="date pull-right text-right">{if $displayName != $order.delivery_name && $order.delivery_name != $order.billing_name}<em>{$order.delivery_name}</em>, {/if}{$order.delivery_city}, {$order.delivery_state}{if $order.delivery_country != $storeCountryName} {$order.delivery_country}{/if}{if $order.shipping_method_code}<br><span class="small">{$order.shipping_method_code}</span>{/if}</div></td>
 		<td class="text-right"><div class="date"><span style="white-space:nowrap">{$order.purchase_time}</span>{if $order.deadline_date} <br><span class="badge alert-danger">{$order.deadline_date|cal_date_format:'%a %b %e, %Y'}</span>{/if}</div></td>

@@ -48,6 +48,7 @@ class CommerceProduct extends LibertyMime {
 		$this->mUpdateContentPerm	= 'p_bitcommerce_product_update';
 		$this->mCreateContentPerm	= 'p_bitcommerce_product_create';
 		$this->mAdminContentPerm = 'p_bitcommerce_admin';
+		BitBase::registerSmartyClass( 'CommerceProduct', 'CommerceProduct' );
 	}
 
 	public function __sleep() {
