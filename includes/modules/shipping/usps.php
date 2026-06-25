@@ -1366,12 +1366,14 @@ class usps extends CommercePluginShippingBase
 	            $ret['letter'] = $this->_makeQuotesCall($ltr_body, 'letters-domestic');
 			}
         } else { // It's not going to the US, so it's international
-
+if( $pShipHash['shipping_num_boxes'] > 1 ) {
+eb( "MUTLI BOX SUPPORT FOR USPS not supported", $pShipHash );
+}
             $pkg_body = [
                 "originZIPCode" => uspsr_validate_zipcode(SHIPPING_ORIGIN_ZIP),
                 "foreignPostalCode" => $pShipHash['destination']['postcode'],
                 "destinationCountryCode" => $pShipHash['destination']['countries_iso_code_2'],
-                "weight" => $shipping_weight,
+                "weight" => $pShipHash['shipping_weight_total'],
                 'length' => (float)$pShipHash['box_length'],
                 'width' => (float)$pShipHash['box_width'],
                 'height' => (float)$pShipHash['box_height'],

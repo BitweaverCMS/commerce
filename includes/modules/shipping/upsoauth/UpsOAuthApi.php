@@ -394,6 +394,9 @@ class UpsOAuthApi extends CommerceBase
 		$ups_service_types = $this->getServiceTypes();
 		$ups_shipping_origin = $this->getShippingOrigin();
 		foreach ($all_ups_quotes->RateResponse->RatedShipment as $next_shipment) {
+			if ( empty( $next_shipment->Service->Code ) ) {
+				continue;
+			}
 			$service_code = $next_shipment->Service->Code;
 			if (strpos($ups_service_types, "[$service_code]") === false) {
 				continue;
