@@ -2724,6 +2724,7 @@ Skip deleting of images for now
 function bc_get_commerce_product( $pLookupMixed ) {
 	return CommerceProduct::getCommerceObject( $pLookupMixed );
 }
+bitsmarty_register_function( 'bc_get_commerce_product', 'bc_get_commerce_product' );
 
 if( !defined( 'TABLE_PRODUCTS' ) ) {
 	// we might be coming in from LibertyBase::getLibertyObject

@@ -701,4 +701,5 @@ function zen_run_normal() {
       return 'false';
     }
   }
+bitsmarty_register_function( 'zen_get_cc_enabled', 'zen_get_cc_enabled' );
 ?>

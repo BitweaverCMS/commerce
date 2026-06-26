@@ -1132,7 +1132,8 @@ function zen_get_page_uri( $pTarget=NULL, $pParams=NULL ) {
     }
   }
 
-
+bitsmarty_register_function( 'zen_address_format', 'zen_address_format' );
+bitsmarty_register_function( 'zen_get_option_value', 'zen_get_option_value' );
 
 
 
