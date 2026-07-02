@@ -25,7 +25,7 @@ if( !$gBitUser->isRegistered() && !empty( $_REQUEST['inline_registration'] ) ) {
 
 // determine the page directory
 if( empty( $_REQUEST['main_page'] ) ) {
-	if( @BitBase::verifyId( $_REQUEST['user_id'] ) ) {
+	if( BitBase::verifyIdParameter( $_REQUEST, 'user_id' ) ) {
 		$_REQUEST['main_page'] = 'user_products';
 	} elseif( $infoPage = $gBitProduct->getInfoPage() ) {
 		$_REQUEST['main_page'] = $infoPage;

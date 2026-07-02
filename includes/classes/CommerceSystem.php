@@ -99,6 +99,10 @@ class CommerceSystem extends BitSingleton {
 
 		$ret = NULL;
 
+		if( empty( $pModuleClass ) ) {
+			return $ret;
+		}
+
 		$moduleBase = DIR_FS_MODULES.strtolower( $pModuleType ).'/'.strtolower( $pModuleClass );
 		if( is_dir( $moduleBase ) ) {
 			$moduleSourceFile = $moduleBase.'/'.strtolower( $pModuleClass ).'.php';

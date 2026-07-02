@@ -758,7 +758,7 @@ If a special exist * 10+9
 		if( !empty( $this->mInfo['normal_price'] ) ) {
 			$special_price_discount = (!empty( $this->mInfo['special_price'] ) ? ($this->mInfo['special_price'] / $this->mInfo['normal_price']) : 1);
 		} else {
-			$special_price_discount = '';
+			$special_price_discount = 0;
 		}
 		$sale_maker_discount = $this->getSaleDiscountType( '', 'amount' );
 
