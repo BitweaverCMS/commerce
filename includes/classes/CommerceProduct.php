@@ -1993,10 +1993,10 @@ If a special exist * 10+9
 
 							switch ($this->mOptions[$optionsId]['products_options_images_style']) {
 								case '1':
-									$optionsValuesHtml .= '<label class="products-option-'.$this->mOptions[$optionsId]['products_options_id'].'">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], (!empty( $vals['attributes_image'] ) ? zen_image(DIR_WS_IMAGES . $vals['attributes_image']).' ' : ' ') . $products_options_details . '</label>' );
+									$optionsValuesHtml .= '<label class="products-option-'.$this->mOptions[$optionsId]['products_options_id'].'">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], (!empty( $vals['attributes_image'] ) ? zen_image(CommerceProductManager::getOptionsValueImagesUrl() . $vals['attributes_image']).' ' : ' ') . $products_options_details . '</label>' );
 									break;
 								case '2':
-									$optionsValuesHtml .= '<label class="products-option-'.$this->mOptions[$optionsId]['products_options_id'].'">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'],  $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(DIR_WS_IMAGES . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '</label>' );
+									$optionsValuesHtml .= '<label class="products-option-'.$this->mOptions[$optionsId]['products_options_id'].'">'.zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'],  $products_options_details .	(!empty( $vals['attributes_image'] ) ? '<br />' . zen_image(CommerceProductManager::getOptionsValueImagesUrl() . $vals['attributes_image'], '', '', '', 'hspace="5" vspace="5"') : '') . '</label>' );
 									break;
 								case '3':
 									$tmp_attributes_image_row++;
@@ -2006,7 +2006,7 @@ If a special exist * 10+9
 									}
 
 									if( !empty( $vals['attributes_image'] ) ) {
-										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname ) . '</td>';
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], zen_image(CommerceProductManager::getOptionsValueImagesUrl() . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . $products_options_details_noname ) . '</td>';
 									} else {
 										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], $vals['products_options_values_name'] . $products_options_details_noname ) . '</td>';
 									}
@@ -2021,7 +2021,7 @@ If a special exist * 10+9
 
 									if( !empty( $vals['attributes_image'] ) ) {
 										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">'
-																	. zen_image(DIR_WS_IMAGES . $vals['attributes_image'])
+																	. zen_image(CommerceProductManager::getOptionsValueImagesUrl() . $vals['attributes_image'])
 																	. (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '')
 																	. (!empty( $products_options_details_noname )	? '<br />' . $products_options_details_noname : '')
 																	. '<br />' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'] ) . '</td>';
@@ -2038,7 +2038,7 @@ If a special exist * 10+9
 									}
 
 									if( !empty( $vals['attributes_image'] ) ) {
-										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') ) . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '</td>';
+										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], zen_image(CommerceProductManager::getOptionsValueImagesUrl() . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') ) . (!empty( $products_options_details_noname ) ? '<br />' . $products_options_details_noname : '') . '</td>';
 									} else {
 										$tmp_attributes_image .= '<td class="smallText" align="center" valign="top">' . zen_draw_checkbox_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']', $products_options_value_id, $selected_attribute, $vals['attributes_html_attrib'], $vals['products_options_values_name'] . ($products_options_details_noname != '' ? $products_options_details_noname : '') ) . '</td>';
 									}
@@ -2118,7 +2118,7 @@ If a special exist * 10+9
 								$tmp_attributes_image_row = 1;
 							}
 
-							$tmp_attributes_image .= '<td class="smallText" align="center">' . zen_image(DIR_WS_IMAGES . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . '</td>';
+							$tmp_attributes_image .= '<td class="smallText" align="center">' . zen_image(CommerceProductManager::getOptionsValueImagesUrl() . $vals['attributes_image']) . (PRODUCT_IMAGES_ATTRIBUTES_NAMES == '1' ? '<br />' . $vals['products_options_values_name'] : '') . '</td>';
 							}
 						}
 

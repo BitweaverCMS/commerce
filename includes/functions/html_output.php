@@ -117,7 +117,7 @@ function zen_image($src, $alt = '', $width = '', $height = '', $parameters = '')
 
 	$srcPath = BIT_ROOT_PATH.$src;
 	if ( ((CONFIG_CALCULATE_IMAGE_SIZE == 'true') && (empty($width) || empty($height))) ) {
-		if ($image_size = @getimagesize($srcPath)) {
+		if (file_exists($srcPath) && ($image_size = getimagesize($srcPath))) {
 			if (empty($width) && zen_not_null($height)) {
 				$ratio = $height / $image_size[1];
 				$width = $image_size[0] * $ratio;
