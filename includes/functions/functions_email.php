@@ -200,7 +200,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
 
 
-	function zen_build_html_email_from_template($module='default',$block) {
+	function zen_build_html_email_from_template($module, $block) {
 		global $gBitSmarty;
 
 		try {
