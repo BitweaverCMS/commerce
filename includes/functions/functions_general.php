@@ -48,10 +48,6 @@ function zen_redirect($url) {
 	// header locates should not have the &amp; in the address it breaks things
 	while (strstr($url, '&amp;')) $url = str_replace('&amp;', '&', $url);
 
-	global $gBitUser;
-	if( is_object( $gBitUser ) ) {
-		apache_setenv( 'USERID', $gBitUser->getField('login', '-'), true );
-	}
     header('Location: ' . $url);
     zen_exit();
 }
