@@ -58,8 +58,7 @@
         $this->lf = "\n";
       }
 
-      reset($params);
-      while (list($key, $value) = each($params)) {
+      foreach ($params as $key => $value) {
         switch ($key) {
           case 'content_type':
             $headers['Content-Type'] = $value . (isset($charset) ? '; charset="' . $charset . '"' : '');
@@ -136,8 +135,7 @@
           $_subparts = $this->_subparts[$i];
           $tmp = $_subparts->encode();
 
-          reset($tmp['headers']);
-          while (list($key, $value) = each($tmp['headers'])) {
+          foreach ($tmp['headers'] as $key => $value) {
             $headers[] = $key . ': ' . $value;
           }
 
@@ -224,7 +222,7 @@
       $escape = '=';
       $output = '';
 
-      while (list(, $line) = each($lines)) {
+      foreach ($lines as $line) {
         $linlen = strlen($line);
         $newline = '';
 
