@@ -83,6 +83,7 @@ function zen_image_OLD($src, $alt = '', $width = '', $height = '', $parameters =
 ////
 // The HTML image wrapper function
 function zen_image($src, $alt = '', $width = '', $height = '', $parameters = '') {
+	$src = $src ?? '';
 	global $template_dir;
 
 	// soft clean the alt tag
