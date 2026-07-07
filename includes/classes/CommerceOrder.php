@@ -1222,7 +1222,7 @@ class CommerceOrder extends CommerceOrderBase {
 		$emailVars['INTRO_ORDER_NUM_TITLE'] = EMAIL_TEXT_ORDER_NUMBER;
 		$emailVars['INTRO_ORDER_NUMBER']		= $this->mOrdersId;
 		$emailVars['INTRO_DATE_TITLE']			= EMAIL_TEXT_DATE_ORDERED;
-		$emailVars['INTRO_DATE_ORDERED']		= strftime(DATE_FORMAT_LONG);
+		$emailVars['INTRO_DATE_ORDERED']		= date(DATE_FORMAT_LONG);
 		$emailVars['INTRO_URL_TEXT']				= EMAIL_TEXT_INVOICE_URL_CLICK;
 
 		$email_order = $emailVars['EMAIL_TEXT_HEADER'] . ' ' . $emailVars['EMAIL_TEXT_FROM'] . ' ' . STORE_NAME . "\n\n" .
@@ -1230,7 +1230,7 @@ class CommerceOrder extends CommerceOrderBase {
 						$emailVars['EMAIL_THANKS_FOR_SHOPPING'] . "\n\n" . $emailVars['EMAIL_DETAILS_FOLLOW'] . "\n" .
 						EMAIL_SEPARATOR . "\n" .
 						$emailVars['INTRO_ORDER_NUM_TITLE'] . ' ' . $this->mOrdersId . "\n" .
-						$emailVars['INTRO_DATE_TITLE'] . ' ' . strftime(DATE_FORMAT_LONG) . "\n" .
+						$emailVars['INTRO_DATE_TITLE'] . ' ' . date(DATE_FORMAT_LONG) . "\n" .
 						$emailVars['INTRO_URL_TEXT'] . ' ' .  zen_get_page_uri( FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $this->mOrdersId ) . "\n\n";
 
 		//comments area

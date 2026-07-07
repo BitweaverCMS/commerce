@@ -335,7 +335,7 @@
     $minute = (int)substr($raw_date, 14, 2);
     $second = (int)substr($raw_date, 17, 2);
 
-    return strftime(DATE_FORMAT_LONG, mktime($hour,$minute,$second,$month,$day,$year));
+    return date(DATE_FORMAT_LONG, mktime($hour,$minute,$second,$month,$day,$year));
   }
 
 
