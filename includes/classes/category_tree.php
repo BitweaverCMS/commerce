@@ -72,7 +72,7 @@ class category_tree {
 		if( !empty( $cPath ) ) {
 			$new_path = '';
 			reset($cPath_array);
-			while (list($key, $value) = each($cPath_array)) {
+			foreach ($cPath_array as $key => $value) {
 				unset($parent_id);
 				unset($first_id);
 				$bindVars = array( (int)$value, (int)$_SESSION['languages_id'] );

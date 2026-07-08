@@ -23,7 +23,7 @@
   require('includes/application_top.php');
 
   reset($_GET);
-  while (list($key, ) = each($_GET)) {
+  foreach ($_GET as $key => $_) {
     switch ($key) {
       case 'banner':
         $banners_id = zen_db_prepare_input($_GET['banner']);

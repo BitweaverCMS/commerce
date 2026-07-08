@@ -205,7 +205,7 @@
               if ($_POST['id'] !='') {
                 $selected_attribute= false;
                 reset($_POST['id']);
-                while(list($key,$value) = each($_POST['id'])) {
+                foreach ($_POST['id'] as $key => $value) {
                   if (($key == $products_options_names->fields['products_options_id'] and $value == $products_options->fields['products_options_values_id'])) {
                   // zen_get_products_name($_POST['products_id']) .
                     $selected_attribute = true;
@@ -303,9 +303,9 @@
               if ($_POST['id'] !='') {
                 $selected_attribute= false;
                 reset($_POST['id']);
-                while(list($key,$value) = each($_POST['id'])) {
+                foreach ($_POST['id'] as $key => $value) {
                   if (is_array($value)) {
-                    while(list($kkey,$vvalue) = each($value)) {
+                    foreach ($value as $kkey => $vvalue) {
                       if (($key == $products_options_names->fields['products_options_id'] and $vvalue == $products_options->fields['products_options_values_id'])) {
                         $selected_attribute = true;
                         break;
@@ -407,7 +407,7 @@
 //            $products_attribs_array = zen_db_fetch_array($products_attribs_query);
             if ($_POST['id']) {
                 reset($_POST['id']);
-                while(list($key,$value) = each($_POST['id'])) {
+                foreach ($_POST['id'] as $key => $value) {
 //echo str_replace('txt_', '', $key) . '#';
 //print_r($_POST['id']);
 //echo $products_options_names->fields['products_options_id'].'|';

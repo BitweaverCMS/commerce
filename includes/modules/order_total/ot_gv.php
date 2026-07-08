@@ -66,13 +66,13 @@ class ot_gv extends CommercePluginOrderTotalBase {
 						$ratio1 = zen_round($creditAmount / $orderTotal,2);
 						$tod_amount = 0;
 						reset($this->mOrder->info['tax_groups']);
-						while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
+						foreach ($this->mOrder->info['tax_groups'] as $key => $value) {
 							$tax_rate = zen_get_tax_rate_from_desc($key, $tax_address['country_id'], $tax_address['zone_id']);
 							$total_net += $tax_rate * $value;
 						}
 						if ($creditAmount > $total_net) $creditAmount = $total_net;
 						reset($this->mOrder->info['tax_groups']);
-						while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
+						foreach ($this->mOrder->info['tax_groups'] as $key => $value) {
 							$tax_rate = zen_get_tax_rate_from_desc($key, $tax_address['country_id'], $tax_address['zone_id']);
 							$net = $tax_rate * $value;
 							if ($net > 0) {

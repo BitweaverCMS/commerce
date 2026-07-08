@@ -64,7 +64,7 @@ if ( defined( 'SEARCH_ENGINE_FRIENDLY_URLS' ) && SEARCH_ENGINE_FRIENDLY_URLS == 
 		}
 
 		if (sizeof($GET_array) > 0) {
-			while (list($key, $value) = each($GET_array)) {
+			foreach ($GET_array as $key => $value) {
 				$_REQUEST[$key] = $value;
 			}
 		}

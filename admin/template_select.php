@@ -158,7 +158,7 @@ switch ($action) {
 
 		$contents = array('form' => zen_draw_form_admin('zones', FILENAME_TEMPLATE_SELECT, 'page=' . $_GET['page'] . '&action=insert'));
 		$contents[] = array('text' => TEXT_INFO_INSERT_INTRO);
-		while (list ($key, $value) = each($template_info) ) {
+		foreach ($template_info as $key => $value) {
 			$template_array[] = array('id' => $key, 'text' => $value['name']);
 		}
 		$lns = $gBitDb->Execute("select name, languages_id from " . TABLE_LANGUAGES);
@@ -177,7 +177,7 @@ switch ($action) {
 		$contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
 		if ( !empty($template_info) ) {
 		reset($template_info);
-			while (list ($key, $value) = each($template_info) ) {
+			foreach ($template_info as $key => $value) {
 				$template_array[] = array('id' => $key, 'text' => $value['name']);
 			}
 		}
@@ -205,7 +205,7 @@ switch ($action) {
 			$contents[] = array('text' => '<br>' . TEXT_INFO_TEMPLATE_DESCRIPTION	. '<br />' . $template_info[$tInfo->template_dir]['description']);
 			$contents[] = array('text' => '<br>' . TEXT_INFO_TEMPLATE_INSTALLED	. '<br />');
 		if ( is_array($template_info) ) {
-			while (list ($key, $value) = each($template_info) ) {
+			foreach ($template_info as $key => $value) {
 				$contents[] = array('text' => '<a href="' . DIR_WS_CATALOG_TEMPLATE . $key . '/images/' . $value['screenshot'] . '" target = "_blank">' . zen_image_button('button_preview.gif', IMAGE_PREVIEW) . '</a>&nbsp;&nbsp;' . $value['name']);
 			}
 		}

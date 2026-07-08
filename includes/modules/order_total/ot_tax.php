@@ -22,7 +22,7 @@ class ot_tax extends CommercePluginOrderTotalBase {
 		global $currencies;
 
 		reset($this->mOrder->info['tax_groups']);
-		while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
+		foreach ($this->mOrder->info['tax_groups'] as $key => $value) {
 			if ($value > 0 or STORE_TAX_DISPLAY_STATUS == 1) {
 				$this->mProcessingOutput = array( 'code' => $this->code,
 													'sort_order' => $this->getSortOrder(),

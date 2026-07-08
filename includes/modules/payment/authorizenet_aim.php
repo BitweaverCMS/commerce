@@ -262,7 +262,7 @@ function process_button( $pPaymentParameters ) {
 		}
 
 		// concatenate the submission data and put into variable $data
-		while(list($key, $value) = each($submit_data)) {
+		foreach ($submit_data as $key => $value) {
 			$data .= $key . '=' . urlencode(str_replace(',', '', $value)) . '&';
 		}
 
@@ -306,7 +306,7 @@ function process_button( $pPaymentParameters ) {
 		if (MODULE_PAYMENT_AUTHORIZENET_AIM_STORE_DATA == 'True'){
 
 			// Create a string from all of the response data for insertion into the database
-			while(list($key, $value) = each($response)) {
+			foreach ($response as $key => $value) {
 				$response_list .= ($key +1) . '=' . urlencode(ereg_replace(',', '', $value)) . '&';
 			}
 

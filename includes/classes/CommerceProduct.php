@@ -400,7 +400,7 @@ If a special exist * 10+9
 		}
 		foreach( array_keys( $salemakerSales ) as $saleId ) {
 			$categories = explode(',', $salemakerSales[$saleId]['sale_categories_all']);
-			while (list($key,$value) = each($categories)) {
+			foreach ($categories as $key => $value) {
 				if ($value == $check_category) {
 					$sale_exists = 'true';
 					$sale_maker_discount = $salemakerSales[$saleId]['sale_deduction_value'];
@@ -1937,7 +1937,7 @@ If a special exist * 10+9
 								if( !empty( $pSelectedId ) ) {
 									$selected_attribute= false;
 									reset($pSelectedId);
-									while(list($key,$value) = each($pSelectedId)) {
+									foreach ($pSelectedId as $key => $value) {
 										if (($key == $this->mOptions[$optionsId]['products_options_id'] and $value == $vals['products_options_values_id'])) {
 											// zen_get_products_name($_POST['products_id']) .
 											$selected_attribute = true;
@@ -1971,9 +1971,9 @@ If a special exist * 10+9
 								if( !empty( $pSelectedId ) ) {
 									$selected_attribute= false;
 									reset($pSelectedId);
-									while(list($key,$value) = each($pSelectedId)) {
+									foreach ($pSelectedId as $key => $value) {
 										if (is_array($value)) {
-											while(list($kkey,$vvalue) = each($value)) {
+											foreach ($value as $kkey => $vvalue) {
 												if (($key == $this->mOptions[$optionsId]['products_options_id'] and $vvalue == $vals['products_options_values_id'])) {
 													$selected_attribute = true;
 													break;

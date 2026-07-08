@@ -130,7 +130,7 @@ class purolator extends CommercePluginShippingBase {
 				$quotes['weight'] = $shippingWeight. ' Lb / '. round( $shippingWeight / 2.2 ) .' Kg';
 					$methods = array();
 				for ($i = 0; $i < sizeof($purolatorQuote); $i++) {
-					list($type, $cost) = each($purolatorQuote[$i]);
+					reset($purolatorQuote[$i]); $type = key($purolatorQuote[$i]); $cost = current($purolatorQuote[$i]);
 					$type = html_entity_decode($type);
 					if ($method == '' || $method == $type) {
 						$methods[] = array('id' => $type , 'title' => $type , 'cost' => (MODULE_SHIPPING_PUROLATOR_HANDLING + $cost));

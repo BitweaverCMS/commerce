@@ -185,7 +185,7 @@ if (isset($_REQUEST['action'])) {
 				// verify attributes and quantity first
 				$the_list = '';
 				if (isset($_REQUEST['id'])) {
-					while(list($key,$value) = each($_REQUEST['id'])) {
+					foreach ($_REQUEST['id'] as $key => $value) {
 						if( is_array( $value ) ) {
 							$value = current( $value );
 						}
@@ -254,7 +254,7 @@ if (isset($_REQUEST['action'])) {
 			break;
 
 		case 'multiple_products_add_product':
-			while ( list( $key, $qty ) = each($_REQUEST['products_id']) ) {
+			foreach ($_REQUEST['products_id'] as $key => $qty) {
 				if( !zen_has_product_attributes( $_REQUEST['products_id'] ) ) {
 					$gBitCustomer->mCart->addToCart($prodId, $qty );
 				}
@@ -311,7 +311,7 @@ if (isset($_REQUEST['action'])) {
 			// Add wishlist item to the cart
 			reset ($lvnr);
 			reset ($lvanz);
-			while (list($key,$elem) =each ($lvnr)) {
+			foreach ($lvnr as $key => $elem) {
 				(list($key1,$elem1) =each ($lvanz));
 				$gBitDb->Execute("update " . TABLE_WISHLIST . " SET `products_quantity`=$elem1 WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_id`=$elem");
 				$gBitDb->Execute("delete FROM " . TABLE_WISHLIST . " WHERE `customers_id`= '" . $_SESSION['customer_id'] . "' AND `products_quantity`='999'");

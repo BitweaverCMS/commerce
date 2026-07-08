@@ -266,7 +266,7 @@ function selectAll(FormName, SelectBox) {
 //send emails
       reset($audience);
     $i=0;
-      while (list($key, $value) = each ($audience)) {
+      foreach ($audience as $key => $value) {
     $i++;
       $html_msg['EMAIL_FIRST_NAME'] = $value['firstname'];
       $html_msg['EMAIL_LAST_NAME']  = $value['lastname'];

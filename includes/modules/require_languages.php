@@ -43,20 +43,20 @@ foreach( $directory_array as $key=>$value ) {
 $directory_array = $gCommerceSystem->get_template_part($language_page_directory . $template_dir, '/^'.$current_page_base . '/');
 
 // load language file(s)
-while(list ($key, $value) = each($directory_array)) {
+foreach ($directory_array as $key => $value) {
 	require_once($language_page_directory . $template_dir_select . $value);
 }
 */
 /*
 $directory_array = $gCommerceSystem->get_template_part($language_page_directory . 'extra_definitions/' . $gCommerceSystem->mTemplateDir . '/', '/^'.$current_page_base . '/');
 
-while(list ($key, $value) = each($directory_array)) {
+foreach ($directory_array as $key => $value) {
 	require($language_page_directory . 'extra_definitions/' . $gCommerceSystem->mTemplateDir . '/' . $value);
 }
 
 $directory_array = $gCommerceSystem->get_template_part($language_page_directory . 'extra_definitions/', '/^'.$current_page_base . '/');
 
-while(list ($key, $value) = each($directory_array)) {
+foreach ($directory_array as $key => $value) {
 	require($language_page_directory . 'extra_definitions/' . $value);
 }
 */

@@ -124,7 +124,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
 			// process attachments
 			if ( defined( 'EMAIL_ATTACHMENTS_ENABLED' ) && EMAIL_ATTACHMENTS_ENABLED && zen_not_null($attachments_list) ) {
-//				while ( list($key, $value) = each($attachments_list)) {
+//				foreach ($attachments_list as $key => $value) {
 				$fileraw = $message->get_file(DIR_FS_ADMIN.'attachments/'.$attachments_list['file']);
 				$filemime = ((zen_not_null($attachments_list['file_type']) ) ? $attachments_list['file_type'] : $message->findMime($attachments_list) );    //findMime determines what type this attachment is (XLS, PDF, etc) and sends proper vendor c_type.
 				$message->add_attachment($fileraw, $attachments_list['file'], $filemime);
@@ -355,7 +355,7 @@ define('EMAIL_SYSTEM_DEBUG','off');
 
 	 $to_header = "To: ";
 	 @reset( $mail_to_array );
-	 while( list( , $mail_to_address ) = each( $mail_to_array )) {
+	 foreach ($mail_to_array as $mail_to_address) {
 			$mail_to_address = trim($mail_to_address);
 			if ( preg_match('/[^ ]+\@[^ ]+/', $mail_to_address) ) {
 				 fputs( $socket, "RCPT TO: <$mail_to_address>\r\n" );

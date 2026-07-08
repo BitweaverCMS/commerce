@@ -44,7 +44,7 @@
           return true;
         } else {
 // self destruct
-           while(list($key,) = each($this)) {
+           foreach ($this as $key => $_) {
              $this->$key = null;
            }
 

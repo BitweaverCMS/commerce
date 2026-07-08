@@ -293,7 +293,7 @@ if (zen_not_null($action)) {
 				}
 
 				reset($products);
-				while (list($key, $value) = each($products)) {
+				foreach ($products as $key => $value) {
 					$category_ids = '';
 
 					for ($i=0, $n=sizeof($value['categories']); $i<$n; $i++) {
@@ -317,7 +317,7 @@ if (zen_not_null($action)) {
 				}
 
 				reset($products_delete);
-				while (list($key) = each($products_delete)) {
+				foreach (array_keys($products_delete) as $key) {
 					zen_remove_product($key);
 				}
 			}

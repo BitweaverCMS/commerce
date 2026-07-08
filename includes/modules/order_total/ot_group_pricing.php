@@ -83,13 +83,13 @@ class ot_group_pricing extends CommercePluginOrderTotalBase {
 					}
 					$tod_amount = 0;
 					reset($this->mOrder->info['tax_groups']);
-					while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
+					foreach ($this->mOrder->info['tax_groups'] as $key => $value) {
 						$tax_rate = zen_get_tax_rate_from_desc($key, $tax_address['country_id'], $tax_address['zone_id']);
 						$total_net += $tax_rate * $value;
 					}
 					if ($od_amount > $total_net) $od_amount = $total_net;
 					reset($this->mOrder->info['tax_groups']);
-					while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
+					foreach ($this->mOrder->info['tax_groups'] as $key => $value) {
 						$tax_rate = zen_get_tax_rate_from_desc($key, $tax_address['country_id'], $tax_address['zone_id']);
 						$net = $tax_rate * $value;
 						if ($net > 0) {

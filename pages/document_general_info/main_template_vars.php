@@ -154,7 +154,7 @@ if (PRODUCT_INFO_PREVIOUS_NEXT != 0) {
   if (is_array($id_array)) {
     reset ($id_array);
     $counter = 0;
-    while (list($key, $value) = each ($id_array)) {
+    foreach ($id_array as $key => $value) {
       if ($value == (int)$_GET['products_id']) {
         $position = $counter;
         if ($key == 0) {

@@ -35,7 +35,7 @@ class ot_coupon extends CommercePluginOrderTotalBase  {
 		if( $od_amount = $this->getDiscountHash( $pSessionParams ) ) {
 			$this->deduction = $od_amount['total'];
 			if ($od_amount['total'] > 0) {
-				while (list($key, $value) = each($this->mOrder->info['tax_groups'])) {
+				foreach ($this->mOrder->info['tax_groups'] as $key => $value) {
 					$tax_rate = zen_get_tax_rate_from_desc($key);
 					if( !empty( $od_amount[$key] ) ) {
 						$this->mOrder->info['tax_groups'][$key] -= $od_amount[$key];

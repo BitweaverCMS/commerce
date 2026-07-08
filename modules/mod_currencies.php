@@ -37,7 +37,7 @@ if ($show_currencies == true) {
 	if( isset( $currencies ) && is_object( $currencies ) ) {
 		reset( $currencies->currencies );
 		$currenciesHash = array();
-		while( list( $key, $value ) = each( $currencies->currencies ) ) {
+		foreach ($currencies->currencies as $key => $value) {
 			$currenciesHash[$key] = $value['title'];
 		}
 

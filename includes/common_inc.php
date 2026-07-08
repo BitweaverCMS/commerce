@@ -411,7 +411,7 @@ function zen_date_raw($date, $reverse = false) {
       return trim(zen_sanitize_string(stripslashes($string)));
     } elseif (is_array($string)) {
       reset($string);
-      while (list($key, $value) = each($string)) {
+      foreach ($string as $key => $value) {
         $string[$key] = zen_db_prepare_input($value);
       }
       return $string;

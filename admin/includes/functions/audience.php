@@ -110,7 +110,7 @@ function parsed_query_string($read_string) {
 
   $allwords = explode( " ", $read_string );
   reset( $allwords );
-  while( list( $key, $val ) = each( $allwords ) ) {
+  foreach ($allwords as $key => $val) {
     // find "{TABLE_" and extract that tablename
     if( substr( $val, 0, 7) == "{TABLE_"  && substr( $val, -1) == "}" ) { //check for leading and trailing {} braces
     $val = substr( $val, 2, strlen($val)-2);  // strip off braces.  Could also use str_replace(array('{','}'),'',$val);

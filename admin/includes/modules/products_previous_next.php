@@ -89,7 +89,7 @@
   if (is_array($id_array)) {
     reset ($id_array);
     $counter = 0;
-    while (list($key, $value) = each ($id_array)) {
+    foreach ($id_array as $key => $value) {
       if ($value == $productsId) {
         $position = $counter;
         if ($key == 0) {

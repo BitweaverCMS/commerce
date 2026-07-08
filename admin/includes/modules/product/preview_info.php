@@ -182,7 +182,7 @@ if( BitBase::getParameter( $pInfo, 'products_priced_by_attribute' ) == 1 ) {
 <?php
 /* Re-Post all POST'ed variables */
       reset($_POST);
-      while (list($key, $value) = each($_POST)) {
+      foreach ($_POST as $key => $value) {
         if (!is_array($_POST[$key])) {
           echo zen_draw_hidden_field($key, htmlspecialchars(stripslashes($value)));
         }
