@@ -69,7 +69,7 @@
 ////
 // remove common HTML from text for display as paragraph
   function zen_clean_html($clean_it) {
-
+    $clean_it = $clean_it ?? '';
     $clean_it = preg_replace('/\r/', ' ', $clean_it);
     $clean_it = preg_replace('/\t/', ' ', $clean_it);
     $clean_it = preg_replace('/\n/', ' ', $clean_it);
