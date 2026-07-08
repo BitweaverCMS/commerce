@@ -1,0 +1,7 @@
+*
+!.gitignore
+!featured_products/
+!member_products/
+!products_all/
+!products_new/
+!user_products/
