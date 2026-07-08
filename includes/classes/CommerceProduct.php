@@ -275,7 +275,7 @@ class CommerceProduct extends LibertyMime {
 			}
 
 			// return special price only or Never apply a salededuction to Ian Wilson's Giftvouchers
-			if( substr($this->getField( 'products_model' ), 0, 4) == 'GIFT' || $pSpecialsOnly ) {
+			if( substr($this->getField( 'products_model' ) ?? '', 0, 4) == 'GIFT' || $pSpecialsOnly ) {
 				if( !empty( $this->mInfo['special_price'] ) ) {
 					$ret = $this->mInfo['special_price'];
 				}

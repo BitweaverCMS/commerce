@@ -228,6 +228,9 @@ class usps extends CommercePluginShippingBase
 */
 	function quote( $pShipHash ) {
 		if( $quotes = $this->isEligibleShipper( $pShipHash ) ) {
+			if( empty( $pShipHash['destination']['street_address'] ) ) {
+				return false;
+			}
 
 			// What unit are we working with?
 			global $gCommerceSystem;

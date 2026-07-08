@@ -312,7 +312,7 @@ class UpsOAuthApi extends CommerceBase
 					'ShipTo' => [
 						'Address' => [
 							'City' => (!empty($pShipHash['destination']['city'])) ? $pShipHash['destination']['city'] : '',
-							'StateProvinceCode' => zen_get_zone_code((int)$pShipHash['destination']['countries_id'], (int)$pShipHash['destination']['zone_id'], ''),
+							'StateProvinceCode' => zen_get_zone_code((int)($pShipHash['destination']['countries_id'] ?? 0), (int)($pShipHash['destination']['zone_id'] ?? 0), ''),
 							'PostalCode' => (!empty($pShipHash['destination']['postcode'])) ? $pShipHash['destination']['postcode'] : '',
 							'CountryCode' => $pShipHash['destination']['countries_iso_code_2'],
 						]
