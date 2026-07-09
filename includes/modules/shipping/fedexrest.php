@@ -317,7 +317,7 @@ class fedexrest extends CommercePluginShippingBase {
 			} else if ($this->getModuleConfigValue( '_SHIP_TO_RESIDENCE' ) == 'false') {
 				$ship_to_residential = false; 
 			} else { 
-				$ship_to_residential = empty( trim( BitBase::getParameter( $pShipHash['destination'], 'company' ) ) ); 
+				$ship_to_residential = empty( trim( BitBase::getParameter( $pShipHash['destination'], 'company' ) ?? '' ) );
 			}
 
 			$shipDate = new DateTime( $this->getShippingDate( $pShipHash ) );
@@ -521,7 +521,7 @@ class fedexrest extends CommercePluginShippingBase {
 */
 						$methods[] = array(	'id' => $rate['serviceType'],
 											'title' => ucwords(strtolower(str_replace('_', ' ', $rate['serviceType']))),
-											'cost' => $cost + (strpos($this->types[$rate['serviceType']]['handling_fee'], '%') ? ($cost * (float)$this->types[$rate['serviceType']]['handling_fee'] / 100) : (float)$this->types[$rate['serviceType']]['handling_fee']),
+											'cost' => $cost + (strpos($this->types[$rate['serviceType']]['handling_fee'] ?? '', '%') ? ($cost * (float)$this->types[$rate['serviceType']]['handling_fee'] / 100) : (float)$this->types[$rate['serviceType']]['handling_fee']),
 											'code' => $this->types[$rate['serviceType']]['code'],
 											'transit_days' => $transitDays,
 											'transit_time' => $transitTime,

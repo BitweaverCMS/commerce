@@ -485,7 +485,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 	function show_weight( $pUnit=NULL ) {
 		$this->calculate();
 		$ret = $this->weight;
-		if( strtolower( $pUnit ) == 'kg' ) {
+		if( strtolower( $pUnit ?? '' ) == 'kg' ) {
 			$ret *= .45359;
 		}
 

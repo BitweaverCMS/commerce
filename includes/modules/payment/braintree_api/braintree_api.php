@@ -157,13 +157,13 @@ class braintree_api extends CommercePluginPaymentCardBase {
         $issue_year = array();
 
         for ($i = 1; $i < 13; $i++) {
-            $expires_month[] = array('id' => sprintf('%02d', $i), 'text' => strftime('(%m) - %B', mktime(0, 0, 0, $i, 1, 2000)));
+            $expires_month[] = array('id' => sprintf('%02d', $i), 'text' => date('(m) - F', mktime(0, 0, 0, $i, 1, 2000)));
         }
 
         $today = getdate();
 
         for ($i = $today['year']; $i < $today['year'] + 15; $i++) {
-            $expires_year[] = array('id' => strftime('%y', mktime(0, 0, 0, 1, 1, $i)), 'text' => strftime('%Y', mktime(0, 0, 0, 1, 1, $i)));
+            $expires_year[] = array('id' => date('y', mktime(0, 0, 0, 1, 1, $i)), 'text' => date('Y', mktime(0, 0, 0, 1, 1, $i)));
         }
 
         $onFocus = ' onfocus="methodSelect(\'pmt-' . $this->code . '\')"';
