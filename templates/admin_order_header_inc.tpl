@@ -31,9 +31,10 @@ function editAddress( pAddress ) {
 		{if $gBitSystem->isPackageActive('stats')}{if $order->customer.referer_url}<a href="{$order->customer.referer_url}"><small>{$order->customer.referer_url|stats_referer_display_short}</a></small><br/>{/if}{/if}
 		{if $customerStats.orders_count == 1}<em>First Order</em>
 		{else}
-		<strong>Tier {$customerStats.tier|round}</strong>: <a href="list_orders.php?user_id={$order->customer.user_id}&amp;orders_status_id=all&amp;list_filter=all">{$customerStats.orders_count} {tr}orders{/tr} {tr}total{/tr} ${$customerStats.customers_total|round:2}</a> {tr}over{/tr} {$customerStats.customers_age} 
+		{* default:0 before round — PHP 8 deprecates round(null); PHP 7.4 compatible *}
+		<strong>Tier {$customerStats.tier|default:0|round}</strong>: <a href="list_orders.php?user_id={$order->customer.user_id}&amp;orders_status_id=all&amp;list_filter=all">{$customerStats.orders_count|default:0} {tr}orders{/tr} {tr}total{/tr} ${$customerStats.customers_total|default:0|round:2}</a> {tr}over{/tr} {$customerStats.customers_age|default:''} 
 			{if $customerStats.gifts_redeemed || $customerStats.gifts_balance}<br/>
-				Gift: ${$customerStats.gifts_redeemed} redeemed {if $customerStats.gifts_balance|round:2}, ${$customerStats.gifts_balance|round:2} {tr}remaining{/tr}{/if}{if $customerStats.commissions}, ${$customerStats.commissions|round:2} {tr}Commissions{/tr}{/if}
+				Gift: ${$customerStats.gifts_redeemed|default:0} redeemed {if $customerStats.gifts_balance|default:0|round:2}, ${$customerStats.gifts_balance|default:0|round:2} {tr}remaining{/tr}{/if}{if $customerStats.commissions}, ${$customerStats.commissions|default:0|round:2} {tr}Commissions{/tr}{/if}
 			{/if}
 		{/if}
 		{if $customerStats.negative_orders}

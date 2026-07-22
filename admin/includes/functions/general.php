@@ -366,10 +366,20 @@
 			if( $ret = $gBitDb->getRow( $sql, array( $pCustomersId ) ) ) {
 				// get the natural log of the total divided by the natural log of the 10th root of the tier cieling.
 				// This gives an exponentail number from 1 to 10, akin to Google PageRank for customers
-				$ret['tier'] = log( $ret['customers_total'] ) / log( pow( $gCommerceSystem->getConfig( 'CUSTOMERS_TIER_CIELING', 100000 ), 1/10 ) );
+				// PHP 8+ deprecates log(null)/strpos(null,…); stay compatible with PHP 7.4 and 8.x
+				$customersTotal = isset( $ret['customers_total'] ) ? (float)$ret['customers_total'] : 0.0;
+				$tierCeiling = (float)$gCommerceSystem->getConfig( 'CUSTOMERS_TIER_CIELING', 100000 );
+				if( $customersTotal > 0 && $tierCeiling > 1 ) {
+					$ret['tier'] = log( $customersTotal ) / log( pow( $tierCeiling, 1/10 ) );
+				} else {
+					$ret['tier'] = 0;
+				}
 				// if we have a space in the age, clean up trailing stuff
-				if( strpos( $ret['customers_age'], ' ' ) ) {
-					$ret['customers_age'] = substr( $ret['customers_age'], 0, strrpos( $ret['customers_age'], ' ' ));
+				$customersAge = isset( $ret['customers_age'] ) ? (string)$ret['customers_age'] : '';
+				if( $customersAge !== '' && strpos( $customersAge, ' ' ) !== false ) {
+					$ret['customers_age'] = substr( $customersAge, 0, strrpos( $customersAge, ' ' ) );
+				} else {
+					$ret['customers_age'] = $customersAge;
 				}
 				$ret['commissions'] = $gBitDb->getOne( "SELECT SUM(cop.`products_quantity` * cop.`products_commission`) FROM " . TABLE_ORDERS_PRODUCTS . " cop INNER JOIN " . TABLE_PRODUCTS . " cp ON(cop.`products_id`=cp.`products_id`) INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(cp.`content_id`=lc.`content_id`) WHERE lc.`user_id`=?", array( $pCustomersId ) );
 			}
