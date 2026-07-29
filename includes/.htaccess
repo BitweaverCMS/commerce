@@ -1,22 +1,22 @@
-# $Id: .htaccess,v 1.1 2005/07/05 05:58:59 bitweaver Exp $
+# Package private directory
 #
-# This is used with Apache WebServers
-# The following blocks direct HTTP requests in this directory recursively
-#
-# For this to work, you must include the parameter 'Limit' to the AllowOverride configuration
-#
-# Example:
-#
-#<Directory "/usr/local/apache/htdocs">
-#  AllowOverride Limit
-#
-# 'All' with also work. (This configuration is in your apache/conf/httpd.conf file)
-#
-# This does not affect PHP include/require functions
-#
-# Example: http://server/catalog/includes/application_top.php will not work
+# Block direct HTTP access to this includes directory and every descendant.
+# PHP include/require and filesystem access are unaffected.
 
-<Files *.php>
-Order Deny,Allow
-Deny from all
-</Files>
+<FilesMatch "(?i)^(?:\.htaccess|web\.config)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order Allow,Deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order Allow,Deny
+  Deny from all
+</IfModule>
