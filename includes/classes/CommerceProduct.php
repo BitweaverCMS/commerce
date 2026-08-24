@@ -1196,14 +1196,40 @@ If a special exist * 10+9
 		// keep a copy of user_id for later...
 		$userId = parent::getParameter( $pListHash, 'user_id' );
 		parent::prepGetList($pListHash);
-		if(empty($pListHash['query_string'])){
+		if( empty( $pListHash['query_string'] ) ) {
 			$pListHash['query_string'] = '';
 		}
-		$dynamicParams = array ('page', 'max_records','sort_mode');
-		foreach ($_GET as $key=>$value){
-			if(!in_array($key,$dynamicParams) && !is_array($value) ){
-				$pListHash['query_string'].= "&$key=$value";
+		// Pagination controls (page, max_records, sort_mode) are re-appended by
+		// templates; do not mirror them here. Only preserve known list filters so
+		// tracker/junk params (e.g. srsltid) never enter HTML href/action
+		// attributes. Values are always rawurlencoded (XSS defense).
+		$preserveParams = array(
+			'main_page',
+			'category_id',
+			'cPath',
+			'user_id',
+			'tag',
+			'commissioned',
+			'search',
+			'lower_price_limit',
+			'upper_price_limit',
+			'content_status_id',
+			'specials',
+			'featured',
+			'best_sellers',
+			'freshness',
+			'reviews',
+			'manufacturers_id',
+		);
+		foreach( $preserveParams as $key ) {
+			if( !isset( $_GET[$key] ) ) {
+				continue;
 			}
+			$value = $_GET[$key];
+			if( is_array( $value ) || $value === '' || $value === null ) {
+				continue;
+			}
+			$pListHash['query_string'] .= '&' . rawurlencode( $key ) . '=' . rawurlencode( (string)$value );
 		}
 		if( !empty( $userId ) ) {
 			// LibertyContent clobbers user_id for security reasons base on list_content. For Commerce, we want to loosen this up.
