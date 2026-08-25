@@ -346,6 +346,17 @@ class CommerceOrder extends CommerceOrderBase {
 											ORDER BY op.`orders_products_id`";
 				$orders_products = $this->mDb->query( $orders_products_query, array( $this->mOrdersId ) );
 
+				$orderAttributes = array();
+				$attributes_query = "SELECT opa.*, `orders_products_attributes_id` AS `products_attributes_id`
+									 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
+									 WHERE `orders_id` = ?
+									 ORDER BY `orders_products_id`";
+				if( $attrRows = $this->mDb->getArray( $attributes_query, array( $this->mOrdersId ) ) ) {
+					foreach( $attrRows as $attribute ) {
+						$orderAttributes[$attribute['orders_products_id']][] = $attribute;
+					}
+				}
+
 				while (!$orders_products->EOF) {
 					// convert quantity to proper decimals - account history
 					if (QUANTITY_DECIMALS != 0) {
@@ -377,12 +388,8 @@ class CommerceOrder extends CommerceOrderBase {
 					$this->contents[$productsKey]['tax'] = (!empty( $orders_products->fields['tax_rate'] ) ? $orders_products->fields['tax_rate'] : NULL);
 					$this->contents[$productsKey]['price'] = $orders_products->fields['products_price'];
 
-					$attributes_query = "SELECT opa.*, `orders_products_attributes_id` AS `products_attributes_id`
-										 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
-										 WHERE `orders_id` = ? AND `orders_products_id` = ?
-										 ORDER BY `orders_products_id`";
-					if( $attributes = $this->mDb->getArray( $attributes_query, array( $this->mOrdersId, $orders_products->fields['orders_products_id'] ) ) ) {
-						foreach( $attributes as $attribute ) {
+					if( !empty( $orderAttributes[$orders_products->fields['orders_products_id']] ) ) {
+						foreach( $orderAttributes[$orders_products->fields['orders_products_id']] as $attribute ) {
 							$this->contents[$productsKey]['attributes'][] = array( 'products_options_id' => $attribute['products_options_id'],
 																					'products_options_values_id' => $attribute['products_options_values_id'],
 																					'products_options_name' => $attribute['products_options_name'],
