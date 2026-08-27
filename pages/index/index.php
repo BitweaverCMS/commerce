@@ -148,9 +148,49 @@ while (!$show_display_category->EOF) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } elseif( (!empty( $category_depth ) && $category_depth == 'products') || !empty( $_GET['user_id'] ) || zen_check_url_get_terms() ) {
-	global $gBitProduct;
+	global $gBitProduct, $gBitSystem;
+
+	// P2 defaults for category / user product listings (match pages/products)
+	if( empty( $_REQUEST['sort_mode'] ) ) {
+		$_REQUEST['sort_mode'] = 'created_desc';
+	}
+	if( empty( $_REQUEST['max_records'] ) ) {
+		$_REQUEST['max_records'] = $gBitSystem->getConfig( 'max_records', 100 );
+	}
 
 	$listProducts = $gBitProduct->getList( $_REQUEST );
+
+	$defaultSort = 'created_desc';
+	$defaultMax = (int)$gBitSystem->getConfig( 'max_records', 100 );
+	$nonDefaultSort = ( !empty( $_REQUEST['sort_mode'] ) && $_REQUEST['sort_mode'] !== $defaultSort );
+	$nonDefaultMax = ( !empty( $_REQUEST['max_records'] ) && (int)$_REQUEST['max_records'] !== $defaultMax );
+	$_REQUEST['pagination_append_sort'] = $nonDefaultSort;
+	$_REQUEST['pagination_append_max'] = $nonDefaultMax;
+	$_REQUEST['pagination_nofollow'] = ( $nonDefaultSort || $nonDefaultMax );
+
+	$canonicalQuery = array();
+	if( !empty( $_REQUEST['query_string'] ) ) {
+		parse_str( ltrim( $_REQUEST['query_string'], '&' ), $canonicalQuery );
+	}
+	if( empty( $canonicalQuery['main_page'] ) ) {
+		$canonicalQuery['main_page'] = 'index';
+	}
+	$currentPage = !empty( $_REQUEST['current_page'] ) ? (int)$_REQUEST['current_page'] : ( !empty( $_REQUEST['page'] ) ? (int)$_REQUEST['page'] : 1 );
+	if( $currentPage > 1 ) {
+		$canonicalQuery['page'] = $currentPage;
+	}
+	$canonicalRel = BITCOMMERCE_PKG_URL . 'index.php';
+	if( !empty( $canonicalQuery ) ) {
+		$canonicalRel .= '?' . http_build_query( $canonicalQuery, '', '&' );
+	}
+	$gBitSystem->setCanonicalLink( $canonicalRel );
+	if( $nonDefaultSort || $nonDefaultMax ) {
+		$gBitSmarty->assign( 'metaNoIndex', 1 );
+	}
+	if( empty( $_REQUEST['pagination_nofollow'] ) ) {
+		$gBitSystem->setPagination( $_REQUEST );
+	}
+
 	$gBitSmarty->assign( 'listInfo', $_REQUEST );
 	$gBitSmarty->assignByRef( 'listProducts', $listProducts );
 	$gBitSmarty->display( 'bitpackage:bitcommerce/list_products_inc.tpl' );

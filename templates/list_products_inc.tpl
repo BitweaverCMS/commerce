@@ -1,6 +1,6 @@
 {if $listProducts}
 	<div class="page-header">
-	{form action=$smarty.server.REQUEST_URI}
+	{form action="`$smarty.server.SCRIPT_NAME`?`$listInfo.query_string`" method="post"}
 		<div class="floaticon">
 		{tr}Sort by:{/tr}
 			<select class="form-control" name="sort_mode" onChange="this.form.submit();">

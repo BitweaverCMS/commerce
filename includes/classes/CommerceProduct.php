@@ -1199,10 +1199,10 @@ If a special exist * 10+9
 		if( empty( $pListHash['query_string'] ) ) {
 			$pListHash['query_string'] = '';
 		}
-		// Pagination controls (page, max_records, sort_mode) are re-appended by
-		// templates; do not mirror them here. Only preserve known list filters so
-		// tracker/junk params (e.g. srsltid) never enter HTML href/action
-		// attributes. Values are always rawurlencoded (XSS defense).
+		// Identity filters only for list URLs (P2 crawl path). Pagination templates
+		// append page when needed; sort_mode/max_records stay off the default path.
+		// Tracker/junk params (e.g. srsltid) must never enter href/action attributes.
+		// Values are always rawurlencoded (XSS defense).
 		$preserveParams = array(
 			'main_page',
 			'category_id',

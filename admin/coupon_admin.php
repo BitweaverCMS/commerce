@@ -195,6 +195,9 @@ default:
 if( isset( $_REQUEST['listInfo'] ) ) {
 	$_REQUEST['listInfo']['block_pages'] = 3;
 	$_REQUEST['listInfo']['item_name'] = 'coupons';
+	// Admin lists keep sort/max_records in paginator links (not a public crawl path)
+	$_REQUEST['listInfo']['pagination_append_sort'] = TRUE;
+	$_REQUEST['listInfo']['pagination_append_max'] = TRUE;
 	$gBitSmarty->assignByRef( 'listInfo', $_REQUEST['listInfo'] );
 }
 
