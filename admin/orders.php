@@ -31,8 +31,8 @@ $gBitThemes->loadCss( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/css
 $gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
 $gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE);
 
-$tempBodyLayout = $gBitSystem->getConfig( 'layout-body' ); // Caching might save here. Save value and reset
-$gBitSystem->mConfig['layout-body'] = '-fluid';
+// Request-only: do not mutate mConfig (APCu-cached BitSystem singleton).
+$gBitSystem->setRequestConfig( 'layout-body', '-fluid' );
 
 $currencies = new currencies();
 
@@ -350,5 +350,3 @@ if( $order_exists ) {
 
 require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 
 require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); 
-
-$gBitSystem->mConfig['layout-body'] = $tempBodyLayout; // Caching might save here. Save value and reset
