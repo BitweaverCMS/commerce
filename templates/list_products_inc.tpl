@@ -4,13 +4,13 @@
 		<div class="floaticon">
 		{tr}Sort by:{/tr}
 			<select class="form-control" name="sort_mode" onChange="this.form.submit();">
+				<option value="created_desc" {if $listInfo.sort_mode == 'created_desc'}selected="selected"{/if}>{tr}Newest{/tr}</option>
+				<option value="created_asc" {if $listInfo.sort_mode == 'created_asc'}selected="selected"{/if}>{tr}Oldest{/tr}</option>
 				<option value="products_name_asc" {if $listInfo.sort_mode == 'products_name_asc'}selected="selected"{/if}>{tr}Product Name{/tr}</option>
 				<option value="products_name_desc" {if $listInfo.sort_mode == 'products_name_desc'}selected="selected"{/if}>{tr}Product Name - desc{/tr}</option>
 				<option value="products_price_asc" {if $listInfo.sort_mode == 'products_price_asc'}selected="selected"{/if}>{tr}Price - low to high{/tr}</option>
 				<option value="products_price_desc" {if $listInfo.sort_mode == 'products_price_desc'}selected="selected"{/if}>{tr}Price - high to low{/tr}</option>
 				<option value="products_model_asc" {if $listInfo.sort_mode == 'model_asc'}selected="selected"{/if}>{tr}Model{/tr}</option>
-				<option value="products_date_added_desc" {if $listInfo.sort_mode == 'products_date_added_desc'}selected="selected"{/if}>{tr}Date Added - New to Old{/tr}</option>
-				<option value="products_date_added_asc" {if $listInfo.sort_mode == 'products_date_added_asc'}selected="selected"{/if}>{tr}Date Added - Old to New{/tr}</option>
 			</select>
 		</div>
 	{/form}

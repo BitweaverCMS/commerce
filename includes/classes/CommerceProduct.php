@@ -1192,6 +1192,13 @@ If a special exist * 10+9
 		}
 	}
 
+	/** Bare / human default list sort (newest first). */
+	const LIST_HUMAN_SORT = 'created_desc';
+	/** Indexed crawl sort (oldest first — stable pagination). */
+	const LIST_CRAWL_SORT = 'created_asc';
+	/** Default page size for public product lists. */
+	const LIST_DEFAULT_MAX_RECORDS = 100;
+
 	public static function prepGetList(&$pListHash){
 		// keep a copy of user_id for later...
 		$userId = parent::getParameter( $pListHash, 'user_id' );
@@ -1199,10 +1206,9 @@ If a special exist * 10+9
 		if( empty( $pListHash['query_string'] ) ) {
 			$pListHash['query_string'] = '';
 		}
-		// Identity filters only for list URLs (P2 crawl path). Pagination templates
-		// append page when needed; sort_mode/max_records stay off the default path.
-		// Tracker/junk params (e.g. srsltid) must never enter href/action attributes.
-		// Values are always rawurlencoded (XSS defense).
+		// Identity filters only (no sort_mode / page / max_records). Bare URL =
+		// human newest; crawl path must emit sort_mode=created_asc explicitly.
+		// Tracker/junk params must never enter href/action attributes.
 		$preserveParams = array(
 			'main_page',
 			'category_id',
@@ -1237,11 +1243,75 @@ If a special exist * 10+9
 		}
 	}
 
+	/**
+	 * Apply P2.1 list SEO after getList(): bare URL = newest; crawl/canonical =
+	 * explicit sort_mode=created_asc (stable ascending pages).
+	 *
+	 * Sets pagination_* flags on $pListHash, canonical link, and metaNoIndex
+	 * when not on the crawl sort (or non-default page size).
+	 *
+	 * @param array $pListHash list hash from getList (by ref)
+	 * @return void
+	 */
+	public static function applyListCrawlSeo( &$pListHash ) {
+		global $gBitSystem, $gBitSmarty;
+
+		$crawlSort = self::LIST_CRAWL_SORT;
+		$defaultMax = self::LIST_DEFAULT_MAX_RECORDS;
+		$sortMode = !empty( $pListHash['sort_mode'] ) ? $pListHash['sort_mode'] : self::LIST_HUMAN_SORT;
+		$isCrawlSort = ( $sortMode === $crawlSort );
+		$nonDefaultMax = ( !empty( $pListHash['max_records'] ) && (int)$pListHash['max_records'] !== (int)$defaultMax );
+
+		// Crawl path must always emit sort_mode=created_asc (bare URL means newest).
+		// Human/newest path: keep sort in pager for UX, but nofollow.
+		$pListHash['pagination_append_sort'] = TRUE;
+		$pListHash['pagination_append_max'] = $nonDefaultMax;
+		$pListHash['pagination_nofollow'] = ( !$isCrawlSort || $nonDefaultMax );
+
+		$canonicalQuery = array();
+		if( !empty( $pListHash['query_string'] ) ) {
+			parse_str( ltrim( $pListHash['query_string'], '&' ), $canonicalQuery );
+		}
+		if( empty( $canonicalQuery['main_page'] ) && !empty( $_REQUEST['main_page'] ) ) {
+			$canonicalQuery['main_page'] = preg_replace( '/[^0-9a-zA-Z_]/', '', $_REQUEST['main_page'] );
+		}
+		if( empty( $canonicalQuery['category_id'] ) && !empty( $pListHash['category_id'] ) ) {
+			$canonicalQuery['category_id'] = $pListHash['category_id'];
+		}
+		if( empty( $canonicalQuery['user_id'] ) && !empty( $pListHash['user_id'] ) ) {
+			$canonicalQuery['user_id'] = $pListHash['user_id'];
+		}
+		// Indexed path always names the stable sort explicitly.
+		$canonicalQuery['sort_mode'] = $crawlSort;
+		$currentPage = !empty( $pListHash['current_page'] ) ? (int)$pListHash['current_page'] : ( !empty( $pListHash['page'] ) ? (int)$pListHash['page'] : 1 );
+		// Only paginate canonical when already on the crawl sort (do not map newest page N → oldest page N).
+		if( $isCrawlSort && $currentPage > 1 ) {
+			$canonicalQuery['page'] = $currentPage;
+		}
+		$canonicalRel = BITCOMMERCE_PKG_URL . 'index.php';
+		if( !empty( $canonicalQuery ) ) {
+			$canonicalRel .= '?' . http_build_query( $canonicalQuery, '', '&' );
+		}
+		$gBitSystem->setCanonicalLink( $canonicalRel );
+
+		if( !$isCrawlSort || $nonDefaultMax ) {
+			$gBitSmarty->assign( 'metaNoIndex', 1 );
+		}
+
+		// rel=next/prev only along the stable crawl path
+		if( $isCrawlSort && !$nonDefaultMax ) {
+			$pgnInfo = $pListHash;
+			$pgnInfo['query_string'] = rtrim( $pListHash['query_string'] ?? '', '&' )
+				. '&sort_mode=' . rawurlencode( $crawlSort ) . '&';
+			$gBitSystem->setPagination( $pgnInfo );
+		}
+	}
+
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
 
 		if( empty( $pListHash['sort_mode'] ) ) {
-			$pListHash['sort_mode'] = 'created_desc';
+			$pListHash['sort_mode'] = self::LIST_HUMAN_SORT;
 		}
 
 		$this->prepGetList( $pListHash );

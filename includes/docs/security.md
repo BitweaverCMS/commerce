@@ -41,25 +41,31 @@ it proves that the server executed a directly requested implementation file.
   templates, responses, logs, or these documents.
 - File operations must use validated storage helpers and must prevent traversal.
 
-## List URL query strings and crawl paths (P2)
+## List URL query strings and crawl paths (P2.1)
 
 `CommerceProduct::prepGetList()` builds `$pListHash['query_string']` for
 pagination and sort forms from an **allowlist** of identity filters only
 (`main_page`, `category_id`, `user_id`, `tag`, …). Values are `rawurlencode()`’d.
 Never concatenate raw `$_GET` into that string or into HTML attributes.
+`sort_mode` / `page` / `max_records` are **not** in that allowlist.
 
-**Public list pagination** (`templates/commerce_pagination.tpl`):
+**Dual sort (stable crawl vs human newest):**
 
-- Crawlable `href`s = identity `query_string` + `page` when page &gt; 1.
-- Do **not** emit defaultable `sort_mode` / `max_records` (avoids a spider-trap
-  matrix of sort × page-size × page).
-- Non-default sort/page-size: append those params for humans, mark links
-  `rel="nofollow"`, set `metaNoIndex` (`noindex,follow`), and keep
-  **canonical** on the default-sort path with `page=N` when N&gt;1 (P2 — large
-  categories must not all canonicalize to page 1).
-- Sort UI should use POST against the identity URL (not crawlable GET sorts).
-- Admin lists that need sort in pager links set `pagination_append_sort` and
-  `pagination_append_max` on `listInfo`.
+| URL | Display sort | Indexing |
+|-----|--------------|----------|
+| Bare (no `sort_mode`) | `created_desc` (newest) | `noindex,follow`; canonical → `sort_mode=created_asc` (page 1) |
+| `sort_mode=created_asc` | Oldest first (stable) | Indexed; self-canonical; `page=N` when N&gt;1 |
+| Other sorts / non-default `max_records` | As requested | `noindex,follow`; pagers `rel="nofollow"` |
+
+Call `CommerceProduct::applyListCrawlSeo( $listHash )` after `getList()` on public
+list pages. Crawl pagers **must** append `sort_mode=created_asc` (omitting sort
+would mean newest). Do not map “newest page N” to “oldest page N” in canonical.
+
+Constants: `CommerceProduct::LIST_HUMAN_SORT`, `LIST_CRAWL_SORT`,
+`LIST_DEFAULT_MAX_RECORDS`.
+
+Admin lists that need sort in pager links set `pagination_append_sort` and
+`pagination_append_max` on `listInfo`.
 
 Related: `{form}` escapes `action` with `htmlspecialchars` in
 `themes/smartyplugins/block.form.php` (defense-in-depth against attribute XSS).

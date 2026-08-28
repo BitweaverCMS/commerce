@@ -1,11 +1,10 @@
 {strip}
 {*
-	P2 crawl path: paginator hrefs are identity query_string + page only by default.
-	Do not emit defaultable sort_mode / max_records (spider-trap matrix).
-	When listInfo.pagination_append_sort / pagination_append_max are set (non-default
-	human controls, or admin lists), those params are appended; pair with
-	listInfo.pagination_nofollow so bots stay on the default-sort path.
-	Omit page=1 from hrefs (page 1 URL = identity only).
+	P2.1 crawl path: identity query_string + page; sort_mode appended via flags.
+	Bare list URLs mean human newest (created_desc). Indexed path must emit
+	sort_mode=created_asc on every pager link (CommerceProduct::applyListCrawlSeo).
+	pagination_nofollow marks human/newest and non-default max_records paths.
+	Omit page=1 from hrefs (page 1 = base + optional sort extra only).
 *}
 <nav class="paginator">
 {if $listInfo.total_pages == 1}
