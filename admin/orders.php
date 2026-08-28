@@ -26,10 +26,10 @@ require('includes/application_top.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderManager.php' );
 
 global $gBitThemes;
-$gBitThemes->loadJavascript( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/js/bootstrap-datepicker.js');
-$gBitThemes->loadCss( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/css/bootstrap-datepicker3.css');
-$gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
-$gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE);
+$gBitThemes->loadJavascript( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/js/bootstrap-datepicker.js', FALSE, 600, TRUE, FALSE );
+$gBitThemes->loadCss( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/css/bootstrap-datepicker3.css', TRUE, 300, TRUE, FALSE, FALSE );
+$gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/jquery.colorbox-min.js' ), NULL, FALSE, FALSE );
+$gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE, FALSE, FALSE );
 
 // Request-only: do not mutate mConfig (APCu-cached BitSystem singleton).
 $gBitSystem->setRequestConfig( 'layout-body', '-fluid' );

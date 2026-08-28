@@ -323,4 +323,4 @@ if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) && $_REQUEST['o
 	}
 }
 
-$gBitThemes->loadCss( BITCOMMERCE_PKG_PATH.'css/admin.css' );
+$gBitThemes->loadCss(BITCOMMERCE_PKG_PATH.'css/admin.css', TRUE, 300, TRUE, FALSE, FALSE);

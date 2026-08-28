@@ -1,8 +1,8 @@
 <?php
 
 global $gBitThemes;
-$gBitThemes->loadJavascript( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/js/bootstrap-datepicker.js');
-$gBitThemes->loadCss( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/css/bootstrap-datepicker3.css');
+$gBitThemes->loadJavascript(CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/js/bootstrap-datepicker.js', FALSE, 600, TRUE, FALSE);
+$gBitThemes->loadCss(CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/css/bootstrap-datepicker3.css', TRUE, 300, TRUE, FALSE, FALSE);
 
 if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
 	if (!isset($_POST['conditions']) || ($_POST['conditions'] != '1')) {
