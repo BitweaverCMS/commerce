@@ -44,7 +44,9 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 	$gBitSmarty->assign( 'orderStatuses', commerce_get_statuses( TRUE ) );
 	$gBitSmarty->assignByRef( 'order', $order ); 
 	$gBitSmarty->assignByRef( 'currencies', $currencies ); 
-	$gBitSmarty->assignByRef( 'order', $order ); 
+	$gBitSmarty->assignByRef( 'order', $order );
+	$combineOrdersStatusId = $gCommerceSystem->getConfig( 'COMBINE_ORDERS_STATUS_ID', DEFAULT_ORDERS_STATUS_ID );
+	$gBitSmarty->assign( 'combineOrdersStatusName', zen_get_order_status_name( $combineOrdersStatusId ) ); 
 	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
 	$productManager = new CommerceProductManager();
 
@@ -232,17 +234,20 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				}
 				break;
 			case 'combine':
-				if( @BitBase::verifyId( $_REQUEST['combine_order_id'] ) ) {
-					$combineOrder = new order( $_REQUEST['combine_order_id'] );
-					$combineHash['source_orders_id'] =	$_REQUEST['oID'];
-					$combineHash['dest_orders_id'] = $_REQUEST['combine_order_id'];
-					$combineHash['combine_notify'] = !empty( $_REQUEST['combine_notify'] );
-					if( $combineOrder->combineOrders( $combineHash ) ) {
-						bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['combine_order_id'] );
-					} else {
-						print "<span class='error'>".$combineOrder->mErrors['combine']."</span>";
-					}
+				if( !BitBase::verifyId( BitBase::getParameter( $_REQUEST, 'combine_order_id' ) ) ) {
+					$messageStack->add_session( 'Combine failed: enter a valid destination order number.', 'error' );
+					bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
 				}
+				$combineOrder = new order( $_REQUEST['combine_order_id'] );
+				$combineHash['source_orders_id'] = $_REQUEST['oID'];
+				$combineHash['dest_orders_id'] = $_REQUEST['combine_order_id'];
+				$combineHash['combine_notify'] = !empty( $_REQUEST['combine_notify'] );
+				if( $combineOrder->combineOrders( $combineHash ) ) {
+					$messageStack->add_session( 'Order '.$_REQUEST['oID'].' was combined into order '.$_REQUEST['combine_order_id'].'.', 'success' );
+					bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['combine_order_id'] );
+				}
+				$messageStack->add_session( BitBase::getParameter( $combineOrder->mErrors, 'combine', 'Combine failed.' ), 'error' );
+				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
 				break;
 			case 'delete':
 				$formHash['action'] = 'deleteconfirm';

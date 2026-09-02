@@ -1538,8 +1538,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 	}
 
 	function combineOrders( $pParamHash ) {
-		global $currencies, $gCommerceSystem;
-		$ret = FALSE;
+		global $currencies, $gCommerceSystem, $gBitSystem;
 
 		$sql = "SELECT * FROM " . TABLE_ORDERS . " WHERE `orders_id`=?";
 		$sourceHash = $this->mDb->getRow( $sql, array( $pParamHash['source_orders_id'] ) );
@@ -1557,12 +1556,12 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] does not have status " . zen_get_order_status_name( $combineOrdersStatus );
 		} elseif( $pParamHash['dest_orders_id'] == $pParamHash['source_orders_id'] ) {
 			$this->mErrors['combine'] = "Order $pParamHash[dest_orders_id] cannot be combined into itself";
-		} elseif( ($sourceHash['delivery_street_address'] == $destHash['delivery_street_address']) &&
-			($sourceHash['delivery_suburb'] == $destHash['delivery_suburb']) &&
-			($sourceHash['delivery_city'] == $destHash['delivery_city']) &&
-			($sourceHash['delivery_postcode'] == $destHash['delivery_postcode']) &&
-			($sourceHash['delivery_state'] == $destHash['delivery_state']) &&
-			($sourceHash['delivery_country'] == $destHash['delivery_country']) ) {
+		} elseif( trim( (string)$sourceHash['delivery_street_address'] ) == trim( (string)$destHash['delivery_street_address'] ) &&
+			trim( (string)$sourceHash['delivery_suburb'] ) == trim( (string)$destHash['delivery_suburb'] ) &&
+			trim( (string)$sourceHash['delivery_city'] ) == trim( (string)$destHash['delivery_city'] ) &&
+			trim( (string)$sourceHash['delivery_postcode'] ) == trim( (string)$destHash['delivery_postcode'] ) &&
+			trim( (string)$sourceHash['delivery_state'] ) == trim( (string)$destHash['delivery_state'] ) &&
+			trim( (string)$sourceHash['delivery_country'] ) == trim( (string)$destHash['delivery_country'] ) ) {
 
 			$this->StartTrans();
 			// update new order with combined total and combined tax
@@ -1572,33 +1571,49 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 			// Move products and attributes over to new order
 			$this->mDb->query( "UPDATE ". TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
 			$this->mDb->query( "UPDATE ". TABLE_ORDERS_PRODUCTS . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
+			$this->mDb->query( "UPDATE ". TABLE_ORDERS_PRODUCTS_DOWNLOAD . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
 			$this->mDb->query( "UPDATE ". TABLE_REVIEWS . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
+
+			// Reassign fulfillment rows that FK to orders_id so source expunge can succeed
+			if( !empty( $gBitSystem ) && $gBitSystem->isPackageActive( 'products' ) ) {
+				$this->mDb->query( "UPDATE com_pod_transfers_items SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
+				$this->mDb->query( "UPDATE com_pod_transfers SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
+				$this->mDb->query( "UPDATE com_pod_reorders SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
+			}
+
+			if( empty( $destHash['currency'] ) ) {
+				$destHash['currency'] = NULL;
+				$destHash['currency_value'] = NULL;
+			}
 
 			if( $rs = $this->mDb->query( "SELECT cot.`orders_total_id`, cot.* FROM " . TABLE_ORDERS_TOTAL . " cot WHERE `orders_id`=?", array( $pParamHash['source_orders_id'] ) ) ) {
 				while( $sourceTotal = $rs->fetchRow() ) {
 					$destTotal = $this->mDb->getRow( "SELECT `class`, cot.* FROM " . TABLE_ORDERS_TOTAL . " cot WHERE `orders_id`=? AND `class`=?", array( $pParamHash['dest_orders_id'], $sourceTotal['class'] ) );
-					if( empty( $destHash['currency'] ) ) {
-						$destHash['currency'] = NULL;
-						$destHash['currency_value'] = NULL;
+					if( empty( $destTotal ) ) {
+						// Dest lacks this total class — move the source row onto dest
+						$text = $currencies->format( $sourceTotal['orders_value'], true, $destHash['currency'], $destHash['currency_value'] );
+						$this->mDb->query( "UPDATE ". TABLE_ORDERS_TOTAL . " SET `orders_id`=?, `text`=? WHERE `orders_total_id`=?", array( $pParamHash['dest_orders_id'], $text, $sourceTotal['orders_total_id'] ) );
+					} else {
+						$total = $sourceTotal['orders_value'] + $destTotal['orders_value'];
+						$text = $currencies->format( $total, true, $destHash['currency'], $destHash['currency_value'] );
+						$this->mDb->query( "UPDATE ". TABLE_ORDERS_TOTAL . " SET `orders_value`=?, `text`=? WHERE `orders_id`=? AND `class`=?", array( $total, $text, $pParamHash['dest_orders_id'], $sourceTotal['class'] ) );
 					}
-					$total = $sourceTotal['orders_value'] + $destTotal['orders_value'];
-					$text = $currencies->format( $total, true, $destHash['currency'], $destHash['currency_value'] );
-					$this->mDb->query( "UPDATE ". TABLE_ORDERS_TOTAL . " SET `orders_value`=?, `text`=? WHERE `orders_id`=? AND `class`=?", array( $total, $text, $pParamHash['dest_orders_id'], $sourceTotal['class'] ) );
-
 				}
 			}
 
-			// Move statuses over to
+			// Move statuses over to dest
 			$this->mDb->query( "UPDATE ". TABLE_ORDERS_STATUS_HISTORY . " SET `orders_id`=? WHERE `orders_id`=?", array( $pParamHash['dest_orders_id'], $pParamHash['source_orders_id'] ) );
 			$this->updateStatus( array( 'notify' => !empty( $pParamHash['combine_notify'] ) , "comments" => "Order $pParamHash[source_orders_id] was combined with this order" ) );
-			$delOrder	= new order( $pParamHash['source_orders_id'] );
+			$delOrder = new order( $pParamHash['source_orders_id'] );
 			$delOrder->expunge();
-			$this->CompleteTrans();
+			// BitBase::CompleteTrans() does not return the ADOdb result — check mDb.
+			if( !$this->mDb->CompleteTrans() ) {
+				$this->mErrors['combine'] = "Combine of order $pParamHash[source_orders_id] into $pParamHash[dest_orders_id] failed and was rolled back.";
+			}
 		} else {
 			$this->mErrors['combine'] = "Address mismatch. To combine orders, they must have the same delivery address.";
 		}
 
-		// no yet implemented
 		return empty( $this->mErrors['combine'] );
 	}
 
