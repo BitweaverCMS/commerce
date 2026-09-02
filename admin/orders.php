@@ -318,6 +318,14 @@ if( $order_exists ) {
 */
 	$siblingOrderIds = $gCommerceOrderManager->getOrdersToAddress( $order->delivery, 39 ); // Crude hard code 
 	$gBitSmarty->assign( 'siblingOrderIds', $siblingOrderIds );
+	$combineOrderIdDefault = '';
+	foreach( $siblingOrderIds as $sibOrderId ) {
+		if( $sibOrderId != $order->mOrdersId ) {
+			$combineOrderIdDefault = $sibOrderId;
+			break;
+		}
+	}
+	$gBitSmarty->assign( 'combineOrderIdDefault', $combineOrderIdDefault );
 
 	$gBitSmarty->assign( 'isForeignCurrency', !empty( $order->info['currency'] ) && $order->info['currency'] != DEFAULT_CURRENCY );
 	$gBitSmarty->assign( 'customersInterests', CommerceCustomer::getCustomerInterests( $order->customer['customers_id'] ) );
