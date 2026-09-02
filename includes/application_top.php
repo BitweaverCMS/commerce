@@ -28,7 +28,7 @@ define('PAGE_PARSE_START_TIME', microtime());
 //	define('DISPLAY_PAGE_PARSE_TIME', 'true');
 // set the level of error reporting
 if( defined( 'IS_LIVE' ) && IS_LIVE ) {
-	error_reporting(E_ALL & ~E_NOTICE);
+	error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT);
 }
 
 @ini_set("arg_separator.output","&");

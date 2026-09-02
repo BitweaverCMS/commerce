@@ -424,12 +424,13 @@ class braintree_api extends CommercePluginPaymentCardBase {
 					$pnref = $result->transaction->id;
 					$this->payment_ref_id = $pnref;
 					$logHash['exchange_rate'] = 1.0;
-					if( $transExchange = urldecode($result->transaction->disbursementDetails->settlementCurrencyExchangeRate) ) {
+					$settlementRate = $result->transaction->disbursementDetails->settlementCurrencyExchangeRate;
+					if( $settlementRate !== null && ( $transExchange = urldecode( (string) $settlementRate ) ) ) {
 						$logHash['exchange_rate'] = $transExchange;
 					}
 					$logHash['payment_status'] = $result->transaction->status;
 					$logHash['payment_date'] = $result->transaction->createdAt->format('Y-m-d H:i:s+00');
-					$logHash['payment_amount'] = (float) urldecode( $result->transaction->amount );
+					$logHash['payment_amount'] = (float) urldecode( (string) ( $result->transaction->amount ?? '' ) );
 					if( $pPaymentParams['charge_amount'] < 0 ) {
 						// credits are logged as a negative amount
 						$logHash['payment_amount'] *= -1;

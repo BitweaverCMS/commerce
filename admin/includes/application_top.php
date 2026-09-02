@@ -32,7 +32,7 @@ ini_set('display_errors', '1');
 
 // Set the level of error reporting
 if( defined( 'IS_LIVE' ) && IS_LIVE ) {
-	error_reporting(E_ALL & ~E_NOTICE);
+	error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT);
 } else {
 	error_reporting(E_ALL);
 }

@@ -24,7 +24,7 @@
   define('PAGE_PARSE_START_TIME', microtime());
 //  define('DISPLAY_PAGE_PARSE_TIME', 'true');
 // set the level of error reporting
-  error_reporting(E_ALL & ~E_NOTICE);
+  error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT);
 if (MODULE_PAYMENT_PAYPAL_IPN_DEBUG == 'Yes') mail('ian@zen-cart.com','IPN DEBUG MESSAGE', '0.0. in app top ' . $_SERVER['SCRIPT_NAME']);
 
   @ini_set("arg_separator.output","&");
