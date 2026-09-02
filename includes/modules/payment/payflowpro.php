@@ -59,7 +59,7 @@ class payflowpro extends CommercePluginPaymentCardBase {
 									array(	'title' => tra( 'Card Number' ),
 											'field' => $this->getPaymentNumber( $pPaymentParams, TRUE )),
 									array(	'title' => tra( 'Expiration Date' ),
-											'field' => strftime('%B,%Y', mktime(0,0,0,$pPaymentParams['payment_expires_month'], 1, '20' . $pPaymentParams['payment_expires_year']))),
+											'field' => date('F,Y', mktime(0,0,0,$pPaymentParams['payment_expires_month'], 1, '20' . $pPaymentParams['payment_expires_year']))),
 									)
 								);
 

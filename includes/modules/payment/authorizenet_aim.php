@@ -71,12 +71,12 @@ class authorizenet_aim extends CommercePluginPaymentCardBase {
 		global $order;
 
 		for ($i=1; $i<13; $i++) {
-			$expires_month[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B',mktime(0,0,0,$i,1,2000)));
+			$expires_month[] = array('id' => sprintf('%02d', $i), 'text' => date('F',mktime(0,0,0,$i,1,2000)));
 		}
 
 		$today = getdate();
 		for ($i=$today['year']; $i < $today['year']+10; $i++) {
-			$expires_year[] = array('id' => strftime('%y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
+			$expires_year[] = array('id' => date('y',mktime(0,0,0,1,1,$i)), 'text' => date('Y',mktime(0,0,0,1,1,$i)));
 		}
 
 		if (MODULE_PAYMENT_AUTHORIZENET_AIM_USE_CVV == 'True') {
@@ -151,7 +151,7 @@ class authorizenet_aim extends CommercePluginPaymentCardBase {
 										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_TYPE, 'field' => $this->cc_type),
 										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_OWNER, 'field' => $pPaymentParams['authorizenet_aim_cc_owner']),
 										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_NUMBER, 'field' => substr($this->cc_number, 0, 4) . str_repeat('X', (strlen($this->cc_number) - 8)) . substr($this->cc_number, -4)),
-										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_EXPIRES, 'field' => strftime('%B, %Y', mktime(0,0,0,$pPaymentParams['authorizenet_aim_cc_expires_month'], 1, '20' . $pPaymentParams['authorizenet_aim_cc_expires_year']))),
+										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_EXPIRES, 'field' => date('F, Y', mktime(0,0,0,$pPaymentParams['authorizenet_aim_cc_expires_month'], 1, '20' . $pPaymentParams['authorizenet_aim_cc_expires_year']))),
 										array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CVV, 'field' => $pPaymentParams['authorizenet_aim_cc_cvv'])
 									)
 							);
@@ -164,7 +164,7 @@ class authorizenet_aim extends CommercePluginPaymentCardBase {
 																						array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_NUMBER,
 																									'field' => substr($this->cc_number, 0, 4) . str_repeat('X', (strlen($this->cc_number) - 8)) . substr($this->cc_number, -4)),
 																						array('title' => MODULE_PAYMENT_AUTHORIZENET_AIM_TEXT_CREDIT_CARD_EXPIRES,
-																									'field' => strftime('%B, %Y', mktime(0,0,0,$pPaymentParams['authorizenet_aim_cc_expires_month'], 1, '20' . $pPaymentParams['authorizenet_aim_cc_expires_year'])))));
+																									'field' => date('F, Y', mktime(0,0,0,$pPaymentParams['authorizenet_aim_cc_expires_month'], 1, '20' . $pPaymentParams['authorizenet_aim_cc_expires_year'])))));
 		}
 
 		return $confirmation;
