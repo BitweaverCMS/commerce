@@ -32,7 +32,7 @@ ini_set('display_errors', '1');
 
 // Set the level of error reporting
 if( defined( 'IS_LIVE' ) && IS_LIVE ) {
-	error_reporting(E_ALL & ~E_NOTICE);
+	error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT);
 } else {
 	error_reporting(E_ALL);
 }
@@ -323,4 +323,4 @@ if( !empty( $_REQUEST['oID'] ) && is_numeric( $_REQUEST['oID'] ) && $_REQUEST['o
 	}
 }
 
-$gBitThemes->loadCss( BITCOMMERCE_PKG_PATH.'css/admin.css' );
+$gBitThemes->loadCss(BITCOMMERCE_PKG_PATH.'css/admin.css', TRUE, 300, TRUE, FALSE, FALSE);

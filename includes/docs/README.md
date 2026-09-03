@@ -22,6 +22,23 @@ the dependencies do not thereby depend on this package.
 
 Does not define deployment-specific products, production workflows, or storefront branding.
 
+## Admin presentation / APCu gotchas
+
+Commerce admin (for example `admin/orders.php` and `admin/includes/application_top.php`)
+often needs a fluid body and admin-only CSS/JS (admin.css, datepicker, colorbox).
+
+- Fluid width: `$gBitSystem->setRequestConfig('layout-body', '-fluid')`. Do not
+  assign `$gBitSystem->mConfig['layout-body']` — that path previously required
+  save/restore because APCu can serialize `BitSystem` and poison public pages
+  with `container-fluid` (intermittent per FPM worker).
+- Admin/page CSS/JS: pass `$pPersistent = FALSE` on `BitThemes::loadCss` /
+  `loadJavascript` / `loadAjax`. A cache-miss store of those assets into the
+  `BitThemes` singleton was observed leaking bookstore admin CSS onto public
+  Search HTML.
+
+See Themes `includes/docs/development.md` and Kernel
+`includes/docs/core-runtime.md`.
+
 ## Documentation map
 
 - [Architecture](architecture.md) — initialization, components, and request flow.

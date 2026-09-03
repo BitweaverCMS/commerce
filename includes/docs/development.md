@@ -23,6 +23,10 @@
 - Reuse registered package paths and URLs instead of hard-coded deployment
   paths.
 - Treat request parameters as untrusted even when a controller is admin-only.
+- Admin fluid layout: `setRequestConfig('layout-body', '-fluid')` only.
+- Admin or checkout page-only Themes assets: `$pPersistent = FALSE` on load
+  helpers so they are not stored in the APCu `BitThemes` baseline. See
+  [README.md](README.md).
 
 ## Schema changes
 

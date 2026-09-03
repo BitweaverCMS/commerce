@@ -114,6 +114,10 @@ Many tables use legacy naming and denormalized snapshots intentionally. Order
 rows must preserve purchase-time address, price, tax, and product descriptions
 even when catalogue/customer records later change.
 
+`CommerceOrder::load()` loads all `TABLE_ORDERS_PRODUCTS_ATTRIBUTES` rows for
+the order in one query and groups them in PHP. Do not restore a per-line-item
+attributes SELECT inside that load loop.
+
 ## Testing matrix
 
 - Anonymous and registered carts.

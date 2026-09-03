@@ -80,7 +80,7 @@ class cc extends CommercePluginPaymentCardBase {
 												array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_NUMBER,
 														'field' => substr($this->payment_number, 0, 4) . str_repeat('X', (strlen($this->payment_number) - 8)) . substr($this->payment_number, -4)),
 												array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_EXPIRES,
-														'field' => strftime('%B, %Y', mktime(0,0,0,$pPaymentParams['payment_expires_month'], 1, '20' . $pPaymentParams['payment_expires_year'])))));
+														'field' => date('F, Y', mktime(0,0,0,$pPaymentParams['payment_expires_month'], 1, '20' . $pPaymentParams['payment_expires_year'])))));
 
 		if (MODULE_PAYMENT_CC_COLLECT_CVV == 'True')	{
 			$confirmation['fields'][] = array('title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_CVV,

@@ -185,7 +185,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-7"><label class="control-label"><i class="fa fal fa-credit-card"></i> '.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), 'id="' . $this->code . '-cc-number" inputmode="numeric" pattern="[0-9\s]{13,19}"' . $onFocus . ' autocomplete="cc-number"', 'tel') . '</div><div class="col-xs-4 col-sm-5"><label class="control-label">' . tra( 'CVC Code' ) . '</label>' . zen_draw_input_field('payment_cvv', BitBase::getParameter( $_SESSION, 'payment_cvv' ), 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' . $onFocus . ' autocomplete="cc-csc"', 'tel')  . '</div></div>',
 							),
 							array(	'title' => tra( 'Expiration Date' ),
-									'field' => '<div class="row"><div class="col-xs-7 col-sm-8 col-md-9">' . zen_draw_pull_down_menu('payment_expires_month', $expires_month, BitBase::getParameter( $_SESSION, 'payment_expires_month', strftime('%m') ), 'id="' . $this->code . '-cc-expires-month" class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-4 col-md-3">' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, substr( BitBase::getParameter( $_SESSION, 'payment_expires_year', (date('Y') + 1) ), -2 ), 'id="' . $this->code . '-cc-expires-year" class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
+									'field' => '<div class="row"><div class="col-xs-7 col-sm-8 col-md-9">' . zen_draw_pull_down_menu('payment_expires_month', $expires_month, BitBase::getParameter( $_SESSION, 'payment_expires_month', date('m') ), 'id="' . $this->code . '-cc-expires-month" class="input-small" autocomplete="cc-exp-month" ') . '</div><div class="col-xs-5 col-sm-4 col-md-3">' . zen_draw_pull_down_menu('payment_expires_year', $expires_year, substr( BitBase::getParameter( $_SESSION, 'payment_expires_year', (date('Y') + 1) ), -2 ), 'id="' . $this->code . '-cc-expires-year" class="input-small" autocomplete="cc-exp-year" ') . '</div></div>'
 							),
 						)
 					);
@@ -220,7 +220,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_NUMBER' ), 'field' => substr($pPaymentParams['payment_number'], 0, 4) . str_repeat('X', (strlen($pPaymentParams['payment_number']) - 8)) . substr($pPaymentParams['payment_number'], -4));
 		}
 		if( isset( $pPaymentParams['payment_expires_month'] ) && isset( $pPaymentParams['payment_expires_year'] ) ) {
-			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_EXPIRES' ), 'field' => strftime('%B, %Y', mktime(0, 0, 0, $pPaymentParams['payment_expires_month'], 1, $pPaymentParams['payment_expires_year'])));
+			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_CREDIT_CARD_EXPIRES' ), 'field' => date('F, Y', mktime(0, 0, 0, $pPaymentParams['payment_expires_month'], 1, $pPaymentParams['payment_expires_year'])));
 		}
 		if( isset( $pPaymentParams['bt_cc_issuenumber'] ) ) {
 			$confirmation['fields'][] = array('title' => $this->getModuleConfigValue( '_TEXT_ISSUE_NUMBER' ), 'field' => $pPaymentParams['bt_cc_issuenumber']);
@@ -424,12 +424,13 @@ class braintree_api extends CommercePluginPaymentCardBase {
 					$pnref = $result->transaction->id;
 					$this->payment_ref_id = $pnref;
 					$logHash['exchange_rate'] = 1.0;
-					if( $transExchange = urldecode($result->transaction->disbursementDetails->settlementCurrencyExchangeRate) ) {
+					$settlementRate = $result->transaction->disbursementDetails->settlementCurrencyExchangeRate;
+					if( $settlementRate !== null && ( $transExchange = urldecode( (string) $settlementRate ) ) ) {
 						$logHash['exchange_rate'] = $transExchange;
 					}
 					$logHash['payment_status'] = $result->transaction->status;
 					$logHash['payment_date'] = $result->transaction->createdAt->format('Y-m-d H:i:s+00');
-					$logHash['payment_amount'] = (float) urldecode( $result->transaction->amount );
+					$logHash['payment_amount'] = (float) urldecode( (string) ( $result->transaction->amount ?? '' ) );
 					if( $pPaymentParams['charge_amount'] < 0 ) {
 						// credits are logged as a negative amount
 						$logHash['payment_amount'] *= -1;

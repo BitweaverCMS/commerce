@@ -26,13 +26,13 @@ require('includes/application_top.php');
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderManager.php' );
 
 global $gBitThemes;
-$gBitThemes->loadJavascript( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/js/bootstrap-datepicker.js');
-$gBitThemes->loadCss( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/css/bootstrap-datepicker3.css');
-$gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/jquery.colorbox-min.js' ) );
-$gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE);
+$gBitThemes->loadJavascript( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/js/bootstrap-datepicker.js', FALSE, 600, TRUE, FALSE );
+$gBitThemes->loadCss( CONFIG_PKG_PATH.'themes/bootstrap/bootstrap-datepicker/css/bootstrap-datepicker3.css', TRUE, 300, TRUE, FALSE, FALSE );
+$gBitThemes->loadAjax( 'jquery', array( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/jquery.colorbox-min.js' ), NULL, FALSE, FALSE );
+$gBitThemes->loadCss( UTIL_PKG_PATH.'javascript/jquery/plugins/colorbox/colorbox.css', FALSE, 300, FALSE, FALSE, FALSE );
 
-$tempBodyLayout = $gBitSystem->getConfig( 'layout-body' ); // Caching might save here. Save value and reset
-$gBitSystem->mConfig['layout-body'] = '-fluid';
+// Request-only: do not mutate mConfig (APCu-cached BitSystem singleton).
+$gBitSystem->setRequestConfig( 'layout-body', '-fluid' );
 
 $currencies = new currencies();
 
@@ -44,7 +44,9 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 	$gBitSmarty->assign( 'orderStatuses', commerce_get_statuses( TRUE ) );
 	$gBitSmarty->assignByRef( 'order', $order ); 
 	$gBitSmarty->assignByRef( 'currencies', $currencies ); 
-	$gBitSmarty->assignByRef( 'order', $order ); 
+	$gBitSmarty->assignByRef( 'order', $order );
+	$combineOrdersStatusId = $gCommerceSystem->getConfig( 'COMBINE_ORDERS_STATUS_ID', DEFAULT_ORDERS_STATUS_ID );
+	$gBitSmarty->assign( 'combineOrdersStatusName', zen_get_order_status_name( $combineOrdersStatusId ) ); 
 	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
 	$productManager = new CommerceProductManager();
 
@@ -232,17 +234,20 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				}
 				break;
 			case 'combine':
-				if( @BitBase::verifyId( $_REQUEST['combine_order_id'] ) ) {
-					$combineOrder = new order( $_REQUEST['combine_order_id'] );
-					$combineHash['source_orders_id'] =	$_REQUEST['oID'];
-					$combineHash['dest_orders_id'] = $_REQUEST['combine_order_id'];
-					$combineHash['combine_notify'] = !empty( $_REQUEST['combine_notify'] );
-					if( $combineOrder->combineOrders( $combineHash ) ) {
-						bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['combine_order_id'] );
-					} else {
-						print "<span class='error'>".$combineOrder->mErrors['combine']."</span>";
-					}
+				if( !BitBase::verifyId( BitBase::getParameter( $_REQUEST, 'combine_order_id' ) ) ) {
+					$messageStack->add_session( 'Combine failed: enter a valid destination order number.', 'error' );
+					bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
 				}
+				$combineOrder = new order( $_REQUEST['combine_order_id'] );
+				$combineHash['source_orders_id'] = $_REQUEST['oID'];
+				$combineHash['dest_orders_id'] = $_REQUEST['combine_order_id'];
+				$combineHash['combine_notify'] = !empty( $_REQUEST['combine_notify'] );
+				if( $combineOrder->combineOrders( $combineHash ) ) {
+					$messageStack->add_session( 'Order '.$_REQUEST['oID'].' was combined into order '.$_REQUEST['combine_order_id'].'.', 'success' );
+					bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['combine_order_id'] );
+				}
+				$messageStack->add_session( BitBase::getParameter( $combineOrder->mErrors, 'combine', 'Combine failed.' ), 'error' );
+				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
 				break;
 			case 'delete':
 				$formHash['action'] = 'deleteconfirm';
@@ -313,6 +318,14 @@ if( $order_exists ) {
 */
 	$siblingOrderIds = $gCommerceOrderManager->getOrdersToAddress( $order->delivery, 39 ); // Crude hard code 
 	$gBitSmarty->assign( 'siblingOrderIds', $siblingOrderIds );
+	$combineOrderIdDefault = '';
+	foreach( $siblingOrderIds as $sibOrderId ) {
+		if( $sibOrderId != $order->mOrdersId ) {
+			$combineOrderIdDefault = $sibOrderId;
+			break;
+		}
+	}
+	$gBitSmarty->assign( 'combineOrderIdDefault', $combineOrderIdDefault );
 
 	$gBitSmarty->assign( 'isForeignCurrency', !empty( $order->info['currency'] ) && $order->info['currency'] != DEFAULT_CURRENCY );
 	$gBitSmarty->assign( 'customersInterests', CommerceCustomer::getCustomerInterests( $order->customer['customers_id'] ) );
@@ -350,5 +363,3 @@ if( $order_exists ) {
 
 require(DIR_FS_ADMIN_INCLUDES . 'footer.php'); 
 require(DIR_FS_ADMIN_INCLUDES . 'application_bottom.php'); 
-
-$gBitSystem->mConfig['layout-body'] = $tempBodyLayout; // Caching might save here. Save value and reset
