@@ -27,6 +27,16 @@
 - Admin or checkout page-only Themes assets: `$pPersistent = FALSE` on load
   helpers so they are not stored in the APCu `BitThemes` baseline. See
   [README.md](README.md).
+- Admin `{form}` escapes the `action` attribute. Do not put pre-escaped
+  `&amp;` query parameters in that attribute (they become `&amp;amp;` and the
+  param never reaches PHP). Prefer a hidden `action` field, as on admin order
+  combine/email.
+- `BitBase::CompleteTrans()` / `StartTrans()` do not return the ADOdb result.
+  When commit success matters, check `$this->mDb->CompleteTrans()`.
+- Order combine: both orders need `COMBINE_ORDERS_STATUS_ID` (falls back to
+  `DEFAULT_ORDERS_STATUS_ID`), matching delivery address, and dependents that
+  FK to `orders_id` (downloads, POD transfer/reorder rows) must move to the
+  destination before source `expunge()`.
 
 ## Schema changes
 
