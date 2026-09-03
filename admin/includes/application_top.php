@@ -32,7 +32,9 @@ ini_set('display_errors', '1');
 
 // Set the level of error reporting
 if( defined( 'IS_LIVE' ) && IS_LIVE ) {
-	error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT);
+	// Keep deprecations/warnings visible in admin (display_errors is on); Kernel
+	// shows a compact orange box and does not fall through to Xdebug 3 dumps.
+	error_reporting(E_ALL & ~E_NOTICE);
 } else {
 	error_reporting(E_ALL);
 }
