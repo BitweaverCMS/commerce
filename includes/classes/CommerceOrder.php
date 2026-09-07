@@ -996,6 +996,9 @@ class CommerceOrder extends CommerceOrderBase {
 						$ret = FALSE;
 						$messageStack->add_session( $statusMsg, 'error');
 						$this->updateStatus( array( 'comments' => $statusMsg ) );
+						require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
+						$failManager = new CommercePaymentManager( $paymentModule->code );
+						$failManager->recordFailedPayment( $this, $paymentParams, $paymentModule );
 					}
 				} else {
 					$statusMsg = tra( 'Payment Module could not be loaded.' ).' ('.$this->info['payment_module_code'].')';

@@ -100,6 +100,8 @@ class payflowpro extends CommercePluginPaymentCardBase {
 
 		$postFields = array();
 		$responseHash = array();
+		$logHash = array();
+		$ret = FALSE;
 		$this->result = NULL;
 
 		if( self::verifyPayment( $pOrder, $pPaymentParams, $pSessionParams ) ) {
@@ -373,7 +375,9 @@ class payflowpro extends CommercePluginPaymentCardBase {
 				}
 				$this->response = $response;
 			}
-		} 
+		} else {
+			$logHash = $this->prepPayment( $pOrder, $pPaymentParams );
+		}
 
 		if( count( $this->mErrors ) == 0 && $this->result === 0 ) {
 			$ret = TRUE;
@@ -391,8 +395,14 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			}
 
 			if( isset( $postFields['ACCT'] ) ) { $postFields['ACCT'] = $this->privatizePaymentNumber( $postFields['ACCT'] ); }
-			
-			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), bit_error_string(), array( 'mErrors' => $this->mErrors, 'CURL' => $postFields, 'RESPONSE' => $responseHash ) );
+
+			if( $this->result === 'X' ) {
+				$logHash['payment_result'] = 'X';
+				$logHash['payment_message'] = BitBase::getParameter( $this->mErrors, 'process_payment', 'Malformed Payflow response' );
+			} elseif( empty( $logHash['payment_message'] ) ) {
+				$logHash['payment_message'] = BitBase::getParameter( $this->mErrors, 'process_payment', '' );
+			}
+
 			$this->mDb->RollbackTrans();
 			$messageStack->add_session('checkout_payment',tra( 'There has been an error processing your payment, please try again.' ).'<br/>'.BitBase::getParameter( $responseHash, 'RESPMSG' ),'error');
 			$ret = FALSE;
@@ -401,6 +411,42 @@ class payflowpro extends CommercePluginPaymentCardBase {
 			$pPaymentParams['result'] = $logHash;
 		}
 		return $ret;
+	}
+
+	public function classifyPaymentFailure( $pLogHash, $pErrors = NULL ) {
+		if( $pErrors === NULL ) {
+			$pErrors = $this->mErrors;
+		}
+		if( !empty( $pErrors['curl_errno'] ) ) {
+			return 'infra';
+		}
+		$result = BitBase::getParameter( $pLogHash, 'payment_result' );
+		if( $result === 'X' || $result === '' || $result === NULL ) {
+			return parent::classifyPaymentFailure( $pLogHash, $pErrors );
+		}
+		if( is_numeric( $result ) ) {
+			$code = (int)$result;
+			$customerCodes = array( 7, 12, 13, 23, 24, 50, 112, 114, 125, 126, 127, 128 );
+			if( in_array( $code, $customerCodes, TRUE ) ) {
+				return 'customer';
+			}
+			return 'infra';
+		}
+		return parent::classifyPaymentFailure( $pLogHash, $pErrors );
+	}
+
+	public function paymentStatusForFailure( $pClass, $pLogHash, $pErrors = NULL ) {
+		if( $pErrors === NULL ) {
+			$pErrors = $this->mErrors;
+		}
+		if( $pClass === 'infra' ) {
+			return 'infra';
+		}
+		$result = BitBase::getParameter( $pLogHash, 'payment_result' );
+		if( is_numeric( $result ) && in_array( (int)$result, array( 7, 23, 24 ), TRUE ) ) {
+			return 'invalid';
+		}
+		return parent::paymentStatusForFailure( $pClass, $pLogHash, $pErrors );
 	}
 
 	/**

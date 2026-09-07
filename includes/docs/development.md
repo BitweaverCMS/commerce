@@ -33,6 +33,10 @@
   combine/email.
 - `BitBase::CompleteTrans()` / `StartTrans()` do not return the ADOdb result.
   When commit success matters, check `$this->mDb->CompleteTrans()`.
+- Payment plugins must not `bit_error_email()` on ordinary declines. Log via
+  `CommercePaymentManager::recordFailedPayment()` (after plugin rollback) and
+  classify with `classifyPaymentFailure()`. See
+  [commerce-lifecycle.md](commerce-lifecycle.md).
 - Order combine: both orders need `COMBINE_ORDERS_STATUS_ID` (falls back to
   `DEFAULT_ORDERS_STATUS_ID`), matching delivery address, and dependents that
   FK to `orders_id` (downloads, POD transfer/reorder rows) must move to the
