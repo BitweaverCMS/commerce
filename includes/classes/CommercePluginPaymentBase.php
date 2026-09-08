@@ -75,7 +75,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		}	
 	}
 
-	protected function prepPayment( $pOrder, $pPaymentParams ) {
+	public function prepPayment( $pOrder, $pPaymentParams ) {
 		global $gBitUser;
 		$logHash = array();
 
@@ -85,29 +85,75 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		$logHash['payment_expires'] = $this->getPaymentExpires( $pPaymentParams );
 		$logHash['payment_type'] = $this->getPaymentType( $pPaymentParams );
 		$logHash['payment_owner'] = $this->getPaymentOwner( $pPaymentParams );
-		$logHash['ip_address'] = $_SERVER['REMOTE_ADDR'];
+		$logHash['ip_address'] = BitBase::getParameter( $_SERVER, 'REMOTE_ADDR', '' );
 		$logHash['payment_module'] = $this->code;
 		$logHash['payment_number'] = $this->getPaymentNumber( $pPaymentParams, TRUE );
 
-		$logHash['customers_id'] = $pOrder->customer['customers_id'];
-		$logHash['customers_email'] = $pOrder->customer['email_address'];
+		$logHash['customers_id'] = BitBase::getParameter( $pOrder->customer, 'customers_id' );
+		$logHash['customers_email'] = BitBase::getParameter( $pOrder->customer, 'email_address', '' );
 		$logHash['num_cart_items'] = count( $pOrder->contents );
 
-		$logHash['address_company'] = $pOrder->delivery['company'];
-		$logHash['address_street_address'] =  $pOrder->delivery['street_address'];
-		$logHash['address_suburb'] =  $pOrder->delivery['suburb'];
-		$logHash['address_city'] =    $pOrder->delivery['city'];
-		$logHash['address_state'] =   $pOrder->delivery['state'];
-		$logHash['address_postcode'] =     $pOrder->delivery['postcode'];
-		$logHash['address_country'] = $pOrder->delivery['countries_iso_code_2'];
+		$logHash['address_company'] = BitBase::getParameter( $pOrder->delivery, 'company', '' );
+		$logHash['address_street_address'] = BitBase::getParameter( $pOrder->delivery, 'street_address', '' );
+		$logHash['address_suburb'] = BitBase::getParameter( $pOrder->delivery, 'suburb', '' );
+		$logHash['address_city'] = BitBase::getParameter( $pOrder->delivery, 'city', '' );
+		$logHash['address_state'] = BitBase::getParameter( $pOrder->delivery, 'state', '' );
+		$logHash['address_postcode'] = BitBase::getParameter( $pOrder->delivery, 'postcode', '' );
+		$logHash['address_country'] = BitBase::getParameter( $pOrder->delivery, 'countries_iso_code_2', '' );
 
 		// We assume a default error, and let payment method set the success
 		$logHash['is_success'] = 'n';
-		$logHash['exchange_rate'] = $pOrder->info['currency_value'];
+		$logHash['exchange_rate'] = BitBase::getParameter( $pOrder->info, 'currency_value', 1 );
 		$logHash['payment_status'] = 'default';
-		$logHash['payment_amount'] = $this->getParameter( $pPaymentParams, 'payment_amount' );
+		$logHash['payment_amount'] = $this->getParameter( $pPaymentParams, 'payment_amount', 0 );
+		$logHash['payment_currency'] = $this->getParameter( $pPaymentParams, 'payment_currency', DEFAULT_CURRENCY );
+		$logHash['payment_mode'] = 'charge';
 
 		return $logHash;
+	}
+
+	/**
+	 * Classify a failed attempt: 'customer' (expected decline/bad card data) or 'infra'.
+	 * Unknown gateway codes default to infra so new failure modes still page staff.
+	 */
+	public function classifyPaymentFailure( $pLogHash, $pErrors = NULL ) {
+		if( $pErrors === NULL ) {
+			$pErrors = $this->mErrors;
+		}
+
+		$processMsg = BitBase::getParameter( $pErrors, 'process_payment', '' );
+		if( !empty( $pErrors['curl_errno'] ) || stripos( $processMsg, 'CURL ERROR' ) !== FALSE ) {
+			return 'infra';
+		}
+		if( stripos( $processMsg, 'has not implemented' ) !== FALSE ) {
+			return 'infra';
+		}
+		if( BitBase::getParameter( $pLogHash, 'payment_result' ) === 'exception' ) {
+			return 'infra';
+		}
+
+		foreach( array( 'number', 'owner', 'date', 'cvv', 'charge_amount' ) as $field ) {
+			if( !empty( $pErrors[$field] ) ) {
+				return 'customer';
+			}
+		}
+
+		return 'infra';
+	}
+
+	public function paymentStatusForFailure( $pClass, $pLogHash, $pErrors = NULL ) {
+		if( $pErrors === NULL ) {
+			$pErrors = $this->mErrors;
+		}
+		if( $pClass === 'infra' ) {
+			return 'infra';
+		}
+		foreach( array( 'number', 'owner', 'date', 'cvv' ) as $field ) {
+			if( !empty( $pErrors[$field] ) ) {
+				return 'invalid';
+			}
+		}
+		return 'declined';
 	}
 
 	function getTransactionReference() {

@@ -24,6 +24,7 @@
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}customers.php">{tr}Customers{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}interests.php">{tr}Interests{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}orders.php">{tr}Orders{/tr}</a></li>
+					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}payment_failures.php">{tr}Payment Failures{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}coupon_admin.php">{tr}Coupon Admin{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}includes/modules/amazonmws/index.php">{tr}Amazon Orders{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}commissions.php">{tr}Commissions{/tr}</a></li>

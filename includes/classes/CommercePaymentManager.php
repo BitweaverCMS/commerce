@@ -199,6 +199,7 @@ class CommercePaymentManager extends BitBase {
 				$pPaymentParams['processed_orders_status_id'] = $this->mPaymentObjects[$this->selected_module]->getProcessedOrdersStatus();
 			} else {
 				$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
+				$this->recordFailedPayment( $pOrder, $pPaymentParams, $this->mPaymentObjects[$this->selected_module] );
 			}
 		} else {
 			if( !empty( $this->selected_module ) ) {
@@ -206,6 +207,7 @@ class CommercePaymentManager extends BitBase {
 			} else {
 				$this->mErrors['payment_method'] = 'No payment method specified.';
 			}
+			$this->recordFailedPayment( $pOrder, $pPaymentParams );
 		}
 
 		return $ret;
@@ -250,8 +252,10 @@ class CommercePaymentManager extends BitBase {
 			'last_name', 
 			'address_company', 
 			'address_name', 
+			'address_street', 
 			'address_suburb', 
 			'address_city', 
+			'address_state', 
 			'address_postcode', 
 			'address_country', 
 			'num_cart_items' 
@@ -262,6 +266,10 @@ class CommercePaymentManager extends BitBase {
 			$pParamHash['address_country'] = zen_get_country_name( $pParamHash['country_id'] );
 		}
 
+		if( empty( $pParamHash['address_street'] ) && isset( $pParamHash['address_street_address'] ) ) {
+			$pParamHash['address_street'] = $pParamHash['address_street_address'];
+		}
+
 		if( empty( $pParamHash['payment_status'] ) ) {
 			$pParamHash['payment_status'] = ($pParamHash['is_success'] == 'y' ? 'PAID' : 'unsuccessful');
 		}
@@ -270,6 +278,10 @@ class CommercePaymentManager extends BitBase {
 			if( isset( $pParamHash[$colName] ) ) {
 				$pParamHash['payment_store'][$colName] = $pParamHash[$colName];
 			}
+		}
+
+		if( empty( $pParamHash['payment_store']['address_street'] ) && isset( $pParamHash['address_street_address'] ) ) {
+			$pParamHash['payment_store']['address_street'] = $pParamHash['address_street_address'];
 		}
 
 		// No bounds checking yet
@@ -300,6 +312,241 @@ bit_error_log( $pParamHash, $this->mErrors );
 			$this->mDb->CompleteTrans();
 		}
 
+		return $ret;
+	}
+
+	/**
+	 * Persist a failed attempt after any plugin RollbackTrans, then alert if needed.
+	 * Does not update order status — checkout failures often have no order row yet.
+	 */
+	public function recordFailedPayment( $pOrder, &$pPaymentParams, $pPaymentModule = NULL ) {
+		global $gBitUser, $gCommerceSystem;
+
+		$errors = $pPaymentModule ? $pPaymentModule->mErrors : $this->mErrors;
+		if( empty( $errors ) ) {
+			$errors = $this->mErrors;
+		}
+
+		$logHash = BitBase::getParameter( $pPaymentParams, 'result', array() );
+		if( empty( $logHash ) || !is_array( $logHash ) ) {
+			$logHash = array();
+		}
+		if( empty( $logHash['payment_module'] ) && $pPaymentModule && method_exists( $pPaymentModule, 'prepPayment' ) ) {
+			$logHash = array_merge( $pPaymentModule->prepPayment( $pOrder, $pPaymentParams ), $logHash );
+		}
+
+		if( $pPaymentModule ) {
+			$failClass = $pPaymentModule->classifyPaymentFailure( $logHash, $errors );
+			$paymentStatus = $pPaymentModule->paymentStatusForFailure( $failClass, $logHash, $errors );
+		} else {
+			$failClass = 'infra';
+			$paymentStatus = 'infra';
+		}
+
+		$message = BitBase::getParameter( $logHash, 'payment_message' );
+		if( $message === NULL || $message === '' ) {
+			$message = BitBase::getParameter( $errors, 'process_payment', implode( ' ', array_filter( $errors, 'is_scalar' ) ) );
+		}
+
+		$resultCode = BitBase::getParameter( $logHash, 'payment_result', '' );
+		if( $resultCode === NULL || $resultCode === '' ) {
+			$resultCode = $failClass;
+		}
+
+		$storeHash = array(
+			'user_id' => BitBase::getParameter( $logHash, 'user_id', $gBitUser->mUserId ),
+			'customers_id' => BitBase::getParameter( $logHash, 'customers_id', BitBase::getParameter( $pOrder->customer, 'customers_id' ) ),
+			'customers_email' => BitBase::getParameter( $logHash, 'customers_email', BitBase::getParameter( $pOrder->customer, 'email_address', '' ) ),
+			'ip_address' => BitBase::getParameter( $logHash, 'ip_address', BitBase::getParameter( $_SERVER, 'REMOTE_ADDR', '' ) ),
+			'is_success' => 'n',
+			'payment_module' => BitBase::getParameter( $logHash, 'payment_module', ( $pPaymentModule ? $pPaymentModule->code : 'unknown' ) ),
+			'payment_mode' => BitBase::getParameter( $logHash, 'payment_mode', 'charge' ),
+			'payment_status' => $paymentStatus,
+			'payment_ref_id' => BitBase::getParameter( $logHash, 'payment_ref_id', '' ),
+			'payment_type' => BitBase::getParameter( $logHash, 'payment_type', '' ),
+			'payment_owner' => BitBase::getParameter( $logHash, 'payment_owner', '' ),
+			'payment_number' => BitBase::getParameter( $logHash, 'payment_number', '' ),
+			'payment_expires' => BitBase::getParameter( $logHash, 'payment_expires', '' ),
+			'payment_result' => (string)$resultCode,
+			'payment_message' => (string)$message,
+			'payment_amount' => (float)BitBase::getParameter( $logHash, 'payment_amount', BitBase::getParameter( $pPaymentParams, 'payment_amount', 0 ) ),
+			'payment_currency' => BitBase::getParameter( $logHash, 'payment_currency', BitBase::getParameter( $pPaymentParams, 'payment_currency', DEFAULT_CURRENCY ) ),
+			'exchange_rate' => (float)BitBase::getParameter( $logHash, 'exchange_rate', 1 ),
+			'address_name' => BitBase::getParameter( $logHash, 'address_name', BitBase::getParameter( $logHash, 'payment_owner', '' ) ),
+			'address_company' => BitBase::getParameter( $logHash, 'address_company', '' ),
+			'address_street' => BitBase::getParameter( $logHash, 'address_street', BitBase::getParameter( $logHash, 'address_street_address', '' ) ),
+			'address_suburb' => BitBase::getParameter( $logHash, 'address_suburb', '' ),
+			'address_city' => BitBase::getParameter( $logHash, 'address_city', '' ),
+			'address_state' => BitBase::getParameter( $logHash, 'address_state', '' ),
+			'address_postcode' => BitBase::getParameter( $logHash, 'address_postcode', '' ),
+			'address_country' => BitBase::getParameter( $logHash, 'address_country', '' ),
+			'num_cart_items' => (int)BitBase::getParameter( $logHash, 'num_cart_items', 0 ),
+		);
+
+		if( BitBase::verifyIdParameter( $logHash, 'orders_id' ) ) {
+			$storeHash['orders_id'] = $logHash['orders_id'];
+		} elseif( !empty( $pOrder->mOrdersId ) && BitBase::verifyId( $pOrder->mOrdersId ) ) {
+			$storeHash['orders_id'] = $pOrder->mOrdersId;
+		}
+
+		foreach( $storeHash as $key => $value ) {
+			if( $value === NULL ) {
+				$storeHash[$key] = ( $key === 'payment_amount' || $key === 'exchange_rate' || $key === 'num_cart_items' ) ? 0 : '';
+			}
+		}
+
+		if( !BitBase::verifyId( $storeHash['customers_id'] ) ) {
+			bit_error_log( 'recordFailedPayment skipped insert: missing customers_id', $storeHash );
+		} else {
+			$storeHash['user_id'] = (int)$storeHash['user_id'];
+			$storeHash['customers_id'] = (int)$storeHash['customers_id'];
+			$this->mDb->StartTrans();
+			$this->mDb->associateInsert( TABLE_ORDERS_PAYMENTS, $storeHash );
+			$this->mDb->CompleteTrans();
+		}
+
+		$logHash['is_success'] = 'n';
+		$logHash['payment_status'] = $paymentStatus;
+		$logHash['failure_class'] = $failClass;
+		$pPaymentParams['result'] = $logHash;
+
+		$this->alertFailedPayment( $failClass, $storeHash, $errors, $pPaymentParams );
+
+		return $failClass;
+	}
+
+	private function alertFailedPayment( $pClass, $pStoreHash, $pErrors, $pPaymentParams ) {
+		global $gCommerceSystem;
+
+		$host = php_uname( 'n' );
+		$message = BitBase::getParameter( $pStoreHash, 'payment_message', '' );
+		$safeVars = $this->sanitizePaymentAlertVars( array(
+			'payment' => $pStoreHash,
+			'mErrors' => $pErrors,
+		) );
+
+		if( $pClass === 'infra' ) {
+			bit_error_email(
+				'PAYMENT INFRA on '.$host.': '.$message,
+				$message."\n\n".( function_exists( 'bit_error_string' ) ? bit_error_string() : '' ),
+				$safeVars
+			);
+			return;
+		}
+
+		$threshold = (int)$gCommerceSystem->getConfig( 'PAYMENT_FAIL_ALERT_THRESHOLD', 5 );
+		$windowMin = (int)$gCommerceSystem->getConfig( 'PAYMENT_FAIL_ALERT_WINDOW_MINUTES', 15 );
+		if( $threshold < 1 ) {
+			$threshold = 5;
+		}
+		if( $windowMin < 1 ) {
+			$windowMin = 15;
+		}
+
+		$count = $this->countRecentFailedPayments( $pStoreHash, $windowMin );
+		if( $count == $threshold ) {
+			bit_error_email(
+				'PAYMENT FAILURES on '.$host.': '.$count.' failures in '.$windowMin.'m ('.$message.')',
+				$count.' unsuccessful payment attempts for this account in the last '.$windowMin.' minutes.'."\n\n".$message."\n\n".( function_exists( 'bit_error_string' ) ? bit_error_string() : '' ),
+				$safeVars
+			);
+		}
+	}
+
+	private function countRecentFailedPayments( $pStoreHash, $pWindowMinutes ) {
+		$since = date( 'Y-m-d H:i:s', time() - ( (int)$pWindowMinutes * 60 ) );
+		$customersId = BitBase::getParameter( $pStoreHash, 'customers_id' );
+		if( BitBase::verifyId( $customersId ) ) {
+			return (int)$this->mDb->getOne(
+				"SELECT COUNT(*) FROM " . TABLE_ORDERS_PAYMENTS . " WHERE `is_success`='n' AND `customers_id`=? AND `payment_date` >= ?",
+				array( $customersId, $since )
+			);
+		}
+		$userId = BitBase::getParameter( $pStoreHash, 'user_id' );
+		if( BitBase::verifyId( $userId ) ) {
+			return (int)$this->mDb->getOne(
+				"SELECT COUNT(*) FROM " . TABLE_ORDERS_PAYMENTS . " WHERE `is_success`='n' AND `user_id`=? AND `payment_date` >= ?",
+				array( $userId, $since )
+			);
+		}
+		$ip = BitBase::getParameter( $pStoreHash, 'ip_address' );
+		if( $ip !== '' && $ip !== NULL ) {
+			return (int)$this->mDb->getOne(
+				"SELECT COUNT(*) FROM " . TABLE_ORDERS_PAYMENTS . " WHERE `is_success`='n' AND `ip_address`=? AND `payment_date` >= ?",
+				array( $ip, $since )
+			);
+		}
+		return 0;
+	}
+
+	private function sanitizePaymentAlertVars( $pVars ) {
+		$secretKeys = array( 'payment_cvv', 'CVV2', 'PWD', 'USER', 'VENDOR', 'PARTNER', 'cvv', 'password', 'passwd' );
+		if( !is_array( $pVars ) ) {
+			return $pVars;
+		}
+		$ret = array();
+		foreach( $pVars as $key => $value ) {
+			if( in_array( $key, $secretKeys, TRUE ) ) {
+				continue;
+			}
+			if( is_array( $value ) ) {
+				$ret[$key] = $this->sanitizePaymentAlertVars( $value );
+			} else {
+				$ret[$key] = $value;
+			}
+		}
+		return $ret;
+	}
+
+	public function getFailedPayments( $pListHash = array() ) {
+		$whereSql = array( "cop.`is_success` = 'n'" );
+		$bindVars = array();
+
+		$days = (int)BitBase::getParameter( $pListHash, 'days', 7 );
+		if( $days < 1 ) {
+			$days = 7;
+		}
+		$whereSql[] = "cop.`payment_date` >= ?";
+		$bindVars[] = date( 'Y-m-d H:i:s', time() - ( $days * 86400 ) );
+
+		if( $status = BitBase::getParameter( $pListHash, 'payment_status' ) ) {
+			$whereSql[] = "cop.`payment_status` = ?";
+			$bindVars[] = $status;
+		}
+		if( BitBase::verifyIdParameter( $pListHash, 'customers_id' ) ) {
+			$whereSql[] = "cop.`customers_id` = ?";
+			$bindVars[] = $pListHash['customers_id'];
+		}
+		if( $email = BitBase::getParameter( $pListHash, 'customers_email' ) ) {
+			$whereSql[] = "LOWER(cop.`customers_email`) LIKE ?";
+			$bindVars[] = '%'.strtolower( $email ).'%';
+		}
+		if( $ip = BitBase::getParameter( $pListHash, 'ip_address' ) ) {
+			$whereSql[] = "cop.`ip_address` = ?";
+			$bindVars[] = $ip;
+		}
+		if( $module = BitBase::getParameter( $pListHash, 'payment_module' ) ) {
+			$whereSql[] = "cop.`payment_module` = ?";
+			$bindVars[] = $module;
+		}
+
+		$max = (int)BitBase::getParameter( $pListHash, 'max_records', 250 );
+		if( $max < 1 || $max > 1000 ) {
+			$max = 250;
+		}
+
+		$sql = "SELECT cop.*, co.`orders_id` AS `existing_orders_id`
+			FROM " . TABLE_ORDERS_PAYMENTS . " cop
+			LEFT JOIN " . TABLE_ORDERS . " co ON (co.`orders_id` = cop.`orders_id`)
+			WHERE ".implode( ' AND ', $whereSql )."
+			ORDER BY cop.`payment_date` DESC";
+
+		$ret = array();
+		if( $rs = $this->mDb->query( $sql, $bindVars, $max ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$ret[] = $row;
+			}
+		}
 		return $ret;
 	}
 	// }}}
@@ -408,7 +655,9 @@ bit_error_log( $pParamHash, $this->mErrors );
 										if( $ret = $this->mPaymentObjects[$this->selected_module]->processPayment( $tempOrder, $pParamHash, $sessionParams ) ) {
 											$pParamHash['payment_ref_id'] = $tempOrder->info['payment_ref_id'];
 										} else {
-											$this->mErrors['errors'][] = tra( 'Payment Failed' ).': '.$pParamHash['result']['payment_result'];
+											$this->mErrors = $this->mPaymentObjects[$this->selected_module]->mErrors;
+											$this->recordFailedPayment( $tempOrder, $pParamHash, $this->mPaymentObjects[$this->selected_module] );
+											$this->mErrors['errors'][] = tra( 'Payment Failed' ).': '.BitBase::getParameter( $pParamHash['result'], 'payment_result' );
 											break;
 										}
 									}

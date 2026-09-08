@@ -281,6 +281,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
 
 		$postFields = array();
 		$responseHash = array();
+		$logHash = array();
 
 		$ret = FALSE;
 
@@ -468,55 +469,93 @@ class braintree_api extends CommercePluginPaymentCardBase {
 					$this->numitems = sizeof($pOrder->contents);
 
 				} elseif( empty( $this->mErrors ) ) {
-					$this->mErrors['process_payment'] = $result->message."\n\n";
+					$processorCode = !empty( $result->transaction->processorResponseCode ) ? (string)$result->transaction->processorResponseCode : '';
+					$gatewayMessage = trim( (string)$result->message );
+					$detailMessage = '';
 
-					if( !empty( $result->transaction->processorResponseCode ) ) {
-						if( preg_match('/^1(\d+)/', $result->transaction->processorResponseCode)) {
-							// If it's a 1000 code it's Card Approved but since it didn't suceed above we assume it's Verification Failed.
-							// FROM " . TABLE_BRAINTREE . " : 1000 class codes mean the processor has successfully authorized the transaction; success will be true. However, the transaction could still be gateway rejected even though the processor successfully authorized the transaction if you have AVS and/or CVV rules set up and/or duplicate transaction checking is enabled and the transaction fails those validation.
-							$this->mErrors['process_payment'] .= 'We were unable to process your credit card. Please make sure that your credit card and billing information is accurate and entered properly.';
-						} else if (preg_match('/^2(\d+)/', $result->transaction->processorResponseCode)) {
-							// If it's a 2000 code it's Card Declined
-							// FROM " . TABLE_BRAINTREE . " : 2000 class codes means the authorization was declined by the processor ; success will be false and the code is meant to tell you more about why the card was declined.                
-							if (defined('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode)) {
-								$this->mErrors['process_payment'] .= constant('BRAINTREE_ERROR_CODE_' . $result->transaction->processorResponseCode);
+					if( $processorCode !== '' ) {
+						if( preg_match('/^1(\d+)/', $processorCode)) {
+							// 1000 class: processor authorized but gateway rejected (AVS/CVV/duplicate rules).
+							$detailMessage = 'We were unable to process your credit card. Please make sure that your credit card and billing information is accurate and entered properly.';
+						} else if (preg_match('/^2(\d+)/', $processorCode)) {
+							if (defined('BRAINTREE_ERROR_CODE_' . $processorCode)) {
+								$detailMessage = constant('BRAINTREE_ERROR_CODE_' . $processorCode);
 							} else {
-								$this->mErrors['process_payment'] .= 'Processor Decline - Please try another card. ('.$result->transaction->processorResponseCode.')';
+								$detailMessage = 'Processor Decline - Please try another card. ('.$processorCode.')';
 							}
-						} else if (preg_match('/^3(\d+)/', $result->transaction->processorResponseCode)) {
-							// If it's a 3000 code it's a processor failure
-							// FROM " . TABLE_BRAINTREE . " : 3000 class codes are problems with the back-end processing network, and dont necessarily mean a problem with the card itself.
-							$this->mErrors['process_payment'] .= 'Processor Network Unavailable - Try Again.';
+						} else if (preg_match('/^3(\d+)/', $processorCode)) {
+							$detailMessage = 'Processor Network Unavailable - Try Again.';
 						} else {
-							// This is the default error msg but technically it shouldn't be able to get here, Braintree in the future may add codes making it possible to not be a 1, 2, or 3k class code though.
-							$this->mErrors['process_payment'] .= 'We were unable to process your credit card. Please make sure that your billing information is accurate and entered properly.';
+							$detailMessage = 'We were unable to process your credit card. Please make sure that your billing information is accurate and entered properly.';
 						}
 					}
 
+					if( $gatewayMessage !== '' && strcasecmp( $gatewayMessage, $detailMessage ) === 0 ) {
+						$this->mErrors['process_payment'] = $gatewayMessage;
+					} elseif( $gatewayMessage !== '' && $detailMessage !== '' ) {
+						$this->mErrors['process_payment'] = $detailMessage;
+					} else {
+						$this->mErrors['process_payment'] = $detailMessage !== '' ? $detailMessage : $gatewayMessage;
+					}
+
 					$logHash['payment_message'] = trim( $this->mErrors['process_payment'] );
-					$logHash['payment_result'] = 'Failure';
+					$logHash['payment_result'] = $processorCode !== '' ? $processorCode : 'Failure';
 				}
 			} catch (Exception $e) {
 				if( !($msg = $e->getMessage()) ) {
 					$msg = "Payment Execption";
 				}
 				$this->mErrors['process_payment'] = $e->getMessage();
+				$logHash['payment_result'] = 'exception';
+				$logHash['payment_message'] = $this->mErrors['process_payment'];
 			}
 		} else {
-			$errorString = implode( $this->mErrors );
-			$this->mErrors = array( 'process_payment' => $errorString );
-			bit_error_email( 'PAYMENT ERROR: DID NOT VERIFY', 'verifyPayment failed'."\n\n".bit_error_string(), array( $this->mErrors, $pPaymentParams ) );
+			$logHash = $this->prepPayment( $pOrder, $pPaymentParams );
+			$errorString = implode( ' ', $this->mErrors );
+			$this->mErrors['process_payment'] = $errorString;
+			$logHash['payment_message'] = $errorString;
+			$logHash['payment_result'] = 'invalid';
 		}
 
 		if( !empty( $this->mErrors['process_payment'] ) ) {
 			$pSessionParams[$this->code.'_error']['number'] = $this->mErrors['process_payment'];
-			bit_error_email( 'PAYMENT ERROR on '.php_uname( 'n' ).': '.BitBase::getParameter( $this->mErrors, 'process_payment' ), BitBase::getParameter( $this->mErrors, 'process_payment' )."\n\n".bit_error_string(), array( 'mErrors' => $this->mErrors, $result->errors, 'RESPONSE' => $responseHash ) );
 			$ret = FALSE;
 		}
 
 		$pPaymentParams['result'] = $logHash;
 
 		return $ret;
+	}
+
+	public function classifyPaymentFailure( $pLogHash, $pErrors = NULL ) {
+		if( $pErrors === NULL ) {
+			$pErrors = $this->mErrors;
+		}
+		$code = (string)BitBase::getParameter( $pLogHash, 'payment_result', '' );
+		if( $code === 'exception' ) {
+			return 'infra';
+		}
+		if( preg_match( '/^3\d+/', $code ) ) {
+			return 'infra';
+		}
+		if( preg_match( '/^[12]\d+/', $code ) ) {
+			return 'customer';
+		}
+		return parent::classifyPaymentFailure( $pLogHash, $pErrors );
+	}
+
+	public function paymentStatusForFailure( $pClass, $pLogHash, $pErrors = NULL ) {
+		if( $pErrors === NULL ) {
+			$pErrors = $this->mErrors;
+		}
+		$code = (string)BitBase::getParameter( $pLogHash, 'payment_result', '' );
+		if( $pClass === 'infra' ) {
+			return 'infra';
+		}
+		if( $code === 'invalid' || preg_match( '/^8170[67]$/', $code ) ) {
+			return 'invalid';
+		}
+		return parent::paymentStatusForFailure( $pClass, $pLogHash, $pErrors );
 	}
 
 	/**

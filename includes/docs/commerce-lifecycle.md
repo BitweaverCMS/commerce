@@ -67,6 +67,23 @@ refund, and local order state. Remote timeout is not proof of failure; use
 provider idempotency/reconciliation where supported. Never store sensitive card
 data outside the adapter/provider contract.
 
+Failed attempts (including checkout tries that never create an order) are
+inserted into `com_orders_payments` with `is_success='n'` by
+`CommercePaymentManager::recordFailedPayment()` after any plugin
+`RollbackTrans()`. CVV is never stored; PAN is privatized.
+
+Failures are classified by the payment plugin (`classifyPaymentFailure()`):
+
+| Class | `payment_status` | Email |
+|---|---|---|
+| Customer (issuer decline, CVV/AVS, bad card data, Payflow 7/12/23/24/114, Braintree 2xxx) | `declined` or `invalid` | None, unless the same `customers_id` (else `user_id`, else IP) reaches `PAYMENT_FAIL_ALERT_THRESHOLD` (default 5) unsuccessful rows in `PAYMENT_FAIL_ALERT_WINDOW_MINUTES` (default 15). That sends one `PAYMENT FAILURES` email. Config keys live in Customer Details (`configuration_group_id` 5). |
+| Infra (CURL, merchant auth, malformed response, Payflow unknown RESULT, Braintree 3xxx/exception) | `infra` | Immediate `PAYMENT INFRA` to `ERROR_EMAIL`. Unknown gateway codes stay infra. |
+
+Staff inspect the log at `admin/payment_failures.php`. Do not call
+`bit_error_email('PAYMENT ERROR…')` from a payment plugin for ordinary
+declines. Card-base does not validate CVV length locally; Payflow may return
+“CVV must be 4 digits…” as a customer field error (RESULT 7).
+
 ### Shipping
 
 Shipping adapters receive an order-derived shipment description. Eligibility,
