@@ -26,6 +26,16 @@ than duplicating their persistence.
 
 Does not define deployment-specific products, production workflows, or storefront branding.
 
+## Orders
+
+Commerce owns `com_orders`, line items, and `com_orders_status_history`.
+Construct with `new order( $ordersId )`. Append history only through
+`CommerceOrder::updateStatus()`. Customer email is opt-in: `notify` must be
+the string `'on'`. Staff/production comments use `notify => FALSE` and omit
+`status` (keeps the current status). Full API, tables, and product→order
+lookup: [orders.md](orders.md). Checkout pipeline:
+[commerce-lifecycle.md](commerce-lifecycle.md).
+
 ## Request and rendering pattern
 
 Most package controllers follow Bitweaver's established flow:

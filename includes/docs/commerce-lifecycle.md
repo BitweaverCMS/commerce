@@ -88,11 +88,14 @@ production systems belong outside this upstream package.
 
 ## Order state
 
-Order status history is business/audit state. Status changes should:
+Order status history is business/audit state. The write API is
+`CommerceOrder::updateStatus()` — see [orders.md](orders.md). Status changes
+should:
 
 - Validate the transition and actor.
-- Persist history with the order update.
-- Avoid duplicate notifications/remote side effects.
+- Persist history with the order update (`updateStatus()`, not ad-hoc INSERTs).
+- Avoid duplicate notifications/remote side effects. Customer email is sent
+  only when `notify` is `'on'`; staff comments pass `notify => FALSE`.
 - Preserve terminal and financial state.
 - Remain recoverable after partial provider failure.
 

@@ -41,6 +41,9 @@ See Themes `includes/docs/development.md` and Kernel
 
 ## Documentation map
 
+- [Orders and order processing](orders.md) — `orders_id` / line items, status
+  history, `updateStatus()` (including `notify => FALSE` for staff comments),
+  and resolving an order from `products_id`.
 - [Architecture](architecture.md) — initialization, components, and request flow.
 - [Source reference](source-reference.md) — source-derived files, classes,
   controllers, schema artifacts, plugins, and templates.
