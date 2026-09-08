@@ -76,7 +76,7 @@ Failures are classified by the payment plugin (`classifyPaymentFailure()`):
 
 | Class | `payment_status` | Email |
 |---|---|---|
-| Customer (issuer decline, CVV/AVS, bad card data, Payflow 7/12/23/24/114, Braintree 2xxx) | `declined` or `invalid` | None, unless the same `customers_id` (else `user_id`, else IP) reaches `PAYMENT_FAIL_ALERT_THRESHOLD` (default 5) unsuccessful rows in `PAYMENT_FAIL_ALERT_WINDOW_MINUTES` (default 15). That sends one `PAYMENT REPEAT` email. |
+| Customer (issuer decline, CVV/AVS, bad card data, Payflow 7/12/23/24/114, Braintree 2xxx) | `declined` or `invalid` | None, unless the same `customers_id` (else `user_id`, else IP) reaches `PAYMENT_FAIL_ALERT_THRESHOLD` (default 5) unsuccessful rows in `PAYMENT_FAIL_ALERT_WINDOW_MINUTES` (default 15). That sends one `PAYMENT FAILURES` email. Config keys live in Customer Details (`configuration_group_id` 5). |
 | Infra (CURL, merchant auth, malformed response, Payflow unknown RESULT, Braintree 3xxx/exception) | `infra` | Immediate `PAYMENT INFRA` to `ERROR_EMAIL`. Unknown gateway codes stay infra. |
 
 Staff inspect the log at `admin/payment_failures.php`. Do not call

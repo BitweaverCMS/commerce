@@ -446,7 +446,7 @@ bit_error_log( $pParamHash, $this->mErrors );
 		$count = $this->countRecentFailedPayments( $pStoreHash, $windowMin );
 		if( $count == $threshold ) {
 			bit_error_email(
-				'PAYMENT REPEAT on '.$host.': '.$count.' failures in '.$windowMin.'m ('.$message.')',
+				'PAYMENT FAILURES on '.$host.': '.$count.' failures in '.$windowMin.'m ('.$message.')',
 				$count.' unsuccessful payment attempts for this account in the last '.$windowMin.' minutes.'."\n\n".$message."\n\n".( function_exists( 'bit_error_string' ) ? bit_error_string() : '' ),
 				$safeVars
 			);
