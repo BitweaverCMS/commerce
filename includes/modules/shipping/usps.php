@@ -542,8 +542,8 @@ class usps extends CommercePluginShippingBase
 					// Now go through the list of SELECTED services from the configurator and do the work on THOSE
 					foreach ($selected_methods as $method_item) {
 
-						// If the $method_item['method'] is it the lookup, continue, otherwise, pass
-						if (isset($lookup[$method_item['method']])) {
+						$matchedRate = $this->matchUspsLookupRate( $lookup, $method_item['method'] );
+						if ( $matchedRate ) {
 							
 							$match = TRUE;
 							$made_weight = FALSE;
@@ -554,7 +554,7 @@ class usps extends CommercePluginShippingBase
 							if (!$this->is_apo_dest && ($method_item['method'] === 'Priority Mail Large Flat Rate APO/FPO/DPO'))
 								continue;
 
-							$price = $lookup[$method_item['method']]['totalBasePrice'];
+							$price = $matchedRate['totalBasePrice'];
 							
 							// Go through and add up the appropriate amount as necessary.
 							$services = strpos($method_item['method'], "Letter") !== false ? $ltr_services : $pkg_services;
@@ -567,12 +567,12 @@ class usps extends CommercePluginShippingBase
 								$method_labels = [];        // tracks names of extra services
 
 								foreach ($services as $s) {
-									if (isset($lookup[$method_name]['extraService'][$s]['price'])) {
-										$method_price = $lookup[$method_name]['extraService'][$s]['price'];
+									if (isset($matchedRate['extraService'][$s]['price'])) {
+										$method_price = $matchedRate['extraService'][$s]['price'];
 										$extraServices += $method_price;
 
 										// Add service name if available, otherwise fall back to the code
-										$label = $lookup[$method_name]['extraService'][$s]['name'] ?? $s;
+										$label = $matchedRate['extraService'][$s]['name'] ?? $s;
 										$method_labels[] = $label . " (" . $currencies->format($method_price) . ")";
 									}
 								}
@@ -618,11 +618,11 @@ class usps extends CommercePluginShippingBase
 								// Okay, we have the methods, we have the quotes: start building.
 								$quote = [
 									'id' => $m,
-									'title' => uspsr_filter_gibberish($lookup[$method_item['method']]['productName']),
+									'title' => uspsr_filter_gibberish($matchedRate['productName']),
 									'cost' => $price,
 									'transit_time' => $transitTime,
 									'delivery_date' => $deliveryDate,
-									'code' => $lookup[$method_item['method']]['mailClass'],
+									'code' => $matchedRate['mailClass'],
 									'servicesAdded' => $servicesList, // For debugging
 								];
 								if( $this->isDomesticShipment( $pShipHash ) && isset($rateQuote['standards'][$quote['code']])) { // Only do this for domestic shipments
@@ -1439,6 +1439,37 @@ class usps extends CommercePluginShippingBase
 	protected function isDomesticShipment( $pShipHash ) {
 		$destCountryCode = $this->verifyCountryCode( $pShipHash['destination']['countries_iso_code_2'] );	
 		return $destCountryCode == 'US';
+	}
+
+	/**
+	 * Match a configured TYPES name to an API productName.
+	 * International REST names insert Machinable / Nonstandard / Large Envelope
+	 * into strings that the admin checklist stores without those tokens.
+	 */
+	protected function normalizeUspsProductName( $pName ) {
+		$name = strtolower( trim( (string)$pName ) );
+		$name = preg_replace( '/\s+(machinable|nonstandard|large envelope)\b/', ' ', $name );
+		return trim( preg_replace( '/\s+/', ' ', $name ) );
+	}
+
+	protected function matchUspsLookupRate( $pLookup, $pMethodName ) {
+		if( isset( $pLookup[$pMethodName] ) ) {
+			return $pLookup[$pMethodName];
+		}
+		$want = $this->normalizeUspsProductName( $pMethodName );
+		$package = null;
+		$envelope = null;
+		foreach( $pLookup as $key => $rate ) {
+			if( $this->normalizeUspsProductName( $key ) !== $want ) {
+				continue;
+			}
+			if( stripos( $key, 'Large Envelope' ) !== false ) {
+				$envelope = $rate;
+			} else {
+				$package = $rate;
+			}
+		}
+		return $package ?? $envelope;
 	}
 
     protected function _makeStandardsCall($query)

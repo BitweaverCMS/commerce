@@ -99,6 +99,11 @@ returned rate by `shipping_num_boxes`. Do not `eb()` / `emergency_break()` on
 multi-box international quotes — that aborts checkout instead of returning
 rates.
 
+USPS REST international `productName` values include Machinable, Nonstandard,
+or Large Envelope. Admin `_TYPES` strings often omit those tokens (for example
+`Priority Mail International ISC Single-piece`). `usps::quote()` matches them
+after normalizing those tokens and prefers the package rate over Large Envelope.
+
 ### Order totals
 
 `CommerceOrderBase::otProcess()` coordinates configured total modules.
