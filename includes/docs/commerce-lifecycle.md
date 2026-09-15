@@ -91,6 +91,14 @@ origin/destination, cutoff, handling, weight, dimensions, currency, and tax can
 affect quotes. Keep quoting free of durable shipment side effects;
 `createShipment()` is a separate operation.
 
+`CommerceShipping::quote()` splits a shipment into `shipping_num_boxes` when
+cart weight exceeds `SHIPPING_MAX_WEIGHT`, then sets `shipping_weight_box` to
+the per-box weight. Plugins that rate a single package (USPS REST domestic and
+international) must quote that box weight. `usps::quote()` then multiplies the
+returned rate by `shipping_num_boxes`. Do not `eb()` / `emergency_break()` on
+multi-box international quotes — that aborts checkout instead of returning
+rates.
+
 ### Order totals
 
 `CommerceOrderBase::otProcess()` coordinates configured total modules.

@@ -51,4 +51,5 @@ See Themes `includes/docs/development.md` and Kernel
   validation, and maintenance guidance.
 - [Security](security.md) — trust boundaries and direct-HTTP access requirements.
 - [Commerce lifecycle and plugins](commerce-lifecycle.md) — initialization,
-  catalogue/cart/order flow, module families, fulfilment, and consistency rules.
+  catalogue/cart/order flow, module families, fulfilment, shipping box split
+  (`shipping_weight_box` × `shipping_num_boxes`), and consistency rules.

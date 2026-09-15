@@ -1369,14 +1369,12 @@ class usps extends CommercePluginShippingBase
 	            $ret['letter'] = $this->_makeQuotesCall($ltr_body, 'letters-domestic');
 			}
         } else { // It's not going to the US, so it's international
-if( $pShipHash['shipping_num_boxes'] > 1 ) {
-eb( "MUTLI BOX SUPPORT FOR USPS not supported", $pShipHash );
-}
+            // Quote one box; quote() multiplies by shipping_num_boxes (same as domestic).
             $pkg_body = [
                 "originZIPCode" => uspsr_validate_zipcode(SHIPPING_ORIGIN_ZIP),
                 "foreignPostalCode" => $pShipHash['destination']['postcode'],
                 "destinationCountryCode" => $pShipHash['destination']['countries_iso_code_2'],
-                "weight" => $pShipHash['shipping_weight_total'],
+                "weight" => (float)$pShipHash['shipping_weight_box'],
                 'length' => (float)$pShipHash['box_length'],
                 'width' => (float)$pShipHash['box_width'],
                 'height' => (float)$pShipHash['box_height'],
@@ -1388,7 +1386,7 @@ eb( "MUTLI BOX SUPPORT FOR USPS not supported", $pShipHash );
 			if( $isQuoteLetter ) {
 				// Letter Request Body
 				$ltr_body = [
-					"weight" => $shipping_weight,
+					"weight" => $pShipHash['shipping_weight_box'] * 16, // pounds → ounces, matching letters-domestic
 					"length" => (float)$pShipHash['ltr_length'],
 					"height" => (float)$pShipHash['ltr_height'],
 					"thickness" => (float)$pShipHash['ltr_thickness'],
