@@ -27,10 +27,11 @@
 - Admin or checkout page-only Themes assets: `$pPersistent = FALSE` on load
   helpers so they are not stored in the APCu `BitThemes` baseline. See
   [README.md](README.md).
-- Admin `{form}` escapes the `action` attribute. Do not put pre-escaped
-  `&amp;` query parameters in that attribute (they become `&amp;amp;` and the
-  param never reaches PHP). Prefer a hidden `action` field, as on admin order
-  combine/email.
+- `{form}` (Themes `block.form.php`) HTML-escapes the `action` attribute.
+  Do not put pre-escaped `&amp;` query parameters in that attribute (they
+  become `&amp;amp;` and the param never reaches PHP). Prefer a hidden
+  `action` field. Storefront: `page_product_info.tpl` add-to-cart. Admin:
+  order combine/email.
 - `BitBase::CompleteTrans()` / `StartTrans()` do not return the ADOdb result.
   When commit success matters, check `$this->mDb->CompleteTrans()`.
 - Payment plugins must not `bit_error_email()` on ordinary declines. Log via

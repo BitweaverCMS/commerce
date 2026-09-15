@@ -24,7 +24,8 @@
 	{/if}
 		
 	<div class="col-sm-{if $thumbUrl}8{else}12{/if}">
-		{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$smarty.get.products_id`&amp;action=add_product" method='post' enctype='multipart/form-data'}
+		{form name='cart_quantity' action="`$smarty.const.BITCOMMERCE_PKG_URL`index.php?products_id=`$gBitProduct->mProductsId`" method='post' enctype='multipart/form-data'}
+		<input type="hidden" name="action" value="add_product" />
 
 		<div class="row">
 			{if $gBitProduct->getField('products_description')}

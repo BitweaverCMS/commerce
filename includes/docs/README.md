@@ -48,7 +48,8 @@ See Themes `includes/docs/development.md` and Kernel
 - [Source reference](source-reference.md) — source-derived files, classes,
   controllers, schema artifacts, plugins, and templates.
 - [Development guide](development.md) — safe change workflow, extension points,
-  validation, and maintenance guidance.
+  validation, `{form}` action escaping (hidden `action`, not `&amp;` in the
+  URL), and maintenance guidance.
 - [Security](security.md) — trust boundaries and direct-HTTP access requirements.
 - [Commerce lifecycle and plugins](commerce-lifecycle.md) — initialization,
   catalogue/cart/order flow, module families, fulfilment, shipping box split
