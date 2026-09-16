@@ -42,6 +42,10 @@
   `DEFAULT_ORDERS_STATUS_ID`), matching delivery address, and dependents that
   FK to `orders_id` (downloads, POD transfer/reorder rows) must move to the
   destination before source `expunge()`.
+- Checkout confirmation: do not compile `if ($smarty.session.shipping.date)`
+  unless `shipping` is an array. PHP 8 `empty($string['key'])` is false;
+  a bare `if ($string['key'])` is a TypeError. `quoteToHash()` returning
+  `array()` is truthy — use `empty( $quoteHash )`, never assign `''`.
 
 ## Schema changes
 

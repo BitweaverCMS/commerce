@@ -36,7 +36,12 @@ The established checkout pipeline spans page controllers and shared includes:
 1. Load/synchronize the customer and shopping cart.
 2. Validate product availability, quantities, options, and prices.
 3. Resolve billing and shipping addresses.
-4. Obtain eligible shipping methods/quotes.
+4. Obtain eligible shipping methods/quotes. Session `shipping` is a
+   quote hash (`id`, `title`, `cost`, optional dates), never a bare
+   string. `free_free` / `freeshipper_free` is not a shipping module —
+   `CommerceOrder::loadFromCart()` must not re-quote it. Confirmation
+   templates must test `is_array($smarty.session.shipping)` before
+   reading `delivery_date` / `ship_date` (PHP 8 TypeError on `''['key']`).
 5. Run order-total modules in configured order.
 6. Select and validate payment.
 7. Persist the order, products, totals, and status history transactionally.

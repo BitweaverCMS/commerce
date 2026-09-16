@@ -572,20 +572,31 @@ class CommerceOrder extends CommerceOrderBase {
 			$coupon_code = $pSessionParams['dc_redeem_code'];
 		}
 
+		$quote = array();
 		if( !empty( $pSessionParams['shipping_quote'] ) ) {
-			// load all enabled shipping modules
-			require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
-			global $gCommerceShipping;
-			list($module, $method) = explode('_', $pSessionParams['shipping_quote'], 2);
-			$quote = $gCommerceShipping->quote( $pCart, $method, $module);
-
-			if( isset( $quote['error'] ) || !($quoteHash = $gCommerceShipping->quoteToHash( $quote )) ) {
-				$pSessionParams['shipping'] = '';
-				$this->mErrors['shipping'] = 'Could not quote shipping method: '.$pSessionParams['shipping_quote'].' ['.BitBase::getParameter( $quote, 'error', 'Unknown quote error' ).']';
+			$shippingQuote = $pSessionParams['shipping_quote'];
+			if( $shippingQuote === 'free_free' || $shippingQuote === 'freeshipper_free' ) {
+				$pSessionParams['shipping'] = array(
+					'id' => 'freeshipper_free',
+					'title' => defined( 'FREE_SHIPPING_TITLE' ) ? FREE_SHIPPING_TITLE : tra( 'Free Shipping' ),
+					'cost' => 0,
+					'code' => 'FREESHIP',
+				);
 			} else {
-				$pSessionParams['shipping'] = $quoteHash;
+				require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php');
+				global $gCommerceShipping;
+				list($module, $method) = explode( '_', $shippingQuote, 2 );
+				$quote = $gCommerceShipping->quote( $pCart, $method, $module );
+				$quoteHash = $gCommerceShipping->quoteToHash( $quote );
+				if( isset( $quote['error'] ) || empty( $quoteHash ) ) {
+					$pSessionParams['shipping'] = array();
+					$this->mErrors['shipping'] = 'Could not quote shipping method: '.$shippingQuote.' ['.BitBase::getParameter( $quote, 'error', 'Unknown quote error' ).']';
+				} else {
+					$pSessionParams['shipping'] = $quoteHash;
+				}
 			}
 		}
+		$shippingHash = is_array( BitBase::getParameter( $pSessionParams, 'shipping' ) ) ? $pSessionParams['shipping'] : array();
 
 		$this->info = array('orders_status_id' => DEFAULT_ORDERS_STATUS_ID, // may be adjusted below
 							'currency' => !empty( $pSessionParams['currency'] ) ? $pSessionParams['currency'] : NULL,
@@ -593,12 +604,12 @@ class CommerceOrder extends CommerceOrderBase {
 							'payment_method' => '',
 							'payment_module_code' => '',
 							'coupon_code' => $coupon_code,
-							'shipping_method' => !empty( $pSessionParams['shipping']['title'] ) ? $pSessionParams['shipping']['title'] : '',
-							'shipping_method_code' => !empty( $pSessionParams['shipping']['code'] ) ? $pSessionParams['shipping']['code'] : '',
-							'shipping_module_code' => !empty( $pSessionParams['shipping']['id'] ) ? $pSessionParams['shipping']['id'] : '',
-							'shipping_cost' => !empty( $pSessionParams['shipping']['cost'] ) ? $pSessionParams['shipping']['cost'] : 0,
-							'estimated_ship_date' => !empty( $pSessionParams['shipping']['ship_date'] ) ? $pSessionParams['shipping']['ship_date'] : NULL,
-							'estimated_arrival_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL,
+							'shipping_method' => BitBase::getParameter( $shippingHash, 'title', '' ),
+							'shipping_method_code' => BitBase::getParameter( $shippingHash, 'code', '' ),
+							'shipping_module_code' => BitBase::getParameter( $shippingHash, 'id', '' ),
+							'shipping_cost' => BitBase::getParameter( $shippingHash, 'cost', 0 ),
+							'estimated_ship_date' => BitBase::getParameter( $shippingHash, 'ship_date' ),
+							'estimated_arrival_date' => BitBase::getParameter( $shippingHash, 'delivery_date' ),
 							'deadline_date' => $this->getParameter( $pSessionParams, 'deadline_date', NULL ),
 							'subtotal' => 0,
 							'tax' => 0,

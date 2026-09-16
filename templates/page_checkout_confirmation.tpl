@@ -76,10 +76,10 @@
 				{fieldset legend="Shipping Address"}
 					<div class="pull-right"><a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_URL}?main_page=checkout_shipping&amp;change_address=1">{booticon iname="fa-truck"} {tr}Change{/tr}</a></div>
 					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$order->getDelivery()}
-{if $smarty.session.shipping.delivery_date}
+{if is_array($smarty.session.shipping) && !empty($smarty.session.shipping.delivery_date)}
 <strong>{tr}Estimated Delivery{/tr}: </strong>{$smarty.session.shipping.delivery_date}
-{elseif $smarty.session.shipping.ship_date}
-Estimated Ship Date: {$smarty.session.shipping.ship_date}
+{elseif is_array($smarty.session.shipping) && !empty($smarty.session.shipping.ship_date)}
+{tr}Estimated Ship Date{/tr}: {$smarty.session.shipping.ship_date}
 {/if}
 				{/fieldset}
 			</div>
