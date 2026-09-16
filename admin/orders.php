@@ -187,8 +187,9 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				}
 				$newOption['orders_id'] = $_REQUEST['oID'];
 				$newOption['orders_products_id'] = $_REQUEST['orders_products_id'];
-				if( !empty( trim( BitBase::getParameter( $_REQUEST, 'add_order_povid_text', NULL ) ) ) ) {
-					$newOption['products_options_values_name'] .= '~'.trim( $_REQUEST['add_order_povid_text'] );
+				$povidText = trim( (string)BitBase::getParameter( $_REQUEST, 'add_order_povid_text', '' ) );
+				if( $povidText !== '' ) {
+					$newOption['products_options_values_name'] .= '~'.$povidText;
 				}
 				$replaceExisting = !empty( $_REQUEST['replace_existing_option'] );
 

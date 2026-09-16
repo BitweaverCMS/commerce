@@ -93,6 +93,8 @@ Staff can add or delete snapshot rows in `com_orders_products_att`.
   adds the new value alongside the existing ones.
 - Picker labels and attribute lines include `products_options_values_id` so
   two values that share a display name stay distinguishable.
+- Optional text for a value (`add_order_povid_text`) is trimmed as a string.
+  Do not `trim( null )` when the field is omitted.
 
 ## Finding the order from a product
 
