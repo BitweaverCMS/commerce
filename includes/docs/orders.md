@@ -79,6 +79,21 @@ must log history and must not notify.
 A comment-only update still sets `orders_status_id` to the current status on
 both the order row and the new history row. That is expected.
 
+## Admin line-item options (`admin/orders.php`)
+
+Staff can add or delete snapshot rows in `com_orders_products_att`.
+
+- **Same `products_options_values_id` on a line is a no-op.** Do not insert a
+  second copy. History notes that the value is already on the line.
+- **Replace existing option** (checkbox, on by default) when the line already
+  has any value for that `products_options_id`. The picker lists those values
+  under the checkbox. Saving with it checked deletes the previous row(s) for
+  that group, inserts the new one, and writes **one** `updateStatus()` comment
+  listing what was deleted and what was added (`notify => FALSE`). Unchecked
+  adds the new value alongside the existing ones.
+- Picker labels and attribute lines include `products_options_values_id` so
+  two values that share a display name stay distinguishable.
+
 ## Finding the order from a product
 
 `com_orders_products.products_id` links a project to purchased lines:

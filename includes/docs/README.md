@@ -43,7 +43,9 @@ See Themes `includes/docs/development.md` and Kernel
 
 - [Orders and order processing](orders.md) — `orders_id` / line items, status
   history, `updateStatus()` (including `notify => FALSE` for staff comments),
-  and resolving an order from `products_id`.
+  resolving an order from `products_id`, and admin add-option replace
+  (default-checked replace of the same `products_options_id` on a line;
+  unique `products_options_values_id`).
 - [Architecture](architecture.md) — initialization, components, and request flow.
 - [Source reference](source-reference.md) — source-derived files, classes,
   controllers, schema artifacts, plugins, and templates.
