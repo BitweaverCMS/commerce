@@ -131,8 +131,8 @@
 	{if $history.customer_notified || $gBitUser->hasPermission( 'p_bitcommerce_admin' )}
 	<li class="alert {if $history.customer_notified}alert-warning{else}alert-info{/if}">
 		<div class="strong"><strong>{$history.date_added|bit_short_datetime}</strong> <em>{$history.orders_status_name}</em></div>
-		{if $history.comments|escape:"html"}
-		<p>{$history.comments}</p>
+		{if $history.comments}
+		<div class="order-history-comment">{if $history.comments_html}{$history.comments_html}{else}{$history.comments|escape}{/if}</div>
 		{/if}
    </li>
    {/if}

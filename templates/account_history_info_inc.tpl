@@ -5,8 +5,8 @@
  		<li class="item">
  			{if !$orderHistory[ix].customer_notified}<span class="warning">{/if}
 			{$orderHistory[ix].date_added|bit_short_datetime} - {$orderHistory[ix].orders_status_name}
-			{if $orderHistory[ix].comments|escape:"html"}
-			<br/><strong>{tr}NOTE{/tr}:</strong> {$orderHistory[ix].comments}
+			{if $orderHistory[ix].comments}
+			<br/><strong>{tr}NOTE{/tr}:</strong> {if $orderHistory[ix].comments_html}{$orderHistory[ix].comments_html}{else}{$orderHistory[ix].comments|escape}{/if}
 			{/if}
 	 		{if !$orderHistory[ix].customer_notified}</span>{/if}
        </li>

@@ -876,7 +876,8 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_status_history' => "
   orders_status_id I4 NOTNULL,
   date_added T,
   customer_notified I1 default '0',
-  comments X
+  comments X,
+  format_guid C(16)
   CONSTRAINT ', CONSTRAINT `ord_stat_hist_ord_ref` FOREIGN KEY ( `orders_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders`( `orders_id` )
 			  , CONSTRAINT `ord_stat_hist_stat_ref` FOREIGN KEY ( `orders_status_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_orders_status`( `orders_status_id` )
 			  , CONSTRAINT `ord_stat_hist_user_ref` FOREIGN KEY ( `user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )'

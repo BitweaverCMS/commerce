@@ -42,10 +42,10 @@ See Themes `includes/docs/development.md` and Kernel
 ## Documentation map
 
 - [Orders and order processing](orders.md) — `orders_id` / line items, status
-  history, `updateStatus()` (including `notify => FALSE` for staff comments),
-  resolving an order from `products_id`, and admin add-option replace
-  (default-checked replace of the same `products_options_id` on a line;
-  unique `products_options_values_id`).
+  history, `updateStatus()` (including `notify => FALSE` for staff comments
+  and optional `format_guid` / Markdown), resolving an order from
+  `products_id`, and admin add-option replace (default-checked replace of the
+  same `products_options_id` on a line; unique `products_options_values_id`).
 - [Architecture](architecture.md) — initialization, components, and request flow.
 - [Source reference](source-reference.md) — source-derived files, classes,
   controllers, schema artifacts, plugins, and templates.

@@ -38,7 +38,29 @@ Order history is the staff/customer audit log for an order. It is **not** a
 job queue (press/render state stays in Products).
 
 `CommerceOrder::loadHistory()` reads history joined to status names and
-`users_users` (actor).
+`users_users` (actor). Each row includes source `comments`, optional
+`format_guid`, and display HTML in `comments_html` from
+`CommerceOrder::formatHistoryComment()`.
+
+`format_guid` on `com_orders_status_history` is nullable `C(16)` with **no**
+plugin FK. NULL (and omitted) is legacy plain text. Existing rows stay NULL;
+do not backfill.
+
+| `format_guid` | Stored source | Display (`comments_html`) |
+|---------------|---------------|---------------------------|
+| NULL / `''` / `simpletext` / unknown | Plain text | `nl2br( htmlspecialchars( comments ) )` |
+| `markdown` | Markdown | Parsedown with `setSafeMode(true)` and `setMarkupEscaped(true)` |
+
+Do **not** parse comments through `LibertyContent::parseDataHash()` (Liberty
+data plugins such as `{attachment}` must not run on order notes). Commerce
+calls Parsedown in Util (`includes/parsedown/`) directly. ShipStation XML,
+fulfiller ILIKE scans, and similar consumers keep raw `comments`.
+
+Deployed databases need:
+
+```sql
+ALTER TABLE com_orders_status_history ADD COLUMN IF NOT EXISTS format_guid VARCHAR(16);
+```
 
 ### `CommerceOrder::updateStatus( $pParamHash )`
 
@@ -49,16 +71,18 @@ This is the only write path for a history row. It:
 2. Defaults `status` to the order’s current status when omitted.
 3. Writes `com_orders.orders_status_id` and `last_modified`.
 4. Inserts `com_orders_status_history` with `orders_id`, `orders_status_id`,
-   `date_added`, `customer_notified`, `comments`, and `user_id` (current
-   `$gBitUser`).
-5. Emails the customer **only** when `notify` is the string `'on'`.
+   `date_added`, `customer_notified`, `comments`, `user_id` (current
+   `$gBitUser`), and optional `format_guid`.
+5. Emails the customer **only** when `notify` is the string `'on'`. The HTML
+   part uses `comments_html`; the text part uses the source `comments`.
 
 Keys:
 
 | Key | Effect |
 |---|---|
 | `status` | New `orders_status_id`. Omit to keep the current status. |
-| `comments` | History text. A comment with no status change still inserts a row. |
+| `comments` | History **source** (plain or Markdown). A comment with no status change still inserts a row. Store source, not HTML. |
+| `format_guid` | Optional. Empty/omitted → NULL. Allowed: `markdown`, `simpletext`. Unknown values are stored as NULL and logged. |
 | `notify` | Customer email. Must be `'on'` to send. Any other value (including `FALSE`, `0`, or omitted) does **not** notify. |
 | `last_status_id` | If set, must match the latest history id or the update is rejected. |
 
@@ -69,15 +93,19 @@ $order = new order( $ordersId );
 $order->updateStatus( array(
 	'comments' => $staffComment,
 	'notify' => FALSE,
+	'format_guid' => 'markdown',
 ) );
 ```
 
-Do not pass `notify => 'on'` unless the customer is meant to receive the
-status email. Admin production mutations (for example Products PDF Tackle Box)
-must log history and must not notify.
+Omit `format_guid` for plain text. Do not pass `notify => 'on'` unless the
+customer is meant to receive the status email. Admin production mutations
+(for example Products PDF Tackle Box) must log history and must not notify.
 
 A comment-only update still sets `orders_status_id` to the current status on
 both the order row and the new history row. That is expected.
+
+The admin order-history form has Plain (default) and Markdown radios. Checkout
+customer comments stay NULL / plain.
 
 ## Admin line-item options (`admin/orders.php`)
 

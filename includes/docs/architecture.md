@@ -32,8 +32,8 @@ Commerce owns `com_orders`, line items, and `com_orders_status_history`.
 Construct with `new order( $ordersId )`. Append history only through
 `CommerceOrder::updateStatus()`. Customer email is opt-in: `notify` must be
 the string `'on'`. Staff/production comments use `notify => FALSE` and omit
-`status` (keeps the current status). Full API, tables, and product→order
-lookup: [orders.md](orders.md). Checkout pipeline:
+`status` (keeps the current status). Optional `format_guid` (`markdown` or
+NULL plain text) is documented in [orders.md](orders.md). Checkout pipeline:
 [commerce-lifecycle.md](commerce-lifecycle.md).
 
 ## Request and rendering pattern

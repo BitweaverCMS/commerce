@@ -187,6 +187,8 @@ class CommerceOrder extends CommerceOrderBase {
 					if( $lastComment = $gBitDb->getRow( "SELECT *, ".$gBitDb->SQLDate( 'Y-m-d H:i', '`date_added`' )." as comments_time FROM " . TABLE_ORDERS_STATUS_HISTORY . " osh WHERE osh.`orders_id`=? AND `comments` IS NOT NULL ORDER BY `orders_status_history_id` DESC", array( $row['orders_id'] ) ) ) {
 						$ret[$row['orders_id']]['comments_time'] = $lastComment['comments_time'];
 						$ret[$row['orders_id']]['comments'] = $lastComment['comments'];
+						$ret[$row['orders_id']]['format_guid'] = isset( $lastComment['format_guid'] ) ? $lastComment['format_guid'] : NULL;
+						$ret[$row['orders_id']]['comments_html'] = self::formatHistoryComment( $lastComment );
 					}
 				}
 				if( !empty( $pListHash['orders_products'] ) ) {
@@ -541,7 +543,9 @@ class CommerceOrder extends CommerceOrderBase {
 
 			if( $rs = $this->mDb->query($sql, array( $this->mOrdersId ) ) ) {
 				while( !$rs->EOF ) {
-					array_push( $this->mHistory, $rs->fields );
+					$row = $rs->fields;
+					$row['comments_html'] = self::formatHistoryComment( $row );
+					array_push( $this->mHistory, $row );
 					$rs->MoveNext();
 				}
 			}
@@ -1403,6 +1407,58 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 		$this->mDb->query( "DELETE FROM " . TABLE_ORDERS_STATUS_HISTORY . " WHERE `orders_status_history_id`=?", array( $pOrdersStatusHistoryId ) );
 	}
 
+	/**
+	 * Normalize a history format_guid for storage.
+	 * Empty / omitted → NULL (legacy plain text). markdown and simpletext are
+	 * stored. Unknown values are dropped (NULL) and logged.
+	 */
+	public static function normalizeHistoryFormatGuid( $pFormatGuid ) {
+		if( $pFormatGuid === NULL || $pFormatGuid === FALSE ) {
+			return NULL;
+		}
+		$guid = strtolower( trim( (string)$pFormatGuid ) );
+		if( $guid === '' ) {
+			return NULL;
+		}
+		if( $guid === 'markdown' || $guid === 'simpletext' ) {
+			return $guid;
+		}
+		bit_error_log( 'updateStatus unknown format_guid='.$guid );
+		return NULL;
+	}
+
+	/**
+	 * HTML for one history comment. Source stays in `comments`; this is display
+	 * only. Does not run Liberty data plugins.
+	 *
+	 * NULL / simpletext / unknown → escaped nl2br. markdown → Parsedown with
+	 * safe mode (no raw HTML).
+	 */
+	public static function formatHistoryComment( $pRow ) {
+		$comments = '';
+		$guid = '';
+		if( is_array( $pRow ) ) {
+			$comments = isset( $pRow['comments'] ) ? (string)$pRow['comments'] : '';
+			$guid = isset( $pRow['format_guid'] ) ? strtolower( trim( (string)$pRow['format_guid'] ) ) : '';
+		} elseif( is_string( $pRow ) ) {
+			$comments = $pRow;
+		}
+		if( $comments === '' ) {
+			return '';
+		}
+		if( $guid === 'markdown' ) {
+			require_once( UTIL_PKG_INCLUDE_PATH.'parsedown/Parsedown.php' );
+			static $parser = NULL;
+			if( $parser === NULL ) {
+				$parser = new Parsedown();
+				$parser->setSafeMode( TRUE );
+				$parser->setMarkupEscaped( TRUE );
+			}
+			return $parser->text( $comments );
+		}
+		return nl2br( htmlspecialchars( $comments, ENT_QUOTES, 'UTF-8' ), FALSE );
+	}
+
 	function updateStatus( $pParamHash ) {
 		global $gBitUser;
 
@@ -1420,6 +1476,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 		// default to order status if not specified
 		$status = !empty( $pParamHash['status'] ) ? zen_db_prepare_input( $pParamHash['status'] ) : $this->getStatus();
 		$comments = !empty( $pParamHash['comments'] ) ? zen_db_prepare_input( trim( $pParamHash['comments'] ) ) : NULL;
+		$formatGuid = self::normalizeHistoryFormatGuid( isset( $pParamHash['format_guid'] ) ? $pParamHash['format_guid'] : NULL );
 
 		$statusChanged = ($this->getStatus() != $status);
 
@@ -1433,8 +1490,13 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 				$customer_notified = '0';
 				if( isset( $pParamHash['notify'] ) && ( $pParamHash['notify'] == 'on' ) ) {
 					$notify_comments = '';
+					$notifyCommentsHtml = '';
 					if( !empty( $comments ) ) {
 						$notify_comments = $comments . "\n\n";
+						$notifyCommentsHtml = self::formatHistoryComment( array(
+							'comments' => $notify_comments,
+							'format_guid' => $formatGuid,
+						) );
 					}
 
 					//send emails
@@ -1442,7 +1504,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 						tra( 'Order Number' ) . ': ' . $this->mOrdersId . "\n" .
 						tra( 'Date Ordered' ) . ': ' . zen_date_long($this->info['date_purchased']) . "\n" .
 						$this->getDisplayUrl() . "\n\n" .
-						strip_tags($notify_comments) ;
+						$notify_comments ;
 					
 					if( $statusChanged ) {
 						$textMessage .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status_name'] . "\n\n";
@@ -1453,7 +1515,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 					$emailVars['EMAIL_TEXT_ORDER_NUMBER'] = tra( 'Order Number' ) . ': ' . $this->mOrdersId;
 					$emailVars['EMAIL_TEXT_INVOICE_URL']	= $this->getDisplayLink();
 					$emailVars['EMAIL_TEXT_DATE_ORDERED'] = tra( 'Date Ordered' ) . ': ' . zen_date_long( $this->info['date_purchased'] );
-					$emailVars['EMAIL_TEXT_STATUS_COMMENTS'] = nl2br( $notify_comments );
+					$emailVars['EMAIL_TEXT_STATUS_COMMENTS'] = !empty( $notifyCommentsHtml ) ? $notifyCommentsHtml : nl2br( $notify_comments );
 					if( $statusChanged ) {
 						$emailVars['EMAIL_TEXT_STATUS_UPDATED'] = tra( 'Your order has been updated to the following status' ) . ': ';
 						$emailVars['EMAIL_TEXT_NEW_STATUS'] = $this->info['orders_status_name'];
@@ -1470,8 +1532,8 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 					}
 				}
 
-				$this->mDb->query( "INSERT INTO " . TABLE_ORDERS_STATUS_HISTORY . " (`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`, `user_id`)
-									VALUES ( ?, ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $this->mDb->NOW(), $customer_notified, $comments, $gBitUser->mUserId ) );
+				$this->mDb->query( "INSERT INTO " . TABLE_ORDERS_STATUS_HISTORY . " (`orders_id`, `orders_status_id`, `date_added`, `customer_notified`, `comments`, `user_id`, `format_guid`)
+									VALUES ( ?, ?, ?, ?, ?, ?, ? )", array( $this->mOrdersId, $status, $this->mDb->NOW(), $customer_notified, $comments, $gBitUser->mUserId, $formatGuid ) );
 
 				$this->CompleteTrans();
 				$orderUpdated = true;

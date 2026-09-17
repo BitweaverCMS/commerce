@@ -32,7 +32,7 @@
 	</tr>
 	{if $order.comments && $order.comments!='Credit Card processed'}
 	<tr class="comments">
-		<td colspan="8"><code class="date inline-block mr-1">{$order.comments_time}</code> {$order.comments}</td>
+		<td colspan="8"><code class="date inline-block mr-1">{$order.comments_time}</code> {if $order.comments_html}{$order.comments_html}{else}{$order.comments|escape}{/if}</td>
 	</tr>
 	{/if}
 	{if $order.products}

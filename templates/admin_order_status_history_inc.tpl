@@ -6,6 +6,10 @@
 	<label>{tr}Change Status{/tr}</label> {html_options class="form-control" name='status' options=$orderStatuses selected=$gBitOrder->getStatus()}
 	<label>{tr}Comments{/tr}</label>
 	<textarea class="form-control" name="comments" wrap="soft">{$smarty.request.comments|escape}</textarea>
+	{forminput}
+		<label class="radio-inline"><input type="radio" name="format_guid" value=""{if $smarty.request.format_guid|default:'' != 'markdown'} checked{/if}> {tr}Plain{/tr}</label>
+		<label class="radio-inline"><input type="radio" name="format_guid" value="markdown"{if $smarty.request.format_guid|default:'' == 'markdown'} checked{/if}> {tr}Markdown{/tr}</label>
+	{/forminput}
 	{forminput label="checkbox"}
 		<input name="notify" type="checkbox"> {booticon iname="fa-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
 	{/forminput}
@@ -60,8 +64,8 @@
 		<div class="status">
 			<strong>{$gBitOrder->mHistory[ix].orders_status_name}</strong> by {displayname hash=$gBitOrder->mHistory[ix]}
 		</div>
-		{if $gBitOrder->mHistory[ix].comments}
-			<p>{$gBitOrder->mHistory[ix].comments|nl2br}</p>
+		{if $gBitOrder->mHistory[ix].comments_html}
+			<div class="order-history-comment">{$gBitOrder->mHistory[ix].comments_html}</div>
 		{/if}
 		</li>
 	{sectionelse} 
