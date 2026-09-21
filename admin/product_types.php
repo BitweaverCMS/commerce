@@ -285,7 +285,7 @@ if ( $action == 'layout' || $action == 'layout_edit') {
 	$product_types_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $product_types_query_raw, $product_types_query_numrows);
 	$product_types = $gBitDb->Execute($product_types_query_raw);
 	while (!$product_types->EOF) {
-		if ((!isset($_GET['ptID']) || (isset($_GET['ptID']) && ($_GET['ptID'] == $product_types->fields['type_id']))) && !isset($ptInfo) && (substr($action, 0, 3) != 'new')) {
+		if ((!isset($_GET['ptID']) || (isset($_GET['ptID']) && ($_GET['ptID'] == $product_types->fields['type_id']))) && !isset($ptInfo) && (substr( (string)$action, 0, 3 ) != 'new')) {
 			$product_type_products = $gBitDb->Execute("select count(*) as `products_count`
 																						 from " . TABLE_PRODUCTS . "
 																						 where `products_type` = '" . (int)$product_types->fields['type_id'] . "'");
