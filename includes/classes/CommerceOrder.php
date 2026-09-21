@@ -776,6 +776,21 @@ class CommerceOrder extends CommerceOrderBase {
 
 	function process( $pRequestParams, &$pSessionParams ) {
 		$ret = FALSE;
+		if( !empty( $this->mErrors['shipping'] ) ) {
+			return $ret;
+		}
+		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceShipping.php' );
+		$shippingQuote = BitBase::getParameter( $pSessionParams, 'shipping_quote' );
+		$shippingModule = (string)BitBase::getParameter( $this->info, 'shipping_module_code', '' );
+		if( strpos( $shippingModule, '_' ) !== false ) {
+			$shippingModule = substr( $shippingModule, 0, strpos( $shippingModule, '_' ) );
+		}
+		$allowZeroCost = ( $shippingQuote === 'free_free' || $shippingQuote === 'freeshipper_free'
+			|| CommerceShipping::isZeroCostShippingAllowed( $shippingModule ) );
+		if( !$allowZeroCost && (float)BitBase::getParameter( $this->info, 'shipping_cost', 0 ) <= 0 ) {
+			$this->mErrors['shipping'] = 'Shipping quote has no charge';
+			return $ret;
+		}
 		// load selected payment module
 		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
 		$paymentManager = new CommercePaymentManager( BitBase::getParameter( $pSessionParams, 'payment_method') );

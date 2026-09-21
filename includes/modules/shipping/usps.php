@@ -372,7 +372,10 @@ class usps extends CommercePluginShippingBase
 
 					// Build lookup from rates
 					foreach ($uspsQuote['rateOptions'] as $opt) {
-						
+						if( empty( $opt['rates'] ) || !is_array( $opt['rates'] ) ) {
+							continue;
+						}
+
 						// Base Price of the rate, more in a second.
 						$totalBasePrice = $opt['totalBasePrice'] ?? null; // get totalBasePrice if it exists
 
@@ -509,7 +512,7 @@ class usps extends CommercePluginShippingBase
 						// ---------------------------------------------
 						// Extra services: Tack that onto the main roster of returns.
 						// ---------------------------------------------
-						if (isset($opt['extraServices'])) {
+						if (isset($opt['extraServices']) && isset($lookup[$name])) {
 							foreach ($opt['extraServices'] as $svc) {
 								$lookup[$name]['extraService'][$svc['extraService']] = $svc;
 							}
@@ -554,7 +557,7 @@ class usps extends CommercePluginShippingBase
 							if (!$this->is_apo_dest && ($method_item['method'] === 'Priority Mail Large Flat Rate APO/FPO/DPO'))
 								continue;
 
-							$price = $matchedRate['totalBasePrice'];
+							$price = (float)( $matchedRate['totalBasePrice'] ?? 0 );
 							
 							// Go through and add up the appropriate amount as necessary.
 							$services = strpos($method_item['method'], "Letter") !== false ? $ltr_services : $pkg_services;
@@ -610,7 +613,10 @@ class usps extends CommercePluginShippingBase
 							// Did the order make weight?
 							if ($this->quote_weight >= $method_item['min_weight'] && $this->quote_weight <= $method_item['max_weight']) $made_weight = TRUE;
 
-							if ($match && $made_weight) {
+							$productName = trim( (string)( $matchedRate['productName'] ?? '' ) );
+							$mailClass = trim( (string)( $matchedRate['mailClass'] ?? '' ) );
+							$title = uspsr_filter_gibberish($productName);
+							if ($match && $made_weight && $price > 0 && $title !== '') {
 								global $currencies;
 								$transitTime = NULL;
 								$deliveryDate = NULL;
@@ -618,11 +624,11 @@ class usps extends CommercePluginShippingBase
 								// Okay, we have the methods, we have the quotes: start building.
 								$quote = [
 									'id' => $m,
-									'title' => uspsr_filter_gibberish($matchedRate['productName']),
+									'title' => $title,
 									'cost' => $price,
 									'transit_time' => $transitTime,
 									'delivery_date' => $deliveryDate,
-									'code' => $matchedRate['mailClass'],
+									'code' => $mailClass,
 									'servicesAdded' => $servicesList, // For debugging
 								];
 								if( $this->isDomesticShipment( $pShipHash ) && isset($rateQuote['standards'][$quote['code']])) { // Only do this for domestic shipments
@@ -1452,15 +1458,26 @@ class usps extends CommercePluginShippingBase
 		return trim( preg_replace( '/\s+/', ' ', $name ) );
 	}
 
+	protected function isUsableUspsRate( $pRate ) {
+		if( !is_array( $pRate ) ) {
+			return false;
+		}
+		$price = $pRate['totalBasePrice'] ?? $pRate['price'] ?? null;
+		if( !is_numeric( $price ) || (float)$price <= 0 ) {
+			return false;
+		}
+		return !empty( $pRate['productName'] ) || !empty( $pRate['description'] );
+	}
+
 	protected function matchUspsLookupRate( $pLookup, $pMethodName ) {
-		if( isset( $pLookup[$pMethodName] ) ) {
+		if( isset( $pLookup[$pMethodName] ) && $this->isUsableUspsRate( $pLookup[$pMethodName] ) ) {
 			return $pLookup[$pMethodName];
 		}
 		$want = $this->normalizeUspsProductName( $pMethodName );
 		$package = null;
 		$envelope = null;
 		foreach( $pLookup as $key => $rate ) {
-			if( $this->normalizeUspsProductName( $key ) !== $want ) {
+			if( !$this->isUsableUspsRate( $rate ) || $this->normalizeUspsProductName( $key ) !== $want ) {
 				continue;
 			}
 			if( stripos( $key, 'Large Envelope' ) !== false ) {
@@ -2451,6 +2468,7 @@ function uspsr_validate_zipcode($entry)
 // Filter out the "gibberish" and make the title pretty
 function uspsr_filter_gibberish($entry)
 {
+    $entry = (string)( $entry ?? '' );
     $entry = preg_replace(
         [
             '/ISC/',

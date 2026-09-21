@@ -113,14 +113,18 @@ class CommerceShipping extends BitSingleton {
 
 						if( $quotes = $shipModule->quote( $quoteHash ) ) {
 							if( !empty( $quotes['methods'] ) ) {
+								$allowZeroCost = self::isZeroCostShippingAllowed( $shipModule->code );
 								foreach( array_keys( $quotes['methods'] ) as $j ) {
 									if( (empty( $method ) || $method == $quotes['methods'][$j]['id']) ) {
-										if( !empty( $quotes['methods'][$j]['cost'] ) ) {	
+										$methodCost = $quotes['methods'][$j]['cost'] ?? null;
+										if( !empty( $methodCost ) ) {
 											$quotes['methods'][$j]['shipping_num_boxes'] = $quoteHash['shipping_num_boxes'];
 											$quotes['methods'][$j]['shipping_weight_box'] = $quoteHash['shipping_weight_box'];
 											$quotes['methods'][$j]['shipping_weight_total'] = $quoteHash['shipping_weight_total'];
 											$quotes['methods'][$j]['cost_add_tax'] = zen_add_tax($quotes['methods'][$j]['cost'], (isset($quotes['tax']) ? $quotes['tax'] : 0));
 											$quotes['methods'][$j]['format_add_tax'] = $currencies->format( $quotes['methods'][$j]['cost_add_tax'] );
+										} elseif( !$allowZeroCost ) {
+											unset( $quotes['methods'][$j] );
 										}
 									} else {
 										unset( $quotes['methods'][$j] );
@@ -145,18 +149,26 @@ class CommerceShipping extends BitSingleton {
 		return !empty( $_SESSION['shipping'] );	
 	}
 
+	public static function isZeroCostShippingAllowed( $pModuleCode ) {
+		return in_array( (string)$pModuleCode, array( 'storepickup', 'freeshipper', 'free' ), true );
+	}
+
 	function quoteToHash( $quote ) {
 		$ret = array();
 
 		if( (isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost'])) && isset( $quote[0]['id'] ) ) {
-			$ret = array(
-				'id' => $quote[0]['id'].'_'.$quote[0]['methods'][0]['id'],
-				'title' => (($quote[0]['module'] == $quote[0]['methods'][0]['title']) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
-				'cost' => $quote[0]['methods'][0]['cost'],
-				'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
-				'ship_date' => !empty( $quote[0]['methods'][0]['ship_date'] ) ? $quote[0]['methods'][0]['ship_date'] : NULL,
-				'delivery_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL
-				);
+			$moduleCode = $quote[0]['id'];
+			$cost = $quote[0]['methods'][0]['cost'];
+			if( $this->isZeroCostShippingAllowed( $moduleCode ) || (float)$cost > 0 ) {
+				$ret = array(
+					'id' => $moduleCode.'_'.$quote[0]['methods'][0]['id'],
+					'title' => (($quote[0]['module'] == $quote[0]['methods'][0]['title']) ? $quote[0]['methods'][0]['title'] : $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
+					'cost' => $cost,
+					'code' => !empty( $quote[0]['methods'][0]['code'] ) ? $quote[0]['methods'][0]['code'] : NULL,
+					'ship_date' => !empty( $quote[0]['methods'][0]['ship_date'] ) ? $quote[0]['methods'][0]['ship_date'] : NULL,
+					'delivery_date' => !empty( $quote[0]['methods'][0]['delivery_date'] ) ? $quote[0]['methods'][0]['delivery_date'] : NULL
+					);
+			}
 		}
 		return $ret;
 	}

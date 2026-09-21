@@ -29,9 +29,15 @@ require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'page_checkout_parameters_inc.php' );
 require(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 global $gBitCustomer;
 $quoteOrder = CommerceOrder::orderFromCart( $gBitCustomer->mCart, $_SESSION );
+if( !empty( $quoteOrder->mErrors['shipping'] ) ) {
+	zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+}
 
 // load the before_process function from the payment modules
 if( !$quoteOrder->process( $_REQUEST, $_SESSION ) ) {
+	if( !empty( $quoteOrder->mErrors['shipping'] ) ) {
+		zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+	}
 	zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, NULL, 'SSL', true, false));
 }
 

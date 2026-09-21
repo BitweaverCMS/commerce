@@ -109,6 +109,17 @@ or Large Envelope. Admin `_TYPES` strings often omit those tokens (for example
 `Priority Mail International ISC Single-piece`). `usps::quote()` matches them
 after normalizing those tokens and prefers the package rate over Large Envelope.
 
+A USPS rate is usable only when it has a positive `totalBasePrice` (or
+`price`) and a `productName` / `description`. Incomplete API rows must not
+enter the lookup or the checkout method list — they produce
+`United States Postal Service ()` at cost 0. Extra-service hashes must not
+create a lookup key that has no rate.
+
+`CommerceShipping::quoteToHash()` and `CommerceOrder::process()` reject a
+paid carrier quote whose cost is 0. `storepickup` / `freeshipper` / `free`
+and session `free_free` remain the only $0 methods. Checkout process
+redirects to shipping when the re-quote fails or has no charge.
+
 ### Order totals
 
 `CommerceOrderBase::otProcess()` coordinates configured total modules.
