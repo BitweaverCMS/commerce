@@ -302,7 +302,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
 		$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
 		if( $basketId = $this->mDb->getOne( "SELECT `customers_basket_id` FROM " . TABLE_CUSTOMERS_BASKET . " WHERE `$selectColumn` = ? AND `products_key` = ?", array( $selectValue, $pProductsKey ) ) ) {
-			$pQty = abs( $pQty );
+			// Request quantities arrive as strings. abs() rejects those on PHP 8.
+			$pQty = abs( (float)$pQty );
 			if( !empty( $pQty ) ) {
 				// TODO products *can* take decimal values, and that needs to be handled here
 				$this->contents[$pProductsKey]['products_quantity'] = $pQty;
