@@ -22,6 +22,8 @@
 
 define('HEADING_SEARCH_HELP', tra( 'Search Help' ) );
 define('TEXT_SEARCH_HELP', tra( 'Keywords may be separated by AND and/or OR statements for greater control of the search results.For example, <u>Microsoft AND mouse</u> would generate a result set that contain both words. However, for <u>mouse OR keyboard</u>, the result set returned would contain both or either words.Exact matches can be searched for by enclosing keywords in double-quotes.For example, <u>"notebook computer"</u> would generate a result set which match the exact string.Brackets can be used for further control on the result set.For example, <u>Microsoft and (keyboard or mouse or "visual basic")</u>.' ) );
+if( !defined( 'TEXT_CLOSE_WINDOW' ) ) {
 define('TEXT_CLOSE_WINDOW', tra( '<u>Close Window</u> [x]' ) );
+}
 
 ?>

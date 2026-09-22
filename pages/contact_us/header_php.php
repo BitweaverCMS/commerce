@@ -29,7 +29,7 @@
 
     if (zen_validate_email($email_address)) {
 // auto complete when logged in
-      if($_SESSION['customer_id']) {
+      if( !empty( $_SESSION['customer_id'] ) ) {
         $check_customer = $gBitDb->query("select `customers_id`, `customers_firstname`, `customers_lastname`, `customers_password`, `customers_email_address`, `customers_default_address_id` from " . TABLE_CUSTOMERS . " where `customers_id` = ?", array( $_SESSION['customer_id'] ) );
         $customer_email= $check_customer->fields['customers_email_address'];
         $customer_name= $check_customer->fields['customers_firstname'] . ' ' . $check_customer->fields['customers_lastname'];
@@ -75,7 +75,7 @@
   } // end action==send
 
 // default email and name if customer is logged in
-  if($_SESSION['customer_id']) {
+  if( !empty( $_SESSION['customer_id'] ) ) {
       $check_customer = $gBitDb->Execute("select `customers_id`, `customers_firstname`, `customers_lastname`, `customers_password`, `customers_email_address`, `customers_default_address_id` from " . TABLE_CUSTOMERS . " where `customers_id` = '" . $_SESSION['customer_id'] . "'");
       $email= $check_customer->fields['customers_email_address'];
       $name= $check_customer->fields['customers_firstname'] . ' ' . $check_customer->fields['customers_lastname'];
