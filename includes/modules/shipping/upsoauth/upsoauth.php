@@ -34,7 +34,8 @@ class upsoauth extends CommercePluginShippingBase
 	protected function debugLog($message, $include_spacer = false)
 	{
 			$spacer = ($include_spacer === false) ? '' : "------------------------------------------\n";
-			bit_error_log($spacer . date('Y-m-d H:i:s') . ': ' . $message . PHP_EOL);
+			// No clock prefix. A timestamp made every call a distinct report.
+			bit_error_log($spacer . $message);
 	}
 
 	function quote( $pShipHash ) {
@@ -61,8 +62,6 @@ class upsoauth extends CommercePluginShippingBase
 						}
 						$this->debugLog($log_message, true);
 					} else {
-						$token_retrieved = true;
-						$this->debugLog('OAuth Token successfully retrieved, expires in ' . ($oauth_token->expires_in - 3) . ' seconds.');
 						$_SESSION['upsoauth_token'] = $oauth_token->access_token;
 						$_SESSION['upsoauth_token_expires'] = time() + $oauth_token->expires_in - 3;
 					}
