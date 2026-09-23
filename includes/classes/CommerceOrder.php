@@ -22,19 +22,6 @@
 
 require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrderBase.php' );
 
-// maintained for backwards compatibility in the code. CommerceOrder should be invoked
-class order extends CommerceOrder {
-
-	function __construct( $pOrdersId=NULL ) {
-		parent::__construct();
-
-		if( self::verifyId( $pOrdersId ) ) {
-			$this->mOrdersId = $pOrdersId;
-			$this->load();
-		}
-	}
-}
-
 class CommerceOrder extends CommerceOrderBase {
 	public $mOrdersId;
 	public $info, $totals, $customer, $content_type, $email_low_stock, $products_ordered_attributes, $products_ordered_email, $mPayments = array();
@@ -1025,7 +1012,7 @@ class CommerceOrder extends CommerceOrderBase {
 						$statusMsg = tra( 'Additional charge could not be made:' ).' '.$formatCharge.'<br/>'.implode( '<br/>', $paymentModule->mErrors );
 						$ret = FALSE;
 						$messageStack->add_session( $statusMsg, 'error');
-						$this->updateStatus( array( 'comments' => $statusMsg ) );
+						$this->updateStatus( array( 'comments' => $statusMsg, 'format_guid' => 'html' ) );
 						require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
 						$failManager = new CommercePaymentManager( $paymentModule->code );
 						$failManager->recordFailedPayment( $this, $paymentParams, $paymentModule );
@@ -1040,6 +1027,9 @@ class CommerceOrder extends CommerceOrderBase {
 
 		if( $statusMsg || (BitBase::getParameter( $pPaymentParams, 'status' ) != $this->getField( 'orders_status_id' )) ) {
 			$pPaymentParams['comments'] = $statusMsg;
+			if( self::historyCommentHasMarkup( $statusMsg ) ) {
+				$pPaymentParams['format_guid'] = 'html';
+			}
 			$this->updateStatus( $pPaymentParams );
 		}
 
@@ -1424,8 +1414,8 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 
 	/**
 	 * Normalize a history format_guid for storage.
-	 * Empty / omitted → NULL (legacy plain text). markdown and simpletext are
-	 * stored. Unknown values are dropped (NULL) and logged.
+	 * Empty / omitted → NULL. markdown, simpletext, and html are stored.
+	 * Unknown values are dropped (NULL) and logged.
 	 */
 	public static function normalizeHistoryFormatGuid( $pFormatGuid ) {
 		if( $pFormatGuid === NULL || $pFormatGuid === FALSE ) {
@@ -1435,7 +1425,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 		if( $guid === '' ) {
 			return NULL;
 		}
-		if( $guid === 'markdown' || $guid === 'simpletext' ) {
+		if( $guid === 'markdown' || $guid === 'simpletext' || $guid === 'html' ) {
 			return $guid;
 		}
 		bit_error_log( 'updateStatus unknown format_guid='.$guid );
@@ -1443,11 +1433,54 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 	}
 
 	/**
+	 * True when a comment already contains an HTML tag. Legacy rows (NULL
+	 * format_guid) used this for currency spans and <br/> before formats existed.
+	 */
+	public static function historyCommentHasMarkup( $pComments ) {
+		return is_string( $pComments ) && preg_match( '/<\/?[a-z][a-z0-9]*\b/i', $pComments );
+	}
+
+	/**
+	 * Display HTML for a comment whose source is HTML. Drops active content.
+	 * Keeps the inline tags currencies::format() writes (span, sup).
+	 */
+	public static function formatHistoryHtml( $pComments ) {
+		$comments = preg_replace( '#<(script|style|iframe|object|embed|form)\b[^>]*>.*?</\1>#is', '', (string)$pComments );
+		$comments = strip_tags( $comments, '<span><sup><sub><br><b><strong><em><i><u><p><div><ul><ol><li><a><small><code><hr>' );
+		$comments = preg_replace_callback( '/<([a-z0-9]+)(\s[^>]*)?>/i', function( $m ) {
+			$tag = strtolower( $m[1] );
+			$attrs = isset( $m[2] ) ? $m[2] : '';
+			$keep = '';
+			if( preg_match_all( '/\s+([a-z0-9:-]+)\s*=\s*(".*?"|\'.*?\'|[^\s>]+)/i', $attrs, $found, PREG_SET_ORDER ) ) {
+				foreach( $found as $attr ) {
+					$name = strtolower( $attr[1] );
+					$value = $attr[2];
+					if( strncmp( $name, 'on', 2 ) === 0 ) {
+						continue;
+					}
+					if( ( $name === 'href' || $name === 'src' ) && preg_match( '/^\s*["\']?\s*javascript:/i', $value ) ) {
+						continue;
+					}
+					$allowed = ( $tag === 'a' ) ? array( 'href', 'title' ) : array( 'class', 'title' );
+					if( !in_array( $name, $allowed, TRUE ) ) {
+						continue;
+					}
+					$keep .= ' '.$name.'='.$value;
+				}
+			}
+			$selfClose = ( $tag === 'br' || $tag === 'hr' ) ? ' /' : '';
+			return '<'.$tag.$keep.$selfClose.'>';
+		}, $comments );
+		return nl2br( $comments, FALSE );
+	}
+
+	/**
 	 * HTML for one history comment. Source stays in `comments`; this is display
 	 * only. Does not run Liberty data plugins.
 	 *
-	 * NULL / simpletext / unknown → escaped nl2br. markdown → Parsedown with
-	 * safe mode (no raw HTML).
+	 * simpletext / unknown / tag-free NULL → escaped nl2br.
+	 * markdown → Parsedown, safe mode, raw HTML escaped.
+	 * html, and NULL that already contains tags → sanitized HTML.
 	 */
 	public static function formatHistoryComment( $pRow ) {
 		$comments = '';
@@ -1470,6 +1503,9 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 				$parser->setMarkupEscaped( TRUE );
 			}
 			return $parser->text( $comments );
+		}
+		if( $guid === 'html' || ( $guid === '' && self::historyCommentHasMarkup( $comments ) ) ) {
+			return self::formatHistoryHtml( $comments );
 		}
 		return nl2br( htmlspecialchars( $comments, ENT_QUOTES, 'UTF-8' ), FALSE );
 	}
@@ -1519,7 +1555,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 						tra( 'Order Number' ) . ': ' . $this->mOrdersId . "\n" .
 						tra( 'Date Ordered' ) . ': ' . zen_date_long($this->info['date_purchased']) . "\n" .
 						$this->getDisplayUrl() . "\n\n" .
-						$notify_comments ;
+						strip_tags( $notify_comments );
 					
 					if( $statusChanged ) {
 						$textMessage .= tra( 'Your order has been updated to the following status' ) . ': ' . $this->info['orders_status_name'] . "\n\n";
@@ -1623,7 +1659,7 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 			if( !empty( $pParamHash['comment'] ) ) {
 				$message .= "\n--\n".trim( $pParamHash['comment'] );
 			}
-			$this->updateStatus( array( 'notify' => FALSE , "comments" => $message ) );
+			$this->updateStatus( array( 'notify' => FALSE, 'comments' => $message, 'format_guid' => 'html' ) );
 			$this->CompleteTrans();
 		}
 	}
@@ -1756,5 +1792,18 @@ $downloads_check_query = $this->mDb->query("select o.`orders_id`, opd.orders_pro
 	}
 
 
+}
+
+// maintained for backwards compatibility in the code. CommerceOrder should be invoked
+class order extends CommerceOrder {
+
+	function __construct( $pOrdersId=NULL ) {
+		parent::__construct();
+
+		if( self::verifyId( $pOrdersId ) ) {
+			$this->mOrdersId = $pOrdersId;
+			$this->load();
+		}
+	}
 }
 

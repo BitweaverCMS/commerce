@@ -6,10 +6,12 @@
 	<label>{tr}Change Status{/tr}</label> {html_options class="form-control" name='status' options=$orderStatuses selected=$gBitOrder->getStatus()}
 	<label>{tr}Comments{/tr}</label>
 	<textarea class="form-control" name="comments" wrap="soft">{$smarty.request.comments|escape}</textarea>
-	{forminput}
-		<label class="radio-inline"><input type="radio" name="format_guid" value=""{if $smarty.request.format_guid|default:'' != 'markdown'} checked{/if}> {tr}Plain{/tr}</label>
-		<label class="radio-inline"><input type="radio" name="format_guid" value="markdown"{if $smarty.request.format_guid|default:'' == 'markdown'} checked{/if}> {tr}Markdown{/tr}</label>
-	{/forminput}
+	<label>{tr}Format{/tr}</label>
+	<select class="form-control" name="format_guid">
+		<option value="simpletext"{if $smarty.request.format_guid|default:'simpletext' == 'simpletext'} selected="selected"{/if}>{tr}Plain{/tr}</option>
+		<option value="markdown"{if $smarty.request.format_guid|default:'' == 'markdown'} selected="selected"{/if}>{tr}Markdown{/tr}</option>
+		<option value="html"{if $smarty.request.format_guid|default:'' == 'html'} selected="selected"{/if}>{tr}HTML{/tr}</option>
+	</select>
 	{forminput label="checkbox"}
 		<input name="notify" type="checkbox"> {booticon iname="fa-envelope" iexplain="Notified"} {tr}Notify Customer{/tr} 
 	{/forminput}
