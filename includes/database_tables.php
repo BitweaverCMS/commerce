@@ -81,6 +81,7 @@ define('TABLE_PAYPAL_SESSION', '`'.BITCOMMERCE_DB_PREFIX . 'com_paypal_session`'
 define('TABLE_PAYPAL_PAYMENT_STATUS', '`'.BITCOMMERCE_DB_PREFIX . 'com_paypal_payment_status`');
 define('TABLE_PAYPAL_PAYMENT_STATUS_HISTORY', '`'.BITCOMMERCE_DB_PREFIX . 'com_paypal_pment_stat_his`');
 define('TABLE_PRODUCTS', '`'.BITCOMMERCE_DB_PREFIX . 'com_products`');
+define('TABLE_PRODUCTS_LOG', '`'.BITCOMMERCE_DB_PREFIX . 'com_products_log`');
 define('TABLE_PRODUCT_TYPES', '`'.BITCOMMERCE_DB_PREFIX . 'com_product_types`');
 define('TABLE_PRODUCT_TYPE_LAYOUT', '`'.BITCOMMERCE_DB_PREFIX . 'com_product_type_layout`');
 define('TABLE_PRODUCT_TYPES_TO_CATEGORY', '`'.BITCOMMERCE_DB_PREFIX . 'com_product_types_to_category`');

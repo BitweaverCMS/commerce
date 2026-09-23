@@ -2459,6 +2459,130 @@ If a special exist * 10+9
 		return( !empty( $pParamHash['discounts_store'] ) && count( $pParamHash['discounts_store'] ) );
 	}
 
+	/**
+	 * Validate one product-log row into log_store. Does not write.
+	 * Requires comments or log_code. owner_visible defaults to hidden.
+	 */
+	function verifyLog( &$pParamHash ) {
+		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
+		if( !is_array( $pParamHash ) ) {
+			$pParamHash = array();
+		}
+		unset( $pParamHash['log_store'] );
+		if( !$this->isValid() ) {
+			$this->mErrors['log'] = tra( 'This product is not loaded.' );
+			return FALSE;
+		}
+
+		$comments = isset( $pParamHash['comments'] ) ? trim( (string)$pParamHash['comments'] ) : '';
+		if( strlen( $comments ) > 4000 ) {
+			$comments = substr( $comments, 0, 4000 );
+		}
+		$logCode = isset( $pParamHash['log_code'] ) ? strtolower( trim( (string)$pParamHash['log_code'] ) ) : '';
+		if( $logCode !== '' && !preg_match( '/^[a-z0-9_]{1,32}$/', $logCode ) ) {
+			$this->mErrors['log'] = tra( 'The log code is not valid.' );
+			return FALSE;
+		}
+		if( $comments === '' && $logCode === '' ) {
+			$this->mErrors['log'] = tra( 'A note needs text or a code.' );
+			return FALSE;
+		}
+
+		$visible = 0;
+		if( !empty( $pParamHash['owner_visible'] ) && $pParamHash['owner_visible'] !== '0' ) {
+			$visible = 1;
+		}
+
+		$pParamHash['log_store'] = array(
+			'products_id' => $this->mProductsId,
+			'owner_visible' => $visible,
+			'log_code' => ( $logCode === '' ? NULL : $logCode ),
+			'comments' => ( $comments === '' ? NULL : $comments ),
+			'format_guid' => CommerceOrder::normalizeHistoryFormatGuid( isset( $pParamHash['format_guid'] ) ? $pParamHash['format_guid'] : NULL ),
+		);
+		return TRUE;
+	}
+
+	/**
+	 * Insert one product-log row. Admin or the product owner.
+	 * Returns the new products_log_id, or FALSE.
+	 */
+	function storeLog( &$pParamHash ) {
+		global $gBitUser;
+		if( !$gBitUser->hasPermission( 'p_bitcommerce_admin' ) && !$this->isOwner() ) {
+			$this->mErrors['log'] = tra( 'You cannot add a note to this product.' );
+			return FALSE;
+		}
+		if( !$this->verifyLog( $pParamHash ) ) {
+			return FALSE;
+		}
+		$userId = NULL;
+		if( $gBitUser->isRegistered() ) {
+			$userId = $gBitUser->mUserId;
+		}
+		$this->mDb->query( "INSERT INTO " . TABLE_PRODUCTS_LOG . " (`products_id`, `user_id`, `date_added`, `owner_visible`, `log_code`, `comments`, `format_guid`)
+			VALUES ( ?, ?, ".$this->mDb->NOW().", ?, ?, ?, ? )", array(
+			$pParamHash['log_store']['products_id'],
+			$userId,
+			$pParamHash['log_store']['owner_visible'],
+			$pParamHash['log_store']['log_code'],
+			$pParamHash['log_store']['comments'],
+			$pParamHash['log_store']['format_guid'],
+		) );
+		$logId = 0;
+		if( !empty( $this->mDb->mDb ) ) {
+			$logId = (int)$this->mDb->mDb->Insert_ID( 'com_products_log', 'products_log_id' );
+		}
+		return $logId ? $logId : TRUE;
+	}
+
+	/**
+	 * Load product log rows into mLog, oldest first.
+	 * Admin sees every row. The owner sees owner_visible rows. Others see none.
+	 */
+	function loadLog() {
+		global $gBitUser;
+		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
+		$this->mLog = array();
+		if( !$this->isValid() ) {
+			return 0;
+		}
+		if( !$gBitUser->hasPermission( 'p_bitcommerce_admin' ) && !$this->isOwner() ) {
+			return 0;
+		}
+		$whereSql = '';
+		$bindVars = array( $this->mProductsId );
+		if( !$gBitUser->hasPermission( 'p_bitcommerce_admin' ) ) {
+			$whereSql = ' AND cpl.`owner_visible` = 1 ';
+		}
+		$sql = "SELECT cpl.*, uu.`real_name`, uu.`login`
+				FROM " . TABLE_PRODUCTS_LOG . " cpl
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = cpl.`user_id` )
+				WHERE cpl.`products_id` = ? $whereSql
+				ORDER BY cpl.`date_added`, cpl.`products_log_id`";
+		if( $rs = $this->mDb->query( $sql, $bindVars ) ) {
+			while( !$rs->EOF ) {
+				$row = $rs->fields;
+				$row['comments_html'] = CommerceOrder::formatHistoryComment( $row );
+				$this->mLog[] = $row;
+				$rs->MoveNext();
+			}
+		}
+		return count( $this->mLog );
+	}
+
+	/**
+	 * Delete one log row on this product. Admin only.
+	 */
+	function expungeLog( $pLogId ) {
+		global $gBitUser;
+		if( !$this->isValid() || !$gBitUser->hasPermission( 'p_bitcommerce_admin' ) || !BitBase::verifyId( $pLogId ) ) {
+			return FALSE;
+		}
+		$this->mDb->query( "DELETE FROM " . TABLE_PRODUCTS_LOG . " WHERE `products_log_id` = ? AND `products_id` = ?", array( $pLogId, $this->mProductsId ) );
+		return TRUE;
+	}
+
 	////
 	// Display Price Retail
 	// Specials and Tax Included
@@ -2512,6 +2636,7 @@ Skip deleting of images for now
 			$this->mDb->query("DELETE FROM " . TABLE_SPECIALS . " WHERE `products_id` = ?", array( $this->mProductsId ));
 			$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_DISCOUNT_QUANTITY . " WHERE `products_id` = ?", array( $this->mProductsId ));
 			if( !$this->isPurchased() ) {
+				$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_LOG . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				$this->mDb->query("DELETE FROM " . TABLE_PRODUCTS . " WHERE `products_id` = ?", array( $this->mProductsId ));
 				LibertyMime::expunge();

@@ -883,6 +883,19 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_status_history' => "
 			  , CONSTRAINT `ord_stat_hist_user_ref` FOREIGN KEY ( `user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )'
 ",
 
+BITCOMMERCE_INSTALL_PREFIX.'com_products_log' => "
+  products_log_id I4 PRIMARY AUTO,
+  products_id I4 NOTNULL,
+  user_id I4,
+  date_added T,
+  owner_visible I1 NOTNULL default '0',
+  log_code C(32),
+  comments X,
+  format_guid C(16)
+  CONSTRAINT ', CONSTRAINT `products_log_prod_ref` FOREIGN KEY ( `products_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_products`( `products_id` )
+			  , CONSTRAINT `products_log_user_ref` FOREIGN KEY ( `user_id` ) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )'
+",
+
 BITCOMMERCE_INSTALL_PREFIX.'com_orders_total' => "
   orders_total_id I4 PRIMARY AUTO,
   orders_id I4 NOTNULL,
@@ -1238,6 +1251,7 @@ $indices = array (
   'orders_prod_dld_ods_pd_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_dld', 'cols' => 'orders_products_id', 'opts' => NULL),
   'orders_status_name_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_status', 'cols' => 'orders_status_name', 'opts' => NULL),
   'orders_status_hist_ods_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_status_history', 'cols' => 'orders_id', 'opts' => NULL),
+  'products_log_prod_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_products_log', 'cols' => 'products_id', 'opts' => NULL),
   'orders_status_hist_sts_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_status_history', 'cols' => 'orders_status_id ', 'opts' => NULL),
   'ot_orders_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_orders_total', 'cols' => 'orders_id', 'opts' => NULL),
   'reviews_products_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_reviews', 'cols' => 'products_id', 'opts' => NULL),

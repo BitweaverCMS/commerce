@@ -121,6 +121,41 @@ comments stay NULL. A NULL comment with no tag still displays escaped. A
 NULL comment that already contains a tag displays as HTML, so existing
 shipping-change notes keep their prices without a backfill.
 
+## Product log
+
+`com_products_log` (`TABLE_PRODUCTS_LOG`) is an append-only note list on a
+catalogue product. It is not order status and it does not send mail. Existing
+databases apply `admin/install_com_products_log.sql`.
+
+| Column | Role |
+|---|---|
+| `products_log_id` | One row. |
+| `products_id` | Owning product. |
+| `user_id` | Actor. NULL when the writer is not a registered user. |
+| `date_added` | When the row was stored. |
+| `owner_visible` | `0` hidden from the owner (admin still sees it). `1` the owner can read it. |
+| `log_code` | Optional short token (`[a-z0-9_]`, at most 32). Not a lookup table. |
+| `comments` | Source text, at most 4000 characters. Empty is allowed when `log_code` is set. |
+| `format_guid` | Same allow-list as order history: `simpletext`, `markdown`, `html`. Empty is stored as NULL. |
+
+`CommerceProduct` methods, separate from product `load` / `verify` / `store` / `expunge`:
+
+| Method | Behavior |
+|---|---|
+| `verifyLog( &$pParamHash )` | Fills `log_store`. Requires `comments` or `log_code`. |
+| `storeLog( &$pParamHash )` | Inserts one row. Caller must be `p_bitcommerce_admin` or the product owner. Returns the new id. |
+| `loadLog()` | Fills `mLog`, oldest first, with `comments_html`. Admin sees every row. The owner sees `owner_visible = 1`. Anyone else gets an empty list. Not called from `load()`. |
+| `expungeLog( $pLogId )` | Admin deletes one row on this product. |
+
+Deleting a product that has never been purchased deletes its log rows first.
+A purchased product is marked deleted and keeps its log.
+
+`format_guid` display uses `CommerceOrder::formatHistoryComment()`. The
+product-log dialog uses the same Format menu: Plain (`simpletext`), Markdown,
+or HTML.
+
+An owner-visible row with a `log_code` is a message the owner can read and a token another program can read later through `loadLog()`. This table does not email the owner.
+
 ## Admin line-item options (`admin/orders.php`)
 
 Staff can add or delete snapshot rows in `com_orders_products_att`.
