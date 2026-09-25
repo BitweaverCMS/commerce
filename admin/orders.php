@@ -116,6 +116,7 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 
 			$gBitSmarty->assign( 'countryPullDown', zen_get_country_list('address_country_id', $countryId, 'autocomplete="'.$addressType.' country-name" ' ) );
 			$gBitSmarty->assignByRef( 'address', $entry );
+			$gBitSmarty->assign( 'customerAddressIds', $order->matchingAddressBookIds( $addressType ) );
 
 			if( !empty( $_REQUEST['address_type'] ) ) {
 				$gBitSmarty->display( 'bitpackage:bitcommerce/order_address_edit.tpl' );
@@ -245,7 +246,17 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				break;
 			case 'save_address':
 				$addressType = $_REQUEST['address_type'];
+				if( $addressType !== 'delivery' && $addressType !== 'billing' ) {
+					break;
+				}
+				$customerAddressIds = array();
+				if( !empty( $_REQUEST['update_customer_address'] ) ) {
+					$customerAddressIds = $order->matchingAddressBookIds( $addressType );
+				}
 				$statusMsg = 'Updated '.$addressType." address. Previously:\n\n".$order->getFormattedAddress( $addressType, "\n" );
+				if( !empty( $customerAddressIds ) ) {
+					$statusMsg .= "\nUpdated customer address ".implode( ', ', $customerAddressIds ).'.';
+				}
 				$order->updateStatus( array( 'comments' => $statusMsg ) );
 				$saveAddress[$addressType.'_name'] = $_REQUEST['address_name'];
 				$saveAddress[$addressType.'_company'] = $_REQUEST['address_company'];
@@ -257,7 +268,20 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				$saveAddress[$addressType.'_country'] = zen_get_country_name( $_REQUEST['address_country_id'] );
 				$saveAddress[$addressType.'_telephone'] = $_REQUEST['address_telephone'];
 				$gBitDb->StartTrans();
-				$gBitDb->associateUpdate( TABLE_ORDERS, $saveAddress, array( 'orders_id'=>$_REQUEST['oID'] ) ); 
+				$gBitDb->associateUpdate( TABLE_ORDERS, $saveAddress, array( 'orders_id'=>$_REQUEST['oID'] ) );
+				if( !empty( $customerAddressIds ) ) {
+					$order->storeCustomerAddressBook( $customerAddressIds, array(
+						'name' => $_REQUEST['address_name'],
+						'company' => $_REQUEST['address_company'],
+						'street_address' => $_REQUEST['address_street_address'],
+						'suburb' => $_REQUEST['address_suburb'],
+						'city' => $_REQUEST['address_city'],
+						'state' => $_REQUEST['address_state'],
+						'postcode' => $_REQUEST['address_postcode'],
+						'country_id' => $_REQUEST['address_country_id'],
+						'telephone' => $_REQUEST['address_telephone'],
+					) );
+				}
 				$gBitDb->CompleteTrans();
 				bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
 				exit;

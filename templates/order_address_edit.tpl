@@ -66,6 +66,18 @@
 		<input class="form-control" type="text" maxlength="32" name="address_telephone" value="{$address.telephone|escape:"htmlall"}" />
 	{/forminput}
 </div>
+{if $customerAddressIds}
+<div class="checkbox">
+	<label>
+		<input type="checkbox" name="update_customer_address" value="1" checked="checked" />
+		{tr}Also update the customer's saved address{/tr}
+		{foreach from=$customerAddressIds item=addressBookId name=bookids}{if !$smarty.foreach.bookids.first}, {/if}#{$addressBookId}{/foreach}
+	</label>
+	<div class="help-block">{tr}Future orders that use this saved address will get the corrected details.{/tr}</div>
+</div>
+{else}
+<div class="help-block">{tr}No saved customer address matches this one. Only this order will change.{/tr}</div>
+{/if}
 <div class="form-group submit">
 	<input class="btn btn-default" type="submit" value="save" name="save_address" />
 </div>

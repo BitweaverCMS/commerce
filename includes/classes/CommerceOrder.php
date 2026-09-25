@@ -1507,6 +1507,106 @@ class CommerceOrder extends CommerceOrderBase {
 		return FALSE;
 	}
 
+	public static function addressPartKey( $pValue ) {
+		return strtolower( trim( preg_replace( '/\s+/', ' ', (string)$pValue ) ) );
+	}
+
+	// Address-book rows for this customer that match the order snapshot.
+	// Street, city, and postcode must match. Suburb and state must match when both sides have a value.
+	public function matchingAddressBookIds( $pAddressType ) {
+		$ids = array();
+		if( ( $pAddressType !== 'delivery' && $pAddressType !== 'billing' ) || empty( $this->$pAddressType ) || !is_array( $this->$pAddressType ) ) {
+			return $ids;
+		}
+		$customerId = !empty( $this->customer['user_id'] ) ? (int)$this->customer['user_id'] : 0;
+		if( !self::verifyId( $customerId ) ) {
+			return $ids;
+		}
+		$rows = CommerceCustomer::getAddressesFromId( $customerId );
+		if( empty( $rows ) ) {
+			return $ids;
+		}
+		$orderAddress = $this->$pAddressType;
+		$street = self::addressPartKey( BitBase::getParameter( $orderAddress, 'street_address', '' ) );
+		$city = self::addressPartKey( BitBase::getParameter( $orderAddress, 'city', '' ) );
+		$postcode = self::addressPartKey( BitBase::getParameter( $orderAddress, 'postcode', '' ) );
+		$suburb = self::addressPartKey( BitBase::getParameter( $orderAddress, 'suburb', '' ) );
+		$state = self::addressPartKey( BitBase::getParameter( $orderAddress, 'state', '' ) );
+		if( $street === '' || $city === '' || $postcode === '' ) {
+			return $ids;
+		}
+		foreach( $rows as $row ) {
+			if( self::addressPartKey( BitBase::getParameter( $row, 'street_address', '' ) ) !== $street ) {
+				continue;
+			}
+			if( self::addressPartKey( BitBase::getParameter( $row, 'city', '' ) ) !== $city ) {
+				continue;
+			}
+			if( self::addressPartKey( BitBase::getParameter( $row, 'postcode', '' ) ) !== $postcode ) {
+				continue;
+			}
+			$bookSuburb = self::addressPartKey( BitBase::getParameter( $row, 'suburb', '' ) );
+			if( $suburb !== '' && $bookSuburb !== '' && $suburb !== $bookSuburb ) {
+				continue;
+			}
+			$bookState = self::addressPartKey( BitBase::getParameter( $row, 'state', '' ) );
+			if( $state !== '' && $bookState !== '' && $state !== $bookState ) {
+				continue;
+			}
+			$ids[] = (int)$row['address_book_id'];
+		}
+		return $ids;
+	}
+
+	// Write the edited order address onto the customer's matching address-book rows.
+	public function storeCustomerAddressBook( $pAddressBookIds, $pHash ) {
+		$customerId = !empty( $this->customer['user_id'] ) ? (int)$this->customer['user_id'] : 0;
+		if( !self::verifyId( $customerId ) || empty( $pAddressBookIds ) || !is_array( $pHash ) ) {
+			return array();
+		}
+		$name = trim( BitBase::getParameter( $pHash, 'name', '' ) );
+		$first = $name;
+		$last = '';
+		if( strpos( $name, ' ' ) !== FALSE ) {
+			list( $first, $last ) = explode( ' ', $name, 2 );
+		}
+		$countryId = (int)BitBase::getParameter( $pHash, 'country_id', 0 );
+		$state = trim( BitBase::getParameter( $pHash, 'state', '' ) );
+		$company = trim( BitBase::getParameter( $pHash, 'company', '' ) );
+		$suburb = trim( BitBase::getParameter( $pHash, 'suburb', '' ) );
+		$telephone = trim( BitBase::getParameter( $pHash, 'telephone', '' ) );
+		$zoneId = NULL;
+		if( $countryId && $state !== '' ) {
+			$zoneId = $this->mDb->getOne(
+				"SELECT `zone_id` FROM " . TABLE_ZONES . " WHERE `zone_country_id`=? AND (UPPER(`zone_name`)=? OR UPPER(`zone_code`)=?)",
+				array( $countryId, strtoupper( $state ), strtoupper( $state ) )
+			);
+		}
+		$store = array(
+			'entry_firstname' => substr( $first, 0, 64 ),
+			'entry_lastname' => substr( $last, 0, 64 ),
+			'entry_company' => ( $company !== '' ? substr( $company, 0, 128 ) : NULL ),
+			'entry_street_address' => substr( trim( BitBase::getParameter( $pHash, 'street_address', '' ) ), 0, 250 ),
+			'entry_suburb' => ( $suburb !== '' ? substr( $suburb, 0, 64 ) : NULL ),
+			'entry_city' => substr( trim( BitBase::getParameter( $pHash, 'city', '' ) ), 0, 64 ),
+			'entry_state' => substr( $state, 0, 64 ),
+			'entry_postcode' => substr( trim( BitBase::getParameter( $pHash, 'postcode', '' ) ), 0, 10 ),
+			'entry_country_id' => $countryId,
+			'entry_zone_id' => ( $zoneId ? $zoneId : NULL ),
+			'entry_telephone' => ( $telephone !== '' ? substr( $telephone, 0, 32 ) : NULL ),
+		);
+		$updated = array();
+		foreach( $pAddressBookIds as $addressBookId ) {
+			$addressBookId = (int)$addressBookId;
+			if( !self::verifyId( $addressBookId ) ) {
+				continue;
+			}
+			$this->mDb->associateUpdate( TABLE_ADDRESS_BOOK, $store, array( 'address_book_id' => $addressBookId, 'customers_id' => $customerId ) );
+			$updated[] = $addressBookId;
+		}
+		return $updated;
+	}
+
 	function getFormattedAddress( $pAddressHash, $pBreak='<br>' ) {
 		$ret = '';
 		if( $this->isValid() ) {
