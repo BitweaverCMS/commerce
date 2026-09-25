@@ -22,6 +22,10 @@ the dependencies do not thereby depend on this package.
 
 Does not define deployment-specific products, production workflows, or storefront branding.
 
+## Product lists
+
+`CommerceProduct::getList()` accepts `skip_image_lookup`. When that flag is set, a row with an empty `products_image` does not call `type_class::getImageUrlFromHash()`. Display URL, URI, and price are still resolved from the type class. Callers that render `products_image_url` leave the flag unset.
+
 ## Admin presentation / APCu gotchas
 
 Commerce admin (for example `admin/orders.php` and `admin/includes/application_top.php`)
