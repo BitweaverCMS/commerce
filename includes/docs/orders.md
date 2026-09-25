@@ -173,6 +173,18 @@ Staff can add or delete snapshot rows in `com_orders_products_att`.
 - Optional text for a value (`add_order_povid_text`) is trimmed as a string.
   Do not `trim( null )` when the field is omitted.
 
+## Staff address edit
+
+`admin/orders.php` `action=save_address` updates the order snapshot
+(`delivery_*` or `billing_*`). The edit form lists customer
+`address_book_id` rows that match that snapshot on street, city, and
+postcode. Suburb and state must also match when both sides have a value.
+The checkbox **Also update the customer's saved address** is on by
+default. Saving it writes the same fields onto those address-book rows
+(and the zone id when the state name resolves) so a later order can reuse
+the correction. Uncheck it to change only this order. When nothing
+matches, only the order row is updated.
+
 ## Order again
 
 Account history and the order receipt (`orderAgainForm`) replace the product
