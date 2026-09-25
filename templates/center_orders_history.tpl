@@ -25,9 +25,8 @@
 	</div>
 </div>
 {foreach from=$ordersRow.products item=ordersProduct key=opid}
-{assign var=product value=$ordersProduct.products_id|bc_get_commerce_product}
 <div class="row pb-2">
-	<div class="col-xs-4 col-sm-2 text-center"><img src="{if $product|is_object}{$product->getThumbnailUrl('icon')}{else}{$ordersProduct.default_image}{/if}" class="img-responsive" style="max-height:100px;"/></div>
+	<div class="col-xs-4 col-sm-2 text-center"><img src="{if $ordersProduct.products_image_url}{$ordersProduct.products_image_url}{else}{$ordersProduct.default_image}{/if}" class="img-responsive" style="max-height:100px;"/></div>
 	<div class="col-xs-8 col-sm-10 text-left">
 		{$ordersProduct.products_quantity}&nbsp;x <a href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">{$ordersProduct.products_name|default:"Product `$ordersProduct.products_id`"}</a>
 		<br/>{$ordersProduct.products_model}{if $ordersProduct.products_version > 1}, v{$ordersProduct.products_version}{/if}

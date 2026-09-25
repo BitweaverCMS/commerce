@@ -22,6 +22,10 @@ the dependencies do not thereby depend on this package.
 
 Does not define deployment-specific products, production workflows, or storefront branding.
 
+## Order history list
+
+`CommerceOrder::getList()` with `orders_products` loads line items and attributes for the whole result, not once per order. Each line's thumbnail is `type_class::getImageUrlFromHash()` with `skip_thumb_refresh` set, so an existing thumb is used without loading the product. Display URLs still come from `getDisplayUrlFromHash()` on the line hash.
+
 ## Admin presentation / APCu gotchas
 
 Commerce admin (for example `admin/orders.php` and `admin/includes/application_top.php`)

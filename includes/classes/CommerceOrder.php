@@ -291,7 +291,6 @@ class CommerceOrder extends CommerceOrderBase {
 						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (co.`orders_id` = ot.`orders_id` AND `class` = 'ot_total')
 					$whereSql
 					ORDER BY ".$gBitDb->convertSortmode( $pListHash['sort_mode'] );
-		$optionTypes = !empty( $pListHash['orders_products'] ) ? self::optionTypeMap() : array();
 		if( $rs = $gBitDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$ret[$row['orders_id']] = $row;
@@ -303,40 +302,95 @@ class CommerceOrder extends CommerceOrderBase {
 						$ret[$row['orders_id']]['comments_html'] = self::formatHistoryComment( $lastComment );
 					}
 				}
-				if( !empty( $pListHash['orders_products'] ) ) {
-					$sql = "SELECT cop.`orders_products_id` AS `hash_key`, cp.*, cop.*
-							FROM " . TABLE_ORDERS_PRODUCTS . " cop
-								INNER JOIN " . TABLE_PRODUCTS . " cp ON(cp.`products_id`=cop.`products_id`)
-							WHERE cop.`orders_id`=?";
-					$ret[$row['orders_id']]['products'] = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
-
-					$sql = "SELECT copa.`orders_products_attributes_id` AS `hash_key`, copa.*
-							FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa
-							WHERE copa.`orders_id`=?";
-					$orderAttributes = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
-					$reorderRows = array();
-					foreach( array_keys( $orderAttributes ) as $ordersProductsAttId ) {
-						$att = $orderAttributes[$ordersProductsAttId];
-						$lineId = $att['orders_products_id'];
-						if( empty( $ret[$row['orders_id']]['products'][$lineId] ) ) {
-							continue;
-						}
-						$att['products_options_type'] = isset( $optionTypes[$att['products_options_id']] ) ? $optionTypes[$att['products_options_id']] : NULL;
-						$label = $att['products_options_values_name'];
-						if( !empty( $att['products_options_values_text'] ) ) {
-							$label = $att['products_options_values_text'];
-						}
-						$ret[$row['orders_id']]['products'][$lineId]['attributes'][$att['products_options_values_id']] = $label;
-						$reorderRows[$lineId][] = $att;
-					}
-					foreach( $reorderRows as $lineId => $lineAttributes ) {
-						$ret[$row['orders_id']]['products'][$lineId]['reorder'] = self::reorderCartFields( $lineAttributes );
-					}
-				}
 			}
+		}
+		if( !empty( $pListHash['orders_products'] ) && !empty( $ret ) ) {
+			self::attachOrderProducts( $ret );
 		}
 
 		return( $ret );
+	}
+
+	/**
+	 * Attach line items, attributes, reorder fields, and a thumbnail URL.
+	 * Line items and attributes are loaded for the whole list, not once per order.
+	 * skip_thumb_refresh keeps getImageUrlFromHash from loading each product.
+	 */
+	protected static function attachOrderProducts( &$pOrders ) {
+		global $gBitDb;
+		$optionTypes = self::optionTypeMap();
+		foreach( array_keys( $pOrders ) as $ordersId ) {
+			$pOrders[$ordersId]['products'] = array();
+		}
+		$thumbByProduct = array();
+		foreach( array_chunk( array_keys( $pOrders ), 500 ) as $chunk ) {
+			$in = implode( ',', array_fill( 0, count( $chunk ), '?' ) );
+			$sql = "SELECT cop.`orders_products_id` AS `hash_key`, cp.*, cop.*, lc.`user_id`, COALESCE(lcp.`pref_value`,'1') AS `print_version`, pt.`default_image`, pt.`type_class`, pt.`type_class_file`
+					FROM " . TABLE_ORDERS_PRODUCTS . " cop
+						INNER JOIN " . TABLE_PRODUCTS . " cp ON (cp.`products_id`=cop.`products_id`)
+						INNER JOIN `" . BIT_DB_PREFIX . "liberty_content` lc ON (lc.`content_id`=cp.`content_id`)
+						LEFT JOIN `" . BIT_DB_PREFIX . "liberty_content_prefs` lcp ON (lcp.`content_id`=lc.`content_id` AND lcp.`pref_name`='book_version')
+						INNER JOIN " . TABLE_PRODUCT_TYPES . " pt ON (pt.`type_id`=cp.`products_type`)
+					WHERE cop.`orders_id` IN ($in)";
+			$lines = $gBitDb->getAssoc( $sql, $chunk );
+			if( empty( $lines ) ) {
+				$lines = array();
+			}
+			foreach( $lines as $lineId => $line ) {
+				$ordersId = $line['orders_id'];
+				if( !isset( $pOrders[$ordersId] ) ) {
+					continue;
+				}
+				$line['skip_thumb_refresh'] = TRUE;
+				$thumbKey = $line['products_id'] . ':' . $line['print_version'];
+				if( !array_key_exists( $thumbKey, $thumbByProduct ) ) {
+					$thumbByProduct[$thumbKey] = self::orderLineThumbUrl( $line );
+				}
+				if( !empty( $thumbByProduct[$thumbKey] ) ) {
+					$line['products_image_url'] = $thumbByProduct[$thumbKey];
+				}
+				$pOrders[$ordersId]['products'][$lineId] = $line;
+			}
+
+			$sql = "SELECT copa.`orders_products_attributes_id` AS `hash_key`, copa.*
+					FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa
+					WHERE copa.`orders_id` IN ($in)";
+			$orderAttributes = $gBitDb->getAssoc( $sql, $chunk );
+			if( empty( $orderAttributes ) ) {
+				continue;
+			}
+			$reorderRows = array();
+			foreach( $orderAttributes as $att ) {
+				$ordersId = $att['orders_id'];
+				$lineId = $att['orders_products_id'];
+				if( empty( $pOrders[$ordersId]['products'][$lineId] ) ) {
+					continue;
+				}
+				$att['products_options_type'] = isset( $optionTypes[$att['products_options_id']] ) ? $optionTypes[$att['products_options_id']] : NULL;
+				$label = $att['products_options_values_name'];
+				if( !empty( $att['products_options_values_text'] ) ) {
+					$label = $att['products_options_values_text'];
+				}
+				$pOrders[$ordersId]['products'][$lineId]['attributes'][$att['products_options_values_id']] = $label;
+				$reorderRows[$ordersId][$lineId][] = $att;
+			}
+			foreach( $reorderRows as $ordersId => $linesForOrder ) {
+				foreach( $linesForOrder as $lineId => $lineAttributes ) {
+					$pOrders[$ordersId]['products'][$lineId]['reorder'] = self::reorderCartFields( $lineAttributes );
+				}
+			}
+		}
+	}
+
+	protected static function orderLineThumbUrl( $pLine ) {
+		$typeClass = !empty( $pLine['type_class'] ) ? $pLine['type_class'] : 'CommerceProduct';
+		if( !class_exists( $typeClass ) && !empty( $pLine['type_class_file'] ) && file_exists( BIT_ROOT_PATH . $pLine['type_class_file'] ) ) {
+			require_once( BIT_ROOT_PATH . $pLine['type_class_file'] );
+		}
+		if( !class_exists( $typeClass ) || !is_callable( array( $typeClass, 'getImageUrlFromHash' ) ) ) {
+			return NULL;
+		}
+		return $typeClass::getImageUrlFromHash( $pLine, 'icon' );
 	}
 
 	/**
