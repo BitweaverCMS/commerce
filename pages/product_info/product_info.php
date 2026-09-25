@@ -14,7 +14,12 @@ $gContent = &$gBitProduct;
 
 if ( $gBitProduct->isAvailable() ) {
 
-	if( $productOptions = $gBitProduct->getProductOptions() ) {
+	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
+	$reorderSelection = CommerceOrder::mergeRequestOptionIds();
+	if( !empty( $_REQUEST['cart_quantity'] ) && !is_array( $_REQUEST['cart_quantity'] ) ) {
+		$gBitSmarty->assign( 'reorderQuantity', max( 1, (int)$_REQUEST['cart_quantity'] ) );
+	}
+	if( $productOptions = $gBitProduct->getProductOptions( !empty( $reorderSelection ) ? $reorderSelection : NULL ) ) {
 		$gBitSmarty->assignByRef( 'productOptions', $productOptions );
 	}
 

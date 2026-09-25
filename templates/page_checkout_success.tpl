@@ -27,7 +27,7 @@
 		{/if}
 	</form>
 	{include file="bitpackage:bitcommerce/page_checkout_success_inc.tpl"}
-	{include file="bitpackage:bitcommerce/order_invoice_contents_inc.tpl" order=$newOrder}
+	{include file="bitpackage:bitcommerce/order_invoice_contents_inc.tpl" order=$newOrder orderAgainForm=1}
 	{/if}
 </div>
 {/strip}

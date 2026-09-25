@@ -2151,14 +2151,18 @@ If a special exist * 10+9
 						// =-=-=-=-=-=-=-=-=-=-= text
 						if (($this->mOptions[$optionsId]['products_options_type'] == PRODUCTS_OPTIONS_TYPE_TEXT)) {
 							$maxLength = !empty( $this->mOptions[$optionsId]['products_options_length'] ) ? 'maxlength="' . $this->mOptions[$optionsId]['products_options_length'] . '"' : '';
-							if( is_object( $pCart ) ) {
-								$tmp_value = $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']];
+							$postedText = NULL;
+							if( is_array( $pSelectedId ) && isset( $pSelectedId[$this->mOptions[$optionsId]['products_options_id']][$products_options_value_id] ) ) {
+								$postedText = $pSelectedId[$this->mOptions[$optionsId]['products_options_id']][$products_options_value_id];
+							}
+							if( $postedText !== NULL || is_object( $pCart ) ) {
+								$tmp_value = ($postedText !== NULL ? $postedText : $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']]);
 								$optionsValuesHtml .= '<input class="form-control" type="text" name ="id[' . $this->mOptions[$optionsId]['products_options_id'] . ']['.$products_options_value_id.']" ' . $maxLength . ' value="' . htmlspecialchars($tmp_value) .'" />	';
 								$optionsValuesHtml .= $products_options_details;
 								$tmp_word_cnt_string = '';
 					// calculate word charges
 								$tmp_word_cnt =0;
-								$tmp_word_cnt_string = $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']];
+								$tmp_word_cnt_string = $tmp_value;
 								$tmp_word_cnt = zen_get_word_count($tmp_word_cnt_string, $vals['attributes_price_words_free']);
 								$tmp_word_price = zen_get_word_count_price($tmp_word_cnt_string, $vals['attributes_price_words_free'], $vals['attributes_price_words']);
 
@@ -2171,7 +2175,7 @@ If a special exist * 10+9
 								}
 					// calculate letter charges
 								$tmp_letters_cnt =0;
-								$tmp_letters_cnt_string = $pCart->contents[$this->mProductsId]['attributes_values'][$this->mOptions[$optionsId]['products_options_id']];
+								$tmp_letters_cnt_string = $tmp_value;
 								$tmp_letters_cnt = zen_get_letters_count($tmp_letters_cnt_string, $vals['attributes_price_letters_free']);
 								$tmp_letters_price = zen_get_letters_count_price($tmp_letters_cnt_string, $vals['attributes_price_letters_free'], $vals['attributes_price_letters']);
 
@@ -2299,13 +2303,25 @@ If a special exist * 10+9
 						} else {
 							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
 						}
-						$productOptions[$optionsId]['menu'] = zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, 'selected', NULL, $products_options_details );
+						$singleSelected = TRUE;
+						if( !empty( $pSelectedId ) ) {
+							$singleOptionId = $this->mOptions[$optionsId]['products_options_id'];
+							$singleSelected = isset( $pSelectedId[$singleOptionId] ) && !is_array( $pSelectedId[$singleOptionId] ) && (string)$pSelectedId[$singleOptionId] === (string)$products_options_value_id;
+						}
+						$productOptions[$optionsId]['menu'] = zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $singleSelected, NULL, $products_options_details );
 						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;
 					default:
 						// normal dropdown menu display
-						if( is_object( $pCart ) && isset($pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']])) {
+						if( !empty( $pSelectedId ) ) {
+							$menuOptionId = $this->mOptions[$optionsId]['products_options_id'];
+							if( isset( $pSelectedId[$menuOptionId] ) && !is_array( $pSelectedId[$menuOptionId] ) ) {
+								$selected_attribute = $pSelectedId[$menuOptionId];
+							} else {
+								$selected_attribute = '';
+							}
+						} elseif( is_object( $pCart ) && isset($pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']])) {
 							$selected_attribute = $pCart->contents[$this->mProductsId]['attributes'][$this->mOptions[$optionsId]['products_options_id']];
 						} else {
 						// selected set above

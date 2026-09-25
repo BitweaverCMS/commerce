@@ -40,10 +40,17 @@
 		{/foreach}
 		</ul>
 		{/if}
-		<a class="btn btn-xs btn-primary" href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">Order Again</a>
+		{include file="bitpackage:bitcommerce/order_again_form_inc.tpl"}
 	</div>
 </div>
 {/foreach}
+{if $ordersRow.products|@count > 1}
+<div class="row pb-2">
+	<div class="col-xs-8 col-xs-offset-4 col-sm-10 col-sm-offset-2 text-left">
+		{include file="bitpackage:bitcommerce/order_reorder_all_inc.tpl" reorderOrdersId=$ordersRow.orders_id}
+	</div>
+</div>
+{/if}
 <hr>
 
 {foreachelse}

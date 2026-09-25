@@ -122,7 +122,7 @@
 	{/if}
 </header>
 
-{include file="bitpackage:bitcommerce/order_invoice_contents_inc.tpl"}
+{include file="bitpackage:bitcommerce/order_invoice_contents_inc.tpl" orderAgainForm=1}
 
 {if $showPricing && $order->mHistory}
 <h3>{tr}Status History & Comments{/tr}</h3>

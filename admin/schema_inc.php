@@ -781,6 +781,7 @@ BITCOMMERCE_INSTALL_PREFIX.'com_orders_products_att' => "
   products_options_values_id INT( 11 ) NOTNULL,
   products_options_name C(32),
   products_options_values C(128),
+  products_options_values_text X,
   options_values_price N(15,4),
   options_values_wholesale N(15,4),
   options_values_cogs N(15,4),

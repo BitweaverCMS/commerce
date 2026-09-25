@@ -69,6 +69,130 @@ class CommerceOrder extends CommerceOrderBase {
 		}
 	}
 
+	// Option ids from the query string, long text from the request body.
+	// A posted `id` array replaces the same option key; nested text merges.
+	public static function mergeRequestOptionIds() {
+		$selected = array();
+		if( !empty( $_GET['id'] ) && is_array( $_GET['id'] ) ) {
+			$selected = $_GET['id'];
+		}
+		if( !empty( $_POST['id'] ) && is_array( $_POST['id'] ) ) {
+			foreach( $_POST['id'] as $optionId => $value ) {
+				if( is_array( $value ) && isset( $selected[$optionId] ) && is_array( $selected[$optionId] ) ) {
+					foreach( $value as $valueId => $valueText ) {
+						$selected[$optionId][$valueId] = $valueText;
+					}
+				} else {
+					$selected[$optionId] = $value;
+				}
+			}
+		}
+		return $selected;
+	}
+
+	// Cart field names for one purchased line. Numeric option values go on the
+	// query string. Text (and any saved free-text) stays off that string.
+	public static function reorderCartFields( $pAttributes ) {
+		$textType = defined( 'PRODUCTS_OPTIONS_TYPE_TEXT' ) ? (int)PRODUCTS_OPTIONS_TYPE_TEXT : 1;
+		$checkType = defined( 'PRODUCTS_OPTIONS_TYPE_CHECKBOX' ) ? (int)PRODUCTS_OPTIONS_TYPE_CHECKBOX : 3;
+		$fileType = defined( 'PRODUCTS_OPTIONS_TYPE_FILE' ) ? (int)PRODUCTS_OPTIONS_TYPE_FILE : 4;
+		$readType = defined( 'PRODUCTS_OPTIONS_TYPE_READONLY' ) ? (int)PRODUCTS_OPTIONS_TYPE_READONLY : 5;
+		$fields = array();
+		$query = array();
+		$scalar = array();
+		$skippedFile = FALSE;
+		if( is_array( $pAttributes ) ) {
+			foreach( $pAttributes as $attr ) {
+				if( empty( $attr['products_options_id'] ) || empty( $attr['products_options_values_id'] ) ) {
+					continue;
+				}
+				$optionId = (int)$attr['products_options_id'];
+				$valueId = (int)$attr['products_options_values_id'];
+				$type = isset( $attr['products_options_type'] ) ? (int)$attr['products_options_type'] : -1;
+				if( $type === $fileType ) {
+					$skippedFile = TRUE;
+					continue;
+				}
+				if( $type === $readType ) {
+					continue;
+				}
+				$text = isset( $attr['products_options_values_text'] ) ? (string)$attr['products_options_values_text'] : '';
+				if( $type === $textType || $text !== '' ) {
+					$fields[] = array( 'name' => 'id['.$optionId.']['.$valueId.']', 'value' => $text );
+					continue;
+				}
+				if( $type === $checkType ) {
+					$fields[] = array( 'name' => 'id['.$optionId.']['.$valueId.']', 'value' => (string)$valueId );
+					$query['id'][$optionId][$valueId] = $valueId;
+					continue;
+				}
+				$scalar[$optionId] = $valueId;
+			}
+		}
+		foreach( $scalar as $optionId => $valueId ) {
+			$fields[] = array( 'name' => 'id['.$optionId.']', 'value' => (string)$valueId );
+			$query['id'][$optionId] = $valueId;
+		}
+		return array(
+			'fields' => $fields,
+			'query' => !empty( $query ) ? http_build_query( $query ) : '',
+			'skipped_file' => $skippedFile,
+		);
+	}
+
+	// `id[opt]` and `id[opt][value]` names from reorderCartFields(), as addToCart() expects them.
+	public static function attributeHashFromReorderFields( $pFields ) {
+		$hash = array();
+		if( is_array( $pFields ) ) {
+			foreach( $pFields as $field ) {
+				if( empty( $field['name'] ) || !preg_match( '/^id\[(\d+)\](?:\[(\d+)\])?$/', $field['name'], $match ) ) {
+					continue;
+				}
+				if( isset( $match[2] ) && $match[2] !== '' ) {
+					$hash[$match[1]][$match[2]] = $field['value'];
+				} else {
+					$hash[$match[1]] = $field['value'];
+				}
+			}
+		}
+		return $hash;
+	}
+
+	// Add every purchased line to the cart at the ordered quantity and options.
+	public function addLinesToCart( $pCart ) {
+		$added = 0;
+		if( is_object( $pCart ) && is_array( $this->contents ) ) {
+			foreach( $this->contents as $line ) {
+				if( empty( $line['products_id'] ) ) {
+					continue;
+				}
+				$qty = !empty( $line['products_quantity'] ) ? $line['products_quantity'] : 1;
+				$attrs = 0;
+				if( !empty( $line['reorder']['fields'] ) ) {
+					$attrs = self::attributeHashFromReorderFields( $line['reorder']['fields'] );
+					if( empty( $attrs ) ) {
+						$attrs = 0;
+					}
+				}
+				$pCart->addToCart( $line['products_id'], $qty, $attrs );
+				$added++;
+			}
+		}
+		return $added;
+	}
+
+	public static function optionTypeMap() {
+		global $gBitDb;
+		$langId = !empty( $_SESSION['languages_id'] ) ? (int)$_SESSION['languages_id'] : 1;
+		$map = array();
+		if( $rows = $gBitDb->getAll( "SELECT `products_options_id`, `products_options_type` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `language_id`=?", array( $langId ) ) ) {
+			foreach( $rows as $row ) {
+				$map[$row['products_options_id']] = $row['products_options_type'];
+			}
+		}
+		return $map;
+	}
+
 	public static function getList( $pListHash ) {
 		global $gBitDb, $gBitSystem;
 		$bindVars = array();
@@ -167,6 +291,7 @@ class CommerceOrder extends CommerceOrderBase {
 						LEFT JOIN " . TABLE_ORDERS_TOTAL . " ot on (co.`orders_id` = ot.`orders_id` AND `class` = 'ot_total')
 					$whereSql
 					ORDER BY ".$gBitDb->convertSortmode( $pListHash['sort_mode'] );
+		$optionTypes = !empty( $pListHash['orders_products'] ) ? self::optionTypeMap() : array();
 		if( $rs = $gBitDb->query( $query, $bindVars, $pListHash['max_records'] ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$ret[$row['orders_id']] = $row;
@@ -189,9 +314,23 @@ class CommerceOrder extends CommerceOrderBase {
 							FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " copa
 							WHERE copa.`orders_id`=?";
 					$orderAttributes = $gBitDb->getAssoc( $sql, array( $row['orders_id'] ) );
+					$reorderRows = array();
 					foreach( array_keys( $orderAttributes ) as $ordersProductsAttId ) {
-						$ret[$row['orders_id']]['products'][$orderAttributes[$ordersProductsAttId]['orders_products_id']]['attributes'][$orderAttributes[$ordersProductsAttId]['products_options_values_id']] = $orderAttributes[$ordersProductsAttId]['products_options_values_name'];
-						
+						$att = $orderAttributes[$ordersProductsAttId];
+						$lineId = $att['orders_products_id'];
+						if( empty( $ret[$row['orders_id']]['products'][$lineId] ) ) {
+							continue;
+						}
+						$att['products_options_type'] = isset( $optionTypes[$att['products_options_id']] ) ? $optionTypes[$att['products_options_id']] : NULL;
+						$label = $att['products_options_values_name'];
+						if( !empty( $att['products_options_values_text'] ) ) {
+							$label = $att['products_options_values_text'];
+						}
+						$ret[$row['orders_id']]['products'][$lineId]['attributes'][$att['products_options_values_id']] = $label;
+						$reorderRows[$lineId][] = $att;
+					}
+					foreach( $reorderRows as $lineId => $lineAttributes ) {
+						$ret[$row['orders_id']]['products'][$lineId]['reorder'] = self::reorderCartFields( $lineAttributes );
 					}
 				}
 			}
@@ -336,6 +475,7 @@ class CommerceOrder extends CommerceOrderBase {
 				$orders_products = $this->mDb->query( $orders_products_query, array( $this->mOrdersId ) );
 
 				$orderAttributes = array();
+				$optionTypes = self::optionTypeMap();
 				$attributes_query = "SELECT opa.*, `orders_products_attributes_id` AS `products_attributes_id`
 									 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " opa
 									 WHERE `orders_id` = ?
@@ -381,14 +521,17 @@ class CommerceOrder extends CommerceOrderBase {
 						foreach( $orderAttributes[$orders_products->fields['orders_products_id']] as $attribute ) {
 							$this->contents[$productsKey]['attributes'][] = array( 'products_options_id' => $attribute['products_options_id'],
 																					'products_options_values_id' => $attribute['products_options_values_id'],
+																					'products_options_type' => (isset( $optionTypes[$attribute['products_options_id']] ) ? $optionTypes[$attribute['products_options_id']] : NULL),
 																					'products_options_name' => $attribute['products_options_name'],
 																					'products_options_values_name' => $attribute['products_options_values_name'],
+																					'products_options_values_text' => (isset( $attribute['products_options_values_text'] ) ? $attribute['products_options_values_text'] : NULL),
 																					'price_prefix' => $attribute['price_prefix'],
 																					'final_price' => $this->getOrderAttributePrice( $attribute, $this->contents[$productsKey] ),
 																					'price' => $attribute['options_values_price'],
 																					'orders_products_attributes_id' => $attribute['orders_products_attributes_id'] );
 
 						}
+						$this->contents[$productsKey]['reorder'] = self::reorderCartFields( $this->contents[$productsKey]['attributes'] );
 					}
 
 					$this->info['tax_groups']["{$this->contents[$productsKey]['tax']}"] = '1';
@@ -1162,6 +1305,9 @@ class CommerceOrder extends CommerceOrderBase {
 											'products_options_id' => $attrHash['products_options_id'],
 											'products_options_values_id' => $attrHash['products_options_values_id'],
 										);
+						if( !empty( $attrHash['products_options_values_text'] ) ) {
+							$bindVars['products_options_values_text'] = $attrHash['products_options_values_text'];
+						}
 						$this->mDb->associateInsert(TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $bindVars);
 					}
 					$this->products_ordered_attributes .= "\n\t" . $attrHash['products_options_name'] . ' ' . zen_decode_specialchars($this->contents[$cartItemKey]['attributes'][$j]['value']);

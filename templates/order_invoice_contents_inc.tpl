@@ -22,7 +22,7 @@
 		<ul class="">
 		{section loop=$ordersProduct.attributes name=a}
 			<li class="orders products attributes">
-				<small>{$ordersProduct.attributes[a].products_options_name}: {$ordersProduct.attributes[a].products_options_values_name}
+				<small>{$ordersProduct.attributes[a].products_options_name}: {if $ordersProduct.attributes[a].products_options_values_text}{$ordersProduct.attributes[a].products_options_values_text|escape}{else}{$ordersProduct.attributes[a].products_options_values_name}{/if}
 					{assign var=sumAttrPrice value=$ordersProduct.attributes[a].final_price*$ordersProduct.products_quantity}
 					{if $ordersProduct.attributes[a].price}({$ordersProduct.attributes[a].prefix}{$gCommerceCurrencies->format($sumAttrPrice,true,$order->info.currency,$order->info.currency_value)}){/if}
 					{if !empty($ordersProduct.attributes[a].product_attribute_is_free) && $ordersProduct.attributes[a].product_attribute_is_free == '1' and $ordersProduct.product_is_free == '1'}<span class="alert alert-warning">{tr}FREE{/tr}</span>{/if}
@@ -31,7 +31,11 @@
 		{/section}
 		</ul>
 		{/if}
+		{if $orderAgainForm}
+		{include file="bitpackage:bitcommerce/order_again_form_inc.tpl"}
+		{else}
 		<a class="btn btn-xs btn-primary" href="{$gBitProduct->getDisplayUrlFromHash($ordersProduct)}">Order Again</a>
+		{/if}
 		{$order->displayOrderProductData($opid)}
 	</td>
 
@@ -47,6 +51,14 @@
 	{/if}
 </tr>
 {/foreach}
+
+{if $orderAgainForm && $order->contents|@count > 1}
+<tr>
+	<td colspan="4" class="text-right">
+		{include file="bitpackage:bitcommerce/order_reorder_all_inc.tpl" reorderOrdersId=$order->mOrdersId}
+	</td>
+</tr>
+{/if}
 
 {if $order->getDownloads()}
 <tr><td>

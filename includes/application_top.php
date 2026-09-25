@@ -241,6 +241,16 @@ if (isset($_REQUEST['action'])) {
 				// errors - display popup message
 			}
 			break;
+		case 'reorder_order' :
+			if( $ordersId = BitBase::getIdParameter( $_REQUEST, 'orders_id' ) ) {
+				require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
+				$reorderOrder = new order( $ordersId );
+				if( $reorderOrder->isValid() && $reorderOrder->hasViewPermission() ) {
+					$reorderOrder->addLinesToCart( $gBitCustomer->mCart );
+				}
+			}
+			zen_redirect( zen_href_link( FILENAME_SHOPPING_CART ) );
+			break;
 		// performed by the 'buy now' button in product listings and review page
 		case 'buy_now' :			
 			if (isset($_REQUEST['products_id']) && $gBitProduct->isValid() ) {

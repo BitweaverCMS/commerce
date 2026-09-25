@@ -173,6 +173,35 @@ Staff can add or delete snapshot rows in `com_orders_products_att`.
 - Optional text for a value (`add_order_povid_text`) is trimmed as a string.
   Do not `trim( null )` when the field is omitted.
 
+## Order again
+
+Account history and the order receipt (`orderAgainForm`) replace the product
+link with an inline form. **Add To Cart** posts `action=add_product`,
+`products_id`, `cart_quantity`, and the line's `id` fields.
+When the order has more than one line, **Reorder All Items** posts
+`action=reorder_order` and `orders_id`. The viewer must be allowed to see
+that order. Each line is added to the current cart at its ordered quantity
+and options (`CommerceOrder::addLinesToCart()`). The cart is not emptied
+first. The browser is sent to the shopping cart.
+
+**Customize** posts that same body to the product URL. Numeric option values
+are also on the query string (`id[optionId]=valueId`, or
+`id[optionId][valueId]=valueId` for checkboxes). Free text stays in the POST
+body only.
+
+`CommerceOrder::reorderCartFields()` builds those fields from the line's
+attribute rows. File and read-only options are omitted. Text uses
+`products_options_values_text` when that column is set.
+`CommerceOrder::mergeRequestOptionIds()` merges query-string `id` with posted
+`id` (posted text wins per option). The product page passes that hash into
+`getProductOptions()` so dropdowns, radios, checkboxes, and text inputs match
+the purchased line. A later script reapplies the same hash after binding
+controls reset checkbox defaults.
+
+Checkout stores typed option text on `com_orders_products_att.products_options_values_text`
+(`X` / SQL `text`). Older rows leave it null, so only the option value id can
+be restored.
+
 ## Finding the order from a product
 
 `com_orders_products.products_id` links a project to purchased lines:
