@@ -242,6 +242,21 @@ class CommerceOrder extends CommerceOrderBase {
 		return $value;
 	}
 
+	/**
+	 * Telephone columns are stored with or without punctuation. Strip the
+	 * common separators so a digit search matches either form.
+	 *
+	 * @param string $pColumn qualified column, already quoted by the caller
+	 * @return string
+	 */
+	protected static function phoneDigitsExpr( $pColumn ) {
+		$expr = $pColumn;
+		foreach( array( '-', ' ', '(', ')', '+', '.' ) as $char ) {
+			$expr = "REPLACE($expr, '$char', '')";
+		}
+		return $expr;
+	}
+
 	public static function getList( $pListHash ) {
 		global $gBitDb, $gBitSystem;
 		$bindVars = array();
@@ -280,6 +295,17 @@ class CommerceOrder extends CommerceOrderBase {
 				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
 				$whereSql .= " LOWER(uu.`email`) like ? OR ";
 				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
+				foreach( array( 'customers_telephone', 'billing_telephone', 'delivery_telephone' ) as $phoneColumn ) {
+					$whereSql .= " co.`$phoneColumn` LIKE ? OR ";
+					$bindVars[] = '%'.$pListHash['search'].'%';
+				}
+				$phoneDigits = preg_replace( '/\D/', '', (string)$pListHash['search'] );
+				if( is_string( $phoneDigits ) && strlen( $phoneDigits ) >= 7 ) {
+					foreach( array( 'customers_telephone', 'billing_telephone', 'delivery_telephone' ) as $phoneColumn ) {
+						$whereSql .= ' '.self::phoneDigitsExpr( 'co.`'.$phoneColumn.'`' ).' LIKE ? OR ';
+						$bindVars[] = '%'.$phoneDigits.'%';
+					}
+				}
 				$totalBind = self::searchTotalBind( $pListHash['search'] );
 				if( $totalBind !== NULL ) {
 					$whereSql .= " co.`order_total` = ? OR ";

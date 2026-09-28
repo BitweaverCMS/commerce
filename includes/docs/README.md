@@ -26,7 +26,7 @@ Does not define deployment-specific products, production workflows, or storefron
 
 `CommerceOrder::getList()` with `orders_products` loads line items and attributes for the whole result, not once per order. Each line's thumbnail is `type_class::getImageUrlFromHash()` with `skip_thumb_refresh` set, so an existing thumb is used without loading the product. Display URLs still come from `getDisplayUrlFromHash()` on the line hash.
 
-Numeric terms in that search compare `co.orders_id` only when the term fits a signed 32-bit integer (`0`..`2147483647`), and `co.order_total` (`numeric(14,2)`) only when it fits 12 digits before the decimal and 2 after. A longer digit string (a phone number, for example) stays in the name and email `LIKE` clauses. Binding it to `orders_id` raises `value is out of range for type integer` and aborts the list.
+Numeric terms in that search compare `co.orders_id` only when the term fits a signed 32-bit integer (`0`..`2147483647`), and `co.order_total` (`numeric(14,2)`) only when it fits 12 digits before the decimal and 2 after. A longer digit string is also matched against `customers_telephone`, `billing_telephone`, and `delivery_telephone` (punctuation stripped when the term has at least 7 digits). Binding it to `orders_id` raises `value is out of range for type integer` and aborts the list.
 
 ## Product lists
 
