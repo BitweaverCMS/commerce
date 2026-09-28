@@ -29,6 +29,22 @@ Do not substitute `content_id` or `products_id` for `orders_id`.
 - `CommerceOrder::getObjectByOrdersProduct( $ordersProductsId )` — resolve
   order from a line id. Admin or owning customer only.
 
+## Order list search
+
+`CommerceOrder::getList()` name and email matches are `LIKE` on
+`delivery_name`, `billing_name`, `users_users.email`, and `real_name`.
+
+Equality filters are added only when the term fits the column:
+
+| Column | Type | Bound when |
+|--------|------|------------|
+| `co.orders_id` | `I4` (signed 32-bit) | Digits only, value `0`..`2147483647` |
+| `co.order_total` | `N(14,2)` | Optional leading minus, at most 12 digits before the decimal and 2 after |
+
+A longer all-digit string is not an order id. Do not bind it to `orders_id`
+or `order_total`; PostgreSQL aborts the statement with `value is out of range
+for type integer` (or numeric overflow) before the `LIKE` clauses can run.
+
 Load Commerce through `includes/bitcommerce_start_inc.php` after Kernel setup.
 Use `BITCOMMERCE_PKG_*` constants, not the `bookstore` directory name.
 

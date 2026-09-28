@@ -193,6 +193,55 @@ class CommerceOrder extends CommerceOrderBase {
 		return $map;
 	}
 
+	/**
+	 * Bind value for com_orders.orders_id (signed 32-bit). Longer digit strings
+	 * such as phone numbers overflow integer and abort the list query.
+	 *
+	 * @param string $pValue
+	 * @return string|null
+	 */
+	protected static function searchIdBind( $pValue ) {
+		$value = trim( (string)$pValue );
+		if( !preg_match( '/^\d+$/', $value ) ) {
+			return NULL;
+		}
+		$significant = ltrim( $value, '0' );
+		if( $significant === '' ) {
+			$significant = '0';
+		}
+		if( strlen( $significant ) > 10 || ( strlen( $significant ) === 10 && strcmp( $significant, '2147483647' ) > 0 ) ) {
+			return NULL;
+		}
+		return $value;
+	}
+
+	/**
+	 * Bind value for com_orders.order_total numeric(14,2): at most 12 digits
+	 * before the decimal point and 2 after.
+	 *
+	 * @param string $pValue
+	 * @return string|null
+	 */
+	protected static function searchTotalBind( $pValue ) {
+		$value = trim( (string)$pValue );
+		if( !preg_match( '/^-?\d+(?:\.\d+)?$/', $value ) ) {
+			return NULL;
+		}
+		$unsigned = ltrim( $value, '-' );
+		$parts = explode( '.', $unsigned, 2 );
+		$whole = ltrim( $parts[0], '0' );
+		if( $whole === '' ) {
+			$whole = '0';
+		}
+		if( strlen( $whole ) > 12 ) {
+			return NULL;
+		}
+		if( isset( $parts[1] ) && strlen( $parts[1] ) > 2 ) {
+			return NULL;
+		}
+		return $value;
+	}
+
 	public static function getList( $pListHash ) {
 		global $gBitDb, $gBitSystem;
 		$bindVars = array();
@@ -231,17 +280,15 @@ class CommerceOrder extends CommerceOrderBase {
 				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
 				$whereSql .= " LOWER(uu.`email`) like ? OR ";
 				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
-				if( is_numeric( $pListHash['search'] ) ) {
-					$whereSql .= " `order_total` = ? OR ";
-					$bindVars[] = $pListHash['search'];
-				}
-				if( is_numeric( $pListHash['search'] ) ) {
-					if( strpos( $pListHash['search'], '.' ) === FALSE ) {
-						$whereSql .= " co.`orders_id` = ? OR ";
-						$bindVars[] = $pListHash['search'];
-					}
+				$totalBind = self::searchTotalBind( $pListHash['search'] );
+				if( $totalBind !== NULL ) {
 					$whereSql .= " co.`order_total` = ? OR ";
-					$bindVars[] = $pListHash['search'];
+					$bindVars[] = $totalBind;
+				}
+				$idBind = self::searchIdBind( $pListHash['search'] );
+				if( $idBind !== NULL ) {
+					$whereSql .= " co.`orders_id` = ? OR ";
+					$bindVars[] = $idBind;
 				}
 				$whereSql .= " LOWER(uu.`real_name`) like ? ";
 				$bindVars[] = '%'.strtolower( $pListHash['search'] ).'%';
