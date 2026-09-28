@@ -26,6 +26,10 @@ Does not define deployment-specific products, production workflows, or storefron
 
 `CommerceOrder::getList()` with `orders_products` loads line items and attributes for the whole result, not once per order. Each line's thumbnail is `type_class::getImageUrlFromHash()` with `skip_thumb_refresh` set, so an existing thumb is used without loading the product. Display URLs still come from `getDisplayUrlFromHash()` on the line hash.
 
+## Product lists
+
+`CommerceProduct::getList()` accepts `skip_image_lookup`. When that flag is set, a row with an empty `products_image` does not call `type_class::getImageUrlFromHash()`. Display URL, URI, and price are still resolved from the type class. Callers that render `products_image_url` leave the flag unset.
+
 ## Admin presentation / APCu gotchas
 
 Commerce admin (for example `admin/orders.php` and `admin/includes/application_top.php`)

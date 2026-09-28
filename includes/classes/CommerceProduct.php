@@ -1470,7 +1470,8 @@ If a special exist * 10+9
 					$ret[$productId]['info_page'] = $ret[$productId]['type_handler'].'_info';
 					$ret[$productId]['display_url'] = $ret[$productId]['type_class']::getDisplayUrlFromHash( $ret[$productId] );
 					$ret[$productId]['display_uri'] = $ret[$productId]['type_class']::getDisplayUriFromHash( $ret[$productId] );
-					if( empty( $ret[$productId]['products_image'] ) ) {
+					// skip_image_lookup: an empty products_image is resolved by getImageUrlFromHash, which loads the product.
+					if( empty( $ret[$productId]['products_image'] ) && empty( $pListHash['skip_image_lookup'] ) ) {
 						$ret[$productId]['products_image_url'] = $ret[$productId]['type_class']::getImageUrlFromHash( $ret[$productId], $pListHash['thumbnail_size'] );
 					}
 
