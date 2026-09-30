@@ -23,10 +23,17 @@
 - Reuse registered package paths and URLs instead of hard-coded deployment
   paths.
 - Treat request parameters as untrusted even when a controller is admin-only.
-- Admin fluid layout: `setRequestConfig('layout-body', '-fluid')` only.
+- Admin fluid layout: `setRequestConfig('layout-body', '-fluid')` only. Do not
+  assign `$gBitSystem->mConfig['layout-body']`. APCu can serialize `BitSystem`
+  and poison later pages with `container-fluid`. Kernel
+  [core-runtime.md](../../../kernel/includes/docs/core-runtime.md) owns the mechanism.
 - Admin or checkout page-only Themes assets: `$pPersistent = FALSE` on load
-  helpers so they are not stored in the APCu `BitThemes` baseline. See
-  [README.md](README.md).
+  helpers so they are not stored in the APCu `BitThemes` baseline. A cache-miss
+  store of those assets was observed leaking admin CSS onto public Search HTML.
+- `CommerceProduct::getList()` accepts `skip_image_lookup`. When set, a row
+  with an empty `products_image` does not call
+  `type_class::getImageUrlFromHash()`. Display URL, URI, and price are still
+  resolved. Callers that render `products_image_url` leave the flag unset.
 - `{form}` (Themes `block.form.php`) HTML-escapes the `action` attribute.
   Do not put pre-escaped `&amp;` query parameters in that attribute (they
   become `&amp;amp;` and the param never reaches PHP). Prefer a hidden

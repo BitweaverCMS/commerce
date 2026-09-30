@@ -52,6 +52,12 @@ A longer all-digit string is not an order id. Do not bind it to `orders_id`
 or `order_total`; PostgreSQL aborts the statement with `value is out of range
 for type integer` (or numeric overflow) before the `LIKE` clauses can run.
 
+With `orders_products`, `getList()` loads line items and attributes for the
+whole result, not once per order. Each line's thumbnail is
+`type_class::getImageUrlFromHash()` with `skip_thumb_refresh` set, so an
+existing thumb is used without loading the product. Display URLs still come
+from `getDisplayUrlFromHash()` on the line hash.
+
 ## Status history
 
 Order history is the staff/customer audit log for an order. It is **not** a
