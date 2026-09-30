@@ -15,21 +15,29 @@
 </div>
 
 {else}
-<div id="attrlist" {$listStyle} >
+<div id="attrlist" class="attrlist" {$listStyle} >
 
 <a href="{$smarty.server.SCRIPT_NAME}?products_options_id=new" class="btn btn-default btn-xs">{tr}New Option{/tr}</a> <a href="{$smarty.server.SCRIPT_NAME}?products_options_values_id=new" class="btn btn-default btn-xs">{tr}New Option Value{/tr}</a>
+<span class="option-values-toolbar">
+	<button type="button" class="btn btn-default btn-xs js-option-values-show">{tr}Show all{/tr}</button>
+	<button type="button" class="btn btn-default btn-xs js-option-values-hide">{tr}Hide all{/tr}</button>
+</span>
 
 
-	<ul class="data">
+	<ul class="data option-list">
 	{foreach from=$optionsList key=optionId item=option}
-		<li class="item">
+		<li class="item option-item">
 			
 			<div class="floaticon">
 				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;action=edit">{booticon iname="fa-pen-to-square" iexplain="Edit Option"}</a>
 				<a href="{$smarty.server.SCRIPT_NAME}?products_options_id={$optionId}&amp;delete_attribute=1">{booticon iname="fa-trash" iexplain="Delete Option Attribute"}</a>
 			</div>
-			<strong>{$option.products_options_name}</strong> (ID {$optionId}, {$option.products_options_types_name}) 
-			<ul class="data">
+			{if $option.values}
+			<a class="option-toggle collapsed" role="button" data-toggle="collapse" href="#option-values-{$optionId}" aria-expanded="false" aria-controls="option-values-{$optionId}">{booticon iname="fa-caret-right" iclass="option-caret" iexplain="Show option values"}</a>
+			{/if}
+			<strong>{$option.products_options_name}</strong> (ID {$optionId}, {$option.products_options_types_name})
+			{if $option.values}<span class="option-value-count text-muted">{$option.values|@count}</span>{/if}
+			<ul class="data{if $option.values} option-values collapse{/if}"{if $option.values} id="option-values-{$optionId}"{/if}>
 			{if $option.values}
 					{foreach from=$option.values key=optionValueId item=optionValue}
 					<li class="item {cycle values="odd,even"}">
@@ -77,6 +85,19 @@
 		<li class="item">{tr}No Product Options.{/tr}</li>
 	{/foreach}
 	</ul>
+<script>
+{literal}
+jQuery(function ($) {
+	var $list = $('#attrlist');
+	$list.on('click', '.js-option-values-show', function () {
+		$list.find('.option-values').collapse('show');
+	});
+	$list.on('click', '.js-option-values-hide', function () {
+		$list.find('.option-values').collapse('hide');
+	});
+});
+{/literal}
+</script>
 </div>
 {/if}
 

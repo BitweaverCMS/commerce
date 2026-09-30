@@ -13,6 +13,13 @@ table.table tr.comments	td { border-top:none; font-size:80%; }
 
 .admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
 
+#attrlist .option-values-toolbar { margin-left: .5em; }
+#attrlist .option-toggle { color: inherit; text-decoration: none; margin-right: .25em; }
+#attrlist .option-caret { display: inline-block; width: 1em; text-align: center; transition: transform .15s linear; }
+#attrlist .option-toggle[aria-expanded="true"] .option-caret { transform: rotate(90deg); }
+#attrlist .option-value-count { margin-left: .35em; }
+#attrlist .option-values { margin-top: .35em; }
+
 .coupon.coupon-active{}
 .coupon.coupon-inactive	{ background-color:#ddd; }
 .coupon.coupon-pending	{ background-color:#ffe; }
