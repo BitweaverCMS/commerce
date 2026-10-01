@@ -147,6 +147,22 @@ comments stay NULL. A NULL comment with no tag still displays escaped. A
 NULL comment that already contains a tag displays as HTML, so existing
 shipping-change notes keep their prices without a backfill.
 
+## Payment adjustment
+
+`CommerceOrder::adjustOrder()` with `adjust_total=y` rewrites the order total.
+The history comment shows the entered amount in the order currency
+(`currencies::format()` with conversion off). `com_orders.order_total` and
+`com_orders_total.orders_value` stay in the default currency. The order page
+displays `orders_value * currency_value`.
+
+The Adjust Order Total amount is entered in the order currency. For a
+non-default currency, divide by that order's `currency_value` (the rate stored
+on the order, not the live currency row) before adding it to the previous
+total. Keep four decimal places on the adjustment `orders_value` (`N(15,4)`)
+so formatting back through the order rate rounds to the amount entered. Round
+`order_total` and the new `ot_total` row to the default currency's decimal
+places. The gateway still receives the entered amount in the order currency.
+
 ## Product log
 
 `com_products_log` (`TABLE_PRODUCTS_LOG`) is an append-only note list on a

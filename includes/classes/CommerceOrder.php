@@ -1257,6 +1257,24 @@ class CommerceOrder extends CommerceOrderBase {
 		return( $this->mOrdersId );
 	}
 
+	// Entered charge is in $pCurrency. com_orders.order_total and orders_value are DEFAULT_CURRENCY.
+	// A non-default order keeps its purchase currency_value; orders_value is N(15,4) so the
+	// order page (orders_value * that rate) rounds back to the amount that was entered.
+	protected function chargeAmountInDefaultCurrency( $pAmount, $pCurrency ) {
+		global $currencies;
+		$amount = (float)$pAmount;
+		$currency = $pCurrency ? $pCurrency : $this->getField( 'currency', DEFAULT_CURRENCY );
+		if( !$currency || $currency == DEFAULT_CURRENCY ) {
+			return round( $amount, (int)$currencies->get_decimal_places( DEFAULT_CURRENCY ) );
+		}
+		$orderCurrency = $this->getField( 'currency', DEFAULT_CURRENCY );
+		$orderRate = (float)$this->getField( 'currency_value' );
+		if( $currency == $orderCurrency && $orderRate > 0 ) {
+			return round( $amount / $orderRate, 4 );
+		}
+		return $currencies->convert( $amount, DEFAULT_CURRENCY, $currency );
+	}
+
 	public function adjustOrder( &$pPaymentParams, &$pSessionParams ) {
 
 		$ret = TRUE;
@@ -1305,14 +1323,17 @@ class CommerceOrder extends CommerceOrderBase {
 
 		if( $ret ) {
 			if( $adjustTotal = (BitBase::getParameter( $pPaymentParams, 'adjust_total' ) == 'y') ) {
-				// discounting or credits affected final order_total
-				$newTotal = (float)BitBase::getParameter( $pPaymentParams, 'charge_amount', 0 ) + (float)$this->getField( 'total' );
+				// The form amount is in the order currency. Totals are stored in DEFAULT_CURRENCY
+				// and the order page multiplies orders_value by the order's currency_value.
+				$chargeCurrency = BitBase::getParameter( $pPaymentParams, 'charge_currency', $this->getField( 'currency', DEFAULT_CURRENCY ) );
+				$baseAmount = $this->chargeAmountInDefaultCurrency( BitBase::getParameter( $pPaymentParams, 'charge_amount', 0 ), $chargeCurrency );
+				$newTotal = round( $baseAmount + (float)$this->getField( 'total' ), (int)$currencies->get_decimal_places( DEFAULT_CURRENCY ) );
 				$maxSortOrder = $this->mDb->getOne( "SELECT MAX(sort_order) + 1 FROM " . TABLE_ORDERS_TOTAL . " WHERE `orders_id`=? ", array( $this->mOrdersId ) );
 				$this->mDb->query( "UPDATE " . TABLE_ORDERS_TOTAL . " SET `class`=?, title=? WHERE `orders_id`=? AND class='ot_total'", array( 'ot_subtotal', 'Previous Total', $this->mOrdersId ) );
 				$sqlParams = array( 'orders_id' => $this->mOrdersId,
 									'title' => $adjustmentText, //$this->mOtClasses[$key]->title,
 									'text' => $adjustmentText,
-									'orders_value' => BitBase::getParameter( $pPaymentParams, 'charge_amount', 0),
+									'orders_value' => $baseAmount,
 									'class' => 'ot_subtotal',
 									'sort_order' => $maxSortOrder++,
 								  );
@@ -1320,7 +1341,7 @@ class CommerceOrder extends CommerceOrderBase {
 				$this->mDb->query( "UPDATE " . TABLE_ORDERS . " SET `order_total`=? WHERE `orders_id`=?", array( $newTotal, $this->mOrdersId ) );
 				$sqlParams = array( 'orders_id' => $this->mOrdersId,
 									'title' => 'Total',
-									'text' => $currencies->format( $newTotal, FALSE, BitBase::getParameter( $pPaymentParams, 'charge_currency' ) ),
+									'text' => $currencies->format( $newTotal, TRUE, $this->getField( 'currency', DEFAULT_CURRENCY ), $this->getField( 'currency_value' ) ),
 									'orders_value' => $newTotal,
 									'class' => 'ot_total',
 									'sort_order' => $maxSortOrder++
