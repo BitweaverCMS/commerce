@@ -2917,7 +2917,8 @@ Skip deleting of images for now
 					FROM " . TABLE_PRODUCT_TYPES . " cpt
 						LEFT JOIN " . TABLE_PRODUCTS . " cp ON(cpt.`type_id`=cp.`products_type`)
 					WHERE `$lookupKey`=?";
-			if( ($productTypes = $gBitDb->getRow( $sql, array( $lookupValue ), BIT_QUERY_CACHE_TIME )) ) {
+			// An empty result is cached for a day per host. A product created after that miss stays unloaded until the entry expires.
+			if( ($productTypes = $gBitDb->getRow( $sql, array( $lookupValue ) )) ) {
 				if( empty( $productTypes['type_class'] ) ) {
 					// this will create an object for an unknown product type. Prob. not a good idea
 					$productClass = get_called_class();
