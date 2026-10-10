@@ -392,27 +392,32 @@ class braintree_api extends CommercePluginPaymentCardBase {
 						$transactionId = $result->transaction->id;
 					}
 				} else if( $pPaymentParams['charge_amount'] < 0 ) {
-					// Process a refund
+					// Void a full credit that has not settled. Refund once it has.
+					// A partial credit waits until the charge is settling or settled.
 					if( $txnID = $this->getParameter( $pPaymentParams, 'payment_ref_id' ) ) {
 						$findResult = Braintree_Transaction::find($txnID);
+						$creditAmount = abs( (float)$pPaymentParams['charge_amount'] );
+						$txnStatus = (string)$findResult->status;
+						$chargeCurrency = (string)BitBase::getParameter( $pPaymentParams, 'charge_currency', BitBase::getParameter( $pPaymentParams, 'payment_currency', '' ) );
+						$fullCredit = self::creditMatchesTransaction( $creditAmount, $findResult->amount, $chargeCurrency, $findResult->currencyIsoCode );
+						$action = self::creditAction( $fullCredit, $txnStatus );
 
-						// Transaction is Settled so Refund
-						$creditAmount = abs( $pPaymentParams['charge_amount'] );
-
-						if( $creditAmount == $pOrder->info['total'] ) {
-							if( $findResult->status == "submitted_for_settlement" || $findResult->status == "authorized" ) {
-								// Transaction is pending so Void
-								$result = Braintree_Transaction::void($txnID);
-								$transactionId = $txnID;
-							} else if ($findResult->status == "settled" || $findResult->status == "settling") {
-								$result = Braintree_Transaction::refund( $txnID );
-								$transactionId = $result->transaction->refundId;
-							}
-						} else {
-							$result = Braintree_Transaction::refund( $txnID, $creditAmount );
+						if( $action === 'void' ) {
+							$result = Braintree_Transaction::void( $txnID );
+							$transactionId = $txnID;
+						} elseif( $action === 'refund' || $action === 'refund_partial' ) {
+							$result = ( $action === 'refund' ) ? Braintree_Transaction::refund( $txnID ) : Braintree_Transaction::refund( $txnID, $creditAmount );
 							if( $result->success ) {
 								$transactionId = $result->transaction->refundId;
 							}
+						} else {
+							$this->mErrors['process_payment'] = self::unsettledCreditMessage( $txnStatus, $fullCredit );
+							$logHash['payment_result'] = 'unsettled';
+							$logHash['payment_message'] = $this->mErrors['process_payment'];
+							$logHash['payment_status'] = $txnStatus;
+							$logHash['payment_ref_id'] = $txnID;
+							$result = new stdClass();
+							$result->success = FALSE;
 						}
 					} else {
 						$this->mErrors['process_payment'] = 'Credit parent transaction ID not set.';
@@ -527,11 +532,54 @@ class braintree_api extends CommercePluginPaymentCardBase {
 		return $ret;
 	}
 
+	/**
+	 * A credit matches the gateway charge when both amounts are within one cent
+	 * and the currencies agree. An empty currency does not block the match.
+	 */
+	public static function creditMatchesTransaction( $pCreditAmount, $pTransactionAmount, $pChargeCurrency, $pTransactionCurrency ) {
+		$chargeCurrency = (string)$pChargeCurrency;
+		$transactionCurrency = (string)$pTransactionCurrency;
+		$sameCurrency = ( $chargeCurrency === '' || $transactionCurrency === '' || strcasecmp( $chargeCurrency, $transactionCurrency ) === 0 );
+		$creditCents = (int)round( (float)$pCreditAmount * 100 );
+		$transactionCents = (int)round( (float)$pTransactionAmount * 100 );
+		return $sameCurrency && abs( $creditCents - $transactionCents ) <= 1;
+	}
+
+	/**
+	 * void, refund, refund_partial, or unsettled.
+	 * Voidable: authorized, submitted_for_settlement, settlement_pending.
+	 * Refundable: settling, settled.
+	 */
+	public static function creditAction( $pFullCredit, $pTransactionStatus ) {
+		$status = (string)$pTransactionStatus;
+		if( $pFullCredit && in_array( $status, array( 'authorized', 'submitted_for_settlement', 'settlement_pending' ), TRUE ) ) {
+			return 'void';
+		}
+		if( in_array( $status, array( 'settling', 'settled' ), TRUE ) ) {
+			return $pFullCredit ? 'refund' : 'refund_partial';
+		}
+		return 'unsettled';
+	}
+
+	public static function unsettledCreditMessage( $pStatus, $pFullCredit ) {
+		$status = (string)$pStatus;
+		if( !$pFullCredit && in_array( $status, array( 'authorized', 'submitted_for_settlement', 'settlement_pending' ), TRUE ) ) {
+			return 'This charge has not settled ('.$status.'). A partial credit has to be retried after settlement.';
+		}
+		if( $status === 'voided' ) {
+			return 'This charge is already voided.';
+		}
+		return 'This charge cannot be voided or refunded ('.$status.').';
+	}
+
 	public function classifyPaymentFailure( $pLogHash, $pErrors = NULL ) {
 		if( $pErrors === NULL ) {
 			$pErrors = $this->mErrors;
 		}
 		$code = (string)BitBase::getParameter( $pLogHash, 'payment_result', '' );
+		if( $code === 'unsettled' ) {
+			return 'customer';
+		}
 		if( $code === 'exception' ) {
 			return 'infra';
 		}
@@ -549,6 +597,9 @@ class braintree_api extends CommercePluginPaymentCardBase {
 			$pErrors = $this->mErrors;
 		}
 		$code = (string)BitBase::getParameter( $pLogHash, 'payment_result', '' );
+		if( $code === 'unsettled' ) {
+			return 'declined';
+		}
 		if( $pClass === 'infra' ) {
 			return 'infra';
 		}

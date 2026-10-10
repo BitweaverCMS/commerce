@@ -163,6 +163,16 @@ so formatting back through the order rate rounds to the amount entered. Round
 `order_total` and the new `ot_total` row to the default currency's decimal
 places. The gateway still receives the entered amount in the order currency.
 
+A negative Braintree adjustment looks up the selected transaction. The credit
+is full when it is within one cent of that transaction amount and the
+currencies match. A full credit is voided while the status is `authorized`,
+`submitted_for_settlement`, or `settlement_pending`, and refunded once the
+status is `settling` or `settled`. A partial credit is refunded only in those
+two settled statuses. A partial credit before settlement is not sent to the
+gateway. The refusal is stored with `payment_result` `unsettled` and
+classified as a customer decline, so it does not raise an infrastructure
+alert, and the order total is left unchanged.
+
 ## Product log
 
 `com_products_log` (`TABLE_PRODUCTS_LOG`) is an append-only note list on a
