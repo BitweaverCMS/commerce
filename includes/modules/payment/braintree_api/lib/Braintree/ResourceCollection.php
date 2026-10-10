@@ -48,7 +48,7 @@ class ResourceCollection implements Iterator
     /**
      * returns the current item when iterating with foreach
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->_items[$this->_index];
     }
@@ -65,7 +65,7 @@ class ResourceCollection implements Iterator
         return $page[0];
     }
 
-    public function key()
+    public function key(): mixed
     {
         return null;
     }
@@ -73,7 +73,7 @@ class ResourceCollection implements Iterator
     /**
      * advances to the next item in the collection when iterating with foreach
      */
-    public function next()
+    public function next(): void
     {
         ++$this->_index;
     }
@@ -81,7 +81,7 @@ class ResourceCollection implements Iterator
     /**
      * rewinds the testIterateOverResults collection to the first item when iterating with foreach
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->_batchIndex = 0;
         $this->_getNextPage();
@@ -90,7 +90,7 @@ class ResourceCollection implements Iterator
     /**
      * returns whether the current item is valid when iterating with foreach
      */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->_index == count($this->_items) && $this->_batchIndex < count($this->_ids)) {
             $this->_getNextPage();

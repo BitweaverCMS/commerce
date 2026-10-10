@@ -49,12 +49,12 @@ class PaginatedCollection implements Iterator
     /**
      * returns the current item when iterating with foreach
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->_items[($this->_index % $this->_pageSize)];
     }
 
-    public function key()
+    public function key(): mixed
     {
         return null;
     }
@@ -62,7 +62,7 @@ class PaginatedCollection implements Iterator
     /**
      * advances to the next item in the collection when iterating with foreach
      */
-    public function next()
+    public function next(): void
     {
         ++$this->_index;
     }
@@ -70,7 +70,7 @@ class PaginatedCollection implements Iterator
     /**
      * rewinds the collection to the first item when iterating with foreach
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->_index = 0;
         $this->_currentPage = 0;
@@ -82,7 +82,7 @@ class PaginatedCollection implements Iterator
     /**
      * returns whether the current item is valid when iterating with foreach
      */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->_currentPage == 0 || $this->_index % $this->_pageSize == 0 && $this->_index < $this->_totalItems)
         {

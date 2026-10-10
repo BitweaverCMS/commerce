@@ -94,7 +94,7 @@ class Collection implements Countable, IteratorAggregate, ArrayAccess
      * Implements countable
      * @return integer
      */
-    public function count()
+    public function count(): int
     {
         return count($this->_collection);
     }
@@ -105,7 +105,7 @@ class Collection implements Countable, IteratorAggregate, ArrayAccess
      * Implements IteratorAggregate
      * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new ArrayIterator($this->_collection);
     }
@@ -117,7 +117,7 @@ class Collection implements Countable, IteratorAggregate, ArrayAccess
      * @param integer $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set($offset, $value);
     }
@@ -128,7 +128,7 @@ class Collection implements Countable, IteratorAggregate, ArrayAccess
      * @see remove
      * @param integer $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $this->remove($offset);
     }
@@ -140,7 +140,7 @@ class Collection implements Countable, IteratorAggregate, ArrayAccess
      * @param integer $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
@@ -152,7 +152,7 @@ class Collection implements Countable, IteratorAggregate, ArrayAccess
      * @param integer $offset
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return $this->exists($offset);
     }
