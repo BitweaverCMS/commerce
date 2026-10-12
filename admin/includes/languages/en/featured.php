@@ -46,5 +46,4 @@ define('TEXT_INFO_STATUS_CHANGE', 'Status Change:');
 //define('TEXT_IMAGE_NONEXISTENT', 'No Image Exists');
 
 define('TEXT_INFO_HEADING_DELETE_FEATURED', 'Delete Featured');
-//define('TEXT_INFO_DELETE_INTRO', 'Are you sure you want to delete the featured product?');
 ?>

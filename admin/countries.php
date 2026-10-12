@@ -146,7 +146,7 @@ switch ($action) {
 		$heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_COUNTRY . '</b>');
 
 		$contents = array('form' => zen_draw_form_admin('countries', FILENAME_COUNTRIES, 'cID=' . $cInfo->countries_id . '&action=deleteconfirm'));
-		$contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
+		$contents[] = array('text' => tra( 'Are you sure you want to delete this country?' ));
 		$contents[] = array('text' => '<br><b>' . $cInfo->countries_name . '</b>');
 		$contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_delete.gif', IMAGE_UPDATE) . '&nbsp;<a href="' . zen_href_link_admin(FILENAME_COUNTRIES, 'cID=' . $cInfo->countries_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
 		break;

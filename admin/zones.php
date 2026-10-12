@@ -22,7 +22,8 @@
 
 require('includes/application_top.php');
 
-if( $action = BitBase::getParameter( $_GET, 'action' ) ) {
+$action = BitBase::getParameter( $_GET, 'action', '' );
+if( $action ) {
 	switch ($action) {
 		case 'insert':
 			$zone_country_id = zen_db_prepare_input($_POST['zone_country_id']);
@@ -74,10 +75,10 @@ require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 	<div class="col-md-8">
 		<table class="table table-hover">
 			<tr class="dataTableHeadingRow">
-				<td class="dataTableHeadingContent"><?php echo TABLE_HEADING_COUNTRY_NAME; ?></td>
-				<td class="dataTableHeadingContent"><?php echo TABLE_HEADING_ZONE_NAME; ?></td>
-				<td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_ZONE_CODE; ?></td>
-				<td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
+				<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_COUNTRY_NAME; ?></th>
+				<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_ZONE_NAME; ?></th>
+				<th class="dataTableHeadingContent text-center"><?php echo TABLE_HEADING_ZONE_CODE; ?></th>
+				<th class="dataTableHeadingContent text-right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
 			</tr>
 				<?php
 	$zones_query_raw = "select z.`zone_id`, c.`countries_id`, c.`countries_name`, z.`zone_name`, z.`zone_code`, z.`zone_country_id` from " . TABLE_ZONES . " z, " . TABLE_COUNTRIES . " c where z.`zone_country_id` = c.`countries_id` ORDER BY c.`countries_name`, z.`zone_name`";
@@ -95,9 +96,8 @@ require(DIR_FS_ADMIN_INCLUDES . 'header.php');
 ?>
 				<td class="dataTableContent"><?php echo $zones->fields['countries_name']; ?></td>
 				<td class="dataTableContent"><?php echo $zones->fields['zone_name']; ?></td>
-				<td class="dataTableContent" align="center"><?php echo $zones->fields['zone_code']; ?></td>
-				<td class="dataTableContent" align="right">
-				<?php if (isset($cInfo) && is_object($cInfo) && ($zones->fields['zone_id'] == $cInfo->zone_id) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . zen_href_link_admin(FILENAME_ZONES, 'cID=' . $zones->fields['zone_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+				<td class="dataTableContent text-center"><?php echo $zones->fields['zone_code']; ?></td>
+				<td class="dataTableContent text-right"><?php if (isset($cInfo) && is_object($cInfo) && ($zones->fields['zone_id'] == $cInfo->zone_id) ) { echo '<i class="fa fal fa-circle-arrow-right"></i>'; } else { echo '<a href="' . zen_href_link_admin(FILENAME_ZONES, 'cID=' . $zones->fields['zone_id']) . '"><i class="fa fal fa-info-circle"></i></a>'; } ?>&nbsp;</td>
 			</tr>
 <?php
 	$zones->MoveNext();
@@ -155,16 +155,10 @@ switch ($action) {
 }
 
 if ( (zen_not_null($heading)) && (zen_not_null($contents)) ) {
-	echo '						<td width="25%" valign="top">' . "\n";
-
 	$box = new box;
 	echo $box->infoBox($heading, $contents);
-
-	echo '						</td>' . "\n";
 }
 ?>
-					</tr>
-				</table>
 	</div>
 </div>
 
