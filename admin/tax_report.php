@@ -24,27 +24,49 @@ if( $deleteFiling !== '' ) {
 } elseif( $action === 'delete_payment' ) {
 	$feedback = $report->deletePayment( $_POST );
 }
-if( $action !== '' ) {
-	$gBitSmarty->assign( 'taxDueFeedback', CommerceTaxReport::dueFeedback() );
+
+// This page shows its own due summary; suppress the generic nav banner.
+$gBitSmarty->assign( 'taxDueFeedback', array() );
+
+// Which period's payment form is open on load: an explicit re-open link, or a
+// payment that failed validation so the typed values can be corrected.
+$reopenTitle = trim( (string)BitBase::getParameter( $_GET, 'reopen_title', '' ) );
+$reopenPeriod = trim( (string)BitBase::getParameter( $_GET, 'reopen_period', '' ) );
+$postedPayment = array();
+if( $action === 'record_payment' && !empty( $feedback['error'] ) ) {
+	$reopenTitle = trim( (string)BitBase::getParameter( $_POST, 'tax_title', '' ) );
+	$reopenPeriod = trim( (string)BitBase::getParameter( $_POST, 'period_start', '' ) );
+	foreach( array( 'amount', 'paid_on', 'reference', 'note' ) as $field ) {
+		$postedPayment[$field] = (string)BitBase::getParameter( $_POST, $field, '' );
+	}
 }
 
-$year = (int)BitBase::getParameter( $_REQUEST, 'year', date( 'Y' ) );
-if( $year < 1990 || $year > (int)date( 'Y' ) ) {
-	$year = (int)date( 'Y' );
+$yearMin = 2005;
+$yearMax = (int)date( 'Y' );
+$year = (int)BitBase::getParameter( $_REQUEST, 'year', $yearMax );
+if( $year < 1990 || $year > $yearMax ) {
+	$year = $yearMax;
 }
 $yearChoices = array();
-for( $choice = (int)date( 'Y' ); $choice >= 2005; $choice-- ) {
+for( $choice = $yearMax; $choice >= $yearMin; $choice-- ) {
 	$yearChoices[$choice] = (string)$choice;
 }
 
+$view = CommerceTaxReport::groupReport( $report->getReport( $year ) );
+
 $gBitSmarty->assign( 'feedback', $feedback );
 $gBitSmarty->assign( 'taxYear', $year );
+$gBitSmarty->assign( 'taxYearMin', $yearMin );
+$gBitSmarty->assign( 'taxYearMax', $yearMax );
 $gBitSmarty->assign( 'taxYearChoices', $yearChoices );
-$gBitSmarty->assign( 'taxReportRows', $report->getReport( $year ) );
+$gBitSmarty->assign( 'taxReportGroups', $view['groups'] );
+$gBitSmarty->assign( 'taxTotals', $view['totals'] );
+$gBitSmarty->assign( 'taxDue', $view['due'] );
 $gBitSmarty->assign( 'taxFilings', $report->scheduleRows() );
 $gBitSmarty->assign( 'taxUnscheduledTitles', $report->unscheduledTitles() );
-$gBitSmarty->assign( 'taxReopenTitle', trim( (string)BitBase::getParameter( $_GET, 'reopen_title', '' ) ) );
-$gBitSmarty->assign( 'taxReopenPeriod', trim( (string)BitBase::getParameter( $_GET, 'reopen_period', '' ) ) );
+$gBitSmarty->assign( 'taxReopenTitle', $reopenTitle );
+$gBitSmarty->assign( 'taxReopenPeriod', $reopenPeriod );
+$gBitSmarty->assign( 'taxPostedPayment', $postedPayment );
 $gBitSmarty->assign( 'taxFrequencies', CommerceTaxReport::frequencyChoices() );
 $gBitSmarty->assign( 'taxCycleMonths', CommerceTaxReport::monthChoices() );
 

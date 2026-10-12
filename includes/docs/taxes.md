@@ -35,4 +35,21 @@ A period is due when it has ended, it starts on or after `track_from`, tax colle
 
 `com_tax_payments` stores `amount`, `paid_on`, `reference`, `note`, and the user who recorded it. Unique on `(tax_title, period_start)`. A due period shows the payment form. A paid or closed period shows **Re-open**, which loads that form so the amount, date, reference, or note can be corrected. Saving again updates that period. Nothing is sent to a tax authority.
 
-Bookstore admin pages that use the commerce nav show `alert-danger` feedback while any of the last eight tracked periods for a title is due.
+Bookstore admin pages that use the commerce nav show `alert-danger` feedback while any of the last eight tracked periods for a title is due. The Sales Tax page assigns that feedback empty and shows its own due summary instead, with a link to each due row.
+
+## Page layout
+
+`admin_tax_report.tpl` is a ledger for one year, picked with the year control in the heading (previous, select, next). `CommerceTaxReport::groupReport()` turns `getReport()` rows into what the template needs: rows grouped by period, year totals, and the due list. Rows are grouped under a period heading. A quarter heading is the `YYYY-Qn` label with its date range; a calendar month is named (`September 2026`); any other span is its date range. The Payment column holds the status and the action for the row:
+
+| Status | Shown | Action |
+|---|---|---|
+| `open` | end date | none |
+| `due` | due since date | **Record payment** opens the form |
+| `paid` | amount, paid-on date, reference, note, and the difference from tax collected when they differ | **Edit** opens the form with the saved values |
+| `closed` | `closed_reason`: `unscheduled`, `untracked` (before `track_from`), or `no_tax` | **Add payment** opens the form; an unscheduled title gets no form because `recordPayment()` rejects it |
+
+The payment form is a collapsed row under its period row (Bootstrap collapse). It is open on load for the row named by `reopen_title` and `reopen_period`, and for the row a rejected `record_payment` post targeted, with the posted values filled back in (`taxPostedPayment`). The amount defaults to tax collected. The footer row totals subtotal, tax collected, paid, and due for the year.
+
+Filing schedules sit in a panel under the ledger. **Add schedule** reveals the form for an unscheduled title. Delete is the trash icon on the row and asks for confirmation. Page script keeps the cycle month in step with the frequency: quarterly offers months 1–3 only, monthly hides the month.
+
+Styles are in `css/admin.css` under `.tax-report`.

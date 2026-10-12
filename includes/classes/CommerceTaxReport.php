@@ -240,6 +240,7 @@ class CommerceTaxReport extends BitBase {
 					'subtotal' => $sums['subtotal'],
 					'tax_collected' => $sums['tax_collected'],
 					'status' => $status,
+					'closed_reason' => ( $status === 'closed' ? $this->closedReason( $period, $track, $sums['tax_collected'], isset( $schedules[$title] ) ) : '' ),
 					'payment' => $payment,
 					'can_pay' => ( $status === 'due' || $status === 'paid' ),
 					'rate_url' => $this->rateUrl( $title ),
@@ -248,6 +249,69 @@ class CommerceTaxReport extends BitBase {
 		}
 		usort( $rows, array( $this, 'sortReportRows' ) );
 		return $rows;
+	}
+
+	/**
+	 * Arrange getReport() rows for display: rows grouped by filing period,
+	 * display dates, payment variance, year totals, and the due list.
+	 */
+	public static function groupReport( $pRows ) {
+		$groups = array();
+		$due = array();
+		$totals = array(
+			'subtotal' => 0.0,
+			'tax_collected' => 0.0,
+			'paid' => 0.0,
+			'paid_count' => 0,
+			'due' => 0.0,
+			'due_count' => 0,
+			'row_count' => 0,
+		);
+		foreach( $pRows as $i => $row ) {
+			$row['index'] = $i;
+			$row['ends_label'] = self::displayDate( $row['period_end'] );
+			$row['due_since_label'] = self::displayDate( self::dayAfter( $row['period_end'] ) );
+			$display = self::displayPeriod( $row['period_start'], $row['period_end'], $row['label'] );
+			$row['display_label'] = $display['label'];
+			$row['variance'] = NULL;
+			if( !empty( $row['payment'] ) ) {
+				$row['payment']['paid_on_label'] = ( $row['payment']['paid_on'] === '' ? '' : self::displayDate( $row['payment']['paid_on'], TRUE ) );
+				$row['payment']['amount_input'] = number_format( (float)$row['payment']['amount'], 2, '.', '' );
+				$variance = round( (float)$row['payment']['amount'] - (float)$row['tax_collected'], 2 );
+				if( abs( $variance ) >= 0.005 ) {
+					$row['variance'] = $variance;
+				}
+				$totals['paid'] += (float)$row['payment']['amount'];
+				$totals['paid_count']++;
+			}
+			if( $row['status'] === 'due' ) {
+				$totals['due'] += (float)$row['tax_collected'];
+				$totals['due_count']++;
+				$due[] = $row;
+			}
+			$totals['subtotal'] += (float)$row['subtotal'];
+			$totals['tax_collected'] += (float)$row['tax_collected'];
+			$totals['row_count']++;
+			$key = $row['period_start'].'|'.$row['period_end'];
+			if( !isset( $groups[$key] ) ) {
+				$groups[$key] = array(
+					'label' => $display['label'],
+					'period_start' => $row['period_start'],
+					'period_end' => $row['period_end'],
+					'range' => $display['range'],
+					'rows' => array(),
+				);
+			}
+			$groups[$key]['rows'][] = $row;
+		}
+		foreach( array( 'subtotal', 'tax_collected', 'paid', 'due' ) as $field ) {
+			$totals[$field] = round( $totals[$field], 2 );
+		}
+		return array(
+			'groups' => array_values( $groups ),
+			'totals' => $totals,
+			'due' => $due,
+		);
 	}
 
 	public function getDuePeriods() {
@@ -666,6 +730,40 @@ class CommerceTaxReport extends BitBase {
 			return 'closed';
 		}
 		return 'due';
+	}
+
+	private function closedReason( $pPeriod, $pTrackFrom, $pTax, $pScheduled ) {
+		if( !$pScheduled || $pTrackFrom === '' ) {
+			return 'unscheduled';
+		}
+		if( $pPeriod['period_start'] < $pTrackFrom ) {
+			return 'untracked';
+		}
+		if( $this->moneyIsZero( $pTax ) ) {
+			return 'no_tax';
+		}
+		return '';
+	}
+
+	/**
+	 * Heading for a period: a quarter label keeps its date range beside it; a
+	 * calendar month is named; any other span is shown as its date range only.
+	 */
+	private static function displayPeriod( $pStart, $pEnd, $pLabel ) {
+		$range = self::displayDate( $pStart ).' – '.self::displayDate( $pEnd, TRUE );
+		if( preg_match( '/^\d{4}-Q[1-4]$/', $pLabel ) ) {
+			return array( 'label' => $pLabel, 'range' => $range );
+		}
+		$start = new DateTimeImmutable( $pStart );
+		if( $start->format( 'd' ) === '01' && $pEnd === $start->format( 'Y-m-t' ) ) {
+			return array( 'label' => $start->format( 'F Y' ), 'range' => '' );
+		}
+		return array( 'label' => $range, 'range' => '' );
+	}
+
+	private static function displayDate( $pDate, $pWithYear = FALSE ) {
+		$date = new DateTimeImmutable( substr( (string)$pDate, 0, 10 ) );
+		return $date->format( $pWithYear ? 'M j, Y' : 'M j' );
 	}
 
 	private function normalizeFrequency( $pFrequency ) {
