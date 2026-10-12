@@ -11,6 +11,8 @@ class CommerceTaxReport extends BitBase {
 
 	private static $tablesReady = FALSE;
 
+	private $rateUrls = NULL;
+
 	public static function dueFeedback() {
 		$report = new CommerceTaxReport();
 		$due = $report->getDuePeriods();
@@ -74,6 +76,43 @@ class CommerceTaxReport extends BitBase {
 		return array( 'success' => tra( 'Filing schedule saved.' ) );
 	}
 
+	public function addFiling( $pParameters ) {
+		$this->prepare();
+		$title = trim( (string)BitBase::getParameter( $pParameters, 'tax_title', '' ) );
+		if( $title === '' || !in_array( $title, $this->knownTitles(), TRUE ) ) {
+			return array( 'error' => tra( 'Unknown tax title.' ) );
+		}
+		$existing = $this->mDb->getOne( "SELECT `tax_filing_id` FROM ".TABLE_TAX_FILING." WHERE `tax_title` = ?", array( $title ) );
+		if( $existing ) {
+			return array( 'error' => tra( 'That tax title already has a schedule.' ) );
+		}
+		$frequency = $this->normalizeFrequency( BitBase::getParameter( $pParameters, 'frequency', '' ) );
+		$month = $this->normalizeMonth( BitBase::getParameter( $pParameters, 'cycle_start_month', 1 ), $frequency );
+		$track = $this->normalizeDate( BitBase::getParameter( $pParameters, 'track_from', '' ) );
+		if( $frequency === NULL || $month === NULL ) {
+			return array( 'error' => tra( 'Filing schedule was not saved.' ) );
+		}
+		$this->mDb->query(
+			"INSERT INTO ".TABLE_TAX_FILING." (`tax_title`, `frequency`, `cycle_start_month`, `track_from`) VALUES (?, ?, ?, ?)",
+			array( $title, $frequency, $month, $track )
+		);
+		return array( 'success' => tra( 'Filing schedule added.' ) );
+	}
+
+	public function deleteFiling( $pParameters ) {
+		$this->prepare();
+		$title = trim( (string)BitBase::getParameter( $pParameters, 'tax_title', '' ) );
+		if( $title === '' ) {
+			return array( 'error' => tra( 'Filing schedule was not deleted.' ) );
+		}
+		$existing = $this->mDb->getOne( "SELECT `tax_filing_id` FROM ".TABLE_TAX_FILING." WHERE `tax_title` = ?", array( $title ) );
+		if( !$existing ) {
+			return array( 'error' => tra( 'Filing schedule was not deleted.' ) );
+		}
+		$this->mDb->query( "DELETE FROM ".TABLE_TAX_FILING." WHERE `tax_title` = ?", array( $title ) );
+		return array( 'success' => tra( 'Filing schedule deleted.' ) );
+	}
+
 	public function recordPayment( $pParameters ) {
 		$this->prepare();
 		$parsed = $this->paymentPeriod( $pParameters );
@@ -131,24 +170,26 @@ class CommerceTaxReport extends BitBase {
 
 	public function scheduleRows() {
 		$this->prepare();
-		$saved = array();
-		foreach( $this->filingRows() as $row ) {
-			$saved[$row['tax_title']] = $row;
-		}
-		$rows = array();
-		foreach( $this->knownTitles() as $title ) {
-			if( isset( $saved[$title] ) ) {
-				$rows[] = $saved[$title];
-			} else {
-				$rows[] = array(
-					'tax_title' => $title,
-					'frequency' => 'quarterly',
-					'cycle_start_month' => 1,
-					'track_from' => '',
-				);
-			}
+		$rows = $this->filingRows();
+		foreach( array_keys( $rows ) as $i ) {
+			$rows[$i]['rate_url'] = $this->rateUrl( $rows[$i]['tax_title'] );
 		}
 		return $rows;
+	}
+
+	public function unscheduledTitles() {
+		$this->prepare();
+		$saved = array();
+		foreach( $this->filingRows() as $row ) {
+			$saved[$row['tax_title']] = TRUE;
+		}
+		$titles = array();
+		foreach( $this->knownTitles() as $title ) {
+			if( empty( $saved[$title] ) ) {
+				$titles[$title] = $title;
+			}
+		}
+		return $titles;
 	}
 
 	public function getReport( $pYear ) {
@@ -201,6 +242,7 @@ class CommerceTaxReport extends BitBase {
 					'status' => $status,
 					'payment' => $payment,
 					'can_pay' => ( $status === 'due' || $status === 'paid' ),
+					'rate_url' => $this->rateUrl( $title ),
 				);
 			}
 		}
@@ -417,6 +459,10 @@ class CommerceTaxReport extends BitBase {
 	}
 
 	private function seedRecentFilings() {
+		$existing = (int)$this->mDb->getOne( "SELECT COUNT(*) FROM ".TABLE_TAX_FILING );
+		if( $existing > 0 ) {
+			return;
+		}
 		$current = self::periodContaining( date( 'Y-m-d' ), 'quarterly', 1 );
 		$previous = self::previousPeriod( $current, 'quarterly', 1 );
 		$titles = $this->mDb->query(
@@ -456,6 +502,23 @@ class CommerceTaxReport extends BitBase {
 			$rs->MoveNext();
 		}
 		return $titles;
+	}
+
+	private function rateUrl( $pTitle ) {
+		if( $this->rateUrls === NULL ) {
+			$this->rateUrls = array();
+			$rs = $this->mDb->query(
+				"SELECT `tax_rates_id`, `tax_description` FROM ".TABLE_TAX_RATES." WHERE `tax_description` IS NOT NULL AND `tax_description` <> '' ORDER BY `tax_rates_id`"
+			);
+			while( $rs && !$rs->EOF ) {
+				$title = $rs->fields['tax_description'];
+				if( !isset( $this->rateUrls[$title] ) ) {
+					$this->rateUrls[$title] = zen_href_link_admin( FILENAME_TAX_RATES, 'page=1&tID='.(int)$rs->fields['tax_rates_id'] );
+				}
+				$rs->MoveNext();
+			}
+		}
+		return isset( $this->rateUrls[$pTitle] ) ? $this->rateUrls[$pTitle] : '';
 	}
 
 	private function filingRows() {
