@@ -57,6 +57,7 @@
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">{tr}Reports{/tr} <b class="caret"></b></a>
                 <ul class="dropdown-menu">
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}sales_and_income.php">{tr}Sales and Income{/tr}</a></li>
+					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}tax_report.php">{tr}Sales Tax{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}stats_products_viewed.php">{tr}Products Viewed{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}stats_products_types.php">{tr}Products Sales{/tr}</a></li>
 					<li><a href="{$smarty.const.DIR_WS_HTTPS_ADMIN}stats_products_purchased.php">{tr}Products Purchased{/tr}</a></li>

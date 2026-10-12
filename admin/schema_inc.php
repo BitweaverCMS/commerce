@@ -989,6 +989,29 @@ BITCOMMERCE_INSTALL_PREFIX.'com_tax_rates' => "
   CONSTRAINT ', CONSTRAINT `tax_rates_class_ref` FOREIGN KEY ( `tax_class_id` ) REFERENCES `".BITCOMMERCE_DB_PREFIX."com_tax_class`( `tax_class_id` )'
 ",
 
+BITCOMMERCE_INSTALL_PREFIX.'com_tax_filing' => "
+  tax_filing_id I4 PRIMARY AUTO,
+  tax_title C(255) NOTNULL,
+  frequency C(16) NOTNULL,
+  cycle_start_month I1 NOTNULL,
+  track_from D,
+  last_modified T DEFTIMESTAMP,
+  date_added T DEFTIMESTAMP
+",
+
+BITCOMMERCE_INSTALL_PREFIX.'com_tax_payments' => "
+  tax_payment_id I4 PRIMARY AUTO,
+  tax_title C(255) NOTNULL,
+  period_start D NOTNULL,
+  period_end D NOTNULL,
+  amount N(15,4),
+  paid_on D,
+  reference C(64),
+  note X,
+  user_id I4,
+  date_added T DEFTIMESTAMP
+",
+
 BITCOMMERCE_INSTALL_PREFIX.'com_template_select' => "
   template_id I4 PRIMARY AUTO,
   template_dir C(64),
@@ -1263,6 +1286,8 @@ $indices = array (
   'specials_date_avail_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_specials', 'cols' => 'specials_date_available', 'opts' => NULL),
   'tax_rates_zone_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_tax_rates', 'cols' => 'tax_zone_id', 'opts' => NULL),
   'tax_rates_class_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_tax_rates', 'cols' => 'tax_class_id', 'opts' => NULL),
+  'tax_filing_title_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_tax_filing', 'cols' => 'tax_title', 'opts' => array( 'UNIQUE' )),
+  'tax_payment_period_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_tax_payments', 'cols' => 'tax_title, period_start', 'opts' => array( 'UNIQUE' )),
   'whos_ip_address_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_whos_online', 'cols' => 'ip_address', 'opts' => NULL),
   'whos_session_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_whos_online', 'cols' => 'session_id', 'opts' => NULL),
   'whos_customer_id_zen_idx' => array( 'table' => BITCOMMERCE_INSTALL_PREFIX.'com_whos_online', 'cols' => 'customer_id', 'opts' => NULL),

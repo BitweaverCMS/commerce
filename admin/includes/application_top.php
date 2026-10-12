@@ -199,6 +199,9 @@ require_once(DIR_WS_CLASSES . 'message_stack.php');
 $messageStack = new messageStack;
 $gBitSmarty->assignByRef( 'messageStack', $messageStack );
 
+require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceTaxReport.php' );
+$gBitSmarty->assign( 'taxDueFeedback', CommerceTaxReport::dueFeedback() );
+
 //	split-page-results
 //	require_once(DIR_FS_CATALOG . DIR_WS_CLASSES . 'split_page_results.php');
 

@@ -108,6 +108,8 @@ define('TABLE_SUPPLIERS_INFO', '`'.BITCOMMERCE_DB_PREFIX . 'com_suppliers_info`'
 define('TABLE_TEMPLATE_SELECT', '`'.BITCOMMERCE_DB_PREFIX . 'com_template_select`');
 define('TABLE_TAX_CLASS', '`'.BITCOMMERCE_DB_PREFIX . 'com_tax_class`');
 define('TABLE_TAX_RATES', '`'.BITCOMMERCE_DB_PREFIX . 'com_tax_rates`');
+define('TABLE_TAX_FILING', '`'.BITCOMMERCE_DB_PREFIX . 'com_tax_filing`');
+define('TABLE_TAX_PAYMENTS', '`'.BITCOMMERCE_DB_PREFIX . 'com_tax_payments`');
 define('TABLE_GEO_ZONES', '`'.BITCOMMERCE_DB_PREFIX . 'com_geo_zones`');
 define('TABLE_ZONES_TO_GEO_ZONES', '`'.BITCOMMERCE_DB_PREFIX . 'com_zones_to_geo_zones`');
 define('TABLE_UPGRADE_EXCEPTIONS', '`'.BITCOMMERCE_DB_PREFIX . 'com_upgrade_exceptions`');
