@@ -3,29 +3,11 @@
 
 <div class="tax-report">
 
-<div class="tax-report-head clearfix">
-	{form method="get" class="form-inline tax-year-nav" id="tax-year-nav"}
-		{if $taxYear > $taxYearMin}
-			<a class="btn btn-default btn-sm" href="?year={$taxYear-1}" title="{tr}Previous year{/tr}"><i class="fa fal fa-chevron-left"></i><span class="sr-only">{tr}Previous year{/tr}</span></a>
-		{else}
-			<span class="btn btn-default btn-sm disabled"><i class="fa fal fa-chevron-left"></i></span>
-		{/if}
-		<label class="sr-only" for="tax-year">{tr}Year{/tr}</label>
-		{html_options class="form-control input-sm" id="tax-year" name="year" options=$taxYearChoices selected=$taxYear onchange="this.form.submit()"}
-		{if $taxYear < $taxYearMax}
-			<a class="btn btn-default btn-sm" href="?year={$taxYear+1}" title="{tr}Next year{/tr}"><i class="fa fal fa-chevron-right"></i><span class="sr-only">{tr}Next year{/tr}</span></a>
-		{else}
-			<span class="btn btn-default btn-sm disabled"><i class="fa fal fa-chevron-right"></i></span>
-		{/if}
-		<noscript><button class="btn btn-default btn-sm" type="submit">{tr}Show{/tr}</button></noscript>
-	{/form}
-	<h1>{tr}Sales Tax{/tr}</h1>
-	<p class="tax-lede">{tr}Tax collected on completed orders, grouped by each tax's filing period. A period is due the day after it ends until its payment is recorded here.{/tr}</p>
-	<div class="tax-how">
-		<a href="#tax-how-body" data-toggle="collapse" aria-expanded="false" aria-controls="tax-how-body"><i class="fa fal fa-circle-info"></i> {tr}How these amounts are calculated{/tr}</a>
-		<div id="tax-how-body" class="collapse tax-how-body">
-			{tr}Tax collected sums the tax line of every order whose status is past cancelled; Subtotal sums those orders' merchandise subtotals. Amounts are in the default currency. A period is marked due only when it has ended, it starts on or after the schedule's Track from date, and it has tax collected but no recorded payment. Recording a payment is bookkeeping for this report; nothing is sent to a tax authority.{/tr}
-		</div>
+<div class="tax-report-head">
+	<h1>{tr}Sales Tax{/tr} <a href="#tax-help" class="tax-help-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="tax-help" title="{tr}About this report{/tr}"><i class="fa fal fa-circle-question"></i><span class="sr-only">{tr}About this report{/tr}</span></a></h1>
+	<div id="tax-help" class="collapse tax-help">
+		<p>{tr}Tax collected on completed orders, grouped by each tax's filing period. A period is due the day after it ends until its payment is recorded here.{/tr}</p>
+		<p>{tr}Tax collected sums the tax line of every order whose status is past cancelled; Subtotal sums those orders' merchandise subtotals. Amounts are in the default currency. A period is marked due only when it has ended, it starts on or after the schedule's Track from date, and it has tax collected but no recorded payment. Recording a payment is bookkeeping for this report; nothing is sent to a tax authority.{/tr}</p>
 	</div>
 </div>
 
@@ -47,7 +29,23 @@
 <table class="table table-condensed tax-ledger">
 	<thead>
 		<tr>
-			<th>{tr}Tax{/tr}</th>
+			<th class="tax-year-cell">
+				{form method="get" class="form-inline tax-year-nav" id="tax-year-nav"}
+					{if $taxYear > $taxYearMin}
+						<a class="btn btn-link btn-xs" href="?year={$taxYear-1}" title="{tr}Previous year{/tr}"><i class="fa fal fa-chevron-left"></i><span class="sr-only">{tr}Previous year{/tr}</span></a>
+					{else}
+						<span class="btn btn-link btn-xs disabled"><i class="fa fal fa-chevron-left"></i></span>
+					{/if}
+					<label class="sr-only" for="tax-year">{tr}Year{/tr}</label>
+					{html_options class="form-control input-sm" id="tax-year" name="year" options=$taxYearChoices selected=$taxYear onchange="this.form.submit()"}
+					{if $taxYear < $taxYearMax}
+						<a class="btn btn-link btn-xs" href="?year={$taxYear+1}" title="{tr}Next year{/tr}"><i class="fa fal fa-chevron-right"></i><span class="sr-only">{tr}Next year{/tr}</span></a>
+					{else}
+						<span class="btn btn-link btn-xs disabled"><i class="fa fal fa-chevron-right"></i></span>
+					{/if}
+					<noscript><button class="btn btn-default btn-xs" type="submit">{tr}Show{/tr}</button></noscript>
+				{/form}
+			</th>
 			<th class="text-right">{tr}Subtotal{/tr}</th>
 			<th class="text-right">{tr}Tax collected{/tr}</th>
 			<th>{tr}Payment{/tr}</th>
@@ -149,17 +147,28 @@
 
 <div class="panel panel-default tax-schedules" id="tax-schedules">
 	<div class="panel-heading clearfix">
-		{if $taxUnscheduledTitles}
-		<button type="button" class="btn btn-default btn-xs pull-right" data-toggle="collapse" data-target="#new-filing-schedule" aria-expanded="false" aria-controls="new-filing-schedule"><i class="fa fal fa-plus"></i> {tr}Add schedule{/tr}</button>
-		{/if}
+		<button type="button" class="btn btn-default btn-xs pull-right tax-schedules-toggle" data-toggle="collapse" data-target="#tax-schedules-editor" aria-expanded="{if $taxSchedulesOpen}true{else}false{/if}" aria-controls="tax-schedules-editor"><i class="fa fal fa-pen-to-square"></i> {tr}Edit schedules{/tr}</button>
 		<h2 class="panel-title">{tr}Filing schedules{/tr}</h2>
 	</div>
-	<div class="panel-body tax-schedules-help">
-		{tr}Each tax files on its own cadence. Periods that start before Track from stay on the report but are never marked due.{/tr}
-	</div>
-	{if $taxUnscheduledTitles}
-	<div id="new-filing-schedule" class="collapse">
-		<div class="panel-body tax-new-schedule">
+	<ul class="list-group tax-schedule-summary">
+	{foreach from=$taxFilings item=filing}
+		<li class="list-group-item">
+			<span class="tax-schedule-name">{if $filing.rate_url}<a href="{$filing.rate_url|escape}" title="{tr}Edit tax rate{/tr}">{$filing.tax_title|escape}</a>{else}{$filing.tax_title|escape}{/if}</span>
+			<span class="text-muted">{$filing.frequency_label|escape}{if $filing.cycle_label} {tr}from{/tr} {$filing.cycle_label|escape}{/if}{if $filing.track_from_label} &middot; {tr}tracked from{/tr} {$filing.track_from_label|escape}{else} &middot; {tr}not tracked{/tr}{/if}</span>
+		</li>
+	{foreachelse}
+		<li class="list-group-item text-muted">{tr}No filing schedules yet. Add one for each tax you file so its periods can come due.{/tr}</li>
+	{/foreach}
+	{if $taxUnscheduledTitles && $taxFilings}
+		<li class="list-group-item text-muted">{tr}Not scheduled{/tr}: {", "|implode:$taxUnscheduledTitles|escape}</li>
+	{/if}
+	</ul>
+	<div id="tax-schedules-editor" class="collapse{if $taxSchedulesOpen} in{/if}">
+		<div class="panel-body tax-schedules-help">
+			{tr}Each tax files on its own cadence. Periods that start before Track from stay on the report but are never marked due. Deleting a schedule stops its periods coming due; recorded payments are kept.{/tr}
+		</div>
+		{if $taxUnscheduledTitles}
+		<div class="panel-body tax-new-schedule" id="tax-new-schedule">
 		{form class="form-inline"}
 			<input type="hidden" name="action" value="add_filing" />
 			<input type="hidden" name="year" value="{$taxYear|escape}" />
@@ -185,43 +194,43 @@
 			</div>
 		{/form}
 		</div>
+		{/if}
+		{if $taxFilings}
+		{form}
+			<input type="hidden" name="action" value="save_filing" />
+			<input type="hidden" name="year" value="{$taxYear|escape}" />
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>{tr}Tax{/tr}</th>
+						<th>{tr}Frequency{/tr}</th>
+						<th>{tr}Cycle starts{/tr}</th>
+						<th>{tr}Track from{/tr}</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				{foreach from=$taxFilings item=filing}
+					<tr class="tax-schedule-fields{if $filing.frequency == 'monthly'} is-monthly{/if}">
+						<td>
+							{$filing.tax_title|escape}
+							<input type="hidden" name="tax_title[]" value="{$filing.tax_title|escape}" />
+						</td>
+						<td>{html_options class="form-control input-sm tax-frequency-select" name="frequency[]" options=$taxFrequencies selected=$filing.frequency}</td>
+						<td>{html_options class="form-control input-sm tax-month-select" name="cycle_start_month[]" options=$taxCycleMonths selected=$filing.cycle_start_month}<span class="tax-month-na">&mdash;</span></td>
+						<td><input class="form-control input-sm" type="date" name="track_from[]" value="{$filing.track_from|escape}" /></td>
+						<td class="text-right"><button class="btn btn-link btn-xs tax-delete" type="submit" name="delete_filing" value="{$filing.tax_title|escape}" formnovalidate="formnovalidate" title="{tr}Delete schedule{/tr}" onclick="return confirm('{tr}Delete this filing schedule? Its periods stop being marked due. Recorded payments are kept.{/tr}');"><i class="fa fal fa-trash-can"></i><span class="sr-only">{tr}Delete schedule{/tr}</span></button></td>
+					</tr>
+				{/foreach}
+				</tbody>
+			</table>
+			<div class="panel-footer">
+				<button class="btn btn-primary btn-sm" type="submit">{tr}Save schedules{/tr}</button>
+				<button type="button" class="btn btn-default btn-sm" data-toggle="collapse" data-target="#tax-schedules-editor">{tr}Close{/tr}</button>
+			</div>
+		{/form}
+		{/if}
 	</div>
-	{/if}
-	{form}
-		<input type="hidden" name="action" value="save_filing" />
-		<input type="hidden" name="year" value="{$taxYear|escape}" />
-		<table class="table table-condensed">
-			<thead>
-				<tr>
-					<th>{tr}Tax{/tr}</th>
-					<th>{tr}Frequency{/tr}</th>
-					<th>{tr}Cycle starts{/tr}</th>
-					<th>{tr}Track from{/tr}</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-			{foreach from=$taxFilings item=filing}
-				<tr class="tax-schedule-fields{if $filing.frequency == 'monthly'} is-monthly{/if}">
-					<td>
-						{if $filing.rate_url}<a href="{$filing.rate_url|escape}" title="{tr}Edit tax rate{/tr}">{$filing.tax_title|escape}</a>{else}{$filing.tax_title|escape}{/if}
-						<input type="hidden" name="tax_title[]" value="{$filing.tax_title|escape}" />
-					</td>
-					<td>{html_options class="form-control input-sm tax-frequency-select" name="frequency[]" options=$taxFrequencies selected=$filing.frequency}</td>
-					<td>{html_options class="form-control input-sm tax-month-select" name="cycle_start_month[]" options=$taxCycleMonths selected=$filing.cycle_start_month}<span class="tax-month-na">&mdash;</span></td>
-					<td><input class="form-control input-sm" type="date" name="track_from[]" value="{$filing.track_from|escape}" /></td>
-					<td class="text-right"><button class="btn btn-link btn-xs tax-delete" type="submit" name="delete_filing" value="{$filing.tax_title|escape}" formnovalidate="formnovalidate" title="{tr}Delete schedule{/tr}" onclick="return confirm('{tr}Delete this filing schedule? Its periods stop being marked due. Recorded payments are kept.{/tr}');"><i class="fa fal fa-trash-can"></i><span class="sr-only">{tr}Delete schedule{/tr}</span></button></td>
-				</tr>
-			{foreachelse}
-				<tr><td colspan="5" class="text-muted">{tr}No filing schedules yet. Add one for each tax you file.{/tr}</td></tr>
-			{/foreach}
-			</tbody>
-		</table>
-		<div class="panel-footer">
-			<button class="btn btn-primary btn-sm" type="submit"{if !$taxFilings} disabled="disabled"{/if}>{tr}Save schedules{/tr}</button>
-			{if $taxFilings && !$taxUnscheduledTitles}<span class="text-muted">{tr}Every tax has a schedule.{/tr}</span>{/if}
-		</div>
-	{/form}
 </div>
 
 </div>
@@ -248,8 +257,12 @@
 			syncCycleMonth($(this).closest('.tax-schedule-fields'));
 		});
 		// The add-schedule fields share one form; keep them in sync as a group.
-		$('#new-tax-frequency').on('change', function () { syncCycleMonth($('#new-filing-schedule')); });
-		syncCycleMonth($('#new-filing-schedule'));
+		$('#new-tax-frequency').on('change', function () { syncCycleMonth($('#tax-new-schedule')); });
+		syncCycleMonth($('#tax-new-schedule'));
+		// "No filing schedule" links and a #tax-schedules URL open the editor.
+		function openScheduleEditor() { $('#tax-schedules-editor').collapse('show'); }
+		$('.tax-ledger').on('click', 'a[href="#tax-schedules"]', openScheduleEditor);
+		if (window.location.hash === '#tax-schedules') { openScheduleEditor(); }
 		// Focus the amount when a payment form opens.
 		$('.tax-ledger').on('shown.bs.collapse', '.collapse', function () {
 			$(this).find('input[name="amount"]').trigger('focus').trigger('select');

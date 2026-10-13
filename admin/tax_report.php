@@ -53,6 +53,11 @@ for( $choice = $yearMax; $choice >= $yearMin; $choice-- ) {
 }
 
 $view = CommerceTaxReport::groupReport( $report->getReport( $year ) );
+$filings = $report->scheduleRows();
+// The schedule editor stays closed unless there is nothing scheduled yet or a
+// schedule change was just rejected.
+$scheduleActions = array( 'save_filing', 'add_filing', 'delete_filing' );
+$schedulesOpen = ( empty( $filings ) || ( in_array( $action, $scheduleActions, TRUE ) && !empty( $feedback['error'] ) ) );
 
 $gBitSmarty->assign( 'feedback', $feedback );
 $gBitSmarty->assign( 'taxYear', $year );
@@ -62,7 +67,8 @@ $gBitSmarty->assign( 'taxYearChoices', $yearChoices );
 $gBitSmarty->assign( 'taxReportGroups', $view['groups'] );
 $gBitSmarty->assign( 'taxTotals', $view['totals'] );
 $gBitSmarty->assign( 'taxDue', $view['due'] );
-$gBitSmarty->assign( 'taxFilings', $report->scheduleRows() );
+$gBitSmarty->assign( 'taxFilings', $filings );
+$gBitSmarty->assign( 'taxSchedulesOpen', $schedulesOpen );
 $gBitSmarty->assign( 'taxUnscheduledTitles', $report->unscheduledTitles() );
 $gBitSmarty->assign( 'taxReopenTitle', $reopenTitle );
 $gBitSmarty->assign( 'taxReopenPeriod', $reopenPeriod );

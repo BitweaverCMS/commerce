@@ -39,7 +39,7 @@ Bookstore admin pages that use the commerce nav show `alert-danger` feedback whi
 
 ## Page layout
 
-`admin_tax_report.tpl` is a ledger for one year, picked with the year control in the heading (previous, select, next). `CommerceTaxReport::groupReport()` turns `getReport()` rows into what the template needs: rows grouped by period, year totals, and the due list. Rows are grouped under a period heading. A quarter heading is the `YYYY-Qn` label with its date range; a calendar month is named (`September 2026`); any other span is its date range. The Payment column holds the status and the action for the row:
+`admin_tax_report.tpl` is a ledger for one year, picked with the year control in the table's first header cell (previous, select, next). The help icon beside the title toggles the explanatory text; nothing else is shown above the due summary. `CommerceTaxReport::groupReport()` turns `getReport()` rows into what the template needs: rows grouped by period, year totals, and the due list. Rows are grouped under a period heading. A quarter heading is the `YYYY-Qn` label with its date range; a calendar month is named (`September 2026`); any other span is its date range. The Payment column holds the status and the action for the row:
 
 | Status | Shown | Action |
 |---|---|---|
@@ -50,6 +50,6 @@ Bookstore admin pages that use the commerce nav show `alert-danger` feedback whi
 
 The payment form is a collapsed row under its period row (Bootstrap collapse). It is open on load for the row named by `reopen_title` and `reopen_period`, and for the row a rejected `record_payment` post targeted, with the posted values filled back in (`taxPostedPayment`). The amount defaults to tax collected. The footer row totals subtotal, tax collected, paid, and due for the year.
 
-Filing schedules sit in a panel under the ledger. **Add schedule** reveals the form for an unscheduled title. Delete is the trash icon on the row and asks for confirmation. Page script keeps the cycle month in step with the frequency: quarterly offers months 1–3 only, monthly hides the month.
+Filing schedules sit in a panel under the ledger as a read-only summary, one line per schedule plus the unscheduled titles. **Edit schedules** opens the editor (`taxSchedulesOpen`), which is open on load only when nothing is scheduled yet or a schedule change was rejected. The editor holds the add form for unscheduled titles, the editable rows, and Save. Delete is the trash icon on the row and asks for confirmation. A **No filing schedule** link in the ledger opens the editor. Page script keeps the cycle month in step with the frequency: quarterly offers months 1–3 only, monthly hides the month.
 
 Styles are in `css/admin.css` under `.tax-report`.

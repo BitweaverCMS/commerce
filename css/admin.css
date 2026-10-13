@@ -300,15 +300,17 @@ form.status textarea {width:100%;height:9em;}
 */
 
 /* Sales tax report (admin/tax_report.php) */
-.tax-report .tax-report-head	{ border-bottom:1px solid #e5e5e5; margin:0 0 16px; padding-bottom:10px; }
-.tax-report .tax-report-head h1	{ font-size:16pt; margin:0 0 4px; }
-.tax-report .tax-lede	{ color:#666; margin:0; max-width:62em; }
-.tax-report .tax-year-nav	{ float:right; margin:2px 0 0 16px; white-space:nowrap; }
-.tax-report .tax-year-nav .form-control	{ display:inline-block; width:auto; vertical-align:middle; }
-.tax-report .tax-year-nav .btn	{ vertical-align:middle; }
-.tax-report .tax-how	{ margin:8px 0 0; }
-.tax-report .tax-how > a	{ color:#777; font-size:85%; }
-.tax-report .tax-how .tax-how-body	{ color:#666; font-size:85%; max-width:62em; margin-top:6px; }
+.tax-report .tax-report-head	{ margin:0 0 14px; }
+.tax-report .tax-report-head h1	{ font-size:16pt; margin:0; }
+.tax-report .tax-help-toggle	{ color:#aaa; font-size:60%; margin-left:.3em; vertical-align:middle; }
+.tax-report .tax-help-toggle:hover, .tax-report .tax-help-toggle[aria-expanded="true"]	{ color:#337ab7; text-decoration:none; }
+.tax-report .tax-help	{ color:#666; font-size:90%; max-width:62em; }
+.tax-report .tax-help p	{ margin:6px 0 0; }
+.tax-report .tax-year-cell	{ padding-top:2px; padding-bottom:2px; vertical-align:middle; }
+.tax-report .tax-year-nav .form-control	{ display:inline-block; width:auto; height:24px; padding:1px 4px; vertical-align:middle; font-weight:normal; }
+.tax-report .tax-year-nav .btn-link	{ color:#999; padding:1px 4px; vertical-align:middle; }
+.tax-report .tax-year-nav .btn-link:hover	{ color:#337ab7; }
+.tax-report .tax-year-nav .btn-link.disabled	{ color:#ddd; }
 
 .tax-report .tax-due-alert	{ margin:0 0 16px; }
 .tax-report .tax-due-alert ul	{ margin:6px 0 0; padding-left:1.4em; }
@@ -354,6 +356,13 @@ form.status textarea {width:100%;height:9em;}
 .tax-report .tax-schedules	{ margin-top:32px; }
 .tax-report .tax-schedules .panel-title	{ font-size:13pt; line-height:1.4; }
 .tax-report .tax-schedules .panel-heading .btn	{ margin-top:-1px; }
+.tax-report .tax-schedule-summary	{ margin-bottom:0; }
+.tax-report .tax-schedule-summary .list-group-item	{ border-left:0; border-right:0; border-radius:0; padding:6px 15px; }
+.tax-report .tax-schedule-summary .list-group-item:last-child	{ border-bottom:0; }
+.tax-report .tax-schedule-name	{ display:inline-block; min-width:16em; font-weight:bold; }
+.tax-report .tax-schedules-editor	{ border-top:1px solid #ddd; }
+.tax-report #tax-schedules-editor .tax-schedules-help	{ border-top:1px solid #ddd; }
+.tax-report .tax-schedules .panel-footer .btn-default	{ margin-left:6px; }
 .tax-report .tax-schedules .tax-schedules-help	{ color:#666; padding-bottom:0; }
 .tax-report .tax-schedules .table	{ margin-bottom:0; }
 .tax-report .tax-schedules .table td	{ vertical-align:middle; }
@@ -363,14 +372,13 @@ form.status textarea {width:100%;height:9em;}
 .tax-report .tax-schedules .is-monthly .tax-month-select	{ display:none; }
 .tax-report .tax-schedules .tax-delete	{ color:#999; }
 .tax-report .tax-schedules .tax-delete:hover	{ color:#a94442; }
-.tax-report .tax-new-schedule	{ background:#f9f9f9; border-bottom:1px solid #ddd; }
+.tax-report .tax-new-schedule	{ background:#f9f9f9; border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
 .tax-report .tax-new-schedule .form-group	{ margin:0 14px 0 0; vertical-align:bottom; }
 .tax-report .tax-new-schedule label	{ display:block; color:#666; font-size:85%; font-weight:normal; margin-bottom:2px; }
 .tax-report .tax-new-schedule .form-control	{ display:inline-block; width:auto; }
 .tax-report .tax-schedules .panel-footer .text-muted	{ margin-left:1em; }
 
 @media (max-width: 767px) {
-	.tax-report .tax-year-nav	{ float:none; margin:0 0 10px; }
 	.tax-report .tax-payment	{ white-space:normal; }
 	.tax-report .tax-pay-form .form-group	{ display:block; margin:0 0 8px; }
 	.tax-report .tax-pay-form .form-control	{ width:100%; }

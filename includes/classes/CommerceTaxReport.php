@@ -171,8 +171,12 @@ class CommerceTaxReport extends BitBase {
 	public function scheduleRows() {
 		$this->prepare();
 		$rows = $this->filingRows();
+		$frequencies = self::frequencyChoices();
 		foreach( array_keys( $rows ) as $i ) {
 			$rows[$i]['rate_url'] = $this->rateUrl( $rows[$i]['tax_title'] );
+			$rows[$i]['frequency_label'] = $frequencies[$rows[$i]['frequency']];
+			$rows[$i]['cycle_label'] = ( $rows[$i]['frequency'] === 'monthly' ? '' : DateTimeImmutable::createFromFormat( '!m', (string)$rows[$i]['cycle_start_month'] )->format( 'F' ) );
+			$rows[$i]['track_from_label'] = ( $rows[$i]['track_from'] === '' ? '' : self::displayDate( $rows[$i]['track_from'], TRUE ) );
 		}
 		return $rows;
 	}
