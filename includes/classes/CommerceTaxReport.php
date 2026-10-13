@@ -9,8 +9,6 @@ class CommerceTaxReport extends BitBase {
 
 	const MAX_DUE_PERIODS = 8;
 
-	private static $tablesReady = FALSE;
-
 	private $rateUrls = NULL;
 
 	public static function dueFeedback() {
@@ -466,64 +464,7 @@ class CommerceTaxReport extends BitBase {
 	}
 
 	private function prepare() {
-		self::ensureTables();
 		$this->seedRecentFilings();
-	}
-
-	private static function ensureTables() {
-		if( self::$tablesReady ) {
-			return;
-		}
-		global $gBitDb;
-		$tables = array();
-		if( !$gBitDb->tableExists( 'com_tax_filing' ) ) {
-			$tables['com_tax_filing'] = "
-  tax_filing_id I4 PRIMARY AUTO,
-  tax_title C(255) NOTNULL,
-  frequency C(16) NOTNULL,
-  cycle_start_month I1 NOTNULL,
-  track_from D,
-  last_modified T DEFTIMESTAMP,
-  date_added T DEFTIMESTAMP
-";
-		}
-		if( !$gBitDb->tableExists( 'com_tax_payments' ) ) {
-			$tables['com_tax_payments'] = "
-  tax_payment_id I4 PRIMARY AUTO,
-  tax_title C(255) NOTNULL,
-  period_start D NOTNULL,
-  period_end D NOTNULL,
-  amount N(15,4),
-  paid_on D,
-  reference C(64),
-  note X,
-  user_id I4,
-  date_added T DEFTIMESTAMP
-";
-		}
-		if( !empty( $tables ) ) {
-			$gBitDb->createTables( $tables );
-		}
-		self::ensureIndex( 'com_tax_filing', 'tax_filing_title_idx', 'tax_title', TRUE );
-		self::ensureIndex( 'com_tax_payments', 'tax_payment_period_idx', 'tax_title, period_start', TRUE );
-		self::$tablesReady = TRUE;
-	}
-
-	private static function ensureIndex( $pTable, $pName, $pColumns, $pUnique ) {
-		global $gBitDb;
-		$existing = $gBitDb->mDb->MetaIndexes( $pTable );
-		if( is_array( $existing ) ) {
-			foreach( array_keys( $existing ) as $name ) {
-				if( strcasecmp( (string)$name, $pName ) === 0 ) {
-					return;
-				}
-			}
-		}
-		$dict = NewDataDictionary( $gBitDb->mDb );
-		$sql = $dict->CreateIndexSQL( $pName, $pTable, $pColumns, ( $pUnique ? array( 'UNIQUE' ) : array() ) );
-		if( $sql ) {
-			$dict->ExecuteSQLArray( $sql );
-		}
 	}
 
 	private function seedRecentFilings() {
