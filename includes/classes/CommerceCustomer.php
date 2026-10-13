@@ -723,5 +723,102 @@ class CommerceCustomer extends CommerceBase {
 		global $gBitDb;
 		return( $gBitDb->getAssoc( "SELECT `interests_id`, `interests_name` FROM `".BITCOMMERCE_DB_PREFIX."com_customers_interests` ORDER BY `interests_name` " ) );
 	}
+
+	public static function customerContentId( $pUserId ) {
+		global $gBitDb;
+		if( !BitBase::verifyId( $pUserId ) ) {
+			return NULL;
+		}
+		return $gBitDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."users_users` WHERE `user_id`=?", array( (int)$pUserId ) );
+	}
+
+	public static function storePurchaseOption( $pContentId, $pOptionsId, $pValuesId ) {
+		global $gBitDb;
+		if( !BitBase::verifyId( $pContentId ) || !BitBase::verifyId( $pOptionsId ) || !BitBase::verifyId( $pValuesId ) ) {
+			return FALSE;
+		}
+		$typeRadio = defined( 'PRODUCTS_OPTIONS_TYPE_RADIO' ) ? (int)PRODUCTS_OPTIONS_TYPE_RADIO : 2;
+		$ok = $gBitDb->getOne(
+			"SELECT cpa.`products_options_values_id` FROM " . TABLE_PRODUCTS_OPTIONS . " cpo INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON (cpa.`products_options_id`=cpo.`products_options_id`) WHERE cpo.`products_options_id`=? AND cpa.`products_options_values_id`=? AND cpo.`products_options_type` IN (0, ?)",
+			array( (int)$pOptionsId, (int)$pValuesId, $typeRadio )
+		);
+		if( !BitBase::verifyId( $ok ) ) {
+			return FALSE;
+		}
+		$content = new LibertyContent();
+		$content->mContentId = (int)$pContentId;
+		return $content->storePackageOption( 'bitcommerce', 'purchase_options', (int)$pOptionsId, (int)$pValuesId );
+	}
+
+	public static function expungePurchaseOption( $pContentId, $pOptionsId ) {
+		if( !BitBase::verifyId( $pContentId ) || !BitBase::verifyId( $pOptionsId ) ) {
+			return FALSE;
+		}
+		$content = new LibertyContent();
+		$content->mContentId = (int)$pContentId;
+		return $content->expungePackageOption( 'bitcommerce', 'purchase_options', (int)$pOptionsId );
+	}
+
+	public static function purchaseOptionRows( $pContentId ) {
+		global $gBitDb;
+		$rows = array();
+		if( !BitBase::verifyId( $pContentId ) ) {
+			return $rows;
+		}
+		$content = new LibertyContent();
+		$content->mContentId = (int)$pContentId;
+		$prefs = $content->getPackageOptions( 'bitcommerce', 'purchase_options' );
+		if( !is_array( $prefs ) ) {
+			return $rows;
+		}
+		foreach( $prefs as $optId => $valId ) {
+			if( !BitBase::verifyId( $optId ) || !BitBase::verifyId( $valId ) ) {
+				continue;
+			}
+			$optName = $gBitDb->getOne( "SELECT `products_options_name` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_id`=?", array( (int)$optId ) );
+			$valName = $gBitDb->getOne( "SELECT `products_options_values_name` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_options_values_id`=?", array( (int)$valId ) );
+			$rows[] = array(
+				'products_options_id' => (int)$optId,
+				'products_options_name' => ( $optName !== NULL && $optName !== '' ) ? $optName : (string)(int)$optId,
+				'products_options_values_id' => (int)$valId,
+				'products_options_values_name' => ( $valName !== NULL && $valName !== '' ) ? $valName : (string)(int)$valId,
+			);
+		}
+		return $rows;
+	}
+
+	public static function assignPurchaseOptionsForUser( $pUserId ) {
+		global $gBitDb, $gBitSmarty;
+		$contentId = CommerceCustomer::customerContentId( $pUserId );
+		$typeRadio = defined( 'PRODUCTS_OPTIONS_TYPE_RADIO' ) ? (int)PRODUCTS_OPTIONS_TYPE_RADIO : 2;
+		$choices = $gBitDb->getAssoc(
+			"SELECT `products_options_id`, `products_options_name` || ' (' || `products_options_id` || ')' FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_type` IN (0, ?) ORDER BY `products_options_name`",
+			array( $typeRadio )
+		);
+		$gBitSmarty->assign( 'customerContentId', $contentId );
+		$gBitSmarty->assign( 'purchaseOptions', CommerceCustomer::purchaseOptionRows( $contentId ) );
+		$gBitSmarty->assign( 'purchaseOptionChoices', $choices );
+	}
+
+	public static function printPurchaseOptionValues( $pOptionsId ) {
+		if( !BitBase::verifyId( $pOptionsId ) ) {
+			return;
+		}
+		global $gBitDb;
+		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
+		$typeRadio = defined( 'PRODUCTS_OPTIONS_TYPE_RADIO' ) ? (int)PRODUCTS_OPTIONS_TYPE_RADIO : 2;
+		$optionType = $gBitDb->getOne( "SELECT `products_options_type` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_id`=?", array( (int)$pOptionsId ) );
+		if( (int)$optionType !== 0 && (int)$optionType !== $typeRadio ) {
+			return;
+		}
+		$productManager = new CommerceProductManager();
+		$optionValues = $productManager->getOptionsList( array( 'products_options_id' => (int)$pOptionsId ) );
+		if( empty( $optionValues[$pOptionsId]['values'] ) ) {
+			return;
+		}
+		foreach( $optionValues[$pOptionsId]['values'] as $optValId => $optVal ) {
+			print '<option value="'.(int)$optValId.'">'.htmlspecialchars( $optVal['products_options_values_name'].' ('.$optValId.')' ).'</option>';
+		}
+	}
 }
 ?>

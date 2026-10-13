@@ -2,7 +2,7 @@
 
 One line per document. Open a file only when the task is that concern.
 
-- [orders.md](orders.md) — orders, status history, payment-adjustment currency, the product log, and order-list search. Open for an order or the order list.
+- [orders.md](orders.md) — orders, status history, payment-adjustment currency, the product log, order-list search, and customer purchase options. Open for an order, the order list, or a customer purchase option.
 - [taxes.md](taxes.md) — sales-tax report, filing cycle, recorded tax payments, and the report page layout. Open for a tax report or a tax payment.
 - [architecture.md](architecture.md) — initialization, components, and request flow. Open for how commerce starts.
 - [source-reference.md](source-reference.md) — files, classes, controllers, schema, and templates. Open to find a source file.

@@ -33,6 +33,29 @@ $error = false;
 $processed = false;
 
 if( BitBase::getParameter( $_GET, 'user_id' ) ) {
+	if( !empty( $_REQUEST['save_purchase_option'] ) || !empty( $_REQUEST['remove_purchase_option'] ) || !empty( $_REQUEST['purchase_option_values'] ) ) {
+		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceCustomer.php' );
+		if( !empty( $_REQUEST['purchase_option_values'] ) ) {
+			CommerceCustomer::printPurchaseOptionValues( $_REQUEST['products_options_id'] ?? 0 );
+			exit;
+		}
+		$contentId = CommerceCustomer::customerContentId( $_GET['user_id'] );
+		$saved = FALSE;
+		if( !empty( $_REQUEST['remove_purchase_option'] ) ) {
+			$saved = CommerceCustomer::expungePurchaseOption( $contentId, $_REQUEST['products_options_id'] ?? 0 );
+		} else {
+			$saved = CommerceCustomer::storePurchaseOption( $contentId, $_REQUEST['products_options_id'] ?? 0, $_REQUEST['products_options_values_id'] ?? 0 );
+		}
+		CommerceCustomer::assignPurchaseOptionsForUser( $_GET['user_id'] );
+		if( !$saved ) {
+			$gBitSmarty->assign( 'purchaseOptionError', tra( 'That purchase option was not saved.' ) );
+		}
+		if( $gBitThemes->isAjaxRequest() ) {
+			$gBitSmarty->display( 'bitpackage:bitcommerce/admin_purchase_options_inc.tpl' );
+			exit;
+		}
+		zen_redirect( zen_href_link_admin( FILENAME_CUSTOMERS, 'user_id='.(int)$_GET['user_id'], 'NONSSL' ) );
+	}
 	switch( BitBase::getParameter( $_REQUEST, 'action' ) ) {
 		case 'status':
 			if ($_GET['current'] == CUSTOMERS_APPROVAL_AUTHORIZATION) {
@@ -290,6 +313,8 @@ if( !empty( $cInfo ) ) {
 		$gBitSmarty->assign( 'groupPricing', $groupPricing );
 		$gBitSmarty->assign( 'customerAuth', array( CUSTOMERS_AUTHORIZATION_0, CUSTOMERS_AUTHORIZATION_1, CUSTOMERS_AUTHORIZATION_2, CUSTOMERS_AUTHORIZATION_3 ) );
 	}
+	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceCustomer.php' );
+	CommerceCustomer::assignPurchaseOptionsForUser( $_GET['user_id'] );
 } else {
 	$mid = 'bitpackage:bitcommerce/admin_customer_list.tpl';
 	$title = tra('Customers');

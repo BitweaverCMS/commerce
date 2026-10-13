@@ -67,5 +67,54 @@
 			<a href="{$smarty.server.HTTP_REFERER}" class="btn btn-default">{tr}Cancel{/tr}</a>
 		</div>
 		{/form}
+
+		{include file="bitpackage:bitcommerce/admin_purchase_options_inc.tpl"}
+		{literal}
+		<script>/* <![CDATA[ */
+		function purchaseOptionsUrl() {
+			return "{/literal}{$smarty.const.BITCOMMERCE_PKG_URL}admin/customers.php?user_id={$smarty.request.user_id|escape:'url'}{literal}";
+		}
+		jQuery(document).on('change', '#purchase-option-id', function() {
+			var optionId = jQuery(this).val();
+			jQuery('#purchase-option-value').empty();
+			if( !optionId ) {
+				return;
+			}
+			jQuery.ajax({
+				url: purchaseOptionsUrl(),
+				data: { purchase_option_values: 1, products_options_id: optionId },
+				timeout: 60000,
+				success: function(r) {
+					jQuery('#purchase-option-value').html(r);
+				}
+			});
+		});
+		jQuery(document).on('click', '#purchase-option-add', function() {
+			var optionId = jQuery('#purchase-option-id').val();
+			var valueId = jQuery('#purchase-option-value').val();
+			if( !optionId || !valueId ) {
+				return;
+			}
+			jQuery.ajax({
+				url: purchaseOptionsUrl(),
+				data: { save_purchase_option: 1, products_options_id: optionId, products_options_values_id: valueId },
+				timeout: 60000,
+				success: function(r) {
+					jQuery('#purchase-options').replaceWith(r);
+				}
+			});
+		});
+		jQuery(document).on('click', '.purchase-option-remove', function() {
+			jQuery.ajax({
+				url: purchaseOptionsUrl(),
+				data: { remove_purchase_option: 1, products_options_id: jQuery(this).data('option-id') },
+				timeout: 60000,
+				success: function(r) {
+					jQuery('#purchase-options').replaceWith(r);
+				}
+			});
+		});
+		/* ]]> */</script>
+		{/literal}
 	</div>
 </div>

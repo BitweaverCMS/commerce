@@ -20,6 +20,21 @@ This file is the concrete order API. Checkout pipeline and plugins are in
 
 Do not substitute `content_id` or `products_id` for `orders_id`.
 
+## Customer purchase options
+
+A customer's preferred catalogue choices live on that user's
+`liberty_content.options_json` branch `bitcommerce.purchase_options`.
+Each leaf name is a `products_options_id`. The leaf is the
+`products_options_values_id` as a JSON number. Dropdown (type 0) and
+radio options only.
+
+Staff edit the list on the customer admin page,
+`admin/customers.php?user_id=`. The order page links there from the
+customer icon bar. `CommerceCustomer::storePurchaseOption()` checks
+that the value belongs to the option, then calls
+`LibertyContent::storePackageOption()`. The order flight check reads
+the same branch.
+
 ## Classes
 
 - `CommerceOrder` — load, status, totals, contents. File
