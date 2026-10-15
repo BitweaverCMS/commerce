@@ -561,7 +561,7 @@ class CommerceCustomer extends CommerceBase {
 			$query = "SELECT `address_book_id`, `entry_firstname` as `firstname`, `entry_lastname` as `lastname`,
 								`entry_company` as `company`, `entry_street_address` as `street_address`,
 								`entry_suburb` as `suburb`, `entry_city` as `city`, `entry_postcode` as `postcode`,
-								`entry_state` as `state`, `entry_zone_id` as `zone_id`,
+								`entry_state` as `state`, `entry_zone_id` as `zone_id`, `entry_telephone` as `telephone`,
 								`entry_country_id` as `country_id`, co.*, ab.`address_book_id`=cu.`customers_default_address_id` AS `entry_primary`
 						FROM " . TABLE_ADDRESS_BOOK . " ab 
 							INNER JOIN " . TABLE_COUNTRIES . " co ON( ab.`entry_country_id`=co.`countries_id` )
@@ -732,6 +732,17 @@ class CommerceCustomer extends CommerceBase {
 		return $gBitDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."users_users` WHERE `user_id`=?", array( (int)$pUserId ) );
 	}
 
+	// A purchase_options leaf is a list of value ids. Older rows hold one id.
+	public static function purchaseOptionLeafValues( $pLeaf ) {
+		$values = array();
+		foreach( is_array( $pLeaf ) ? $pLeaf : array( $pLeaf ) as $valueId ) {
+			if( BitBase::verifyId( $valueId ) ) {
+				$values[(int)$valueId] = (int)$valueId;
+			}
+		}
+		return array_values( $values );
+	}
+
 	public static function storePurchaseOption( $pContentId, $pOptionsId, $pValuesId ) {
 		global $gBitDb;
 		if( !BitBase::verifyId( $pContentId ) || !BitBase::verifyId( $pOptionsId ) || !BitBase::verifyId( $pValuesId ) ) {
@@ -747,18 +758,33 @@ class CommerceCustomer extends CommerceBase {
 		}
 		$content = new LibertyContent();
 		$content->mContentId = (int)$pContentId;
-		return $content->storePackageOption( 'bitcommerce', 'purchase_options', (int)$pOptionsId, (int)$pValuesId );
+		$prefs = $content->getPackageOptions( 'bitcommerce', 'purchase_options' );
+		$values = CommerceCustomer::purchaseOptionLeafValues( $prefs[(int)$pOptionsId] ?? array() );
+		if( !in_array( (int)$pValuesId, $values, TRUE ) ) {
+			$values[] = (int)$pValuesId;
+		}
+		return $content->storePackageOption( 'bitcommerce', 'purchase_options', (int)$pOptionsId, $values );
 	}
 
-	public static function expungePurchaseOption( $pContentId, $pOptionsId ) {
+	// Remove one value, or the whole option when no value is given.
+	public static function expungePurchaseOption( $pContentId, $pOptionsId, $pValuesId = NULL ) {
 		if( !BitBase::verifyId( $pContentId ) || !BitBase::verifyId( $pOptionsId ) ) {
 			return FALSE;
 		}
 		$content = new LibertyContent();
 		$content->mContentId = (int)$pContentId;
+		if( BitBase::verifyId( $pValuesId ) ) {
+			$prefs = $content->getPackageOptions( 'bitcommerce', 'purchase_options' );
+			$values = CommerceCustomer::purchaseOptionLeafValues( $prefs[(int)$pOptionsId] ?? array() );
+			$values = array_values( array_diff( $values, array( (int)$pValuesId ) ) );
+			if( !empty( $values ) ) {
+				return $content->storePackageOption( 'bitcommerce', 'purchase_options', (int)$pOptionsId, $values );
+			}
+		}
 		return $content->expungePackageOption( 'bitcommerce', 'purchase_options', (int)$pOptionsId );
 	}
 
+	// Saved options grouped by option, each with its value rows.
 	public static function purchaseOptionRows( $pContentId ) {
 		global $gBitDb;
 		$rows = array();
@@ -771,19 +797,30 @@ class CommerceCustomer extends CommerceBase {
 		if( !is_array( $prefs ) ) {
 			return $rows;
 		}
-		foreach( $prefs as $optId => $valId ) {
-			if( !BitBase::verifyId( $optId ) || !BitBase::verifyId( $valId ) ) {
+		foreach( $prefs as $optId => $leaf ) {
+			if( !BitBase::verifyId( $optId ) ) {
+				continue;
+			}
+			$values = CommerceCustomer::purchaseOptionLeafValues( $leaf );
+			if( empty( $values ) ) {
 				continue;
 			}
 			$optName = $gBitDb->getOne( "SELECT `products_options_name` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_id`=?", array( (int)$optId ) );
-			$valName = $gBitDb->getOne( "SELECT `products_options_values_name` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_options_values_id`=?", array( (int)$valId ) );
-			$rows[] = array(
+			$valueRows = array();
+			foreach( $values as $valId ) {
+				$valName = $gBitDb->getOne( "SELECT `products_options_values_name` FROM " . TABLE_PRODUCTS_ATTRIBUTES . " WHERE `products_options_values_id`=?", array( $valId ) );
+				$valueRows[$valId] = array(
+					'products_options_values_id' => $valId,
+					'products_options_values_name' => ( $valName !== NULL && $valName !== '' ) ? $valName : (string)$valId,
+				);
+			}
+			$rows[(int)$optId] = array(
 				'products_options_id' => (int)$optId,
 				'products_options_name' => ( $optName !== NULL && $optName !== '' ) ? $optName : (string)(int)$optId,
-				'products_options_values_id' => (int)$valId,
-				'products_options_values_name' => ( $valName !== NULL && $valName !== '' ) ? $valName : (string)(int)$valId,
+				'values' => $valueRows,
 			);
 		}
+		ksort( $rows );
 		return $rows;
 	}
 

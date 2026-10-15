@@ -24,16 +24,51 @@ Do not substitute `content_id` or `products_id` for `orders_id`.
 
 A customer's preferred catalogue choices live on that user's
 `liberty_content.options_json` branch `bitcommerce.purchase_options`.
-Each leaf name is a `products_options_id`. The leaf is the
-`products_options_values_id` as a JSON number. Dropdown (type 0) and
-radio options only.
+Each leaf name is a `products_options_id`. The leaf is a JSON list of
+acceptable `products_options_values_id` numbers; rows written before
+2026-10-15 hold one number, and `CommerceCustomer::purchaseOptionLeafValues()`
+reads both shapes. Dropdown (type 0) and radio options only.
+`storePurchaseOption()` adds a value to the list; `expungePurchaseOption()`
+removes one value, or the whole option when no value is given.
 
 Staff edit the list on the customer admin page,
 `admin/customers.php?user_id=`. The order page links there from the
 customer icon bar. `CommerceCustomer::storePurchaseOption()` checks
 that the value belongs to the option, then calls
-`LibertyContent::storePackageOption()`. The order flight check reads
-the same branch.
+`LibertyContent::storePackageOption()`. The Products purchase page
+pre-selects the branch for the logged-in viewer, and the order flight
+check warns when a line misses one of its values (Products
+`purchase-options.md` and `flightcheck.md`).
+
+The customer page (`admin_customer_edit.tpl`, styles under
+`.customer-edit` in `css/admin.css`) is a header with the customer's
+name, email, id, telephone, sales standing from
+`zen_get_customers_stats()`, and the same account links as the order
+header (cart-plus icon, Customers link, `{displayname}` of the user, id),
+under the standard commerce admin header include; then two `col-md-6`
+columns. Left: Account as a read-only list with an edit icon that
+reveals the form (`action=update`, posting to `?user_id=`), then the
+address book. Only authorization, discount pricing group, gender, and
+date of birth are editable; name, email, and telephone duplicate the
+users table, so a field that is not posted keeps its stored value and is
+not validated, and address fields are validated and written only when
+`entry_street_address` is posted. Right: the saved options grouped by
+option like `admin/products_options.php`, with a caret toggle per option
+(open by default) and one line per value id
+(`admin_purchase_options_inc.tpl`, replaced in place by the add and
+remove requests). An `Add Preferred Option` button reveals the add form;
+its `Save option` button stays disabled until both selects have a
+value. Validation failures on save are assigned as `customerErrors`.
+
+Each address shows formatted with a Default mark and an Edit toggle that
+opens an inline form (`action=address`, `address_book_id`). The
+controller checks `CommerceCustomer::isAddressOwner()` and saves
+through `storeAddress()`, so `verifyAddress()` rules apply: State is a
+free-text field that resolves to a zone by name or code for countries
+with zones. A failed save re-renders with `addressErrors`, the form
+open (`addressEditId`), and the posted values (`addressPosted`).
+`getAddressesFromId()` returns `telephone` for this list. The default
+address is the customer's choice; the admin form does not change it.
 
 ## Classes
 

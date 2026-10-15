@@ -23,6 +23,25 @@
 require('includes/application_top.php');
 require( BITCOMMERCE_PKG_CLASS_PATH.'CommerceStatistics.php');
 
+// Customer row plus default address for the edit page.
+function vv_customer_admin_info( $pUserId ) {
+	global $gBitDb;
+	$customers = $gBitDb->Execute("select c.`customers_id`, c.`customers_gender`, c.`customers_firstname`,
+																				c.`customers_lastname`, c.`customers_dob`, c.`customers_email_address`,
+																				a.`entry_company`, a.`entry_street_address`, a.`entry_suburb`,
+																				a.`entry_postcode`, a.`entry_city`, a.`entry_state`, a.`entry_zone_id`,
+																				a.`entry_country_id`, c.`customers_telephone`, c.`customers_fax`,
+																				c.`customers_newsletter`, c.`customers_default_address_id`,
+																				c.`customers_email_format`, c.`customers_group_pricing`,
+																				c.`customers_authorization`, c.`customers_referral`
+																from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " a
+																on c.`customers_default_address_id` = a.`address_book_id`
+																and a.`customers_id` = c.`customers_id`
+																WHERE c.`customers_id` = '" . (int)$pUserId . "'");
+	$cust = $customers->FetchRow();
+	return new objectInfo( $cust );
+}
+
 if( empty( $_GET['list_order'] ) ) {
 	$_GET['list_order'] = '';
 }
@@ -42,7 +61,7 @@ if( BitBase::getParameter( $_GET, 'user_id' ) ) {
 		$contentId = CommerceCustomer::customerContentId( $_GET['user_id'] );
 		$saved = FALSE;
 		if( !empty( $_REQUEST['remove_purchase_option'] ) ) {
-			$saved = CommerceCustomer::expungePurchaseOption( $contentId, $_REQUEST['products_options_id'] ?? 0 );
+			$saved = CommerceCustomer::expungePurchaseOption( $contentId, $_REQUEST['products_options_id'] ?? 0, $_REQUEST['products_options_values_id'] ?? NULL );
 		} else {
 			$saved = CommerceCustomer::storePurchaseOption( $contentId, $_REQUEST['products_options_id'] ?? 0, $_REQUEST['products_options_values_id'] ?? 0 );
 		}
@@ -67,21 +86,52 @@ if( BitBase::getParameter( $_GET, 'user_id' ) ) {
 			$action = '';
 			zen_redirect(zen_href_link_admin(FILENAME_CUSTOMERS, 'user_id=' . $_GET['user_id'] . '&page=' . $_GET['page'], 'NONSSL'));
 			break;
+		case 'address':
+			// Admin edit of one address-book entry. Validation lives in CommerceCustomer::verifyAddress().
+			require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceCustomer.php' );
+			$customer = new CommerceCustomer( (int)$_GET['user_id'] );
+			$addressEditId = (int)BitBase::getParameter( $_POST, 'address_book_id', 0 );
+			$addressPosted = array();
+			foreach( array( 'firstname', 'lastname', 'company', 'street_address', 'suburb', 'city', 'state', 'postcode', 'telephone' ) as $field ) {
+				$addressPosted[$field] = trim( (string)BitBase::getParameter( $_POST, $field, '' ) );
+			}
+			$addressPosted['country_id'] = (int)BitBase::getParameter( $_POST, 'country_id', 0 );
+			$addressHash = $addressPosted;
+			$addressHash['address_book_id'] = $addressEditId;
+			$addressHash['customers_id'] = (int)$_GET['user_id'];
+			$addressHash['primary'] = !empty( $_POST['primary'] );
+			if( !$customer->isAddressOwner( $addressEditId ) ) {
+				$addressErrors = array( tra( 'That address does not belong to this customer.' ) );
+			} elseif( $customer->storeAddress( $addressHash ) ) {
+				zen_redirect( zen_href_link_admin( FILENAME_CUSTOMERS, 'user_id='.(int)$_GET['user_id'], 'NONSSL' ) );
+			} else {
+				$addressErrors = array_values( $customer->mErrors );
+			}
+			$cInfo = vv_customer_admin_info( (int)$_GET['user_id'] );
+			break;
 		case 'update':
+			$addressPosted = isset( $_POST['entry_street_address'] );
+			$entry_zone_id = 0;
 			$customers_id = zen_db_prepare_input($_GET['user_id']);
-			$customers_firstname = zen_db_prepare_input($_POST['customers_firstname']);
-			$customers_lastname = zen_db_prepare_input($_POST['customers_lastname']);
-			$customers_email_address = zen_db_prepare_input($_POST['customers_email_address']);
-			$customers_telephone = zen_db_prepare_input($_POST['customers_telephone']);
-			$customers_fax = zen_db_prepare_input($_POST['customers_fax']);
-			$customers_newsletter = zen_db_prepare_input($_POST['customers_newsletter']);
-			$customers_group_pricing = zen_db_prepare_input($_POST['customers_group_pricing']);
-			$customers_email_format = zen_db_prepare_input($_POST['customers_email_format']);
-			$customers_gender = zen_db_prepare_input($_POST['customers_gender']);
-			$customers_dob = zen_db_prepare_input($_POST['customers_dob']);
+			// Name, email, and telephone duplicate the users table and are not
+			// edited here. A field that is not posted keeps its stored value.
+			$current = vv_customer_admin_info( (int)$_GET['user_id'] );
+			$posted = function( $pField ) use ( $current ) {
+				return zen_db_prepare_input( isset( $_POST[$pField] ) ? $_POST[$pField] : ( $current->$pField ?? '' ) );
+			};
+			$customers_firstname = $posted('customers_firstname');
+			$customers_lastname = $posted('customers_lastname');
+			$customers_email_address = $posted('customers_email_address');
+			$customers_telephone = $posted('customers_telephone');
+			$customers_fax = $posted('customers_fax');
+			$customers_newsletter = $posted('customers_newsletter');
+			$customers_group_pricing = $posted('customers_group_pricing');
+			$customers_email_format = $posted('customers_email_format');
+			$customers_gender = $posted('customers_gender');
+			$customers_dob = $posted('customers_dob');
 
-			$customers_authorization = zen_db_prepare_input($_POST['customers_authorization']);
-			$customers_referral= zen_db_prepare_input($_POST['customers_referral']);
+			$customers_authorization = $posted('customers_authorization');
+			$customers_referral= $posted('customers_referral');
 
 			if (CUSTOMERS_APPROVAL_AUTHORIZATION == 2 and $customers_authorization == 1) {
 				$customers_authorization = 2;
@@ -93,25 +143,25 @@ if( BitBase::getParameter( $_GET, 'user_id' ) ) {
 				$messageStack->add_session(ERROR_CUSTOMER_APPROVAL_CORRECTION1, 'caution');
 			}
 
-			$default_address_id = zen_db_prepare_input($_POST['default_address_id']);
-			$entry_street_address = zen_db_prepare_input($_POST['entry_street_address']);
-			$entry_suburb = zen_db_prepare_input($_POST['entry_suburb']);
-			$entry_postcode = zen_db_prepare_input($_POST['entry_postcode']);
-			$entry_city = zen_db_prepare_input($_POST['entry_city']);
-			$entry_country_id = zen_db_prepare_input($_POST['entry_country_id']);
+			$default_address_id = zen_db_prepare_input($_POST['default_address_id'] ?? '');
+			$entry_street_address = zen_db_prepare_input($_POST['entry_street_address'] ?? '');
+			$entry_suburb = zen_db_prepare_input($_POST['entry_suburb'] ?? '');
+			$entry_postcode = zen_db_prepare_input($_POST['entry_postcode'] ?? '');
+			$entry_city = zen_db_prepare_input($_POST['entry_city'] ?? '');
+			$entry_country_id = zen_db_prepare_input($_POST['entry_country_id'] ?? '');
 
-			$entry_company = zen_db_prepare_input($_POST['entry_company']);
-			$entry_state = zen_db_prepare_input($_POST['entry_state']);
-			if (isset($_POST['entry_zone_id'])) $entry_zone_id = zen_db_prepare_input($_POST['entry_zone_id']);
+			$entry_company = zen_db_prepare_input($_POST['entry_company'] ?? '');
+			$entry_state = zen_db_prepare_input($_POST['entry_state'] ?? '');
+			if (isset($_POST['entry_zone_id'])) $entry_zone_id = zen_db_prepare_input($_POST['entry_zone_id'] ?? '');
 
-			if (strlen($customers_firstname) < ENTRY_FIRST_NAME_MIN_LENGTH) {
+			if (isset($_POST['customers_firstname']) && strlen($customers_firstname) < ENTRY_FIRST_NAME_MIN_LENGTH) {
 				$error = true;
 				$entry_firstname_error = true;
 			} else {
 				$entry_firstname_error = false;
 			}
 
-			if (strlen($customers_lastname) < ENTRY_LAST_NAME_MIN_LENGTH) {
+			if (isset($_POST['customers_lastname']) && strlen($customers_lastname) < ENTRY_LAST_NAME_MIN_LENGTH) {
 				$error = true;
 				$entry_lastname_error = true;
 			} else {
@@ -127,20 +177,23 @@ if( BitBase::getParameter( $_GET, 'user_id' ) ) {
 				}
 			}
 
-			if (strlen($customers_email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
+			if (isset($_POST['customers_email_address']) && strlen($customers_email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
 				$error = true;
 				$entry_email_address_error = true;
 			} else {
 				$entry_email_address_error = false;
 			}
 
-			if (!zen_validate_email($customers_email_address)) {
+			if (isset($_POST['customers_email_address']) && !zen_validate_email($customers_email_address)) {
 				$error = true;
 				$entry_email_address_check_error = true;
 			} else {
 				$entry_email_address_check_error = false;
 			}
 
+			if (!$addressPosted) {
+				$entry_street_address_error = $entry_post_code_error = $entry_city_error = $entry_country_error = $entry_state_error = false;
+			} else {
 			if (strlen($entry_street_address) < ENTRY_STREET_ADDRESS_MIN_LENGTH) {
 				$error = true;
 				$entry_street_address_error = true;
@@ -200,8 +253,9 @@ if( BitBase::getParameter( $_GET, 'user_id' ) ) {
 					}
 			 }
 		}
+		}
 
-		if (strlen($customers_telephone) < ENTRY_TELEPHONE_MIN_LENGTH) {
+		if (isset($_POST['customers_telephone']) && strlen($customers_telephone) < ENTRY_TELEPHONE_MIN_LENGTH) {
 			$error = true;
 			$entry_telephone_error = true;
 		} else {
@@ -264,32 +318,22 @@ if( BitBase::getParameter( $_GET, 'user_id' ) ) {
 				}
 			}
 
-			$gBitDb->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "customers_id = '" . (int)$customers_id . "' and address_book_id = '" . (int)$default_address_id . "'");
+			if ($addressPosted) {
+				$gBitDb->associateInsert(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "customers_id = '" . (int)$customers_id . "' and address_book_id = '" . (int)$default_address_id . "'");
+			}
 
 			zen_redirect(zen_href_link_admin(FILENAME_CUSTOMERS, zen_get_all_get_params(array('user_id', 'action')) . 'user_id=' . $customers_id, 'NONSSL'));
 
 			} else if ($error == true) {
 				$cInfo = new objectInfo($_POST);
+				$cInfo->customers_id = (int)$customers_id;
+				$cInfo->customers_default_address_id = (int)$default_address_id;
 				$processed = true;
 			}
 
 			break;
 		default:
-			$customers = $gBitDb->Execute("select c.`customers_id`, c.`customers_gender`, c.`customers_firstname`,
-																				c.`customers_lastname`, c.`customers_dob`, c.`customers_email_address`,
-																				a.`entry_company`, a.`entry_street_address`, a.`entry_suburb`,
-																				a.`entry_postcode`, a.`entry_city`, a.`entry_state`, a.`entry_zone_id`,
-																				a.`entry_country_id`, c.`customers_telephone`, c.`customers_fax`,
-																				c.`customers_newsletter`, c.`customers_default_address_id`,
-																				c.`customers_email_format`, c.`customers_group_pricing`,
-																				c.`customers_authorization`, c.`customers_referral`
-																from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " a
-																on c.`customers_default_address_id` = a.`address_book_id`
-																and a.`customers_id` = c.`customers_id`
-																WHERE c.`customers_id` = '" . (int)$_GET['user_id'] . "'");
-							$cust = $customers->FetchRow();
-	$cInfo = new objectInfo($cust);
-		$gBitSmarty->assign( 'cInfo', $cInfo );
+			$cInfo = vv_customer_admin_info( (int)$_GET['user_id'] );
 	}
 } else {
 	$stats = new CommerceStatistics();
@@ -300,20 +344,64 @@ if( BitBase::getParameter( $_GET, 'user_id' ) ) {
 }
 	
 if( !empty( $cInfo ) ) {
+	$gBitSmarty->assign( 'cInfo', $cInfo );
 	$mid = 'bitpackage:bitcommerce/admin_customer_edit.tpl';
-	$title = tra('Edit Customer');
-	if ($processed == true) {
-		if ($cInfo->customers_group_pricing) {
-			$group_query = $gBitDb->Execute("select `group_name`, `group_percentage` from " . TABLE_GROUP_PRICING . " where `group_id` = '" . $cInfo->customers_group_pricing . "'");
-			echo $group_query->fields['group_name'].'&nbsp;'.$group_query->fields['group_percentage'].'%';
-		}
-	} else {
-		$groupPricing[] = 'None';
-		$groupPricing = array_merge( $groupPricing, $gBitDb->getAssoc("select `group_id`, `group_name`|| ' ' || `group_percentage` || '%' from " . TABLE_GROUP_PRICING) );
-		$gBitSmarty->assign( 'groupPricing', $groupPricing );
-		$gBitSmarty->assign( 'customerAuth', array( CUSTOMERS_AUTHORIZATION_0, CUSTOMERS_AUTHORIZATION_1, CUSTOMERS_AUTHORIZATION_2, CUSTOMERS_AUTHORIZATION_3 ) );
+	$title = trim( $cInfo->customers_firstname.' '.$cInfo->customers_lastname );
+	if( $title === '' ) {
+		$title = tra('Edit Customer');
 	}
+	$groupPricing[] = 'None';
+	$groupPricing = array_merge( $groupPricing, $gBitDb->getAssoc("select `group_id`, `group_name`|| ' ' || `group_percentage` || '%' from " . TABLE_GROUP_PRICING) );
+	$gBitSmarty->assign( 'groupPricing', $groupPricing );
+	$gBitSmarty->assign( 'customerAuth', array( CUSTOMERS_AUTHORIZATION_0, CUSTOMERS_AUTHORIZATION_1, CUSTOMERS_AUTHORIZATION_2, CUSTOMERS_AUTHORIZATION_3 ) );
+	$customerErrors = array();
+	if( $processed == true ) {
+		$errorMessages = array(
+			'entry_firstname_error' => tra( 'First name is too short.' ),
+			'entry_lastname_error' => tra( 'Last name is too short.' ),
+			'entry_email_address_error' => tra( 'Email address is too short.' ),
+			'entry_email_address_check_error' => tra( 'Email address is not valid.' ),
+			'entry_email_address_exists' => tra( 'Another customer already uses that email address.' ),
+			'entry_date_of_birth_error' => tra( 'Date of birth is not a valid date.' ),
+			'entry_telephone_error' => tra( 'Telephone number is too short.' ),
+			'entry_street_address_error' => tra( 'Street address is too short.' ),
+			'entry_post_code_error' => tra( 'Post code is too short.' ),
+			'entry_city_error' => tra( 'City is too short.' ),
+			'entry_country_error' => tra( 'Country is required.' ),
+			'entry_state_error' => tra( 'State is not valid for that country.' ),
+		);
+		foreach( $errorMessages as $flag => $message ) {
+			if( !empty( $$flag ) ) {
+				$customerErrors[] = $message;
+			}
+		}
+	}
+	$gBitSmarty->assign( 'customerErrors', $customerErrors );
+	$gBitSmarty->assign( 'customerStats', zen_get_customers_stats( (int)$_GET['user_id'] ) );
+	$customerUser = $gBitUser->getUserInfo( array( 'user_id' => (int)$_GET['user_id'] ) );
+	if( empty( $customerUser ) ) {
+		$customerUser = array( 'user_id' => (int)$_GET['user_id'], 'real_name' => trim( $cInfo->customers_firstname.' '.$cInfo->customers_lastname ), 'login' => '', 'email' => $cInfo->customers_email_address );
+	}
+	$gBitSmarty->assign( 'customerUser', $customerUser );
 	require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceCustomer.php' );
+	$customerAddresses = CommerceCustomer::getAddressesFromId( (int)$_GET['user_id'] );
+	if( !is_array( $customerAddresses ) ) {
+		$customerAddresses = array();
+	}
+	foreach( array_keys( $customerAddresses ) as $addrKey ) {
+		$addr = &$customerAddresses[$addrKey];
+		$addr['zone_name'] = zen_get_zone_name( $addr['country_id'], $addr['zone_id'], $addr['state'] );
+		unset( $addr );
+	}
+	$countryChoices = array();
+	foreach( (array)zen_get_countries() as $country ) {
+		$countryChoices[(int)$country['countries_id']] = $country['countries_name'];
+	}
+	$gBitSmarty->assign( 'customerAddresses', $customerAddresses );
+	$gBitSmarty->assign( 'countryChoices', $countryChoices );
+	$gBitSmarty->assign( 'addressErrors', !empty( $addressErrors ) ? $addressErrors : array() );
+	$gBitSmarty->assign( 'addressEditId', !empty( $addressErrors ) ? $addressEditId : 0 );
+	$gBitSmarty->assign( 'addressPosted', !empty( $addressErrors ) && is_array( $addressPosted ) ? $addressPosted : array() );
 	CommerceCustomer::assignPurchaseOptionsForUser( $_GET['user_id'] );
 } else {
 	$mid = 'bitpackage:bitcommerce/admin_customer_list.tpl';

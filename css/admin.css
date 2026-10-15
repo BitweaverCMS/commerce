@@ -14,11 +14,11 @@ table.table tr.comments	td { border-top:none; font-size:80%; }
 .admin.bitcommerce tr.highlight td { border-top:1px solid #666666;border-bottom:1px solid #666666; background-color:#ffffee; }
 
 #attrlist .option-values-toolbar { margin-left: .5em; }
-#attrlist .option-toggle { color: inherit; text-decoration: none; margin-right: .25em; }
-#attrlist .option-caret { display: inline-block; width: 1em; text-align: center; transition: transform .15s linear; }
-#attrlist .option-toggle[aria-expanded="true"] .option-caret { transform: rotate(90deg); }
-#attrlist .option-value-count { margin-left: .35em; }
-#attrlist .option-values { margin-top: .35em; }
+.attrlist .option-toggle { color: inherit; text-decoration: none; margin-right: .25em; }
+.attrlist .option-caret { display: inline-block; width: 1em; text-align: center; transition: transform .15s linear; }
+.attrlist .option-toggle[aria-expanded="true"] .option-caret { transform: rotate(90deg); }
+.attrlist .option-value-count { margin-left: .35em; }
+.attrlist .option-values { margin-top: .35em; }
 
 .coupon.coupon-active{}
 .coupon.coupon-inactive	{ background-color:#ddd; }
@@ -382,4 +382,93 @@ form.status textarea {width:100%;height:9em;}
 	.tax-report .tax-payment	{ white-space:normal; }
 	.tax-report .tax-pay-form .form-group	{ display:block; margin:0 0 8px; }
 	.tax-report .tax-pay-form .form-control	{ width:100%; }
+}
+
+/* Customer admin (admin/customers.php?user_id=) */
+.customer-edit	{ max-width:90em; }
+.customer-edit .customer-head	{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin:0 0 24px; padding-bottom:14px; border-bottom:2px solid #ddd; }
+.customer-edit .customer-head h1	{ font-size:16pt; margin:0 0 4px; }
+.customer-edit .customer-path-sep	{ color:#bbb; margin:0 .2em; }
+.customer-edit .customer-path .customer-id	{ font-size:70%; font-weight:normal; }
+.customer-edit .customer-section h2 .customer-edit-toggle	{ color:#aaa; font-size:70%; margin-left:.3em; vertical-align:middle; }
+.customer-edit .customer-section h2 .customer-edit-toggle:hover, .customer-edit .customer-section h2 .customer-edit-toggle[aria-expanded="true"]	{ color:#337ab7; text-decoration:none; }
+.customer-edit .customer-account-view	{ margin:0; }
+.customer-edit .customer-account-view dt	{ float:left; clear:left; width:11em; color:#666; font-size:85%; font-weight:normal; line-height:22px; }
+.customer-edit .customer-account-view dd	{ margin-left:11.5em; line-height:22px; }
+.customer-edit .customer-account.is-editing .customer-account-view	{ display:none; }
+.customer-edit .customer-account-form	{ padding-top:4px; }
+.customer-edit .customer-account-form label	{ display:block; color:#666; font-size:85%; font-weight:normal; margin-bottom:2px; }
+.customer-edit .customer-account-form .form-group	{ margin-bottom:12px; }
+.customer-edit .customer-section h2 .fa-cart-plus	{ color:#999; font-size:85%; margin-right:.2em; }
+.customer-edit .purchase-option-add-toggle	{ color:#555; margin-top:2px; }
+.customer-edit .purchase-option-add-toggle .fa	{ margin-right:.25em; }
+.customer-edit .customer-meta	{ color:#555; }
+.customer-edit .customer-meta > *	{ margin-right:1.2em; }
+.customer-edit .customer-id	{ color:#999; }
+.customer-edit .customer-standing	{ color:#555; margin-top:6px; }
+.customer-edit .customer-standing > *	{ margin-right:.6em; }
+.customer-edit .customer-gift	{ color:#8a6d3b; }
+.customer-edit .customer-negative	{ margin:10px 0 0; padding:6px 10px; }
+.customer-edit .customer-negative a	{ margin-right:1em; }
+.customer-edit .customer-links	{ display:flex; flex-wrap:wrap; gap:4px; flex-shrink:0; }
+.customer-edit .customer-links a	{ display:inline-block; color:#777; font-size:16px; padding:4px 7px; border-radius:3px; text-decoration:none; }
+.customer-edit .customer-links a:hover, .customer-edit .customer-links a:focus	{ color:#337ab7; background:#f5f5f5; }
+
+.customer-edit .customer-section	{ margin:0 0 32px; }
+.customer-edit .customer-section h2	{ font-size:13pt; margin:0 0 10px; }
+.customer-edit .customer-help-toggle	{ color:#aaa; font-size:60%; margin-left:.3em; vertical-align:middle; }
+.customer-edit .customer-help-toggle:hover, .customer-edit .customer-help-toggle[aria-expanded="true"]	{ color:#337ab7; text-decoration:none; }
+.customer-edit .customer-help	{ color:#666; font-size:90%; max-width:62em; }
+.customer-edit .customer-help p	{ margin:0 0 10px; }
+
+.customer-edit .purchase-options-list	{ margin:0 0 10px; padding:0; list-style:none; }
+.customer-edit .purchase-options-list > li.item	{ padding:6px 4px; border-top:1px solid #ddd; }
+.customer-edit .purchase-options-list > li.item:first-child	{ border-top:0; padding-top:0; }
+.customer-edit .purchase-options-list .option-values	{ margin:4px 0 0 1.35em; padding:0; list-style:none; }
+.customer-edit .purchase-options-list li.item	{ border:0; background:none; margin:0; }
+.customer-edit .purchase-options-list .purchase-option-value	{ display:flex; align-items:baseline; gap:.4em; padding:3px 0; }
+.customer-edit .purchase-option-id	{ color:#bbb; font-size:85%; white-space:nowrap; margin-right:.15em; }
+.customer-edit .purchase-option-value .purchase-option-id	{ flex:0 0 3.2em; text-align:right; }
+.customer-edit .purchase-option-value .purchase-option-remove	{ margin-left:auto; }
+.customer-edit .purchase-option-remove	{ color:#999; padding:0 4px; }
+.customer-edit .purchase-option-remove:hover, .customer-edit .purchase-option-remove:focus	{ color:#a94442; text-decoration:none; }
+.customer-edit .purchase-options-empty	{ color:#777; margin:0 0 10px; }
+.customer-edit .purchase-option-add	{ display:block; width:100%; background:#f9f9f9; border-top:1px dashed #ddd; margin-top:4px; padding:10px 8px; }
+.customer-edit .purchase-option-add.collapse	{ display:none; }
+.customer-edit .purchase-option-add.collapse.in	{ display:block; }
+.customer-edit #purchase-option-value	{ min-width:16em; }
+.customer-edit .purchase-option-add .form-group	{ margin:0 14px 0 0; vertical-align:bottom; }
+.customer-edit .purchase-option-add label	{ display:block; color:#666; font-size:85%; font-weight:normal; margin-bottom:2px; }
+.customer-edit .purchase-option-add .form-control	{ display:inline-block; width:auto; max-width:18em; }
+.customer-edit .purchase-option-add .purchase-option-submit	{ padding-top:16px; }
+.customer-edit .purchase-options-error	{ margin:0 0 10px; padding:6px 10px; }
+
+.customer-edit .customer-account-form .radio-inline	{ display:inline-block; color:inherit; font-size:inherit; margin-bottom:0; }
+.customer-edit .customer-actions	{ margin-top:4px; }
+.customer-edit .customer-errors ul	{ margin:0; padding-left:1.4em; }
+
+.customer-edit .customer-address	{ border-top:1px solid #ddd; }
+.customer-edit .customer-address:first-of-type	{ border-top:0; }
+.customer-edit .customer-address-card	{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:8px 4px; }
+.customer-edit .customer-address-text	{ color:#333; line-height:1.45; }
+.customer-edit .customer-address-company	{ font-weight:bold; }
+.customer-edit .customer-address-phone	{ color:#777; }
+.customer-edit .customer-address-tools	{ flex-shrink:0; white-space:nowrap; }
+.customer-edit .customer-address-tools .btn-link	{ color:#777; padding:2px 4px; }
+.customer-edit .customer-address-tools .btn-link:hover, .customer-edit .customer-address-tools .btn-link[aria-expanded="true"]	{ color:#337ab7; text-decoration:none; }
+.customer-edit .customer-address-default	{ display:inline-block; color:#3c763d; font-size:85%; margin-right:.6em; }
+.customer-edit .customer-address-form	{ background:#f9f9f9; border-top:1px dashed #ddd; }
+.customer-edit .customer-address-form form	{ padding:10px 8px 4px; }
+.customer-edit .customer-address-form label	{ display:block; color:#666; font-size:85%; font-weight:normal; margin-bottom:2px; }
+.customer-edit .customer-address-form .form-group	{ margin-bottom:8px; }
+.customer-edit .customer-address-actions	{ padding:2px 0 6px; }
+.customer-edit .customer-address-actions .btn-link	{ color:#777; }
+.customer-edit .customer-empty	{ color:#777; }
+
+@media (max-width: 767px) {
+	.customer-edit .customer-head	{ display:block; }
+	.customer-edit .customer-links	{ margin-top:10px; }
+	.customer-edit .purchase-option-add .form-group	{ display:block; margin:0 0 8px; }
+	.customer-edit .purchase-option-add .form-control	{ width:100%; max-width:none; }
+	.customer-edit .purchase-option-add .purchase-option-submit	{ padding-top:0; }
 }
