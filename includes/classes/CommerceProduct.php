@@ -1194,6 +1194,33 @@ If a special exist * 10+9
 
 	/** Bare / human default list sort (newest first). */
 	const LIST_HUMAN_SORT = 'created_desc';
+
+	/**
+	 * Order for one user's catalog when the layout does not set sort_mode.
+	 * Manual products_sort_order, then name, then id.
+	 */
+	public static function userCatalogSortMode() {
+		return array( 'p.products_sort_order_asc', 'pd.products_name_asc', 'p.products_id_asc' );
+	}
+
+	/**
+	 * getList() applies a limit, and that limited query does not keep ORDER BY.
+	 * Re-sort a user catalog in PHP: products_sort_order, then name, then id.
+	 */
+	public static function sortUserCatalog( array &$pRows ) {
+		uasort( $pRows, function( $a, $b ) {
+			$sort = (int)( $a['products_sort_order'] ?? 0 ) <=> (int)( $b['products_sort_order'] ?? 0 );
+			if( $sort !== 0 ) {
+				return $sort;
+			}
+			$name = strcasecmp( (string)( $a['products_name'] ?? '' ), (string)( $b['products_name'] ?? '' ) );
+			if( $name !== 0 ) {
+				return $name;
+			}
+			return (int)( $a['products_id'] ?? 0 ) <=> (int)( $b['products_id'] ?? 0 );
+		} );
+	}
+
 	/** Indexed crawl sort (oldest first — stable pagination). */
 	const LIST_CRAWL_SORT = 'created_asc';
 	/** Default page size for public product lists. */
@@ -1433,6 +1460,13 @@ If a special exist * 10+9
 //		$whereSql = preg_replace( '/^\sAND/', ' ', $whereSql );
 		$pListHash['total_records'] = 0;
 
+		// convertSortMode() on this class is LibertyContent's field check. It
+		// rewrites product-column modes, including an array, to last_modified_desc.
+		if( is_array( $pListHash['sort_mode'] ) ) {
+			$orderSql = $this->mDb->convertSortmode( $pListHash['sort_mode'] );
+		} else {
+			$orderSql = $this->convertSortMode( $pListHash['sort_mode'] );
+		}
 		$query = "SELECT p.`products_id` AS `hash_key`, pd.*, p.*, pd.`products_name`, lc.`created`, lc.`content_status_id`, uu.`user_id`, uu.`real_name`, uu.`login`, pt.* $selectSql
 					FROM " . TABLE_PRODUCTS . " p
 				 	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(p.`content_id`=lc.`content_id` )
@@ -1440,7 +1474,7 @@ If a special exist * 10+9
 					INNER JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON(p.`products_id`=pd.`products_id` )
 						INNER JOIN `" . BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
 					$joinSql
-					WHERE $whereSql ORDER BY ".$this->convertSortmode( $pListHash['sort_mode'] );
+					WHERE $whereSql ORDER BY ".$orderSql;
 
 		if( $rs = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] ) ) {
 			// if we returned fewer than the max, use size of our result set

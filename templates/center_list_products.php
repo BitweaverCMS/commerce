@@ -7,7 +7,19 @@ $title						= !empty( $moduleParams['title'] ) ? $moduleParams['title'] : (!empt
 $columnCount 				= !empty( $moduleParams['module_params']['columns'] ) ? $moduleParams['module_params']['columns'] : 3;
 $listHash['max_records']	= !empty( $moduleParams['module_rows'] ) ? $moduleParams['module_rows'] : $gBitSystem->getConfig( 'max_records', $columnCount * 3 );
 $listHash['offset'] 		= $listHash['max_records'] * (!empty( $_REQUEST['page'] ) ? ($_REQUEST['page'] - 1) : 0);
-$listHash['sort_mode']		= !empty( $moduleParams['sort_mode'] ) ? $moduleParams['sort_mode'] : (!empty( $moduleParams['module_params']['sort_mode'] ) ? $moduleParams['module_params']['sort_mode'] :'random');
+$explicitSort = '';
+if( !empty( $moduleParams['sort_mode'] ) ) {
+	$explicitSort = $moduleParams['sort_mode'];
+} elseif( !empty( $moduleParams['module_params']['sort_mode'] ) ) {
+	$explicitSort = $moduleParams['module_params']['sort_mode'];
+}
+if( $explicitSort !== '' ) {
+	$listHash['sort_mode'] = $explicitSort;
+} elseif( !empty( $gQueryUser ) && !empty( $gQueryUser->mUserId ) ) {
+	$listHash['sort_mode'] = CommerceProduct::userCatalogSortMode();
+} else {
+	$listHash['sort_mode'] = 'random';
+}
 $listHash['thumbnail_size'] = 'medium';
 
 if( !empty( $gQueryUser ) && $gQueryUser->mUserId ) {
@@ -26,6 +38,9 @@ $row = 0;
 $col = 0;
 $listBoxContents = array();
 if( is_object( $gBitProduct ) && $listedProducts = $gBitProduct->getList( $listHash ) ) {
+	if( is_array( $listHash['sort_mode'] ) ) {
+		CommerceProduct::sortUserCatalog( $listedProducts );
+	}
 	// show only when 1 or more
 	$num_products_count = count( $listedProducts );
 	if( $num_products_count < $columnCount  ) {
