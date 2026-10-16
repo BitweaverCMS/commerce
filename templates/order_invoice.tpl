@@ -79,33 +79,83 @@
 			<div class="panel panel-default height">
 				<div class="panel-heading">{tr}Payment{/tr}</div>
 				<div class="panel-body">
-					{if $order->info.payment_type}
+					{if $order->info.payment_method}
 					<div style="clear:both">
-						<div class="pull-left">{$order->info.payment_type}: </div>
-						<div class="pull-right">{$order->info.payment_owner}</div>
+						<div class="pull-left">{tr}Method{/tr}: </div>
+						<div class="pull-right">{$order->info.payment_method|escape}</div>
 					</div>
 					{/if}
-					{if $order->info.payment_number}
-					<div style="clear:both">
-						<div class="pull-left">{tr}Number{/tr}: </div>
-						<div class="pull-right">{$order->info.payment_number}</div>
-					</div>
-					{/if}
-					{if $order->info.payment_number}
-					<div style="clear:both">
-						<div class="pull-left">{tr}Expiration{/tr}: </div>
-						<div class="pull-right">{$order->info.payment_expires}</div>
-					</div>
-					{/if}
-					{if $order->info.payment_ref_id}
-					<div style="clear:both">
-						<div class="pull-left">{tr}Transaction ID{/tr}: </div>
-						<div class="pull-right">{$order->info.payment_ref_id}</div>
-					</div>
+					{if $order->mPayments}
+						{foreach from=$order->mPayments item=paymentHash}
+						<div style="clear:both">
+							{if $paymentHash.payment_date}
+							<div style="clear:both">
+								<div class="pull-left">{tr}Date{/tr}: </div>
+								<div class="pull-right">{$paymentHash.payment_date|bit_short_datetime}</div>
+							</div>
+							{/if}
+							{if $paymentHash.payment_type || $paymentHash.payment_mode}
+							<div style="clear:both">
+								<div class="pull-left">{tr}Type{/tr}: </div>
+								<div class="pull-right">{$paymentHash.payment_type|escape}{if $paymentHash.payment_mode}{if $paymentHash.payment_type} {/if}{$paymentHash.payment_mode|escape}{/if}</div>
+							</div>
+							{/if}
+							{if $paymentHash.payment_owner}
+							<div style="clear:both">
+								<div class="pull-left">{tr}Name{/tr}: </div>
+								<div class="pull-right">{$paymentHash.payment_owner|escape}</div>
+							</div>
+							{/if}
+							{if $paymentHash.payment_number}
+							<div style="clear:both">
+								<div class="pull-left">{tr}Number{/tr}: </div>
+								<div class="pull-right">{$paymentHash.payment_number|escape}</div>
+							</div>
+							{/if}
+							{if $paymentHash.payment_expires}
+							<div style="clear:both">
+								<div class="pull-left">{tr}Expiration{/tr}: </div>
+								<div class="pull-right">{$paymentHash.payment_expires|escape}</div>
+							</div>
+							{/if}
+							{if $paymentHash.payment_ref_id}
+							<div style="clear:both">
+								<div class="pull-left">{tr}Transaction ID{/tr}: </div>
+								<div class="pull-right">{$paymentHash.payment_ref_id|escape}</div>
+							</div>
+							{/if}
+							<div style="clear:both">
+								<div class="pull-left">{tr}Amount{/tr}: </div>
+								<div class="pull-right">{$gCommerceCurrencies->format($paymentHash.payment_amount, false, $paymentHash.payment_currency)}</div>
+							</div>
+							{if $paymentHash.payment_message && $paymentHash.payment_message != 'Approved' && $paymentHash.payment_message != 'Processed'}
+							<div style="clear:both">{$paymentHash.payment_message|escape}</div>
+							{/if}
+						</div>
+						{/foreach}
+					{else}
+						{if $order->info.payment_type}
+						<div style="clear:both">
+							<div class="pull-left">{$order->info.payment_type|escape}: </div>
+							<div class="pull-right">{$order->info.payment_owner|escape}</div>
+						</div>
+						{/if}
+						{if $order->info.payment_number}
+						<div style="clear:both">
+							<div class="pull-left">{tr}Number{/tr}: </div>
+							<div class="pull-right">{$order->info.payment_number|escape}</div>
+						</div>
+						{/if}
+						{if $order->info.payment_expires}
+						<div style="clear:both">
+							<div class="pull-left">{tr}Expiration{/tr}: </div>
+							<div class="pull-right">{$order->info.payment_expires|escape}</div>
+						</div>
+						{/if}
 					{/if}
 					<div style="clear:both">
 						<div class="pull-left">{tr}IP{/tr}:</div>
-						<div class="pull-right"> {$order->info.ip_address}</div>
+						<div class="pull-right"> {$order->info.ip_address|escape}</div>
 					</div>
 				</div>
 			</div>

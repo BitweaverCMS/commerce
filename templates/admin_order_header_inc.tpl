@@ -80,7 +80,7 @@ function editAddress( pAddress ) {
 	<th>{tr}Amount{/tr}</th>
 </tr>
 {foreach from=$order->mPayments item=paymentHash}
-<tr>
+<tr{if $paymentHash.is_success != 'y'} class="warning"{/if}>
 	<td><span class="date">{$paymentHash.payment_date|date_format:'Y-m-d H:i'}</span></td>
 	<td><a href="https://www.iplocation.net/ip-lookup?query={$paymentHash.ip_address}" target=_new">{booticon iname="fa-globe fa-xs"}</a> <a href="{$smarty.const.USERS_PKG_URL}admin/?ip={$paymentHash.ip_address}" target="_new">{$paymentHash.ip_address}</a>{if $paymentHash.user_id!=$paymentHash.customers_id} {displayname hash=$paymentHash}{/if}</td>
 	<td>{if $paymentHash.payment_owner}{$paymentHash.payment_owner} {$paymentHash.address_company}{/if}</td>

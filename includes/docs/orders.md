@@ -108,6 +108,25 @@ whole result, not once per order. Each line's thumbnail is
 existing thumb is used without loading the product. Display URLs still come
 from `getDisplayUrlFromHash()` on the line hash.
 
+## Invoice
+
+`admin/invoice.php` renders `templates/order_invoice.tpl`. The Payment panel
+lists each `CommerceOrder::$mPayments` row (`com_orders_payments`): date,
+type, mode, name, number, expiration, transaction id, and amount in
+`payment_currency`. Card charges store those fields on the payment row.
+`com_orders.payment_method` is the module title (shown as Method). The order
+row's `payment_type`, `payment_owner`, `payment_number`, and `payment_expires`
+are often empty, and `com_orders` has no transaction id. When `$mPayments` is
+empty, the panel falls back to those order columns. `type=packing` sets
+`showPricing` false and omits the panel.
+
+The order admin payments table (`templates/admin_order_header_inc.tpl`,
+`table.table.table-condensed`) leaves `is_success='y'` rows uncolored.
+Any other `is_success` value, including `'n'`, gets Bootstrap's `warning`
+row class. `bookstore/css/admin.css` paints those cells `#fcf8e3` and
+keeps the text `#333`, because the theme's `.warning` rule would
+otherwise turn the text orange.
+
 ## Status history
 
 Order history is the staff/customer audit log for an order. It is **not** a

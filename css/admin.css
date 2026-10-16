@@ -32,6 +32,11 @@ table.table tr.comments	td { border-top:none; font-size:80%; }
 .table tr.transferring { background-color:#afa; }
 .table tr.expediting	{ background-color:#fef; }
 .table tr.paymentdue	{ background-color:#ffe; }
+/* Failed order payments. Bootstrap's row warning is #fcf8e3. The theme .warning color is orange text, so reset it here. */
+.table > tbody > tr.warning > td {
+	background-color: #fcf8e3;
+	color: #333;
+}
 .table tr.shipped td	{ border-top: 3px solid #999; }
 
 .table.order-list code { background-color:#dddddd; }
