@@ -305,7 +305,11 @@ through the existing AJAX (`new_option_id` with `orders_products_id=new`).
 through `CommerceOrder::addProductToOrder()` with those values, last value
 per option group wins, and the history comment lists the product id plus
 each option. A value still selected in the picker (not yet queued) is
-included. Unknown POV ids refuse the whole add.
+included. Unknown POV ids refuse the whole add. Price helpers receive the
+catalogue option hashes (`products_options_id` /
+`products_options_values_id`), the same shape as a cart line.
+`getOneTimeCharges()` and `getWeight()` also accept a cart `$optionId =>
+$valueId` list.
 
 ## Staff address edit
 

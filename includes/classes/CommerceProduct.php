@@ -235,8 +235,15 @@ class CommerceProduct extends LibertyMime {
 	function getOneTimeCharges( $pQuantity, $pAttributes ) {
 		$ret = 0;
 		if( !empty( $pAttributes ) ) {
-			foreach( $pAttributes as $valueHash ) {
-				if( $option = $this->getOptionValue( NULL, $valueHash['products_options_values_id'] ) ) {
+			foreach( $pAttributes as $optionId => $valueHash ) {
+				if( is_numeric( $valueHash ) ) {
+					$valueId = $valueHash;
+				} elseif( is_array( $valueHash ) && !empty( $valueHash['products_options_values_id'] ) ) {
+					$valueId = $valueHash['products_options_values_id'];
+				} else {
+					continue;
+				}
+				if( $option = $this->getOptionValue( NULL, $valueId ) ) {
 					if( $option['product_attribute_is_free'] != '1' && !$this->getField( 'product_is_free' ) ) {
 						// calculate additional one time charges
 						if( !empty( $option['attributes_price_onetime'] ) ) {
@@ -450,8 +457,17 @@ If a special exist * 10+9
 			// account for any additional attributes such as a shopping cart or order
 			if( $pAttributes ) {
 				foreach( $pAttributes as $optionKey => $valueHash ) {
-					if( !empty( $this->mOptions[$valueHash['products_options_id']][$valueHash['products_options_values_id']]['products_attributes_wt'] ) ) {
-						$ret += (int)$this->mOptions[$valueHash['products_options_id']][$valueHash['products_options_values_id']]['products_attributes_wt'];
+					if( is_numeric( $valueHash ) ) {
+						$optionId = $optionKey;
+						$valueId = $valueHash;
+					} elseif( is_array( $valueHash ) && !empty( $valueHash['products_options_id'] ) ) {
+						$optionId = $valueHash['products_options_id'];
+						$valueId = $valueHash['products_options_values_id'];
+					} else {
+						continue;
+					}
+					if( !empty( $this->mOptions[$optionId][$valueId]['products_attributes_wt'] ) ) {
+						$ret += (int)$this->mOptions[$optionId][$valueId]['products_attributes_wt'];
 					}
 				}
 			} // attributes weight

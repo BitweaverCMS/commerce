@@ -1587,7 +1587,6 @@ class CommerceOrder extends CommerceOrderBase {
 		}
 
 		$attrRows = array();
-		$priceAttrs = array();
 		foreach( $pPovids as $povid ) {
 			if( !BitBase::verifyId( $povid ) ) {
 				continue;
@@ -1602,7 +1601,6 @@ class CommerceOrder extends CommerceOrderBase {
 				return FALSE;
 			}
 			$attrRows[$newOption['products_options_id']] = $newOption;
-			$priceAttrs[$newOption['products_options_id']] = $newOption['products_options_values_id'];
 		}
 
 		if( $this->isValid() && $newProduct = CommerceProduct::getCommerceObject( array( 'products_id' => $pProductsId ) ) ) {
@@ -1611,12 +1609,12 @@ class CommerceOrder extends CommerceOrderBase {
 			$paramHash['products_id'] = $newProduct->mProductsId;
 			$paramHash['products_model'] = $newProduct->getProductsModel();
 			$paramHash['products_name'] = $newProduct->getTitle();
-			$paramHash['products_price'] = $newProduct->getPurchasePrice( $pQuantity, $priceAttrs );
-			$paramHash['products_cogs'] = $newProduct->getCostPrice( $pQuantity, $priceAttrs );
-			$paramHash['products_wholesale'] = $newProduct->getWholesalePrice( $pQuantity, $priceAttrs );
+			$paramHash['products_price'] = $newProduct->getPurchasePrice( $pQuantity, $attrRows );
+			$paramHash['products_cogs'] = $newProduct->getCostPrice( $pQuantity, $attrRows );
+			$paramHash['products_wholesale'] = $newProduct->getWholesalePrice( $pQuantity, $attrRows );
 			$paramHash['products_commission'] = $newProduct->getCommissionUserCharges();
-			$paramHash['final_price'] = $newProduct->getPurchasePrice( $pQuantity, $priceAttrs );
-			$paramHash['onetime_charges'] = $newProduct->getOneTimeCharges( $pQuantity, $priceAttrs );
+			$paramHash['final_price'] = $newProduct->getPurchasePrice( $pQuantity, $attrRows );
+			$paramHash['onetime_charges'] = $newProduct->getOneTimeCharges( $pQuantity, $attrRows );
 			$paramHash['products_quantity'] = $pQuantity;
 			$paramHash['products_priced_by_attribute'] = $newProduct->getField( 'products_priced_by_attribute' );
 			$paramHash['product_is_free'] = $newProduct->getField( 'product_is_free' );
