@@ -94,7 +94,11 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 					print '<div class="checkbox"><label><input type="checkbox" name="replace_existing_option" value="1" checked="checked" onchange="document.getElementById(\''.$replaceNoteId.'\').style.display=this.checked?\'\':\'none\';"> '.tra( 'Replace existing option' ).'</label></div>';
 					print '<p class="help-block text-warning" id="'.$replaceNoteId.'">'.htmlspecialchars( tra( 'This will replace the existing option on this line:' ).' '.implode( '; ', $replaceLabels ) ).'</p>';
 				}
-				print '<input class="btn btn-sm btn-primary" type="submit" value="save" name="save_new_option">';
+				if( BitBase::verifyId( $_REQUEST['orders_products_id'] ?? 0 ) ) {
+					print '<input class="btn btn-sm btn-primary" type="submit" value="save" name="save_new_option">';
+				} else {
+					print '<button class="btn btn-sm btn-primary" type="button" onclick="addNewProductOption();">'.tra( 'Add option' ).'</button>';
+				}
 				print $optionComment;
 			} else {
 				print "<span class='alert alert-danger'>Unkown Option</span>";
@@ -155,71 +159,17 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				}
 				break;
 			case 'save_new_option':
-				$query = "SELECT 
-					cpo.`products_options_name`,
-					cpa.`products_options_values_name`,
-					options_values_price,
-					price_prefix,
-					product_attribute_is_free,
-					products_attributes_wt,
-					attributes_discounted,
-					attributes_price_base_inc,
-					attributes_price_onetime,
-					attributes_price_factor,
-					attributes_pf_offset,
-					attributes_pf_onetime,
-					attributes_pf_onetime_offset,
-					attributes_qty_prices,
-					attributes_qty_prices_onetime,
-					attributes_price_words,
-					attributes_price_words_free,
-					attributes_price_letters,
-					attributes_price_letters_free,
-					cpo.`products_options_id`,
-					products_options_values_id
-				FROM " . TABLE_PRODUCTS_OPTIONS . " cpo 
-					INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON(cpa.products_options_id=cpo.products_options_id) 
-				WHERE cpa.`products_options_values_id`=?";
-				$newOption = $gBitDb->getRow( $query, array( $_REQUEST['add_order_povid'] ) );
-				if( empty( $newOption ) || !BitBase::verifyId( $_REQUEST['orders_products_id'] ?? 0 ) ) {
-					$messageStack->add_session( 'The option was not added: unknown option or line item.', 'error' );
-					bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
-					break;
-				}
-				$newOption['orders_id'] = $_REQUEST['oID'];
-				$newOption['orders_products_id'] = $_REQUEST['orders_products_id'];
-				$povidText = trim( (string)BitBase::getParameter( $_REQUEST, 'add_order_povid_text', '' ) );
-				if( $povidText !== '' ) {
-					$newOption['products_options_values_name'] .= '~'.$povidText;
-				}
-				$replaceExisting = !empty( $_REQUEST['replace_existing_option'] );
-
 				$gBitDb->StartTrans();
-				$existingSameOption = $gBitDb->getAll(
-					"SELECT `orders_products_attributes_id`, `products_options_name`, `products_options_values_name`, `products_options_values_id`
-					 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
-					 WHERE `orders_id`=? AND `orders_products_id`=? AND `products_options_id`=?",
-					array( $newOption['orders_id'], $newOption['orders_products_id'], $newOption['products_options_id'] )
+				$historyBits = $order->storeOrderProductAttribute(
+					$_REQUEST['orders_products_id'] ?? 0,
+					$_REQUEST['add_order_povid'] ?? 0,
+					BitBase::getParameter( $_REQUEST, 'add_order_povid_text', '' ),
+					!empty( $_REQUEST['replace_existing_option'] )
 				);
-				$historyBits = array();
-				$skipInsert = FALSE;
-				foreach( $existingSameOption as $existingOpt ) {
-					if( (int)$existingOpt['products_options_values_id'] === (int)$newOption['products_options_values_id'] ) {
-						$skipInsert = TRUE;
-						$historyBits[] = 'Product Option already on line: '.$existingOpt['products_options_name'].' => '.$existingOpt['products_options_values_name'].' ('.$existingOpt['products_options_values_id'].')';
-					} elseif( $replaceExisting ) {
-						$gBitDb->query(
-							"DELETE FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_products_attributes_id`=? AND `orders_id`=?",
-							array( $existingOpt['orders_products_attributes_id'], $newOption['orders_id'] )
-						);
-						$historyBits[] = 'deleted '.$existingOpt['products_options_name'].' => '.$existingOpt['products_options_values_name'].' ('.$existingOpt['products_options_values_id'].')';
-					}
-				}
-				if( !$skipInsert ) {
-					$gBitDb->associateInsert( TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $newOption );
-					$historyBits[] = 'added '.$newOption['products_options_name'].' => '.$newOption['products_options_values_name'].' ('.$newOption['products_options_values_id'].')';
-				}
-				if( !empty( $historyBits ) ) {
+				if( $historyBits === FALSE ) {
+					$gBitDb->FailTrans();
+					$messageStack->add_session( 'The option was not added: unknown option or line item.', 'error' );
+				} elseif( !empty( $historyBits ) ) {
 					$order->updateStatus( array(
 						'comments' => 'Product Option: '.implode( '; ', $historyBits ),
 						'notify' => FALSE,
@@ -229,8 +179,29 @@ if( !empty( $order ) && is_a( $order, 'CommerceOrder' ) ) {
 				bit_redirect( BITCOMMERCE_PKG_URL.'admin/orders.php?oID='.$_REQUEST['oID'] );
 				break;
 			case 'save_new_product':
-				if( $order->addProductToOrder( BitBase::getParameter( $_REQUEST, 'new_product_id' ), BitBase::getParameter( $_REQUEST, 'new_quantity', 1 ) ) ) {
-					$order->updateStatus( array( 'comments' => 'Added Product to order: '.BitBase::getParameter( $_REQUEST, 'new_quantity', 1 ).' x '.BitBase::getParameter( $_REQUEST, 'new_product_id' ) ) );
+				$newQuantity = BitBase::getParameter( $_REQUEST, 'new_quantity', 1 );
+				$newProductId = BitBase::getParameter( $_REQUEST, 'new_product_id' );
+				$newPovids = BitBase::getParameter( $_REQUEST, 'new_order_povid', array() );
+				if( !is_array( $newPovids ) ) {
+					$newPovids = ( $newPovids === '' || $newPovids === NULL ) ? array() : array( $newPovids );
+				}
+				if( BitBase::verifyId( $_REQUEST['add_order_povid'] ?? 0 ) ) {
+					$newPovids[] = $_REQUEST['add_order_povid'];
+				}
+				$newPovidTexts = BitBase::getParameter( $_REQUEST, 'new_order_povid_text', array() );
+				if( !is_array( $newPovidTexts ) ) {
+					$newPovidTexts = array();
+				}
+				$addPovidText = trim( (string)BitBase::getParameter( $_REQUEST, 'add_order_povid_text', '' ) );
+				if( $addPovidText !== '' && BitBase::verifyId( $_REQUEST['add_order_povid'] ?? 0 ) ) {
+					$newPovidTexts[$_REQUEST['add_order_povid']] = $addPovidText;
+				}
+				if( $order->addProductToOrder( $newProductId, $newQuantity, $newPovids, $newPovidTexts ) ) {
+					$comment = 'Added Product to order: '.$newQuantity.' x '.$newProductId;
+					if( !empty( $order->mAddedProductOptions ) ) {
+						$comment .= '; '.implode( '; ', $order->mAddedProductOptions );
+					}
+					$order->updateStatus( array( 'comments' => $comment, 'notify' => FALSE ) );
 					bit_redirect( $_SERVER['SCRIPT_NAME'].'?oID='.$_REQUEST['oID'] );
 				} else {
 					$feedback = $order->mErrors['new_product'];

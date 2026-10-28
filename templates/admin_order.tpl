@@ -30,6 +30,37 @@ function saveNewOption( pForm ) {
 	window.location.reload();
 }
 
+function addNewProductOption() {
+	var typeSel = document.getElementById('neworderoptionnew');
+	var valueSel = document.querySelector('#neworderattrnew select[name="add_order_povid"]');
+	if( !typeSel || !valueSel || !valueSel.value ) {
+		return false;
+	}
+	var optionId = typeSel.value;
+	var povid = valueSel.value;
+	var typeLabel = typeSel.options[typeSel.selectedIndex].text;
+	var valueLabel = valueSel.options[valueSel.selectedIndex].text;
+	var textInput = document.querySelector('#neworderattrnew input[name="add_order_povid_text"]');
+	var textVal = textInput ? jQuery.trim(textInput.value) : '';
+	var list = document.getElementById('new-product-options');
+	jQuery(list).find('li[data-option-id="'+optionId+'"]').remove();
+	var $li = jQuery('<li class="orders products attributes"></li>').attr('data-option-id', optionId);
+	$li.append(jQuery('<input type="hidden" name="new_order_povid[]">').val(povid));
+	if( textVal !== '' ) {
+		$li.append(jQuery('<input type="hidden">').attr('name', 'new_order_povid_text['+povid+']').val(textVal));
+	}
+	var label = typeLabel + ': ' + valueLabel;
+	if( textVal !== '' ) {
+		label += '~' + textVal;
+	}
+	$li.append(' <a class="icon" href="#" onclick="jQuery(this).closest(\'li\').remove();return false;"><i class="fa fal fa-trash"></i></a> <small></small>');
+	$li.find('small').text(label);
+	jQuery(list).append($li);
+	typeSel.selectedIndex = 0;
+	document.getElementById('neworderattrnew').innerHTML = '';
+	return false;
+}
+
 function getShippingQuotes( pOrderId ) {
 	jQuery.ajax({
 		data: 'action=quote&oID='+pOrderId,
@@ -238,7 +269,12 @@ function getShippingQuotes( pOrderId ) {
 					<label>{tr}Quantity{/tr}</label> <input class="form-control input-sm" type="number" name="new_quantity" value="1" min="0">
 				</div> <div class="form-group">
 					<label>{tr}Product ID{/tr}</label> <input class="form-control input-sm" type="number" name="new_product_id" min="1" step="1"  required="required" pattern="[0-9]{ldelim}1,20{rdelim}">
+				</div>
+				<div class="form-group">
+					{html_options class="form-control" name="newOrderOptionType" options=$optionsList id="neworderoptionnew" onchange="getNewOption('new');" selected="0"}
+					<span id="neworderattrnew"></span>
 				</div> <input type="submit" class="btn btn-sm btn-default" name="submit" value="Add">
+				<ul id="new-product-options" class="list-unstyled" style="display:block;width:100%"></ul>
 			{/form}
 		</div>
 	</td>

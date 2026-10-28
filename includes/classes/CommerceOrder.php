@@ -1483,25 +1483,156 @@ class CommerceOrder extends CommerceOrderBase {
 		$this->CompleteTrans();
 	}
 
-	function addProductToOrder( $pProductsId, $pQuantity = 1, $pOrderAttributes=array() ) {
-		if( $this->isValid() && $newProduct = CommerceProduct::getCommerceObject( array( 'products_id' => $pProductsId ) ) ) {	
+	/**
+	 * Catalogue option snapshot for an order line (`com_orders_products_att`).
+	 *
+	 * @param mixed $pPovid `products_options_values_id`
+	 * @param mixed $pText optional free text appended to the value name with `~`
+	 * @return array|null row ready for insert (no `orders_id` / `orders_products_id`), or null when unknown
+	 */
+	function lookupOrderAttribute( $pPovid, $pText = '' ) {
+		if( !BitBase::verifyId( $pPovid ) ) {
+			return NULL;
+		}
+		$query = "SELECT
+			cpo.`products_options_name`,
+			cpa.`products_options_values_name`,
+			options_values_price,
+			price_prefix,
+			product_attribute_is_free,
+			products_attributes_wt,
+			attributes_discounted,
+			attributes_price_base_inc,
+			attributes_price_onetime,
+			attributes_price_factor,
+			attributes_pf_offset,
+			attributes_pf_onetime,
+			attributes_pf_onetime_offset,
+			attributes_qty_prices,
+			attributes_qty_prices_onetime,
+			attributes_price_words,
+			attributes_price_words_free,
+			attributes_price_letters,
+			attributes_price_letters_free,
+			cpo.`products_options_id`,
+			products_options_values_id
+		FROM " . TABLE_PRODUCTS_OPTIONS . " cpo
+			INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON(cpa.products_options_id=cpo.products_options_id)
+		WHERE cpa.`products_options_values_id`=?";
+		$newOption = $this->mDb->getRow( $query, array( $pPovid ) );
+		if( empty( $newOption ) ) {
+			return NULL;
+		}
+		$povidText = trim( (string)$pText );
+		if( $povidText !== '' ) {
+			$newOption['products_options_values_name'] .= '~'.$povidText;
+		}
+		return $newOption;
+	}
+
+	/**
+	 * Add or replace a snapshot option on an existing order line.
+	 *
+	 * Same `products_options_values_id` on the line is a no-op. When
+	 * `$pReplaceExisting` is true, other values for that `products_options_id`
+	 * on the line are deleted first.
+	 *
+	 * @return array history fragments, or FALSE when the value or line is unknown
+	 */
+	function storeOrderProductAttribute( $pOrdersProductsId, $pPovid, $pText = '', $pReplaceExisting = TRUE ) {
+		if( !$this->isValid() || !BitBase::verifyId( $pOrdersProductsId ) ) {
+			return FALSE;
+		}
+		$newOption = $this->lookupOrderAttribute( $pPovid, $pText );
+		if( empty( $newOption ) ) {
+			return FALSE;
+		}
+		$newOption['orders_id'] = $this->mOrdersId;
+		$newOption['orders_products_id'] = $pOrdersProductsId;
+
+		$existingSameOption = $this->mDb->getAll(
+			"SELECT `orders_products_attributes_id`, `products_options_name`, `products_options_values_name`, `products_options_values_id`
+			 FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . "
+			 WHERE `orders_id`=? AND `orders_products_id`=? AND `products_options_id`=?",
+			array( $newOption['orders_id'], $newOption['orders_products_id'], $newOption['products_options_id'] )
+		);
+		$historyBits = array();
+		$skipInsert = FALSE;
+		foreach( $existingSameOption as $existingOpt ) {
+			if( (int)$existingOpt['products_options_values_id'] === (int)$newOption['products_options_values_id'] ) {
+				$skipInsert = TRUE;
+				$historyBits[] = 'Product Option already on line: '.$existingOpt['products_options_name'].' => '.$existingOpt['products_options_values_name'].' ('.$existingOpt['products_options_values_id'].')';
+			} elseif( $pReplaceExisting ) {
+				$this->mDb->query(
+					"DELETE FROM " . TABLE_ORDERS_PRODUCTS_ATTRIBUTES . " WHERE `orders_products_attributes_id`=? AND `orders_id`=?",
+					array( $existingOpt['orders_products_attributes_id'], $newOption['orders_id'] )
+				);
+				$historyBits[] = 'deleted '.$existingOpt['products_options_name'].' => '.$existingOpt['products_options_values_name'].' ('.$existingOpt['products_options_values_id'].')';
+			}
+		}
+		if( !$skipInsert ) {
+			$this->mDb->associateInsert( TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $newOption );
+			$historyBits[] = 'added '.$newOption['products_options_name'].' => '.$newOption['products_options_values_name'].' ('.$newOption['products_options_values_id'].')';
+		}
+		return $historyBits;
+	}
+
+	function addProductToOrder( $pProductsId, $pQuantity = 1, $pPovids=array(), $pPovidTexts=array() ) {
+		$this->mAddedProductOptions = array();
+		if( !is_array( $pPovids ) ) {
+			$pPovids = ( $pPovids === '' || $pPovids === NULL ) ? array() : array( $pPovids );
+		}
+		if( !is_array( $pPovidTexts ) ) {
+			$pPovidTexts = array();
+		}
+
+		$attrRows = array();
+		$priceAttrs = array();
+		foreach( $pPovids as $povid ) {
+			if( !BitBase::verifyId( $povid ) ) {
+				continue;
+			}
+			$text = '';
+			if( isset( $pPovidTexts[$povid] ) ) {
+				$text = $pPovidTexts[$povid];
+			}
+			$newOption = $this->lookupOrderAttribute( $povid, $text );
+			if( empty( $newOption ) ) {
+				$this->mErrors['new_product'] = 'Unknown option value: '.$povid;
+				return FALSE;
+			}
+			$attrRows[$newOption['products_options_id']] = $newOption;
+			$priceAttrs[$newOption['products_options_id']] = $newOption['products_options_values_id'];
+		}
+
+		if( $this->isValid() && $newProduct = CommerceProduct::getCommerceObject( array( 'products_id' => $pProductsId ) ) ) {
+			$this->mDb->StartTrans();
 			$paramHash['orders_id'] = $this->mOrdersId;
 			$paramHash['products_id'] = $newProduct->mProductsId;
 			$paramHash['products_model'] = $newProduct->getProductsModel();
 			$paramHash['products_name'] = $newProduct->getTitle();
-			$paramHash['products_price'] = $newProduct->getPurchasePrice( $pQuantity, $pOrderAttributes );
-			$paramHash['products_cogs'] = $newProduct->getCostPrice( $pQuantity, $pOrderAttributes );
-			$paramHash['products_wholesale'] = $newProduct->getWholesalePrice( $pQuantity, $pOrderAttributes );
+			$paramHash['products_price'] = $newProduct->getPurchasePrice( $pQuantity, $priceAttrs );
+			$paramHash['products_cogs'] = $newProduct->getCostPrice( $pQuantity, $priceAttrs );
+			$paramHash['products_wholesale'] = $newProduct->getWholesalePrice( $pQuantity, $priceAttrs );
 			$paramHash['products_commission'] = $newProduct->getCommissionUserCharges();
-			$paramHash['final_price'] = $newProduct->getPurchasePrice();
-			$paramHash['onetime_charges'] = $newProduct->getOneTimeCharges( $pQuantity, $pOrderAttributes );
-//			$paramHash['products_tax'] = $newProduct->getField( 'tax' );
+			$paramHash['final_price'] = $newProduct->getPurchasePrice( $pQuantity, $priceAttrs );
+			$paramHash['onetime_charges'] = $newProduct->getOneTimeCharges( $pQuantity, $priceAttrs );
 			$paramHash['products_quantity'] = $pQuantity;
 			$paramHash['products_priced_by_attribute'] = $newProduct->getField( 'products_priced_by_attribute' );
 			$paramHash['product_is_free'] = $newProduct->getField( 'product_is_free' );
 			$paramHash['products_discount_type'] = $newProduct->getField( 'products_discount_type' );
 			$paramHash['products_discount_type_from'] = $newProduct->getField( 'products_discount_type_from' );
 			$this->mDb->associateInsert( TABLE_ORDERS_PRODUCTS, $paramHash );
+			$ordersProductsId = zen_db_insert_id( TABLE_ORDERS_PRODUCTS, 'orders_products_id' );
+			foreach( $attrRows as $newOption ) {
+				$newOption['orders_id'] = $this->mOrdersId;
+				$newOption['orders_products_id'] = $ordersProductsId;
+				$this->mDb->associateInsert( TABLE_ORDERS_PRODUCTS_ATTRIBUTES, $newOption );
+				$this->mAddedProductOptions[] = $newOption['products_options_name'].': '.$newOption['products_options_values_name'].' ('.$newOption['products_options_values_id'].')';
+			}
+			if( !$this->mDb->CompleteTrans() ) {
+				$this->mErrors['new_product'] = 'Could not add product: '.$pProductsId;
+			}
 		} else {
 			$this->mErrors['new_product'] = 'Product not found: '.$pProductsId;
 		}

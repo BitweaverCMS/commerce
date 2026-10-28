@@ -293,6 +293,19 @@ Staff can add or delete snapshot rows in `com_orders_products_att`.
   two values that share a display name stay distinguishable.
 - Optional text for a value (`add_order_povid_text`) is trimmed as a string.
   Do not `trim( null )` when the field is omitted.
+- Writes go through `CommerceOrder::storeOrderProductAttribute()` (existing
+  lines) and `lookupOrderAttribute()` (catalogue snapshot).
+
+The Add Product form (`#new-product-form`, `action=save_new_product`) uses
+the same `newOrderOptionType` picker. Choosing an option type loads values
+through the existing AJAX (`new_option_id` with `orders_products_id=new`).
+**Add option** queues `new_order_povid[]` (and optional
+`new_order_povid_text[povid]`) on the form; a second value for the same
+`products_options_id` replaces the queued one. **Add** inserts the line
+through `CommerceOrder::addProductToOrder()` with those values, last value
+per option group wins, and the history comment lists the product id plus
+each option. A value still selected in the picker (not yet queued) is
+included. Unknown POV ids refuse the whole add.
 
 ## Staff address edit
 
