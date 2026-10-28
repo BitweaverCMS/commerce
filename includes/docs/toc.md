@@ -9,4 +9,4 @@ One line per document. Open a file only when the task is that concern.
 - [source-reference.md](source-reference.md) — files, classes, controllers, schema, and templates. Open to find a source file.
 - [development.md](development.md) — change rules, admin layout, form actions, and list flags. Open before editing commerce behavior.
 - [security.md](security.md) — trust boundaries and direct-HTTP denial. Open for an access question.
-- [commerce-lifecycle.md](commerce-lifecycle.md) — cart, checkout, plugins, and shipping boxes. Open for checkout or a plugin.
+- [commerce-lifecycle.md](commerce-lifecycle.md) — cart, checkout, the product order-deadline hook, plugins, and shipping boxes. Open for checkout or a plugin.

@@ -1610,6 +1610,14 @@ If a special exist * 10+9
 	}
 
 	/**
+	* Whether checkout must collect an order deadline (the date the customer needs the order by)
+	* for this cart item. Derived product classes decide; the default never requires one.
+	**/
+	public function isDeadlineRequired( $pCartItemHash ) {
+		return FALSE;
+	}
+
+	/**
 	* Used for checkout tracking
 	**/
 	public function getTrackingHash( $pOrderProductOptions ) {

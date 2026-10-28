@@ -51,6 +51,18 @@ The established checkout pipeline spans page controllers and shared includes:
 Never trust client totals, currency conversion, tax, shipping, or product
 options. Recompute them from authoritative catalogue/configuration state.
 
+**Order deadline required by a product.** `CommerceProduct::isDeadlineRequired( $pCartItemHash )`
+returns FALSE; a derived product class returns TRUE when that cart item
+needs the date the customer wants the order by. The cart item hash carries
+`attributes` keyed `options_id=values_id`. `CommerceShoppingCart::verifyDeadline( $_SESSION )`
+runs on checkout confirmation and checkout process right after
+`page_checkout_parameters_inc.php` has copied a posted `deadline_date` into
+the session. It is not part of `verifyCheckout()`, which runs before that
+copy and sends a failure back to the cart page, which has no deadline field.
+A missing or unparseable date adds one `checkout_payment` message per item
+(`mErrors['deadline']`) and redirects to the payment page, which renders
+`page_checkout_deadline_inc.tpl`. The stored value is `com_orders.deadline_date`.
+
 ## Plugin base classes
 
 All module families derive from `CommercePluginBase` through a specialized base:

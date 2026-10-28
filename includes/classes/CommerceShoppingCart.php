@@ -291,6 +291,24 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		return( empty( $this->mErrors['checkout'] ) );
 	}
 
+	/**
+	* FALSE when an item requires an order deadline (CommerceProduct::isDeadlineRequired) and the
+	* checkout parameters have no valid deadline_date. Errors are in mErrors['deadline'].
+	**/
+	function verifyDeadline( $pSessionParams ) {
+		unset( $this->mErrors['deadline'] );
+		$deadline = trim( (string)BitBase::getParameter( $pSessionParams, 'deadline_date', '' ) );
+		if( $deadline === '' || strtotime( $deadline ) === FALSE ) {
+			foreach( array_keys( $this->contents ) as $cartItemKey ) {
+				$product = $this->getProductObject( $cartItemKey );
+				if( $product && $product->isDeadlineRequired( $this->contents[$cartItemKey] ) ) {
+					$this->mErrors['deadline'][$cartItemKey] = $product->getTitle().tra( ' requires an Order Deadline. Enter the date you need this order by.' );
+				}
+			}
+		}
+		return( empty( $this->mErrors['deadline'] ) );
+	}
+
 	function updateQuantity( $pProductsKey, $pQty ) {
 		global $gBitUser;
 

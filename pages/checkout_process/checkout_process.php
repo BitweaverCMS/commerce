@@ -26,6 +26,13 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 
 require_once( BITCOMMERCE_PKG_INCLUDE_PATH.'page_checkout_parameters_inc.php' );
 
+if( !$gBitCustomer->mCart->verifyDeadline( $_SESSION ) ) {
+	foreach( $gBitCustomer->mCart->mErrors['deadline'] as $deadlineError ) {
+		$messageStack->add_session( 'checkout_payment', $deadlineError, 'error' );
+	}
+	zen_redirect( zen_href_link( FILENAME_CHECKOUT_PAYMENT, '', 'SSL' ) );
+}
+
 require(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 global $gBitCustomer;
 $quoteOrder = CommerceOrder::orderFromCart( $gBitCustomer->mCart, $_SESSION );
