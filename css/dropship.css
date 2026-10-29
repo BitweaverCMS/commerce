@@ -1,0 +1,46 @@
+/* Drop ship page: Bootstrap 3 components plus the few rules it lacks (flex rows, ledger numbers, sticky rail). */
+.drop-ship .num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.drop-ship .page-header { margin-top: 0; }
+.drop-ship .page-header h1 { margin-bottom: 4px; }
+.drop-ship .page-header .btn { margin-top: 8px; }
+.drop-ship .drop-ship-file { font-weight: 600; }
+.drop-ship .table > thead > tr > th { font-weight: 500; color: #777; border-bottom-width: 1px; }
+.drop-ship .table > tbody > tr > td { vertical-align: top; padding: 12px 8px; }
+.drop-ship .table > tfoot > tr > td { font-weight: 600; border-top: 2px solid #ddd; }
+.drop-ship .ship-to-name { font-weight: 600; }
+.drop-ship .ship-to-address { color: #777; font-size: 93%; line-height: 1.4; }
+.drop-ship .ship-to-line { margin-left: 8px; font-weight: normal; }
+.drop-ship .ship-to-why { color: #a94442; font-size: 93%; margin-top: 4px; }
+.drop-ship .drop-ship-edit-toggle { padding: 2px 0; }
+.drop-ship .ship-to-edit .form-control { margin-bottom: 6px; }
+.drop-ship .ship-to-edit .btn { margin-top: 2px; }
+.drop-ship .drop-ship-select { min-width: 15em; font-variant-numeric: tabular-nums; }
+.drop-ship .rate-cell { padding-top: 18px; }
+.drop-ship .remove-cell { width: 36px; padding-top: 14px; }
+.drop-ship .drop-ship-remove { color: #999; padding: 0 4px; }
+.drop-ship .drop-ship-remove:hover { color: #a94442; }
+.drop-ship .drop-ship-clear, .drop-ship .drop-ship-requote { padding: 0; vertical-align: baseline; }
+.drop-ship .drop-ship-rate { display: flex; align-items: baseline; margin: 0; padding: 6px 8px; font-weight: normal; border-radius: 3px; cursor: pointer; }
+.drop-ship .drop-ship-rate:hover { background: #f5f5f5; }
+.drop-ship .drop-ship-rate input[type=radio] { flex: none; margin: 0 10px 0 0; position: relative; top: 2px; }
+.drop-ship .drop-ship-rate .num { flex: none; width: 5.5em; margin-right: 12px; }
+.drop-ship .drop-ship-rate .text-muted { margin-left: 6px; }
+.drop-ship .drop-ship-carrier h4 { margin: 6px 8px 4px; font-weight: 600; }
+.drop-ship .payment-fields { padding-left: 38px; }
+.drop-ship .drop-ship-rail { position: -webkit-sticky; position: sticky; top: 16px; }
+.drop-ship .drop-ship-rail > h3 { margin: 0 0 4px; }
+.drop-ship .drop-ship-rail hr { border-top-color: #ddd; }
+.drop-ship .cart-line { margin-top: 12px; }
+.drop-ship .cart-line .media-left { padding-right: 12px; }
+.drop-ship .cart-line .media-object { width: 64px; height: auto; border: 1px solid #ddd; }
+.drop-ship .cart-line .cartproductname { font-weight: 600; }
+.drop-ship .cart-line .cart-line-options { margin: 4px 0 0; font-size: 93%; color: #555; }
+.drop-ship .cart-line .cart-line-options li { line-height: 1.4; }
+.drop-ship .cart-line .cart-line-qty { font-size: 93%; color: #777; margin-top: 4px; }
+.drop-ship .cart-line .media-right { padding-left: 12px; font-weight: 600; }
+.drop-ship .total-line { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.drop-ship .total-line.grand { font-weight: 600; font-size: 1.1em; border-top: 1px solid #ddd; padding-top: 8px; margin-top: 4px; }
+.drop-ship .drop-ship-upload-box { border: 2px dashed #bbb; border-radius: 4px; padding: 28px 24px; background: #fff; }
+.drop-ship .drop-ship-columns .list-inline > li { background: #f0f0f0; border-radius: 3px; padding: 3px 9px; margin-bottom: 6px; }
+.drop-ship .help-block { margin-bottom: 0; }
+@media (max-width: 991px) { .drop-ship .drop-ship-rail { position: static; } }
