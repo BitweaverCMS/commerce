@@ -1,0 +1,30 @@
+/* Address book page: the same cards, rail, and tools row as the drop ship page (css/dropship.css). */
+.address-book .page-header { margin-top: 0; }
+.address-book .page-header h1 { margin-bottom: 4px; }
+.address-book .address-book-cards { display: flex; flex-wrap: wrap; margin-bottom: 8px; }
+.address-book .address-book-cards > [class*=col-] { float: none; }
+.address-book .address-book-entry { height: calc(100% - 10px); display: flex; flex-direction: column; padding: 10px 12px; margin: 0 0 10px; border: 1px solid #e5e5e5; border-radius: 3px; background: #fff; }
+.address-book .address-book-entry.editing { border-color: #337ab7; box-shadow: 0 0 0 1px #337ab7 inset; }
+.address-book .address-book-empty { background: #fafafa; }
+.address-book .entry-name { font-weight: 600; }
+.address-book .entry-address { color: #777; font-size: 93%; line-height: 1.4; }
+.address-book .entry-tools { margin-top: auto; padding-top: 6px; display: flex; justify-content: space-between; align-items: baseline; }
+.address-book .entry-tools .btn { padding: 2px 0; }
+.address-book .entry-delete { color: #999; padding: 0 4px; }
+.address-book .entry-delete:hover { color: #a94442; }
+.address-book .address-book-tools { padding: 4px 0 10px; }
+.address-book .address-book-import { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 3px; padding: 12px; margin-bottom: 16px; }
+.address-book .address-book-import .form-inline { margin-bottom: 6px; }
+.address-book .address-book-option { display: inline-block; font-weight: normal; color: #777; margin: 0 14px 4px 0; }
+.address-book .address-book-option input { margin: 0 3px 0 0; position: relative; top: 1px; }
+.address-book .help-block { margin-bottom: 0; }
+.address-book .address-book-map .panel-title { font-size: 18px; }
+.address-book .address-map > tbody > tr > td { vertical-align: middle; }
+.address-book .address-map-field { width: 28%; }
+.address-book .address-map-sample { width: 32%; font-size: 93%; }
+.address-book .address-map-sheets { margin-bottom: 10px; }
+.address-book .address-book-rail { position: -webkit-sticky; position: sticky; top: 16px; }
+.address-book .address-book-rail > h3 { margin: 0 0 10px; }
+.address-book .address-book-rail legend { display: none; }
+.address-book .address-book-rail .btn-link.btn-block { margin-top: 4px; }
+@media (max-width: 991px) { .address-book .address-book-rail { position: static; } }
