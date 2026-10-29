@@ -47,7 +47,7 @@
 				<input type="hidden" name="main_page" value="checkout_shipping" />
 				{if $gBitUser->hasPermission('p_bitcommerce_dropship')}
 				<div class="pull-right text-right">
-					<a class="btn btn-default btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}dropship" title="{tr}Send this cart to several people, one order per address{/tr}">{booticon iname="fa-boxes-stacked"} {tr}Ship to multiple addresses{/tr}</a>
+					<a class="btn btn-info btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}dropship" title="{tr}Send this cart to several people, one order per address{/tr}">{booticon iname="fa-boxes-stacked"} {tr}Drop Ship to Multiple Addresses{/tr}</a>
 				</div>
 				{/if}
 
