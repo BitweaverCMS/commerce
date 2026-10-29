@@ -33,11 +33,11 @@
 			</tr>
 			<tr>
 				<td class="">{tr}New Customers That Created Products{/tr}</td>
-				<td class="">{$statsCustomers.new_customers_that_created_products} / {math equation="round(x/y*100)" y=$statsCustomers.new_registrations x=$statsCustomers.new_customers_that_created_products}%</td>
+				<td class="">{$statsCustomers.new_customers_that_created_products}{if $statsCustomers.new_registrations} / {math equation="round(x/y*100)" y=$statsCustomers.new_registrations x=$statsCustomers.new_customers_that_created_products}%{/if}</td>
 			</tr>
 			<tr>
 				<td class="">{tr}New Customers That Purchased New Products{/tr}</td>
-				<td class="">{$statsCustomers.new_customers_that_purchased_new_products} / {math equation="round(x/y*100)" x=$statsCustomers.new_customers_that_purchased_new_products y=$statsCustomers.new_customers_that_created_products}%</td>
+				<td class="">{$statsCustomers.new_customers_that_purchased_new_products}{if $statsCustomers.new_customers_that_created_products} / {math equation="round(x/y*100)" x=$statsCustomers.new_customers_that_purchased_new_products y=$statsCustomers.new_customers_that_created_products}%{/if}</td>
 			</tr>
 			<tr>
 				<td class="">{tr}New Products Created By New Customers{/tr}</td>
@@ -45,24 +45,26 @@
 			</tr>
 			<tr>
 				<td class="">{tr}New Products Purchased By New Customers{/tr}</td>
-				<td class="">{$statsCustomers.new_products_purchased_by_new_customers} / {math equation="round(x/y*100)" x=$statsCustomers.new_products_purchased_by_new_customers y=$statsCustomers.new_products_created_by_new_customers}%</td>
+				<td class="">{$statsCustomers.new_products_purchased_by_new_customers}{if $statsCustomers.new_products_created_by_new_customers} / {math equation="round(x/y*100)" x=$statsCustomers.new_products_purchased_by_new_customers y=$statsCustomers.new_products_created_by_new_customers}%{/if}</td>
 			</tr>
 			<tr><th colspan="3">{tr}Existing Customers{/tr}</th></tr>
+			{assign var=existingCreated value=$statsCustomers.all_customers_that_created_products-$statsCustomers.new_customers_that_created_products}
+			{assign var=existingProductsCreated value=$statsCustomers.new_products_created_by_all_customers-$statsCustomers.new_products_created_by_new_customers}
 			<tr>
 				<td class="">{tr}Existing Customers That Created Products{/tr}</td>
-				<td class="">{$statsCustomers.all_customers_that_created_products-$statsCustomers.new_customers_that_created_products}</td>
+				<td class="">{$existingCreated}</td>
 			</tr>
 			<tr>
 				<td class="">{tr}Existing Customers That Purchased New Products{/tr}</td>
-				<td class="">{$statsCustomers.all_customers_that_purchased_new_products-$statsCustomers.new_customers_that_purchased_new_products} / {math equation="round((w-x)/(y-z)*100)" w=$statsCustomers.all_customers_that_purchased_new_products x=$statsCustomers.new_customers_that_purchased_new_products y=$statsCustomers.all_customers_that_created_products z=$statsCustomers.new_customers_that_created_products}%</td>
+				<td class="">{$statsCustomers.all_customers_that_purchased_new_products-$statsCustomers.new_customers_that_purchased_new_products}{if $existingCreated} / {math equation="round((w-x)/(y-z)*100)" w=$statsCustomers.all_customers_that_purchased_new_products x=$statsCustomers.new_customers_that_purchased_new_products y=$statsCustomers.all_customers_that_created_products z=$statsCustomers.new_customers_that_created_products}%{/if}</td>
 			</tr>
 			<tr>
 				<td class="">{tr}New Products Created By Exsting Customers{/tr}</td>
-				<td class="">{$statsCustomers.new_products_created_by_all_customers-$statsCustomers.new_products_created_by_new_customers}</td>
+				<td class="">{$existingProductsCreated}</td>
 			</tr>
 			<tr>
 				<td class="">{tr}New Products Purchased By Exsting Customers{/tr}</td>
-				<td class="">{$statsCustomers.new_products_purchased_by_all_customers-$statsCustomers.new_products_purchased_by_new_customers} / {math equation="round((w-x)/(y-z)*100)" w=$statsCustomers.new_products_purchased_by_all_customers x=$statsCustomers.new_products_purchased_by_new_customers y=$statsCustomers.new_products_created_by_all_customers z=$statsCustomers.new_products_created_by_new_customers}%</td>
+				<td class="">{$statsCustomers.new_products_purchased_by_all_customers-$statsCustomers.new_products_purchased_by_new_customers}{if $existingProductsCreated} / {math equation="round((w-x)/(y-z)*100)" w=$statsCustomers.new_products_purchased_by_all_customers x=$statsCustomers.new_products_purchased_by_new_customers y=$statsCustomers.new_products_created_by_all_customers z=$statsCustomers.new_products_created_by_new_customers}%{/if}</td>
 			</tr>
 			<tr><th colspan="2">{tr}Totals{/tr}</th></tr>
 			<tr>
@@ -96,7 +98,7 @@
 			<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/revenue.php?period={$smarty.request.period}&timeframe={$smarty.request.timeframe}&interests_id={$interest.interests_id}">{$interest.interests_name}</a></td>
 			<td class="item">{$interest.total_orders}</td>
 			<td class="item currency">${$interest.total_revenue|round:2}</td>
-			<td class="item currency">${math equation="round(x/y,2)" x=$interest.total_revenue y=$interest.total_orders}</td>
+			<td class="item currency">${if $interest.total_orders}{math equation="round(x/y,2)" x=$interest.total_revenue y=$interest.total_orders}{else}0.00{/if}</td>
 		</tr>
 		{/foreach}
 		</tbody>
@@ -122,7 +124,7 @@
 		</td>
 		<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/list_orders.php?user_id={$custId}">{$cust.total_orders}</a></td>
 		<td class="item currency">${$cust.total_revenue|round:2}</td>
-		<td class="item currency">${math equation="round(x/y,2)" x=$cust.total_revenue y=$cust.total_orders}</td>
+		<td class="item currency">${if $cust.total_orders}{math equation="round(x/y,2)" x=$cust.total_revenue y=$cust.total_orders}{else}0.00{/if}</td>
 	</tr>
 	<tr>
 		<td colspan="4">
