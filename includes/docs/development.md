@@ -53,6 +53,9 @@
   unless `shipping` is an array. PHP 8 `empty($string['key'])` is false;
   a bare `if ($string['key'])` is a TypeError. `quoteToHash()` returning
   `array()` is truthy — use `empty( $quoteHash )`, never assign `''`.
+- `{math}` `eval`s the equation. PHP 8 throws `DivisionByZeroError` on a
+  zero denominator. Guard every `{math}` division with `{if $denom}`
+  (revenue timeframe conversion rates, per-unit averages, option share).
 
 ## Schema changes
 

@@ -14,14 +14,14 @@
 		<th class="item">{tr}{$s.totals.type_name}{/tr} {if $s.totals.type_class}({$s.totals.type_class}){/if}</th>
 		<th class="item" style="text-align:right">{$s.totals.total_units}</th>
 		<th class="item" style="text-align:right">{$s.totals.total_revenue|round:2}</th>
-		<th class="item" style="text-align:right">{math equation="round( (r/u), 2 )" r=$s.totals.total_revenue u=$s.totals.total_units}</th>
+		<th class="item" style="text-align:right">{if $s.totals.total_units}{math equation="round( (r/u), 2 )" r=$s.totals.total_revenue u=$s.totals.total_units}{else}0{/if}</th>
 	</tr>
 	{foreach from=$s.models item=sub key=modelName}
 		<tr>
 			<td class="item"><a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/list_orders.php?products_type={$typeId}&amp;products_model={$modelName|urlencode}&amp;period={$smarty.request.period}&amp;timeframe={$smarty.request.timeframe}">{$modelName|escape}</a></td>
 			<td class="item" style="text-align:right">{$sub.total_units}</td>
 			<td class="item" style="text-align:right">{$sub.total_revenue|round:2}</td>
-			<td class="item" style="text-align:right">{math equation="round( (r/u), 2 )" r=$sub.total_revenue u=$sub.total_units}</td>
+			<td class="item" style="text-align:right">{if $sub.total_units}{math equation="round( (r/u), 2 )" r=$sub.total_revenue u=$sub.total_units}{else}0{/if}</td>
 		</tr>
 	{/foreach}
 {/foreach}
