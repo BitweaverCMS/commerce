@@ -474,11 +474,14 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$productHash['weight'] = $product->getWeight( $productHash['products_quantity'], $productHash['attributes'] );
 			$productHash['price'] = $product->getPurchasePrice( $productHash['products_quantity'], $productHash['attributes'] );
 			$productHash['quantity_discount'] = 0;
-			if( $productHash['products_quantity'] > 1 ) {
-				$basePrice = $product->getPurchasePrice( 1, $productHash['attributes'] );
-				if( $basePrice > $productHash['price'] ) {
-					$productHash['quantity_discount'] = 100 - round( $productHash['price'] / $basePrice * 100 );
-				}
+			// the one-unit price is what the line would pay without its quantity tier; a caller's combined-quantity
+			// floor (CommerceProduct::setDiscountQuantityFloor) is suspended for that comparison so the tier shows
+			$floor = CommerceProduct::$sDiscountQuantityFloor;
+			CommerceProduct::$sDiscountQuantityFloor = array();
+			$basePrice = $product->getPurchasePrice( 1, $productHash['attributes'] );
+			CommerceProduct::$sDiscountQuantityFloor = $floor;
+			if( $basePrice > $productHash['price'] ) {
+				$productHash['quantity_discount'] = 100 - round( $productHash['price'] / $basePrice * 100 );
 			}
 
 			$productHash['tax_rate'] = zen_get_tax_rate( $product->getField( 'products_tax_class_id' ) );

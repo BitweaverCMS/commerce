@@ -60,3 +60,58 @@
 .drop-ship .total-line.grand { font-weight: 600; font-size: 1.1em; border-top: 1px solid #ddd; padding-top: 8px; margin-top: 4px; }
 .drop-ship .help-block { margin-bottom: 0; }
 @media (max-width: 991px) { .drop-ship .drop-ship-rail { position: static; } .drop-ship .table-responsive { overflow-x: auto; } }
+.drop-ship .drop-ship-map .panel-title { font-size: 18px; }
+.drop-ship .address-map > tbody > tr > td { vertical-align: middle; }
+.drop-ship .address-map-field { width: 28%; }
+.drop-ship .address-map-sample { width: 32%; font-size: 93%; }
+.drop-ship .address-map-sheets { margin-bottom: 10px; }
+.drop-ship .drop-ship-map-show { padding-left: 4px; }
+.drop-ship .drop-ship-upload-row .drop-ship-save { display: inline-block; margin: 0 14px 4px 0; }
+.drop-ship .drop-ship-qty-toggle { padding: 2px 0; margin-right: 10px; }
+.drop-ship .drop-ship-row-cart { margin-top: 10px; }
+.drop-ship .drop-ship-row-cart .cart-line { margin-top: 8px; }
+.drop-ship .drop-ship-row-cart .cart-line .media-object { width: 48px; }
+.drop-ship .drop-ship-row-cart .cart-line .cartproductname { font-size: 93%; }
+.drop-ship .ship-to-qty { margin-top: 6px; padding: 8px 10px; background: #fafafa; border: 1px solid #e5e5e5; border-radius: 3px; }
+.drop-ship .ship-to-qty .cart-line { margin-top: 8px; }
+.drop-ship .ship-to-qty .cart-line .media-object { width: 48px; }
+.drop-ship .ship-to-qty .cart-line .media-right { vertical-align: middle; padding-left: 12px; }
+.drop-ship .ship-to-qty .drop-ship-qty-input { width: 5em; text-align: right; font-variant-numeric: tabular-nums; }
+.drop-ship .ship-to-qty .btn { margin-top: 10px; }
+.drop-ship-wait { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 1050; background: rgba(255,255,255,0.85); align-items: center; justify-content: center; }
+.drop-ship-wait-box { text-align: center; padding: 24px 28px; max-width: 360px; background: #fff; border: 1px solid #ddd; border-radius: 3px; }
+.drop-ship-wait-title { font-weight: 600; font-size: 1.15em; margin-top: 12px; }
+.drop-ship-wait-text { color: #777; margin-top: 6px; line-height: 1.4; }
+.drop-ship-spinner { width: 36px; height: 36px; margin: 0 auto; border: 3px solid #ddd; border-top-color: #337ab7; border-radius: 50%; animation: drop-ship-spin 0.9s linear infinite; }
+@keyframes drop-ship-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .drop-ship-spinner { animation: none; border-top-color: #ddd; } }
+.drop-ship .drop-ship-batch-note { margin-bottom: 8px; }
+.drop-ship .confirm-order > td { padding: 14px 8px; }
+.drop-ship .confirm-order .cart-line { margin-top: 6px; }
+.drop-ship .confirm-order .cart-line .media-object { width: 48px; }
+.drop-ship .confirm-order .cart-line .cartproductname { font-size: 93%; }
+.drop-ship .confirm-batch { margin: 0 0 6px; }
+.drop-ship .confirm-batch .was { color: #999; text-decoration: line-through; margin-left: 4px; }
+.drop-ship .confirm-orders .confirm-ship-to { width: 34%; }
+.drop-ship .confirm-orders .confirm-items .cart-line:first-child { margin-top: 0; }
+.drop-ship .confirm-orders .confirm-items .cart-line .media-object { width: 56px; }
+.drop-ship .confirm-summary { margin-top: 12px; padding-top: 8px; border-top: 1px solid #eee; max-width: 420px; margin-left: auto; }
+.drop-ship .confirm-summary .total-line { margin-bottom: 4px; font-size: 93%; }
+.drop-ship .confirm-summary .total-line.grand { font-size: 1em; }
+.drop-ship .confirm-orders > tfoot > tr > td { font-weight: 600; }
+.drop-ship .drop-ship-progressbar { margin-bottom: 0; }
+.drop-ship .drop-ship-progressbar:after { content: ""; display: table; clear: both; }
+.drop-ship .drop-ship-progressbar .drop-ship-step-label { white-space: nowrap; }
+.drop-ship .confirm-payment { margin: 10px 0 12px; }
+.drop-ship .confirm-payment dt { font-weight: normal; color: #777; font-size: 85%; text-transform: none; margin-top: 6px; }
+.drop-ship .confirm-payment dd { font-weight: 600; margin: 0; }
+@media (max-width: 767px) {
+	.drop-ship .confirm-orders > thead { display: none; }
+	.drop-ship .confirm-orders > tbody > tr > td, .drop-ship .confirm-orders > tfoot > tr > td { display: block; width: auto; }
+	.drop-ship .confirm-orders .confirm-ship-to, .drop-ship .confirm-orders .confirm-items { width: 100%; }
+	.drop-ship .confirm-orders > tbody > tr > td.confirm-ship-to { padding-bottom: 0; border-top: 2px solid #ddd; }
+	.drop-ship .confirm-orders > tbody > tr > td.confirm-items { border-top: 0; padding-top: 8px; }
+	.drop-ship .confirm-orders > tbody > tr:first-child > td.confirm-ship-to { border-top: 0; }
+	.drop-ship .confirm-summary { max-width: none; }
+	.drop-ship .confirm-orders > tfoot > tr > td.num { text-align: left; padding-top: 0; }
+}

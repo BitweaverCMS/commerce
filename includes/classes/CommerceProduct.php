@@ -545,6 +545,32 @@ If a special exist * 10+9
 		return $pQuantity * $wholesale;
 	}
 
+	/**
+	 * Quantity floors for discount pricing, products_id => quantity, for the rest of the request.
+	 * A caller that prices several carts as one purchase (one order per address from the same cart) sets the
+	 * combined quantity here so every cart and order line gets that quantity's discount tier.
+	 */
+	public static $sDiscountQuantityFloor = array();
+
+	// The quantity to look a discount tier up with: the line's, or the caller's combined-quantity floor when higher
+	function getDiscountQuantity( $pQuantity ) {
+		if( isset( self::$sDiscountQuantityFloor[(int)$this->mProductsId] ) && self::$sDiscountQuantityFloor[(int)$this->mProductsId] > $pQuantity ) {
+			return self::$sDiscountQuantityFloor[(int)$this->mProductsId];
+		}
+		return $pQuantity;
+	}
+
+	public static function setDiscountQuantityFloor( $pQuantities ) {
+		self::$sDiscountQuantityFloor = array();
+		if( is_array( $pQuantities ) ) {
+			foreach( $pQuantities as $productsId => $quantity ) {
+				if( BitBase::verifyId( $productsId ) && (int)$quantity > 0 ) {
+					self::$sDiscountQuantityFloor[(int)$productsId] = (int)$quantity;
+				}
+			}
+		}
+	}
+
 	// check a given price for a quantity discount. it is the responsibility of the calling function to determine if this method is appropirate, ie. it should check attributes_discounted,  etc...
 	function getQuantityPrice( $pQuantity, $pCheckAmount = NULL ) {
 		global $gBitDb, $gBitCustomer;
@@ -555,6 +581,8 @@ If a special exist * 10+9
 				$pQuantity = $mixedQuantity;
 			}
 		}
+		// a combined quantity set by the caller (see setDiscountQuantityFloor) wins over the line quantity
+		$pQuantity = $this->getDiscountQuantity( $pQuantity );
 
 		$discountPrice = $this->getDiscount( $pQuantity, 'discount_price' );
 
@@ -782,7 +810,9 @@ If a special exist * 10+9
 			$sale_maker_discount = ($sale_maker_discount != 0 ? (100 - $sale_maker_discount)/100 : 1);
 		}
 
-		$qty = $check_qty;
+		// the tier gate below must see the same quantity getQuantityPrice() prices with, floor included,
+		// or an option-priced line under the tier on its own never reaches the combined-quantity discount
+		$qty = $this->getDiscountQuantity( $check_qty );
 
 		// ==== percentage discount apply to price
 		if( $this->getDiscount( $qty, 'discount_price' ) && empty( $attributes_id ) ) {
