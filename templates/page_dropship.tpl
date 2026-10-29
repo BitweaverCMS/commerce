@@ -161,7 +161,7 @@
 								</div>
 								<label class="small drop-ship-save"><input type="checkbox" name="add[save]" value="1"> {tr}Also save it to my address book{/tr}</label>
 								<p class="help-block">{tr}Your browser can fill in a saved address here.{/tr}</p>
-								<button type="button" class="btn btn-default btn-sm btn-block drop-ship-add-save">{tr}Save Address{/tr}</button>
+								<button type="button" class="btn btn-info btn-sm drop-ship-add-save">{tr}Save Address{/tr}</button>
 							</td>
 						</tr>
 						<tr class="drop-ship-book-row" style="display:none">
