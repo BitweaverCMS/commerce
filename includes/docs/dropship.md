@@ -1,4 +1,10 @@
-# Drop ship
+# Drop ship (ship to multiple addresses)
+
+Customer-facing copy calls this **Ship to multiple addresses**; "drop
+ship" is the staff and code name. The checkout shipping step shows a
+"Ship to multiple addresses" button to customers with
+`p_bitcommerce_dropship` (it used to be a "Drop Ship" toggle gated on
+`p_bitcommerce_bulk_ordering`, which described the old CSV-only page).
 
 Upload a CSV of delivery addresses and create one order per row from the
 shopper's cart (or from explicit product strings). There is no checkout
@@ -14,6 +20,42 @@ columns).
 Cart clone: `CommerceTemporaryCart::loadFromHash()`. Parser:
 `bc_dropship_parse_csv()`. Preview: `bc_dropship_preview_row()`. Payment
 prefills: `bc_dropship_payment_defaults()`. All in `dropship.php`.
+
+## Three ways in: typed, address book, file
+
+The address table is always on the page. Its last row is a tools row
+with up to three buttons, and nothing else shows until one is pressed:
+
+- **Add an address** reveals a row of `add[<field>]` inputs (browser
+  autofill hints), posted with `dropship_add=1`. The row is validated
+  like a file row, checked for a duplicate, and appended; a failing one
+  is appended as a problem row to fix in place.
+- **From your address book** (only when the customer has entries)
+  reveals the entries from `CommerceCustomer::getAddresses()` as
+  checkboxes; `dropship_addressbook=1` with `address_book[]` ids maps
+  each to a row in `bc_dropship_address_book_rows()` (zone code looked
+  up from `zone_id` when the free-text state is empty).
+- **Upload a CSV or vCard** reveals the file input and Upload button,
+  bound with `form="dropship-upload"` to an otherwise empty multipart
+  form rendered outside the Process form, so the upload lives in the
+  table without nesting forms. The column help is behind a "What the
+  file needs" toggle; the full example with cart and shipping columns is
+  linked there as the advanced path.
+
+### Saving addresses for later
+
+Rows that did not come from the address book carry a **Save to address
+book** checkbox (`save_address[]` = row index; the typed row has
+`add[save]` for an immediate save). Every post from the Process form
+re-syncs those ticks onto the session rows as `_save`, so they survive
+edits and removals. At Process a ticked row is stored after its order is
+created through `CommerceCustomer::storeAddress()`
+(`bc_dropship_save_to_address_book()`: name split on the first space,
+country id from the ISO code, state as the zone code; an entry with the
+same name, street, and postcode already in the book counts as saved).
+Saved rows show "In your address book"; address-book rows (`_book`) are
+never offered. Row meta keys all start with `_` and are stripped before
+the row is merged into the order session.
 
 ## Files
 
@@ -105,30 +147,47 @@ file name to the `$_SESSION['dropship_file']` list. The page is a
 Bootstrap 3 two-column layout (`css/dropship.css` adds the flex rows,
 tabular figures, and the sticky rail):
 
-- Header: title, one sentence naming the loaded files, and an "Add more
-  addresses" button that jumps to the upload form at the bottom.
-- Main column: the address table (checkbox, name and address, a
+- Header: title and one sentence naming the loaded files (or "every
+  address below" for a typed list).
+- Main column: the address table (checkbox, name, address and phone, a
   shipping menu `shipping_quote[rowIdx]` grouped by carrier with the
-  price first, a right-aligned rate column with a footer total, and a
-  remove button; "Remove all" sits in the heading). Prices in the menus,
-  the rate column, the bulk block, and the rail totals are the plain-text
-  form of `currencies->format()` (`$pHtml = FALSE`) because option labels
-  and the script's text updates cannot carry the formatter's HTML; the
-  bulk shipping panel (`shipping_bulk` radios grouped under carrier
-  headings, price in a fixed column, "n of m addresses" when partial);
-  the payment panel (`CommercePaymentManager::userSelection()`, purchase
+  price first and the quote's origin country under it, a right-aligned
+  rate column with a footer total, and a remove button; the header's ×
+  removes every address; the last row is the typed-address form). Prices
+  in the menus, the rate column, the bulk block, and the rail totals are
+  the plain-text form of `currencies->format()` (`$pHtml = FALSE`)
+  because option labels and the script's text updates cannot carry the
+  formatter's HTML. Then the bulk shipping panel (`shipping_bulk` radios
+  grouped under carrier headings, price in a fixed column, "n of m
+  addresses" when partial). Methods there are keyed by **carrier code +
+  method title**, never by `module_method` id: USPS and other modules
+  number methods positionally, so `usps_1` is Ground Advantage for a
+  domestic address and Priority Mail International abroad. The radio
+  value is that `carrier|title` key, the script sets each menu by the
+  option's `data-key`, and the posted menu value is the row's own id;
+  without script Process resolves the key per row by quoting that
+  carrier (`bc_dropship_resolve_method()`). Methods are ordered real
+  carriers first (zero-cost modules last), then by how many addresses can
+  use them, then by total; carriers follow their best method. Then the
+  payment panel (`CommercePaymentManager::userSelection()`, purchase
   order first and open, its three fields in one row, other methods
   collapsed). Rows with `_errors` are Bootstrap `danger` rows with the
-  line number and the reasons, unchecked and disabled; a warning above
+  line label and the reasons, unchecked and disabled; a warning above
   the layout counts them.
+- Which carriers quote for a row is the normal checkout path: the
+  fulfillment modules choose the origin for the cart and destination
+  (`getShippingOrigin()`), and a carrier with an `_ORIGIN_COUNTRY_CODE`
+  (Canada Post CA, Australia Post AU) quotes only when the chosen origin
+  matches. A list mixing countries therefore shows different menus per
+  row, and "Ships from" names the origin the fulfillment layer picked.
 - Rail (sticky on desktop): the live cart with quantities and prices,
   the two-uploads note, items × ready orders, shipping, total due on the
   prefilled PO number, the Create orders button, the notify checkbox
   (off), and the Due Orders note. An empty live cart replaces the cart
   lines with an alert and disables the button.
-- Upload form last (`#dropship-upload`), with the column list and the
-  two template downloads. Before any upload it is the whole page, with
-  the cart in the rail.
+- No separate upload section: the three entry points are the tools row
+  in the table. "Ships from" appears under a menu only when the rows'
+  quote origins differ.
 
 Quotes run per row (`$gCommerceShipping->quote()`; a row with
 `shipping_method` is quoted for that module only) and are cached in
@@ -159,9 +218,10 @@ form; any rows that were skipped stay listed below for another pass.
    `shipping_method_code` columns, else `shipping_bulk`; the chosen
    `module_method` id is split back into those two keys. A row with none
    is skipped with a feedback line.
-3. Copies the row into a session merge (`$dropSession`), sets
-   `shipping_quote`, builds the temporary cart, and refuses a cart with no
-   contents.
+3. Prefixes the order comment with `DROP SHIP ORDER` (the same shape as
+   the `EXPEDITE ORDER` prefix `ot_expedite` adds), copies the row into a
+   session merge (`$dropSession`), sets `shipping_quote`, builds the
+   temporary cart, and refuses a cart with no contents.
 4. `CommerceOrder::orderFromCart()` then `process($checkoutHash, $dropSession)`.
 
 Before the loop, Process refuses the whole batch when no payment method

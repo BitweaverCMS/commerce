@@ -21,6 +21,16 @@ $gBitThemes->loadCss( BITCOMMERCE_PKG_PATH.'css/dropship.css', FALSE, 300, FALSE
 $feedback = array( 'success' => array(), 'error' => array(), 'warning' => array() );
 $dropCreated = array();
 
+// Every post from the Process form carries the per-row "save to address book" ticks; keep them on the session rows
+if( array_key_exists( 'dropship_remove', $_POST ) && !empty( $_SESSION['dropship'] ) && is_array( $_SESSION['dropship'] ) ) {
+	$saveTicks = BitBase::getParameter( $_POST, 'save_address', array() );
+	$saveTicks = is_array( $saveTicks ) ? array_flip( array_map( 'strval', $saveTicks ) ) : array();
+	foreach( $_SESSION['dropship'] as $tickIdx => &$tickRow ) {
+		$tickRow['_save'] = isset( $saveTicks[(string)$tickIdx] );
+	}
+	unset( $tickRow );
+}
+
 if( BitBase::getParameter( $_POST, 'dropship_requote' ) ) {
 	unset( $_SESSION['dropship_quotes'] );
 	$feedback['success'][] = tra( 'Shipping rates refreshed.' );
@@ -34,6 +44,72 @@ if( BitBase::getParameter( $_POST, 'dropship_requote' ) ) {
 		unset( $_SESSION['dropship'], $_SESSION['dropship_file'] );
 	}
 	$feedback['success'][] = tra( 'Removed' ).' '.htmlspecialchars( BitBase::getParameter( $removed, 'delivery_name', '' ) ).'.';
+} elseif( BitBase::getParameter( $_POST, 'dropship_addressbook' ) ) {
+	// Entries picked from the shopper's own address book
+	$picked = BitBase::getParameter( $_POST, 'address_book', array() );
+	$bookRows = bc_dropship_address_book_rows( is_array( $picked ) ? $picked : array() );
+	if( empty( $bookRows ) ) {
+		$feedback['error'][] = tra( 'Pick at least one address from your address book.' );
+	} else {
+		$existing = is_array( BitBase::getParameter( $_SESSION, 'dropship' ) ) ? $_SESSION['dropship'] : array();
+		$seen = array();
+		foreach( $existing as $existingRow ) {
+			$seen[bc_dropship_row_key( $existingRow )] = TRUE;
+		}
+		$added = 0;
+		$skipped = 0;
+		foreach( $bookRows as $row ) {
+			$rowKey = bc_dropship_row_key( $row );
+			if( isset( $seen[$rowKey] ) ) {
+				$skipped++;
+				continue;
+			}
+			$seen[$rowKey] = TRUE;
+			$existing[] = $row;
+			$added++;
+		}
+		$_SESSION['dropship'] = $existing;
+		$feedback['success'][] = $added.' '.tra( 'addresses added from your address book.' ).( $skipped ? ' '.$skipped.' '.tra( 'already in the list were skipped.' ) : '' );
+	}
+} elseif( BitBase::getParameter( $_POST, 'dropship_add' ) ) {
+	// One address typed on the page; validated like a file row and appended (as a problem row if it fails)
+	$add = BitBase::getParameter( $_POST, 'add', array() );
+	$row = array( '_line' => 0, '_line_label' => tra( 'typed' ), '_file' => '', '_errors' => array(), 'cart' => 'active_cart' );
+	foreach( bc_dropship_editable_fields() as $field ) {
+		$row[$field] = ( is_array( $add ) && isset( $add[$field] ) && !is_array( $add[$field] ) ) ? trim( (string)$add[$field] ) : '';
+	}
+	if( $row['delivery_name'] === '' && $row['delivery_street_address1'] === '' ) {
+		$feedback['error'][] = tra( 'Type at least a name and a street to add an address.' );
+	} else {
+		bc_dropship_validate_row( $row, bc_dropship_store_country_iso2() );
+		$existing = is_array( BitBase::getParameter( $_SESSION, 'dropship' ) ) ? $_SESSION['dropship'] : array();
+		$duplicate = FALSE;
+		foreach( $existing as $existingRow ) {
+			if( bc_dropship_row_key( $existingRow ) === bc_dropship_row_key( $row ) ) {
+				$duplicate = TRUE;
+			}
+		}
+		$rowName = htmlspecialchars( $row['delivery_name'] );
+		if( $duplicate ) {
+			$feedback['warning'][] = $rowName.' '.tra( 'is already in the list.' );
+		} else {
+			if( empty( $row['_errors'] ) && !empty( $add['save'] ) ) {
+				$saveErrors = array();
+				if( bc_dropship_save_to_address_book( $row, $saveErrors ) ) {
+					$row['_saved'] = TRUE;
+				} else {
+					$feedback['warning'][] = $rowName.' '.tra( 'was not saved to your address book:' ).' '.implode( ' ', $saveErrors );
+				}
+			}
+			$existing[] = $row;
+			$_SESSION['dropship'] = $existing;
+			if( empty( $row['_errors'] ) ) {
+				$feedback['success'][] = tra( 'Added' ).' '.$rowName.( !empty( $row['_saved'] ) ? ' '.tra( 'and saved it to your address book' ) : '' ).'.';
+			} else {
+				$feedback['warning'][] = tra( 'Added' ).' '.$rowName.' '.tra( 'with a problem:' ).' '.implode( '. ', $row['_errors'] );
+			}
+		}
+	}
 } elseif( ($editIdx = BitBase::getParameter( $_POST, 'dropship_edit' )) !== NULL && $editIdx !== '' && isset( $_SESSION['dropship'][$editIdx] ) ) {
 	// Inline edit of one row's delivery fields; the row is validated again so a problem row can be fixed in place
 	$edit = BitBase::getParameter( $_POST, 'edit', array() );
@@ -117,6 +193,7 @@ if( BitBase::getParameter( $_POST, 'dropship_requote' ) ) {
 		}
 	}
 	$liveCartEmpty = !$gBitCustomer->mCart->count_contents();
+	$savedToBook = 0;
 
 	if( empty( $_SESSION['dropship'] ) ) {
 		$feedback['error'][] = tra( 'There are no addresses loaded. Upload your address file again.' );
@@ -132,7 +209,12 @@ if( BitBase::getParameter( $_POST, 'dropship_requote' ) ) {
 					$feedback['error'][] = tra( 'Skipped' ).' '.$rowLabel.': '.implode( '; ', $checkoutHash['_errors'] );
 					continue;
 				}
-				unset( $checkoutHash['_errors'], $checkoutHash['_line'], $checkoutHash['_line_label'], $checkoutHash['_file'] );
+				$saveToBook = !empty( $checkoutHash['_save'] ) && empty( $checkoutHash['_saved'] ) && empty( $checkoutHash['_book'] );
+				foreach( array_keys( $checkoutHash ) as $metaKey ) {
+					if( strpos( $metaKey, '_' ) === 0 ) {
+						unset( $checkoutHash[$metaKey] );
+					}
+				}
 
 				if( bc_dropship_uses_active_cart( $checkoutHash ) && $liveCartEmpty ) {
 					$feedback['error'][] = tra( 'Skipped' ).' '.$rowLabel.': '.tra( 'your cart is empty, so there is nothing to ship.' );
@@ -153,14 +235,17 @@ if( BitBase::getParameter( $_POST, 'dropship_requote' ) ) {
 				if( strpos( $rowQuote, '_' ) === FALSE && trim( (string)BitBase::getParameter( $checkoutHash, 'shipping_method', '' ) ) !== '' ) {
 					$rowQuote = BitBase::getParameter( $checkoutHash, 'shipping_method' ).'_'.BitBase::getParameter( $checkoutHash, 'shipping_method_code' );
 				}
-				if( strpos( $rowQuote, '_' ) === FALSE ) {
-					$rowQuote = $bulkShippingQuote;
+				if( strpos( $rowQuote, '_' ) === FALSE && strpos( $bulkShippingQuote, '|' ) !== FALSE ) {
+					$rowQuote = bc_dropship_resolve_method( bc_dropship_cart( $checkoutHash ), $bulkShippingQuote );
 				}
 				if( strpos( $rowQuote, '_' ) === FALSE ) {
 					$feedback['error'][] = tra( 'Skipped' ).' '.$rowLabel.': '.tra( 'no shipping method chosen.' );
 					continue;
 				}
 				list( $checkoutHash['shipping_method'], $checkoutHash['shipping_method_code'] ) = explode( '_', $rowQuote, 2 );
+
+				// Mark the order the way ot_expedite marks an expedited one, so staff can see it came from a drop-ship batch
+				$checkoutHash['comments'] = trim( "DROP SHIP ORDER\n\n".BitBase::getParameter( $checkoutHash, 'comments', '' ) );
 
 				// Some payment parameters are expected in request, and some in session during browser checkout. Merge hash and session and them all in under the session
 				$dropSession = array_merge( $sessionCopy, $checkoutHash );
@@ -191,6 +276,14 @@ bit_error_email( 'Dropship Order Failure', $order->mErrors, $checkoutHash, $drop
 						} else {
 							unset( $_SESSION['dropship'][$orderIdx] );
 							$outputStatusCode = HttpStatusCodes::HTTP_OK;
+							if( $saveToBook ) {
+								$saveErrors = array();
+								if( bc_dropship_save_to_address_book( $checkoutHash, $saveErrors ) ) {
+									$savedToBook++;
+								} else {
+									$feedback['warning'][] = $rowLabel.': '.tra( 'not saved to your address book:' ).' '.implode( ' ', $saveErrors );
+								}
+							}
 							$dropCreated[] = array(
 								'orders_id' => $order->mOrdersId,
 								'url' => zen_href_link( 'account_history_info', 'order_id='.$order->mOrdersId ),
@@ -204,6 +297,9 @@ bit_error_email( 'Dropship Order Failure', $order->mErrors, $checkoutHash, $drop
 					}
 				}
 			}
+		}
+		if( $savedToBook ) {
+			$feedback['success'][] = $savedToBook.' '.tra( 'addresses saved to your address book.' );
 		}
 		if( empty( $_SESSION['dropship'] ) ) {
 			unset( $_SESSION['dropship'], $_SESSION['dropship_file'] );
@@ -221,12 +317,13 @@ if( !empty( $_SESSION['dropship'] ) ) {
 	$dropCartEmpty = !$gBitCustomer->mCart->count_contents();
 	foreach( $_SESSION['dropship'] as $rowIdx => $rowHash ) {
 		$preview = bc_dropship_preview_row( $rowHash, $dropCartEmpty );
-		foreach( $preview['quotes'] as $quoteId => $quoteHash ) {
-			if( empty( $dropShippingMethods[$quoteId] ) ) {
-				$dropShippingMethods[$quoteId] = array( 'id' => $quoteId, 'title' => $quoteHash['title'], 'module' => $quoteHash['module'], 'method' => $quoteHash['method'], 'count' => 0, 'total' => 0.0 );
+		foreach( $preview['quotes'] as $quoteHash ) {
+			$methodKey = $quoteHash['key'];
+			if( empty( $dropShippingMethods[$methodKey] ) ) {
+				$dropShippingMethods[$methodKey] = array( 'id' => $quoteHash['id'], 'key' => $methodKey, 'title' => $quoteHash['title'], 'module' => $quoteHash['module'], 'method' => $quoteHash['method'], 'count' => 0, 'total' => 0.0 );
 			}
-			$dropShippingMethods[$quoteId]['count']++;
-			$dropShippingMethods[$quoteId]['total'] += (float)$quoteHash['cost'];
+			$dropShippingMethods[$methodKey]['count']++;
+			$dropShippingMethods[$methodKey]['total'] += (float)$quoteHash['cost'];
 		}
 		if( empty( $preview['errors'] ) ) {
 			$dropReadyCount++;
@@ -261,10 +358,12 @@ if( !empty( $_SESSION['dropship'] ) ) {
 		if( $preview['fixed_quote'] !== '' && isset( $preview['quotes'][$preview['fixed_quote']] ) ) {
 			$preview['selected_quote'] = $preview['fixed_quote'];
 		} else {
-			foreach( array_keys( $dropShippingMethods ) as $methodId ) {
-				if( isset( $preview['quotes'][$methodId] ) ) {
-					$preview['selected_quote'] = $methodId;
-					break;
+			foreach( array_keys( $dropShippingMethods ) as $methodKey ) {
+				foreach( $preview['quotes'] as $quoteId => $quoteHash ) {
+					if( $quoteHash['key'] === $methodKey ) {
+						$preview['selected_quote'] = $quoteId;
+						break 2;
+					}
 				}
 			}
 		}
@@ -301,12 +400,24 @@ $gBitSmarty->assign( 'dropPreview', $dropPreview );
 $gBitSmarty->assign( 'dropShippingMethods', $dropShippingMethods );
 $gBitSmarty->assign( 'dropShippingGroups', $dropShippingGroups );
 $gBitSmarty->assign( 'dropBulkDefault', $dropShippingMethods ? key( $dropShippingMethods ) : '' );
+// "Ships from" is only worth a line when the rows do not all leave from the same place
+$dropOrigins = array();
+foreach( $dropPreview as $preview ) {
+	foreach( $preview['quotes'] as $quoteHash ) {
+		if( $quoteHash['origin'] !== '' ) {
+			$dropOrigins[$quoteHash['origin']] = TRUE;
+		}
+	}
+}
+$gBitSmarty->assign( 'dropOriginsVary', count( $dropOrigins ) > 1 );
 $gBitSmarty->assign( 'dropCartEmpty', $dropCartEmpty );
 $gBitSmarty->assign( 'dropReadyCount', $dropReadyCount );
 $gBitSmarty->assign( 'dropActiveCartRows', $dropActiveCartRows );
 $gBitSmarty->assign( 'dropPaymentSelections', $dropPaymentSelections );
 $gBitSmarty->assign( 'dropPaymentDefault', $dropPaymentDefault );
 $gBitSmarty->assign( 'dropLiveCart', $gBitCustomer->mCart );
+$dropAddressBook = $gBitCustomer->getAddresses();
+$gBitSmarty->assign( 'dropAddressBook', is_array( $dropAddressBook ) ? $dropAddressBook : array() );
 $dropFileNames = BitBase::getParameter( $_SESSION, 'dropship_file', array() );
 $gBitSmarty->assign( 'dropFileName', is_array( $dropFileNames ) ? implode( ', ', array_unique( $dropFileNames ) ) : (string)$dropFileNames );
 $gBitSmarty->assign( 'dropProblemCount', count( $dropPreview ) - $dropReadyCount );
@@ -374,7 +485,14 @@ function bc_dropship_preview_row( $pRowHash, $pLiveCartEmpty ) {
 	if( is_array( $fileNames ) && count( $fileNames ) > 1 && !empty( $pRowHash['_file'] ) ) {
 		$ret['line_label'] = $pRowHash['_file'].', '.$ret['line_label'];
 	}
-	unset( $pRowHash['_errors'], $pRowHash['_line'], $pRowHash['_line_label'], $pRowHash['_file'] );
+	$ret['save'] = !empty( $pRowHash['_save'] );
+	$ret['saved'] = !empty( $pRowHash['_saved'] );
+	$ret['from_book'] = !empty( $pRowHash['_book'] );
+	foreach( array_keys( $pRowHash ) as $metaKey ) {
+		if( strpos( $metaKey, '_' ) === 0 ) {
+			unset( $pRowHash[$metaKey] );
+		}
+	}
 
 	if( $ret['uses_active_cart'] && $pLiveCartEmpty ) {
 		$ret['errors'][] = tra( 'Your cart is empty' );
@@ -413,12 +531,17 @@ function bc_dropship_preview_row( $pRowHash, $pLiveCartEmpty ) {
 				if( !empty( $moduleQuote['methods'] ) && is_array( $moduleQuote['methods'] ) ) {
 					foreach( $moduleQuote['methods'] as $method ) {
 						$quoteId = $moduleQuote['id'].'_'.$method['id'];
+						$originHash = BitBase::getParameter( $moduleQuote, 'origin', array() );
 						$moduleTitle = (string)BitBase::getParameter( $moduleQuote, 'module', $moduleQuote['id'] );
 						$methodTitle = (string)BitBase::getParameter( $method, 'title', $method['id'] );
 						$ret['quotes'][$quoteId] = array(
 							'id' => $quoteId,
+							// Method ids are positional for some carriers (usps_1 is a different service abroad), so the
+							// bulk block and the default selection match methods by carrier + name, never by id.
+							'key' => $moduleQuote['id'].'|'.$methodTitle,
 							'module' => $moduleTitle,
 							'method' => $methodTitle,
+							'origin' => is_array( $originHash ) ? (string)BitBase::getParameter( $originHash, 'countries_name', '' ) : '',
 							'title' => ( $moduleTitle == $methodTitle ) ? $methodTitle : $moduleTitle.' '.$methodTitle,
 							'cost' => BitBase::getParameter( $method, 'cost_add_tax', BitBase::getParameter( $method, 'cost', 0 ) ),
 							// plain text: this goes into <option> labels and the rate column, where the formatter's HTML cannot render
@@ -862,13 +985,31 @@ function bc_dropship_parse_vcard( $pFile, &$pErrors ) {
 
 // Two rows are the same person at the same place: name, street, and postcode, case-insensitive
 function bc_dropship_row_key( $pRow ) {
-	return strtolower( preg_replace( '/\s+/', ' ', trim( BitBase::getParameter( $pRow, 'delivery_name', '' ).'|'.BitBase::getParameter( $pRow, 'delivery_street_address1', '' ).'|'.BitBase::getParameter( $pRow, 'delivery_postcode', '' ) ) ) );
+	$key = preg_replace( '/\s+/u', ' ', trim( BitBase::getParameter( $pRow, 'delivery_name', '' ).'|'.BitBase::getParameter( $pRow, 'delivery_street_address1', '' ).'|'.BitBase::getParameter( $pRow, 'delivery_postcode', '' ) ) );
+	return function_exists( 'mb_strtolower' ) ? mb_strtolower( $key, 'UTF-8' ) : strtolower( $key );
 }
 
 // How long the page keeps a shipping quote before asking the carrier again.
 // Hardcoded at 15 minutes for now; make it a commerce configuration value if staff ever need to tune it.
 function bc_dropship_quote_ttl() {
 	return 900;
+}
+
+// Turn a carrier|method-name key into this address's module_method id by quoting that carrier (no JS fallback path)
+function bc_dropship_resolve_method( $pCart, $pMethodKey ) {
+	global $gCommerceShipping;
+	list( $module, $methodTitle ) = explode( '|', $pMethodKey, 2 );
+	$quotes = $gCommerceShipping->quote( $pCart, '', $module );
+	if( is_array( $quotes ) ) {
+		foreach( $quotes as $moduleQuote ) {
+			foreach( BitBase::getParameter( $moduleQuote, 'methods', array() ) as $method ) {
+				if( (string)BitBase::getParameter( $method, 'title', '' ) === $methodTitle ) {
+					return $moduleQuote['id'].'_'.$method['id'];
+				}
+			}
+		}
+	}
+	return '';
 }
 
 // Cache key for a row's quotes: what ships (ids, quantities, options) and where, plus any carrier the file fixed
@@ -907,6 +1048,85 @@ function bc_dropship_quote_store( $pKey, $pQuotes ) {
 		}
 	}
 	$_SESSION['dropship_quotes'][$pKey] = array( 't' => time(), 'q' => $pQuotes );
+}
+
+// Address-book entries (by address_book_id) as validated drop-ship rows
+function bc_dropship_address_book_rows( $pAddressBookIds ) {
+	global $gBitCustomer, $gBitDb;
+	$ret = array();
+	$wanted = array_flip( array_map( 'intval', $pAddressBookIds ) );
+	if( empty( $wanted ) || !($entries = $gBitCustomer->getAddresses()) ) {
+		return $ret;
+	}
+	$storeCountryIso2 = bc_dropship_store_country_iso2();
+	foreach( $entries as $entry ) {
+		if( !isset( $wanted[(int)$entry['address_book_id']] ) ) {
+			continue;
+		}
+		$state = trim( (string)BitBase::getParameter( $entry, 'state', '' ) );
+		if( $state === '' && BitBase::verifyId( BitBase::getParameter( $entry, 'zone_id' ) ) ) {
+			$state = (string)$gBitDb->getOne( "SELECT `zone_code` FROM ".TABLE_ZONES." WHERE `zone_id`=?", array( (int)$entry['zone_id'] ) );
+		}
+		$row = array(
+			'_line' => (int)$entry['address_book_id'],
+			'_line_label' => tra( 'address book' ),
+			'_book' => TRUE,
+			'_file' => '',
+			'_errors' => array(),
+			'cart' => 'active_cart',
+			'delivery_name' => trim( BitBase::getParameter( $entry, 'firstname', '' ).' '.BitBase::getParameter( $entry, 'lastname', '' ) ),
+			'delivery_company' => (string)BitBase::getParameter( $entry, 'company', '' ),
+			'delivery_street_address1' => (string)BitBase::getParameter( $entry, 'street_address', '' ),
+			'delivery_street_address2' => (string)BitBase::getParameter( $entry, 'suburb', '' ),
+			'delivery_city' => (string)BitBase::getParameter( $entry, 'city', '' ),
+			'delivery_state' => $state,
+			'delivery_postcode' => (string)BitBase::getParameter( $entry, 'postcode', '' ),
+			'delivery_country_iso2' => (string)BitBase::getParameter( $entry, 'countries_iso_code_2', '' ),
+			'delivery_telephone' => (string)BitBase::getParameter( $entry, 'telephone', '' ),
+			'comments' => '',
+		);
+		bc_dropship_validate_row( $row, $storeCountryIso2 );
+		$ret[] = $row;
+	}
+	return $ret;
+}
+
+// Store one drop-ship row in the shopper's address book through CommerceCustomer::storeAddress().
+// An entry with the same name, street, and postcode already there counts as saved.
+function bc_dropship_save_to_address_book( $pRow, &$pErrors ) {
+	global $gBitCustomer;
+	$pErrors = array();
+	if( $entries = $gBitCustomer->getAddresses() ) {
+		$rowKey = bc_dropship_row_key( $pRow );
+		foreach( $entries as $entry ) {
+			$entryRow = array( 'delivery_name' => trim( $entry['firstname'].' '.$entry['lastname'] ), 'delivery_street_address1' => $entry['street_address'], 'delivery_postcode' => $entry['postcode'] );
+			if( bc_dropship_row_key( $entryRow ) === $rowKey ) {
+				return TRUE;
+			}
+		}
+	}
+	$name = trim( (string)BitBase::getParameter( $pRow, 'delivery_name', '' ) );
+	$firstSpace = strpos( $name, ' ' );
+	$countryHash = zen_get_countries( (string)BitBase::getParameter( $pRow, 'delivery_country_iso2', '' ) );
+	$address = array(
+		'firstname' => $firstSpace === FALSE ? $name : substr( $name, 0, $firstSpace ),
+		'lastname' => $firstSpace === FALSE ? '' : trim( substr( $name, $firstSpace + 1 ) ),
+		'company' => (string)BitBase::getParameter( $pRow, 'delivery_company', '' ),
+		'street_address' => (string)BitBase::getParameter( $pRow, 'delivery_street_address1', '' ),
+		'suburb' => (string)BitBase::getParameter( $pRow, 'delivery_street_address2', '' ),
+		'city' => (string)BitBase::getParameter( $pRow, 'delivery_city', '' ),
+		'state' => (string)BitBase::getParameter( $pRow, 'delivery_state', '' ),
+		'postcode' => (string)BitBase::getParameter( $pRow, 'delivery_postcode', '' ),
+		'telephone' => (string)BitBase::getParameter( $pRow, 'delivery_telephone', '' ),
+		'country_id' => (int)BitBase::getParameter( $countryHash, 'countries_id', 0 ),
+	);
+	$gBitCustomer->mErrors = array();
+	if( $gBitCustomer->storeAddress( $address ) ) {
+		return TRUE;
+	}
+	$pErrors = array_values( $gBitCustomer->mErrors );
+	$gBitCustomer->mErrors = array();
+	return FALSE;
 }
 
 // Delivery fields a shopper may change on the page, in display order

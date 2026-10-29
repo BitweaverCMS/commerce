@@ -45,25 +45,17 @@
 				<legend>{tr}Shipping Address{/tr}</legend>
 				<input type="hidden" name="action" value="process" />
 				<input type="hidden" name="main_page" value="checkout_shipping" />
+				{if $gBitUser->hasPermission('p_bitcommerce_dropship')}
 				<div class="pull-right text-right">
-					{if $gBitUser->hasPermission('p_bitcommerce_bulk_ordering')}
-						<span class="btn btn-default btn-sm ship-address-direct" onclick="$('.ship-address-bulk').toggle();$('.ship-address-direct').toggle();">{tr}Drop Ship{/tr} {booticon iname="fa-boxes-stacked"}</span>
-						<span class="btn btn-default btn-sm ship-address-bulk display-none" onclick="$('.ship-address-bulk').toggle();$('.ship-address-direct').toggle();">{tr}Single Shipment{/tr} {booticon iname="fa-box"}</span>
-					{/if}
+					<a class="btn btn-default btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}dropship" title="{tr}Send this cart to several people, one order per address{/tr}">{booticon iname="fa-boxes-stacked"} {tr}Ship to multiple addresses{/tr}</a>
 				</div>
+				{/if}
 
 				<div class="ship-address-direct">
 					<p>{tr}Your order will be shipped to the following address:{/tr}</p>
 					{include file="bitpackage:bitcommerce/address_display_inc.tpl" address=$cartDelivery}
 <button class="btn btn-default btn-sm" name="change_address">{tr}Change{/tr} {booticon iname="fa-truck"}</button> 
 				</div>
-				{if $gBitUser->hasPermission('p_bitcommerce_bulk_ordering')}
-				<div class="ship-address-bulk" style="display:none">
-					{formlabel label="Drop Shipping" for="dropship"}
-
-					<p>If you have would like to have the same cart mailed to multiple recipients, use our <a href="{$smarty.const.BITCOMMERCE_PKG_URL}dropship">Drop Ship feature</a>. A unique order with unique shipping charges will be made for each entry in the CSV file.</p>
-				</div>
-				{/if}
 			</fieldset>
 			{include file="bitpackage:bitcommerce/page_checkout_deadline_inc.tpl" deadline=$smarty.session.deadline_date}
 		</div>

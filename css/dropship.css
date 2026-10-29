@@ -11,12 +11,30 @@
 .drop-ship .ship-to-address { color: #777; font-size: 93%; line-height: 1.4; }
 .drop-ship .ship-to-line { margin-left: 8px; font-weight: normal; }
 .drop-ship .ship-to-why { color: #a94442; font-size: 93%; margin-top: 4px; }
-.drop-ship .drop-ship-edit-toggle { padding: 2px 0; }
+.drop-ship .drop-ship-edit-toggle { padding: 2px 0; margin-right: 10px; }
+.drop-ship .drop-ship-save { font-weight: normal; color: #777; margin: 0; }
+.drop-ship .drop-ship-save input { margin: 0 3px 0 0; position: relative; top: 1px; }
 .drop-ship .ship-to-edit .form-control { margin-bottom: 6px; }
 .drop-ship .ship-to-edit .btn { margin-top: 2px; }
-.drop-ship .drop-ship-select { min-width: 15em; font-variant-numeric: tabular-nums; }
+.drop-ship .drop-ship-select { font-variant-numeric: tabular-nums; }
 .drop-ship .rate-cell { padding-top: 18px; }
 .drop-ship .remove-cell { width: 36px; padding-top: 14px; }
+.drop-ship th.remove-cell { padding-top: 8px; }
+.drop-ship .drop-ship-add .form-control { margin-bottom: 6px; }
+.drop-ship .drop-ship-add .row, .drop-ship .ship-to-edit .row { margin-left: -4px; margin-right: -4px; }
+.drop-ship .drop-ship-add [class*=col-], .drop-ship .ship-to-edit [class*=col-] { padding-left: 4px; padding-right: 4px; }
+.drop-ship .table-responsive { overflow-x: visible; }
+.drop-ship .drop-ship-select { min-width: 0; width: 100%; }
+.drop-ship .drop-ship-add > td, .drop-ship .drop-ship-upload-row > td, .drop-ship .drop-ship-book-row > td { background: #fafafa; }
+.drop-ship .drop-ship-book { margin-bottom: 8px; display: flex; flex-wrap: wrap; }
+.drop-ship .drop-ship-book > [class*=col-] { float: none; }
+.drop-ship .drop-ship-book-entry { height: calc(100% - 6px); }
+.drop-ship .drop-ship-book-entry { display: flex; align-items: flex-start; font-weight: normal; padding: 6px 8px; margin: 0 0 6px; border: 1px solid #e5e5e5; border-radius: 3px; background: #fff; cursor: pointer; }
+.drop-ship .drop-ship-book-entry input { flex: none; margin: 3px 8px 0 0; }
+.drop-ship .drop-ship-book-entry .ship-to-address { font-size: 90%; }
+.drop-ship .drop-ship-tools > td { padding: 10px 8px; }
+.drop-ship .drop-ship-tools .btn { margin-right: 6px; }
+.drop-ship .drop-ship-upload-row .form-inline { margin-bottom: 6px; }
 .drop-ship .drop-ship-remove { color: #999; padding: 0 4px; }
 .drop-ship .drop-ship-remove:hover { color: #a94442; }
 .drop-ship .drop-ship-clear, .drop-ship .drop-ship-requote { padding: 0; vertical-align: baseline; }
@@ -40,7 +58,5 @@
 .drop-ship .cart-line .media-right { padding-left: 12px; font-weight: 600; }
 .drop-ship .total-line { display: flex; justify-content: space-between; margin-bottom: 6px; }
 .drop-ship .total-line.grand { font-weight: 600; font-size: 1.1em; border-top: 1px solid #ddd; padding-top: 8px; margin-top: 4px; }
-.drop-ship .drop-ship-upload-box { border: 2px dashed #bbb; border-radius: 4px; padding: 28px 24px; background: #fff; }
-.drop-ship .drop-ship-columns .list-inline > li { background: #f0f0f0; border-radius: 3px; padding: 3px 9px; margin-bottom: 6px; }
 .drop-ship .help-block { margin-bottom: 0; }
-@media (max-width: 991px) { .drop-ship .drop-ship-rail { position: static; } }
+@media (max-width: 991px) { .drop-ship .drop-ship-rail { position: static; } .drop-ship .table-responsive { overflow-x: auto; } }

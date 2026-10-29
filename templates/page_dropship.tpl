@@ -3,7 +3,7 @@
 
 {if $dropCreated}
 	<header class="page-header">
-		<h1>{$dropCreated|@count} {tr}orders created{/tr}</h1>
+		<h1>{$dropCreated|@count} {tr}orders created{/tr} <small>{tr}ship to multiple addresses{/tr}</small></h1>
 		<p class="lead">{if $dropCreated.0.po_number}{tr}All of them are on purchase order{/tr} <span class="drop-ship-file">{$dropCreated.0.po_number|escape}</span>, {tr}unpaid, and will not print until it is paid.{/tr}{else}{tr}Each one is listed below.{/tr}{/if} {if !$smarty.request.notify}{tr}No one was emailed.{/tr}{/if}</p>
 	</header>
 	{formfeedback hash=$feedback}
@@ -32,7 +32,7 @@
 				<div class="panel-body">
 					<h3>{tr}Next{/tr}</h3>
 					<a class="btn btn-primary btn-block" href="{$smarty.const.BITCOMMERCE_PKG_URL}invoices">{tr}Pay or review in Due Orders{/tr}</a>
-					<a class="btn btn-default btn-block" href="#dropship-upload">{tr}Send another list{/tr}</a>
+					<a class="btn btn-default btn-block" href="#dropship-addresses">{tr}Send another list{/tr}</a>
 					<p class="help-block">{tr}Sending two copies to some people? Change the cart to 2, then upload a file with just those addresses. The purchase order number will suggest the next number for today.{/tr}</p>
 				</div>
 			</div>
@@ -41,18 +41,16 @@
 	<hr>
 {else}
 	<header class="page-header clearfix">
-		{if $dropPreview}<a class="btn btn-default pull-right" href="#dropship-upload">{tr}Add more addresses{/tr}</a>{/if}
-		<h1>{tr}Drop Ship{/tr}</h1>
+		<h1>{tr}Ship to multiple addresses{/tr} <small>{tr}drop ship{/tr}</small></h1>
 		{if $dropPreview}
-			<p class="lead">{tr}Your cart, mailed to every address in{/tr} <span class="drop-ship-file">{$dropFileName|escape}</span>. {tr}Each address becomes its own order.{/tr}</p>
+			<p class="lead">{if $dropFileName}{tr}Your cart, sent to everyone in{/tr} <span class="drop-ship-file">{$dropFileName|escape}</span>.{else}{tr}Your cart, sent to everyone below.{/tr}{/if} {tr}Each address becomes its own order with its own shipping.{/tr}</p>
 		{else}
-			<p class="lead">{tr}Mail your cart to a list of people. Upload the addresses and each one becomes its own order, with its own shipping, on one purchase order.{/tr}</p>
+			<p class="lead">{tr}Send your cart to several people at once. Each address becomes its own order with its own shipping, and they are billed together.{/tr}</p>
 		{/if}
 	</header>
 	{formfeedback hash=$feedback}
 {/if}
 
-{if $dropPreview}
 	{if $dropProblemCount}
 		<div class="alert alert-warning">
 			<strong>{$dropProblemCount} {tr}of{/tr} {$dropPreview|@count} {tr}addresses need a fix in the file.{/tr}</strong>
@@ -65,10 +63,11 @@
 	<input type="hidden" name="dropship_clear" value="">
 	<input type="hidden" name="dropship_requote" value="">
 	<input type="hidden" name="dropship_edit" value="">
+	<input type="hidden" name="dropship_add" value="">
+	<input type="hidden" name="dropship_addressbook" value="">
 	<div class="row">
 		<div class="col-md-8">
 
-			<h2 class="h3">{tr}Addresses{/tr} <small>{$dropReadyCount} {tr}of{/tr} {$dropPreview|@count} {tr}ready{/tr}</small> <button type="button" class="btn btn-link btn-xs drop-ship-clear">{tr}Remove all{/tr}</button></h2>
 			<div class="panel panel-default">
 				<div class="table-responsive">
 				<table class="table" id="dropship-addresses">
@@ -78,7 +77,7 @@
 							<th>{tr}Ship to{/tr}</th>
 							<th>{tr}Shipping{/tr}</th>
 							<th class="num">{tr}Rate{/tr}</th>
-							<th></th>
+							<th class="remove-cell">{if $dropPreview}<button type="button" class="btn btn-link btn-xs drop-ship-clear" title="{tr}Remove every address{/tr}" aria-label="{tr}Remove every address{/tr}">{booticon iname="fa-xmark"}</button>{/if}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -99,6 +98,13 @@
 									{if $preview.row.delivery_telephone}<div class="ship-to-address">{booticon iname="fa-phone"} {$preview.row.delivery_telephone|escape}</div>{/if}
 									{if $preview.row.comments}<div class="ship-to-address"><em>{$preview.row.comments|escape}</em></div>{/if}
 									<button type="button" class="btn btn-link btn-xs drop-ship-edit-toggle">{tr}Edit{/tr}</button>
+									{if !$preview.from_book && !$preview.errors}
+										{if $preview.saved}
+											<span class="small text-muted drop-ship-save">{booticon iname="fa-check"} {tr}In your address book{/tr}</span>
+										{else}
+											<label class="small drop-ship-save"><input type="checkbox" name="save_address[]" value="{$rowIdx}" {if $preview.save}checked{/if}> {tr}Save to address book{/tr}</label>
+										{/if}
+									{/if}
 								</div>
 								<div class="ship-to-edit" style="display:none">
 									<div class="row">
@@ -123,12 +129,13 @@
 									{foreach from=$preview.quote_groups key=carrier item=carrierQuotes}
 										<optgroup label="{$carrier|escape}">
 										{foreach from=$carrierQuotes item=quote}
-											<option value="{$quote.id}" data-cost="{$quote.cost}" data-display="{$quote.display|escape}" {if $quote.id == $preview.selected_quote}selected{/if}>{$quote.display} &nbsp;{$quote.method|escape}</option>
+											<option value="{$quote.id}" data-key="{$quote.key|escape}" data-cost="{$quote.cost}" data-display="{$quote.display|escape}" {if $quote.id == $preview.selected_quote}selected{/if}>{$quote.display} &nbsp;{$quote.method|escape}</option>
 										{/foreach}
 										</optgroup>
 									{/foreach}
 									</select>
 									{if $preview.fixed_quote}<div class="ship-to-address">{tr}carrier set in file{/tr}</div>{/if}
+									{if $dropOriginsVary && $preview.quotes[$preview.selected_quote].origin}<div class="ship-to-address drop-ship-origin">{tr}Ships from{/tr} {$preview.quotes[$preview.selected_quote].origin|escape}</div>{/if}
 								{elseif $preview.errors}
 									<select class="form-control input-sm drop-ship-select" disabled><option>{tr}Fix the address first{/tr}</option></select>
 								{/if}
@@ -138,10 +145,76 @@
 							<td class="remove-cell"><button type="button" class="btn btn-link btn-xs drop-ship-remove" data-row="{$rowIdx}" title="{tr}Remove{/tr} {$preview.row.delivery_name|escape}" aria-label="{tr}Remove{/tr} {$preview.row.delivery_name|escape}">{booticon iname="fa-xmark"}</button></td>
 						</tr>
 					{/foreach}
+						<tr class="drop-ship-add" style="display:none">
+							<td></td>
+							<td colspan="4">
+								<div class="row">
+									<div class="col-sm-4"><input class="form-control input-sm" name="add[delivery_name]" placeholder="{tr}Name{/tr}" aria-label="{tr}Name{/tr}" autocomplete="section-dropship shipping name"></div>
+									<div class="col-sm-4"><input class="form-control input-sm" name="add[delivery_company]" placeholder="{tr}Company{/tr}" aria-label="{tr}Company{/tr}" autocomplete="section-dropship shipping organization"></div>
+									<div class="col-sm-4"><input class="form-control input-sm" name="add[delivery_telephone]" type="tel" placeholder="{tr}Phone{/tr}" aria-label="{tr}Phone{/tr}" autocomplete="section-dropship shipping tel"></div>
+									<div class="col-sm-5"><input class="form-control input-sm" name="add[delivery_street_address1]" placeholder="{tr}Street{/tr}" aria-label="{tr}Street{/tr}" autocomplete="section-dropship shipping address-line1"></div>
+									<div class="col-sm-3"><input class="form-control input-sm" name="add[delivery_street_address2]" placeholder="{tr}Apt, suite, unit{/tr}" aria-label="{tr}Address line 2{/tr}" autocomplete="section-dropship shipping address-line2"></div>
+									<div class="col-sm-4"><input class="form-control input-sm" name="add[delivery_city]" placeholder="{tr}City{/tr}" aria-label="{tr}City{/tr}" autocomplete="section-dropship shipping address-level2"></div>
+									<div class="col-sm-3"><input class="form-control input-sm" name="add[delivery_state]" placeholder="{tr}State{/tr}" aria-label="{tr}State{/tr}" autocomplete="section-dropship shipping address-level1"></div>
+									<div class="col-sm-3"><input class="form-control input-sm" name="add[delivery_postcode]" placeholder="{tr}Zip{/tr}" aria-label="{tr}Postal code{/tr}" autocomplete="section-dropship shipping postal-code"></div>
+									<div class="col-sm-3"><input class="form-control input-sm" name="add[delivery_country_iso2]" placeholder="{tr}Country{/tr}" aria-label="{tr}Country{/tr}" autocomplete="section-dropship shipping country-name"></div>
+								</div>
+								<label class="small drop-ship-save"><input type="checkbox" name="add[save]" value="1"> {tr}Also save it to my address book{/tr}</label>
+								<p class="help-block">{tr}Your browser can fill in a saved address here.{/tr}</p>
+								<button type="button" class="btn btn-default btn-sm btn-block drop-ship-add-save">{tr}Save Address{/tr}</button>
+							</td>
+						</tr>
+						<tr class="drop-ship-book-row" style="display:none">
+							<td></td>
+							<td colspan="4">
+								<div class="row drop-ship-book">
+								{foreach from=$dropAddressBook item=entry}
+									<div class="col-sm-6 col-md-4">
+										<label class="drop-ship-book-entry">
+											<input type="checkbox" name="address_book[]" value="{$entry.address_book_id}">
+											<span><strong>{$entry.firstname|escape} {$entry.lastname|escape}</strong>{if $entry.company}, {$entry.company|escape}{/if}{if $entry.entry_primary == 't'} <span class="label label-default">{tr}default{/tr}</span>{/if}<br>
+											<span class="ship-to-address">{$entry.street_address|escape}{if $entry.suburb}, {$entry.suburb|escape}{/if}<br>{$entry.city|escape}{if $entry.state}, {$entry.state|escape}{/if} {$entry.postcode|escape}{if $entry.countries_iso_code_2 != 'US'}, {$entry.countries_name|escape}{/if}</span></span>
+										</label>
+									</div>
+								{/foreach}
+								</div>
+								<button type="button" class="btn btn-primary btn-sm drop-ship-book-save">{tr}Add selected addresses{/tr}</button>
+								<a class="btn btn-link btn-sm" href="{$smarty.const.BITCOMMERCE_PKG_URL}address_book">{tr}Manage address book{/tr}</a>
+							</td>
+						</tr>
+						<tr class="drop-ship-upload-row" style="display:none">
+							<td></td>
+							<td colspan="4">
+								<div class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">{booticon iname="fa-address-book"}</div>
+											<input type="file" name="drop_csv" form="dropship-upload" class="form-control" accept=".csv,.vcf,text/csv,text/vcard,text/plain">
+										</div>
+										<input class="btn btn-primary" type="submit" name="dropship_upload" form="dropship-upload" value="{tr}Upload{/tr}">
+									</div>
+								</div>
+								<p class="help-block">{tr}A CSV with one person per row, or a vCard (.vcf) from Contacts, Outlook or Google Contacts.{/tr} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}pub/drop_ship_addresses.csv" download="{$gBitSystem->getSiteTitle()} Drop Ship Addresses.csv">{tr}Address template{/tr}</a> &middot; <a href="#" class="drop-ship-file-help-toggle">{tr}What the file needs{/tr}</a></p>
+								<div class="drop-ship-file-help" style="display:none">
+									<p class="help-block">{tr}Columns:{/tr} Name, Street, Address 2, City, State, Zip, Country, Phone, Comments. {tr}Plain headings in any order; country can be blank for the store country; other columns are ignored and listed after upload. From Excel, Numbers or Sheets use File, then Save As or Export, then CSV. A vCard uses each contact's preferred or home address and phone. New people are added to the list; anyone already in it is skipped.{/tr}</p>
+									<p class="help-block">{tr}Advanced:{/tr} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}pub/drop_ship.csv" download="{$gBitSystem->getSiteTitle()} Drop Ship Example.csv">{tr}the full example{/tr}</a> {tr}adds a cart column (product@qty:option) to ship different products per row, and per-row shipping or payment columns.{/tr}</p>
+								</div>
+							</td>
+						</tr>
+						<tr class="drop-ship-tools">
+							<td></td>
+							<td colspan="4">
+								<button type="button" class="btn btn-default btn-sm drop-ship-show-add">{booticon iname="fa-plus"} {tr}Add an address{/tr}</button>
+								{if $dropAddressBook}<button type="button" class="btn btn-default btn-sm drop-ship-show-book">{booticon iname="fa-address-book"} {tr}From your address book{/tr}</button>{/if}
+								<button type="button" class="btn btn-default btn-sm drop-ship-show-upload">{booticon iname="fa-upload"} {tr}Upload a CSV or vCard{/tr}</button>
+							</td>
+						</tr>
 					</tbody>
+					{if $dropPreview}
 					<tfoot>
-						<tr><td></td><td colspan="2">{tr}Shipping for{/tr} <span class="drop-ship-checked-count">{$dropReadyCount}</span> {tr}addresses{/tr}</td><td class="num drop-ship-shipping-total">{$dropShippingTotalDisplay}</td><td></td></tr>
+						<tr><td></td><td colspan="2"><span class="drop-ship-checked-count">{$dropReadyCount}</span> {tr}of{/tr} {$dropPreview|@count} {tr}addresses checked{/tr} &middot; {tr}shipping{/tr}</td><td class="num drop-ship-shipping-total">{$dropShippingTotalDisplay}</td><td></td></tr>
 					</tfoot>
+					{/if}
 				</table>
 				</div>
 			</div>
@@ -157,7 +230,7 @@
 							<h4>{$group.module|escape}</h4>
 							{foreach from=$group.methods item=method}
 							<label class="drop-ship-rate">
-								<input type="radio" name="shipping_bulk" value="{$method.id}" {if $method.id == $dropBulkDefault}checked{/if}>
+								<input type="radio" name="shipping_bulk" value="{$method.key|escape}" {if $method.key == $dropBulkDefault}checked{/if}>
 								<span class="num">{$method.total_display}</span>
 								<span>{$method.method|escape}{if $method.count < $dropReadyCount} <span class="text-muted">{$method.count} {tr}of{/tr} {$dropReadyCount} {tr}addresses{/tr}</span>{/if}</span>
 							</label>
@@ -171,6 +244,7 @@
 				<div class="alert alert-danger">{tr}No shipping method could be quoted for these addresses.{/tr}</div>
 			{/if}
 
+			{if $dropPreview}
 			<h2 class="h3">{tr}Payment{/tr}</h2>
 			<div class="panel panel-default">
 				<div class="panel-body">
@@ -205,12 +279,13 @@
 				{/if}
 				</div>
 			</div>
+			{/if}
 
 		</div>
 		<div class="col-md-4">
 			<div class="well drop-ship-rail">
-					{if $dropActiveCartRows}
-						<h3>{tr}Every address gets{/tr}</h3>
+					{if $dropActiveCartRows || !$dropPreview}
+						<h3>{if $dropPreview}{tr}Every address gets{/tr}{else}{tr}Every address will get{/tr}{/if}</h3>
 						{if $dropCartEmpty}
 							<div class="alert alert-danger">{tr}Your cart is empty, so there is nothing to ship.{/tr} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}">{tr}Add the products to your cart{/tr}</a>; {tr}these addresses stay loaded while you do.{/tr}</div>
 						{else}
@@ -223,7 +298,10 @@
 						<p class="text-muted">{tr}Each row of your file names its own products in the cart column.{/tr}</p>
 					{/if}
 					<hr>
-					{if $dropActiveCartRows && !$dropCartEmpty}
+					{if !$dropPreview}
+					<p class="text-muted">{tr}Shipping and the total appear once there is an address.{/tr}</p>
+					{/if}
+					{if ($dropActiveCartRows || !$dropPreview) && !$dropCartEmpty}
 					<div class="total-line"><span><span class="drop-ship-checked-count">{$dropReadyCount}</span> {tr}orders{/tr} &times; {$dropCartTotalDisplay}</span><span class="num drop-ship-items-total">{$dropItemsTotalDisplay}</span></div>
 					{/if}
 					<div class="total-line"><span>{tr}Shipping{/tr}</span><span class="num drop-ship-shipping-total">{$dropShippingTotalDisplay}</span></div>
@@ -237,55 +315,8 @@
 		</div>
 	</div>
 	{/form}
-	<hr>
-{/if}
 
-<div class="row" id="dropship-upload">
-	<div class="{if $dropPreview || $dropCreated}col-md-12{else}col-md-8{/if}">
-		{form name='dropship_upload' action="`$smarty.const.BITCOMMERCE_PKG_URL`dropship" method='post' enctype='multipart/form-data'}
-		<div class="{if !$dropPreview && !$dropCreated}drop-ship-upload-box{/if}">
-			{if $dropPreview}<h3>{tr}Add more addresses{/tr}</h3><p class="text-muted">{tr}Another CSV or vCard. New people are added to the list above; anyone already in it is skipped.{/tr}</p>{elseif $dropCreated}<h3>{tr}Send another list{/tr}</h3>{else}<h2 class="h3" style="margin-top:0">{tr}Upload your address list{/tr}</h2>{/if}
-			<p class="text-muted">{tr}A CSV file with one person per row, or a vCard (.vcf) exported from Contacts, Outlook or Google Contacts with any number of people in it.{/tr} {tr}From Excel, Numbers or Sheets: File, then Save As or Export, then CSV.{/tr}</p>
-			<div class="form-inline">
-				<div class="form-group">
-					<div class="input-group">
-						<div class="input-group-addon">{booticon iname="fa-address-book"}</div>
-						<input type="file" name="drop_csv" class="form-control" accept=".csv,.vcf,text/csv,text/vcard,text/plain">
-					</div>
-					<input class="btn btn-primary" type="submit" name="dropship_upload" value="{tr}Upload{/tr}">
-				</div>
-			</div>
-		</div>
-		{/form}
-		<div class="drop-ship-columns" style="margin-top:16px">
-			<h4>{tr}Columns the file needs{/tr}</h4>
-			<ul class="list-inline">
-				<li>Name</li><li>Street</li><li>Address 2</li><li>City</li><li>State</li><li>Zip</li><li>Country</li><li>Phone</li><li>Comments</li>
-			</ul>
-			<p class="text-muted">{tr}Plain headings are fine, in any order. Country can be blank for the store country. Other columns are ignored and listed after upload. A vCard uses each contact's preferred or home address and phone; contacts without a postal address are listed and left out.{/tr}</p>
-			<p><a href="{$smarty.const.BITCOMMERCE_PKG_URL}pub/drop_ship_addresses.csv" download="{$gBitSystem->getSiteTitle()} Drop Ship Addresses.csv">{booticon iname="fa-download"} {tr}Download the address template{/tr}</a> <span class="text-muted">&mdash; {tr}two example rows to replace with your own.{/tr}</span></p>
-			<p class="text-muted small">{tr}Advanced:{/tr} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}pub/drop_ship.csv" download="{$gBitSystem->getSiteTitle()} Drop Ship Example.csv">{tr}the full example{/tr}</a> {tr}adds a cart column to ship different products per row, and per-row shipping or payment columns.{/tr}</p>
-		</div>
-	</div>
-	{if !$dropPreview && !$dropCreated}
-	<div class="col-md-4">
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<h3>{tr}Every address will get{/tr}</h3>
-				{if $dropLiveCart->count_contents()}
-					<p class="text-muted">{tr}Your cart as it is now.{/tr} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}shopping_cart">{tr}Change quantities{/tr}</a></p>
-					{include file="bitpackage:bitcommerce/dropship_cart_inc.tpl" cart=$dropLiveCart}
-					<hr>
-					<div class="total-line grand"><span>{tr}Per address{/tr}</span><span class="num">{$dropCartTotalDisplay}</span></div>
-					<p class="help-block">{tr}Shipping is quoted for each address after you upload. Quantity discounts apply per order, not across the list.{/tr}</p>
-				{else}
-					<div class="alert alert-warning">{tr}Your cart is empty.{/tr} <a href="{$smarty.const.BITCOMMERCE_PKG_URL}">{tr}Add the products first{/tr}</a>, {tr}then upload the addresses.{/tr}</div>
-				{/if}
-			</div>
-		</div>
-	</div>
-	{/if}
-</div>
+{form name='dropship_upload' id='dropship-upload' action="`$smarty.const.BITCOMMERCE_PKG_URL`dropship" method='post' enctype='multipart/form-data'}<input type="hidden" name="dropship_upload_form" value="1">{/form}
 
 <script>
 var dropShipSymbol = '{$dropCurrencySymbol|escape:'javascript'}';
@@ -321,7 +352,8 @@ $(document).ready(function() {
 		var method = $('input[name="shipping_bulk"]:checked').val();
 		if( !method ) { return; }
 		$('.drop-ship-select').each(function() {
-			if( $(this).find('option[value="' + method + '"]').length ) { this.value = method; }
+			var match = $(this).find('option').filter(function() { return $(this).data('key') === method; }).first();
+			if( match.length ) { this.value = match.val(); }
 		});
 		refresh();
 	}
@@ -346,6 +378,28 @@ $(document).ready(function() {
 		cell.find('.ship-to-edit').show().find('input').prop('disabled', false).first().focus();
 	});
 	$('.drop-ship-edit-cancel').on('click', closeEdits);
+	function showEntryRow( selector, focusSelector ) {
+		$('.drop-ship-add, .drop-ship-book-row, .drop-ship-upload-row').not( selector ).hide();
+		var row = $( selector ).show();
+		if( focusSelector ) { row.find( focusSelector ).first().focus(); }
+	}
+	$('.drop-ship-show-add').on('click', function() { showEntryRow( '.drop-ship-add', 'input' ); });
+	$('.drop-ship-show-book').on('click', function() { showEntryRow( '.drop-ship-book-row', 'input[type=checkbox]' ); });
+	$('.drop-ship-show-upload').on('click', function() { showEntryRow( '.drop-ship-upload-row', 'input[type=file]' ); });
+	$('.drop-ship-file-help-toggle').on('click', function(e) { e.preventDefault(); $('.drop-ship-file-help').toggle(); });
+	$('.drop-ship-book-save').on('click', function() {
+		var form = $('#dropship-process');
+		form.find('input[name="dropship_addressbook"]').val( '1' );
+		form.submit();
+	});
+	$('.drop-ship-add-save').on('click', function() {
+		var form = $('#dropship-process');
+		form.find('input[name="dropship_add"]').val( '1' );
+		form.submit();
+	});
+	$('.drop-ship-add input').on('keydown', function(e) {
+		if( e.which === 13 ) { e.preventDefault(); $('.drop-ship-add-save').click(); }
+	});
 	$('.drop-ship-edit-save').on('click', function() {
 		var form = $('#dropship-process');
 		form.find('input[name="dropship_edit"]').val( $(this).data('row') );
