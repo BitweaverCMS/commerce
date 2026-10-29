@@ -19,12 +19,13 @@ class CommerceTemporaryCart extends CommerceShoppingCart {
 		$this->setupCartFromHash( $pOrderHash );
 
 		// Load up the cart items. This will overwrite / append existing cart database entries for this user in ::addToCart()
-		if( !empty( $pOrderHash['cart'] ) ) {
-			if( $pOrderHash['cart'] == 'active_cart' ) {
-				global $gBitCustomer;
-				unset( $pOrderHash['cart'] );
-				$this->contents = $gBitCustomer->mCart->contents;
-			} else {
+		// A blank cart cell means the shopper's live cart, the same as the literal 'active_cart'.
+		$cartString = trim( (string)BitBase::getParameter( $pOrderHash, 'cart', '' ) );
+		if( $cartString === '' || $cartString === 'active_cart' ) {
+			global $gBitCustomer;
+			unset( $pOrderHash['cart'] );
+			$this->contents = ( !empty( $gBitCustomer->mCart ) && is_array( $gBitCustomer->mCart->contents ) ) ? $gBitCustomer->mCart->contents : array();
+		} else {
 				$lineItemStrings = explode( ';', $pOrderHash['cart'] );
 				foreach( $lineItemStrings as $lineItemString ) {
 					if( preg_match( '/(\d+)@(\d+):(\d+)/', $lineItemString ) ) {
@@ -50,7 +51,6 @@ class CommerceTemporaryCart extends CommerceShoppingCart {
 						}
 					}
 				}
-			}
 		}
 		return empty( $this->mErrors );
 	}
