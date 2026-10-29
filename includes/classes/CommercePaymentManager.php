@@ -115,12 +115,27 @@ class CommercePaymentManager extends BitBase {
 		return $js;
 	}
 
-	function selection() {
+	// $pDefaults are field prefills (payment_po_number, payment_owner, ...) for modules that accept them
+	function selection( $pDefaults = array() ) {
 		$ret = array();
 
 		$moduleKeys = array_keys( $this->mPaymentObjects );
 		foreach( $moduleKeys as $moduleKey ) { 
-			if( $selection = $this->mPaymentObjects[$moduleKey]->selection() ) {
+			if( $selection = $this->mPaymentObjects[$moduleKey]->selection( $pDefaults ) ) {
+				$ret[] = $selection;
+			}
+		}
+
+		return $ret;
+	}
+
+	// Same as selection(), limited to modules the current user may pay with (module permission honored)
+	function userSelection( $pDefaults = array() ) {
+		$ret = array();
+
+		$moduleKeys = array_keys( $this->mPaymentObjects );
+		foreach( $moduleKeys as $moduleKey ) { 
+			if( $this->mPaymentObjects[$moduleKey]->isUserEnabled() && ($selection = $this->mPaymentObjects[$moduleKey]->selection( $pDefaults )) ) {
 				$ret[] = $selection;
 			}
 		}

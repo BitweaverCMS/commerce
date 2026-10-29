@@ -67,7 +67,7 @@ class authorizenet_aim extends CommercePluginPaymentCardBase {
 	}
 
 	// Display Credit Card Information Submission Fields on the Checkout Payment Page
-	function selection() {
+	function selection( $pDefaults = array() ) {
 		global $order;
 
 		for ($i=1; $i<13; $i++) {

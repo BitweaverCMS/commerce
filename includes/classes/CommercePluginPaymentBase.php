@@ -161,7 +161,7 @@ abstract class CommercePluginPaymentBase extends CommercePluginBase {
 		return NULL;
 	}
 
-	function selection() {
+	function selection( $pDefaults = array() ) {
 		return array( 'id' => $this->code, 'module' => $this->title );
 	}
 

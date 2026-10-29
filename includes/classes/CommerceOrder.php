@@ -1057,7 +1057,7 @@ class CommerceOrder extends CommerceOrderBase {
 		$paymentParams = array_merge( $pRequestParams, $pSessionParams );
 		if( !$this->hasPaymentDue( $paymentParams ) || (!empty( $paymentParams['payment_method'] ) && $paymentManager->processPayment( $this, $paymentParams, $pSessionParams )) ) {
 			// Set Payment status
-			$this->info['payment_method'] = $paymentParams['payment_method'];
+			$this->info['payment_method'] = BitBase::getParameter( $paymentParams, 'payment_method', '' );
 			$this->info['payment_module_code'] = BitBase::getParameter( $paymentParams, 'payment_module_code' );
 			$this->info['orders_status_id'] = BitBase::getParameter( $paymentParams, 'processed_orders_status_id' );
 			global $gBitUser, $gCommerceSystem;

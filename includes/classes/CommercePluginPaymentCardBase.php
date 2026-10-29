@@ -59,25 +59,32 @@ abstract class CommercePluginPaymentCardBase extends CommercePluginPaymentBase {
 	}
 
 	// Display Credit Card Information Submission Fields on the Checkout Payment Page
-	function selection() {
+	function selection( $pDefaults = array() ) {
 		global $order;
 
 		$expireMonths = array();
 		for ($i=1; $i<13; $i++) {
-			$expireMonths[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B',mktime(0,0,0,$i,1,2000)));
+			$expireMonths[] = array('id' => sprintf('%02d', $i), 'text' => date('F',mktime(0,0,0,$i,1,2000)));
 		}
 
 		$today = getdate();
 		$expireYears = array();
 		for ($i=$today['year']; $i < $today['year']+15; $i++) {
-			$expireYears[] = array('id' => strftime('%y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
+			$expireYears[] = array('id' => date('y',mktime(0,0,0,1,1,$i)), 'text' => date('Y',mktime(0,0,0,1,1,$i)));
+		}
+
+		// The invoices page renders this form before any order is loaded
+		$billing = ( is_object( $order ) && is_array( $order->billing ) ) ? $order->billing : array();
+		$defaultOwner = trim( BitBase::getParameter( $billing, 'firstname', '' ).' '.BitBase::getParameter( $billing, 'lastname', '' ) );
+		if( $defaultOwner === '' ) {
+			$defaultOwner = (string)BitBase::getParameter( $pDefaults, 'payment_owner', '' );
 		}
 
 		$selection = array('id' => $this->code,
 						 'module' => $this->title,
 						 'fields' => array(
 							array(	'title' => tra( 'Name On Card' ),
-									'field' => zen_draw_input_field('payment_owner', BitBase::getParameter( $_SESSION, 'payment_owner', $order->billing['firstname'] . ' ' . $order->billing['lastname'] ), 'autocomplete="cc-name"' )
+									'field' => zen_draw_input_field('payment_owner', BitBase::getParameter( $_SESSION, 'payment_owner', $defaultOwner ), 'autocomplete="cc-name"' )
 							),
 							array(	'field' => '<div class="row"><div class="col-xs-8 col-sm-8"><label class="control-label">'.tra( 'Card Number' ).'</label>' . zen_draw_input_field('payment_number', BitBase::getParameter( $_SESSION, 'payment_number' ), ' autocomplete="cc-number" ', 'number' ) . '</div><div class="col-xs-4 col-sm-4"><label class="control-label"><i class="fa fal fa-credit-card"></i> ' . tra( 'CVV Number' ) . '</label>' . zen_draw_input_field('payment_cvv', BitBase::getParameter( $_SESSION, 'payment_cvv' ), ' autocomplete="cc-csc" ', 'number')  . '</div></div>',
 							),

@@ -131,7 +131,7 @@ class braintree_api extends CommercePluginPaymentCardBase {
     /**
      * Display Credit Card Information Submission Fields on the Checkout Payment Page
      */
-    function selection() {
+    function selection( $pDefaults = array() ) {
         global $order, $gBitUser;
 
         $this->payment_type_check = 'var value = document.checkout_payment.bt_payment_type.value;' .

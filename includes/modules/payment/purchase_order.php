@@ -25,15 +25,15 @@ class purchase_order extends CommercePluginPaymentBase {
 		$this->description = 'Payment via purchase request from verified organization';
 	}
 
-	function selection() {
+	function selection( $pDefaults = array() ) {
 		$ret = array();
 		if( $this->isUserEnabled() ) {
 			$ret = array(	'id' => $this->code,
 								'module' => $this->title,
 								'fields' => array(	
-												array( 'title' => 'Purchaser Name', 'field' => zen_draw_input_field('payment_po_contact') ),
-												array( 'title' => 'Purchaser Organization', 'field' => zen_draw_input_field('payment_po_org') ),
-												array( 'title' => 'PO Number', 'field' => zen_draw_input_field('payment_po_number')),
+												array( 'title' => 'Purchaser Name', 'field' => zen_draw_input_field('payment_po_contact', $this->getParameter( $pDefaults, 'payment_po_contact', '' ), 'autocomplete="name"' ) ),
+												array( 'title' => 'Purchaser Organization', 'field' => zen_draw_input_field('payment_po_org', $this->getParameter( $pDefaults, 'payment_po_org', '' ), 'autocomplete="organization"' ) ),
+												array( 'title' => 'PO Number', 'field' => zen_draw_input_field('payment_po_number', $this->getParameter( $pDefaults, 'payment_po_number', '' ) ) ),
 											),
 								);
 			if( $terms = $this->getModuleConfigValue( '_TERMS' ) ) {
@@ -74,9 +74,9 @@ class purchase_order extends CommercePluginPaymentBase {
 
 			$logHash['is_success'] = 'y';
 			$logHash['payment_status'] = 'pending';
-			$logHash['payment_owner'] = trim( $pPaymentParams['payment_po_contact'] );
-			$logHash['address_company'] = trim( $pPaymentParams['payment_po_org'] );
-			$logHash['payment_number'] = trim( $pPaymentParams['payment_po_number'] );
+			$logHash['payment_owner'] = trim( (string)$this->getParameter( $pPaymentParams, 'payment_po_contact', '' ) );
+			$logHash['address_company'] = trim( (string)$this->getParameter( $pPaymentParams, 'payment_po_org', '' ) );
+			$logHash['payment_number'] = trim( (string)$this->getParameter( $pPaymentParams, 'payment_po_number', '' ) );
 			$logHash['payment_result'] = '1';
 
 			// DEFAULT CURRENCY only for now

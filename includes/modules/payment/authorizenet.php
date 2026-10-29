@@ -141,7 +141,7 @@ class authorizenet extends CommercePluginPaymentCardBase {
 		return $js;
 	}
 
-	function selection() {
+	function selection( $pDefaults = array() ) {
 		global $order;
 
 		for ($i=1; $i<13; $i++) {
