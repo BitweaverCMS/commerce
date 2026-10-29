@@ -39,6 +39,10 @@ define('EMAIL_SYSTEM_DEBUG','off');
 	function zen_mail($to_name, $to_address, $email_subject, $email_text, $from_email_name, $from_email_address, $block=array(), $module='default', $attachments_list='', $pFormat='' ) {
 		global $gCommerceSystem, $gBitDb, $messageStack;
 		if (SEND_EMAILS != 'true') return false;  // if sending email is disabled in Admin, just exit
+		if( !bit_outbound_mail_allowed() ) {
+			error_log( 'Outbound mail skipped (non-live, no p_admin): to='.$to_address.' subject='.$email_subject );
+			return false;
+		}
 		if (!zen_not_null($email_text) && !zen_not_null($block['EMAIL_MESSAGE_HTML'])) return false;  // if no text or html-msg supplied, exit
 
 		// Parse "from" addresses for "name" <email@address.com> structure, and supply name/address info from it.

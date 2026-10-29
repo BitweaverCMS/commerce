@@ -432,6 +432,10 @@ function zen_redirect($url) {
 // OLD FUNCTION:
   function legacy_zen_mail($to_name, $to_email_address, $email_subject, $email_text, $from_email_name, $from_email_address) {
     if (SEND_EMAILS != 'true') return false;
+    if( !bit_outbound_mail_allowed() ) {
+      error_log( 'Outbound mail skipped (non-live, no p_admin): to='.$to_email_address.' subject='.$email_subject );
+      return false;
+    }
 
     // Instantiate a new mail object
     $message = new email(array('X-Mailer: Zen Cart Mailer'));

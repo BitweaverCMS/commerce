@@ -453,6 +453,10 @@
  */
 
     function send($to_name, $to_addr, $from_name, $from_addr, $subject = '', $headers = '') {
+      if( !bit_outbound_mail_allowed() ) {
+        error_log( 'Outbound mail skipped (non-live, no p_admin): to='.$to_addr.' subject='.$subject );
+        return false;
+      }
       $to = (($to_name != '') ? '"' . $to_name . '" <' . $to_addr . '>' : $to_addr);
       $from = (($from_name != '') ? '"' . $from_name . '" <' . $from_addr . '>' : $from_addr);
 
