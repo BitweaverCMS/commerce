@@ -815,6 +815,7 @@ function bc_address_book_rows( $pAddressBookIds ) {
 			'_line' => (int)$entry['address_book_id'],
 			'_line_label' => tra( 'address book' ),
 			'_book' => TRUE,
+			'_book_id' => (int)$entry['address_book_id'],
 			'_file' => '',
 			'_errors' => array(),
 			'delivery_name' => trim( BitBase::getParameter( $entry, 'firstname', '' ).' '.BitBase::getParameter( $entry, 'lastname', '' ) ),
@@ -836,11 +837,12 @@ function bc_address_book_rows( $pAddressBookIds ) {
 
 // Store one row in the shopper's address book through CommerceCustomer::storeAddress().
 // An entry with the same name, street, and postcode already there counts as saved ($pDuplicate is set TRUE).
-function bc_address_save_to_book( $pRow, &$pErrors, &$pDuplicate = FALSE ) {
+// With $pAddressBookId (an entry the shopper owns, taken from the session row, never from the post) the entry is updated instead.
+function bc_address_save_to_book( $pRow, &$pErrors, &$pDuplicate = FALSE, $pAddressBookId = NULL ) {
 	global $gBitCustomer;
 	$pErrors = array();
 	$pDuplicate = FALSE;
-	if( $entries = $gBitCustomer->getAddresses() ) {
+	if( empty( $pAddressBookId ) && ($entries = $gBitCustomer->getAddresses()) ) {
 		$rowKey = bc_address_row_key( $pRow );
 		foreach( $entries as $entry ) {
 			$entryRow = array( 'delivery_name' => trim( $entry['firstname'].' '.$entry['lastname'] ), 'delivery_street_address1' => $entry['street_address'], 'delivery_postcode' => $entry['postcode'] );
@@ -865,6 +867,9 @@ function bc_address_save_to_book( $pRow, &$pErrors, &$pDuplicate = FALSE ) {
 		'telephone' => (string)BitBase::getParameter( $pRow, 'delivery_telephone', '' ),
 		'country_id' => (int)BitBase::getParameter( $countryHash, 'countries_id', 0 ),
 	);
+	if( !empty( $pAddressBookId ) && $gBitCustomer->isAddressOwner( $pAddressBookId ) ) {
+		$address['address_book_id'] = (int)$pAddressBookId;
+	}
 	$gBitCustomer->mErrors = array();
 	if( $gBitCustomer->storeAddress( $address ) ) {
 		return TRUE;

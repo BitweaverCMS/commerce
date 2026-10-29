@@ -115,3 +115,4 @@
 	.drop-ship .confirm-summary { max-width: none; }
 	.drop-ship .confirm-orders > tfoot > tr > td.num { text-align: left; padding-top: 0; }
 }
+.drop-ship .drop-ship-update-book { display: block; margin: 2px 0 6px; }

@@ -138,6 +138,7 @@
 										<div class="col-sm-8"><input class="form-control input-sm" name="edit[delivery_telephone]" value="{$preview.row.delivery_telephone|escape}" placeholder="{tr}Phone{/tr}" aria-label="{tr}Phone{/tr}" type="tel" disabled></div>
 										<div class="col-sm-12"><input class="form-control input-sm" name="edit[comments]" value="{$preview.row.comments|escape}" placeholder="{tr}Note for this order{/tr}" aria-label="{tr}Note for this order{/tr}" disabled></div>
 									</div>
+									{if $preview.from_book}<label class="small drop-ship-save drop-ship-update-book"><input type="checkbox" name="edit[update_book]" value="1" checked disabled> {tr}Update in Address Book{/tr}</label>{/if}
 									<button type="button" class="btn btn-primary btn-xs drop-ship-edit-save" data-row="{$rowIdx}">{tr}Save Address{/tr}</button>
 									<button type="button" class="btn btn-default btn-xs drop-ship-edit-cancel">{tr}Cancel{/tr}</button>
 								</div>

@@ -93,8 +93,12 @@ to a zone select the same way as the typed row, and the inputs are
 `disabled` until opened so only the open row posts. Save sets
 `dropship_edit=<idx>`; the controller copies the fields into the session
 row, clears `_errors`, and runs `bc_address_validate_row()` again, so a
-problem row is fixed on the page rather than in the file. The address
-and phone are shown in the row.
+problem row is fixed on the page rather than in the file. A row from
+the address book also carries **Update in Address Book** (checked;
+`edit[update_book]`), and a valid save then writes the change to that
+entry through `bc_address_save_to_book()` with the entry id taken from
+the session row (`_book_id`, never from the post; ownership is checked
+again before the update). The address and phone are shown in the row.
 
 ### Spreadsheets: CSV and XLSX, with a column mapping step
 

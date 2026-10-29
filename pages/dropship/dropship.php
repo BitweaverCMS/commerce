@@ -121,7 +121,18 @@ if( BitBase::getParameter( $_POST, 'dropship_requote' ) ) {
 	$_SESSION['dropship'][$editIdx] = $row;
 	$rowName = htmlspecialchars( BitBase::getParameter( $row, 'delivery_name', '' ) );
 	if( empty( $row['_errors'] ) ) {
-		$feedback['success'][] = tra( 'Updated' ).' '.$rowName.'.';
+		$bookNote = '';
+		// A row from the address book can write the change back to its entry (the id comes from the session row)
+		if( !empty( $row['_book_id'] ) && is_array( $edit ) && !empty( $edit['update_book'] ) ) {
+			$saveErrors = array();
+			$duplicate = FALSE;
+			if( bc_address_save_to_book( $row, $saveErrors, $duplicate, (int)$row['_book_id'] ) ) {
+				$bookNote = ' '.tra( 'and in your address book' );
+			} else {
+				$feedback['warning'][] = $rowName.' '.tra( 'was not updated in your address book:' ).' '.implode( ' ', $saveErrors );
+			}
+		}
+		$feedback['success'][] = tra( 'Updated' ).' '.$rowName.$bookNote.'.';
 	} else {
 		$feedback['warning'][] = $rowName.' '.tra( 'still needs a fix:' ).' '.implode( '. ', $row['_errors'] );
 	}
