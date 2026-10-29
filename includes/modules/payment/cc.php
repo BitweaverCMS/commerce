@@ -112,10 +112,10 @@ class cc extends CommercePluginPaymentCardBase {
 			$logHash['is_success'] = 'y';
 			$logHash['payment_status'] = 'pending';
 			$logHash['payment_mode'] = 'charge';
-			$pOrder->info['payment_expires'] = $pPaymentParams['payment_expires'];
-			$pOrder->info['payment_type'] = $pPaymentParams['payment_type'];
-			$pOrder->info['payment_owner'] = $pPaymentParams['payment_owner'];
-			$pOrder->info['payment_cvv'] = $pPaymentParams['payment_cvv'];
+			$pOrder->info['payment_expires'] = BitBase::getParameter( $pPaymentParams, 'payment_expires' );
+			$pOrder->info['payment_type'] = BitBase::getParameter( $pPaymentParams, 'payment_type' );
+			$pOrder->info['payment_owner'] = BitBase::getParameter( $pPaymentParams, 'payment_owner' );
+			$pOrder->info['payment_cvv'] = BitBase::getParameter( $pPaymentParams, 'payment_cvv' );
 
 			if (MODULE_PAYMENT_CC_STORE_NUMBER == 'True') {
 				$pOrder->info['payment_number'] = $pPaymentParams['payment_number'];

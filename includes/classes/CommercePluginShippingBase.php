@@ -74,6 +74,7 @@ abstract class CommercePluginShippingBase extends CommercePluginBase {
 			if( $dow > 6 ) {
 				$delay++; // assume no shipping on Sun.
 			}
+			$shipDate = date( 'Y-m-d' );
 		}
 		$newDate = new DateTime( $shipDate );
 
