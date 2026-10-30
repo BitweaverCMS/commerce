@@ -77,7 +77,7 @@ class upsoauth extends CommercePluginShippingBase
 				//
 				if( $all_ups_quotes = $this->upsApi->getAllUpsQuotes( $_SESSION['upsoauth_token'], $pShipHash ) ) {
 					if( !empty( $all_ups_quotes->response->errors) ) {
-						$quoteError['response'] .= '';
+						$quoteError['response'] = '';
 						foreach( $all_ups_quotes->response->errors as $alertObject ) {
 							$quoteError['response'] .= $alertObject->code .' : ' . $alertObject->message."<br/>\n";
 						}
