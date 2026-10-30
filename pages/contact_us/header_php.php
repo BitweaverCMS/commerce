@@ -23,9 +23,9 @@
 
   $error = false;
   if (isset($_GET['action']) && ($_GET['action'] == 'send')) {
-    $name = zen_db_prepare_input($_POST['name']);
-    $email_address = zen_db_prepare_input($_POST['email']);
-    $enquiry = zen_db_prepare_input(strip_tags($_POST['enquiry']));
+    $name = zen_db_prepare_input( BitBase::getParameter( $_POST, 'name', '' ) );
+    $email_address = zen_db_prepare_input( BitBase::getParameter( $_POST, 'email', '' ) );
+    $enquiry = zen_db_prepare_input( strip_tags( BitBase::getParameter( $_POST, 'enquiry', '' ) ) );
 
     if (zen_validate_email($email_address)) {
 // auto complete when logged in
@@ -41,10 +41,12 @@
 // use contact us dropdown if defined
 	if (CONTACT_US_LIST !=''){
 		$send_to_array=explode("," ,CONTACT_US_LIST);
-		preg_match('/\<[^>]+\>/', $send_to_array[$_POST['send_to']], $send_email_array);
-		$send_to_email= str_ireplace (">", "", $send_email_array[0]);
+		$sendTo = BitBase::getParameter( $_POST, 'send_to', 0 );
+		$sendTo = isset( $send_to_array[$sendTo] ) ? $sendTo : 0;
+		preg_match('/\<[^>]+\>/', $send_to_array[$sendTo], $send_email_array);
+		$send_to_email= str_ireplace (">", "", BitBase::getParameter( $send_email_array, 0, '' ));
 		$send_to_email= str_ireplace ("<", "", $send_to_email);
-		$send_to_name = preg_replace('/\<[^*]*/', '', $send_to_array[$_POST['send_to']]);
+		$send_to_name = preg_replace('/\<[^*]*/', '', $send_to_array[$sendTo]);
 	} else {  //otherwise default to EMAIL_FROM and store name
 		$send_to_email = EMAIL_FROM;
 		$send_to_name =  STORE_NAME;
@@ -56,11 +58,11 @@
 	$text_message = OFFICE_FROM . "\t" . $name . "\n" .
                     OFFICE_EMAIL . "\t" . $email_address . "\n\n" .
                     '------------------------------------------------------' . "\n\n" .
-                    strip_tags($_POST['enquiry']) .  "\n\n" .
+                    strip_tags( BitBase::getParameter( $_POST, 'enquiry', '' ) ) .  "\n\n" .
                     '------------------------------------------------------' . "\n\n" .
 					$extra_info['TEXT'];
 // Prepare HTML-portion of message
-     $html_msg['EMAIL_MESSAGE_HTML'] = strip_tags($_POST['enquiry']);
+     $html_msg['EMAIL_MESSAGE_HTML'] = strip_tags( BitBase::getParameter( $_POST, 'enquiry', '' ) );
      $html_msg['CONTACT_US_OFFICE_FROM'] = OFFICE_FROM . ' ' . $name . '<br />' . OFFICE_EMAIL . '(' . $email_address . ')';
 	 $html_msg['EXTRA_INFO'] = $extra_info['HTML'];
 // Send message
