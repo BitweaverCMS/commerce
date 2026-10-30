@@ -230,7 +230,7 @@ if (isset($_REQUEST['action'])) {
 							}
 						}
 					}
-					$gBitCustomer->mCart->addToCart( $productsId, $_REQUEST['cart_quantity'], $cartAttributes );
+					$gBitCustomer->mCart->addToCart( $productsId, BitBase::getParameter( $_REQUEST, 'cart_quantity', 1 ), $cartAttributes );
 				}
 			}
 
