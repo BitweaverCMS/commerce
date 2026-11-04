@@ -30,7 +30,12 @@
       if( !empty( $_SESSION['messageToStack'] ) ) {
         $messageToStack = $_SESSION['messageToStack'];
         for ($i=0, $n=sizeof($messageToStack); $i<$n; $i++) {
-          $this->add($messageToStack[$i]['class'], $messageToStack[$i]['text'], $messageToStack[$i]['type']);
+          $stackRow = is_array( $messageToStack[$i] ) ? $messageToStack[$i] : array();
+          $this->add(
+            isset( $stackRow['class'] ) ? $stackRow['class'] : '',
+            isset( $stackRow['text'] ) ? $stackRow['text'] : '',
+            isset( $stackRow['type'] ) ? $stackRow['type'] : 'error'
+          );
         }
         $_SESSION['messageToStack']= '';
       }
