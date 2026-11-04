@@ -51,7 +51,11 @@ class CommerceProduct extends LibertyMime {
 	}
 
 	public function __sleep() {
-		return array_merge( parent::__sleep(), array( 'mProductsId', 'mOptions', 'mDiscounts' ) );
+		$keys = array_merge( parent::__sleep(), array( 'mProductsId', 'mOptions', 'mDiscounts' ) );
+		$vars = get_object_vars( $this );
+		return array_values( array_filter( $keys, function( $k ) use ( $vars ) {
+			return array_key_exists( $k, $vars );
+		} ) );
 	}
 
 	// Override LibertyBase method
@@ -80,7 +84,7 @@ class CommerceProduct extends LibertyMime {
 			parent::load();
 			if( $this->isDeleted() && !($gBitUser->hasPermission( 'p_bitcommerce_admin' ) || $this->isPurchased()) ) {
 				$this->mInfo = array();
-				unset( $this->mProductsId );
+				$this->mProductsId = NULL;
 			} else {
 				$this->mContentId = $this->mInfo['content_id'];
 			}
