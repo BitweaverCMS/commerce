@@ -34,8 +34,8 @@ class upsoauth extends CommercePluginShippingBase
 	protected function debugLog($message, $include_spacer = false)
 	{
 			$spacer = ($include_spacer === false) ? '' : "------------------------------------------\n";
-			// No clock prefix. A timestamp made every call a distinct report.
-			bit_error_log($spacer . $message);
+			// Staff breadcrumb only. bit_error_log reports every line as an application error.
+			error_log($spacer . $message);
 	}
 
 	function quote( $pShipHash ) {
