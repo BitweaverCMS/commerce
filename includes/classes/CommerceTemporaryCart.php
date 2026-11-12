@@ -160,6 +160,7 @@ class CommerceTemporaryCart extends CommerceShoppingCart {
 			$_SESSION['new_products_id_in_cart'] = $cartItemKey;
 		}
 
+		$pQty = $this->numericCartQuantity( $pQty );
 		$addQty = $this->get_quantity( $cartItemKey, $attributes ) + $pQty;
 		// overflow protection
 		if( $addQty > MAX_CART_QUANTITY ) {
@@ -173,14 +174,8 @@ class CommerceTemporaryCart extends CommerceShoppingCart {
 			$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
 			$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
 
-			if( $gCommerceSystem->getConfig( 'QUANTITY_DECIMALS' ) ) {
-				// This is some fractional product crap - hope it still works...
-				switch (true) {
-					case (strstr($addQty, '.')):
-						// remove all trailing zeros after zero
-						$addQty = preg_replace('/[0]+$/','',$addQty);
-						break;
-				}
+			if( $gCommerceSystem->getConfig( 'QUANTITY_DECIMALS' ) && strpos( (string)$addQty, '.' ) !== FALSE ) {
+				$addQty = preg_replace('/[0]+$/','', (string)$addQty);
 			}
 
 			$attributesValues = array();

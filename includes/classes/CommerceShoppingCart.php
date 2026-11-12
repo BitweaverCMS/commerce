@@ -125,9 +125,22 @@ class CommerceShoppingCart extends CommerceOrderBase {
 		$this->mDb->query($sql, array( $selectValue ) );
 	}
 
+	/**
+	 * Coerce a cart quantity to a non-negative number. Empty or non-numeric
+	 * input is 0 so PHP 8 does not TypeError on int + string.
+	 */
+	protected function numericCartQuantity( $pQty ) {
+		if( is_bool( $pQty ) || !is_numeric( $pQty ) ) {
+			return 0;
+		}
+		$qty = 0 + $pQty;
+		return $qty < 0 ? 0 : $qty;
+	}
+
 	function addToCart($pProductsId, $pQty = '1', $attributes = array(), $notify = true) {
 		global $gBitUser, $gCommerceSystem;
 		$cartItemKey = $this->getUniqueCartItemKey( $pProductsId, $attributes );
+		$pQty = $this->numericCartQuantity( $pQty );
 
 		if ($notify == true) {
 			$_SESSION['new_products_id_in_cart'] = $cartItemKey;
@@ -146,14 +159,8 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			$selectColumn = $gBitUser->isRegistered() ? 'customers_id' : 'cookie' ;
 			$selectValue = $gBitUser->isRegistered() ? $gBitUser->mUserId : session_id();
 
-			if( $gCommerceSystem->getConfig( 'QUANTITY_DECIMALS' ) ) {
-				// This is some fractional product crap - hope it still works...
-				switch (true) {
-					case (strstr($addQty, '.')):
-						// remove all trailing zeros after zero
-						$addQty = preg_replace('/[0]+$/','',$addQty);
-						break;
-				}
+			if( $gCommerceSystem->getConfig( 'QUANTITY_DECIMALS' ) && strpos( (string)$addQty, '.' ) !== FALSE ) {
+				$addQty = preg_replace('/[0]+$/','', (string)$addQty);
 			}
 
 			// insert into database
