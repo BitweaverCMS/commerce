@@ -109,7 +109,6 @@ function saveOptionsValue( pOptValId ) {
 	return false;
 }
 
-  MochiKit.Sortable.Sortable.create('optval_sortable',{onUpdate:function(){alert('drop!')}});
 </script>
 {/literal}
 	{/forminput}

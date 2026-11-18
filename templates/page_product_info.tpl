@@ -19,7 +19,7 @@
 	{assign var=thumbUrl value=$gBitProduct->getImageUrl('large')}	
 	{if $thumbUrl}
 	<div class="col-sm-4">
-		<a rel="nofollow" href="{$thumbUrl}" {if !$gBitSystem->isFeatureActive( 'site_fancy_zoom' )}target="_new"{/if} ><img src="{$thumbUrl}" class="img-responsive"  alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb"/></a>
+		<a rel="nofollow" href="{$thumbUrl}" target="_new" ><img src="{$thumbUrl}" class="img-responsive"  alt="{$gBitProduct->mInfo.products_name|escape:html}" id="productthumb"/></a>
 	</div>
 	{/if}
 		

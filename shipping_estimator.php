@@ -147,6 +147,6 @@ if( $gBitThemes->isAjaxRequest() ) {
 	$gBitSmarty->assign( 'liCss', 'col-xs-12' );
 	$gBitSmarty->display( 'bitpackage:bitcommerce/shipping_estimator_inc.tpl' );
 } else {
-	$gBitThemes->loadAjax( 'jquery', array( 'ui/ui.core.js' ) );
+	$gBitThemes->loadAjax( 'jquery' );
 	$gBitSystem->display( 'bitpackage:bitcommerce/popup_shipping_estimator.tpl' );
 }

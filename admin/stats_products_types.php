@@ -19,10 +19,6 @@ define('HEADING_TITLE', 'Order'.( (!empty( $_REQUEST['oID'] )) ? ' #'.$_REQUEST[
 
 require('includes/application_top.php');
 global $gBitThemes;
-$gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/calendar.js' );
-$gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/lang/calendar-en.js' );
-$gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/calendar-setup.js' );
-$gBitThemes->loadCss( UTIL_PKG_URL.'javascript/libs/dynarch/jscalendar/calendar-win2k-cold-1.css' );
 
 $gBitThemes->loadJavascript( UTIL_PKG_URL.'javascript/jquery/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js' );
 $gBitThemes->loadCss( UTIL_PKG_URL.'javascript/jquery/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css' );
