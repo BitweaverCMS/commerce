@@ -743,15 +743,30 @@ class CommerceCustomer extends CommerceBase {
 		return array_values( $values );
 	}
 
+	// Discrete catalogue choices that can be a standing customer preference.
+	public static function purchaseOptionTypes() {
+		$types = array(
+			defined( 'PRODUCTS_OPTIONS_TYPE_SELECT' ) ? (int)PRODUCTS_OPTIONS_TYPE_SELECT : 0,
+			defined( 'PRODUCTS_OPTIONS_TYPE_RADIO' ) ? (int)PRODUCTS_OPTIONS_TYPE_RADIO : 2,
+			defined( 'PRODUCTS_OPTIONS_TYPE_CHECKBOX' ) ? (int)PRODUCTS_OPTIONS_TYPE_CHECKBOX : 3,
+		);
+		return array_values( array_unique( $types ) );
+	}
+
+	public static function isPurchaseOptionType( $pType ) {
+		return in_array( (int)$pType, self::purchaseOptionTypes(), TRUE );
+	}
+
 	public static function storePurchaseOption( $pContentId, $pOptionsId, $pValuesId ) {
 		global $gBitDb;
 		if( !BitBase::verifyId( $pContentId ) || !BitBase::verifyId( $pOptionsId ) || !BitBase::verifyId( $pValuesId ) ) {
 			return FALSE;
 		}
-		$typeRadio = defined( 'PRODUCTS_OPTIONS_TYPE_RADIO' ) ? (int)PRODUCTS_OPTIONS_TYPE_RADIO : 2;
+		$types = self::purchaseOptionTypes();
+		$in = implode( ',', array_fill( 0, count( $types ), '?' ) );
 		$ok = $gBitDb->getOne(
-			"SELECT cpa.`products_options_values_id` FROM " . TABLE_PRODUCTS_OPTIONS . " cpo INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON (cpa.`products_options_id`=cpo.`products_options_id`) WHERE cpo.`products_options_id`=? AND cpa.`products_options_values_id`=? AND cpo.`products_options_type` IN (0, ?)",
-			array( (int)$pOptionsId, (int)$pValuesId, $typeRadio )
+			"SELECT cpa.`products_options_values_id` FROM " . TABLE_PRODUCTS_OPTIONS . " cpo INNER JOIN " . TABLE_PRODUCTS_ATTRIBUTES . " cpa ON (cpa.`products_options_id`=cpo.`products_options_id`) WHERE cpo.`products_options_id`=? AND cpa.`products_options_values_id`=? AND cpo.`products_options_type` IN ($in)",
+			array_merge( array( (int)$pOptionsId, (int)$pValuesId ), $types )
 		);
 		if( !BitBase::verifyId( $ok ) ) {
 			return FALSE;
@@ -827,10 +842,11 @@ class CommerceCustomer extends CommerceBase {
 	public static function assignPurchaseOptionsForUser( $pUserId ) {
 		global $gBitDb, $gBitSmarty;
 		$contentId = CommerceCustomer::customerContentId( $pUserId );
-		$typeRadio = defined( 'PRODUCTS_OPTIONS_TYPE_RADIO' ) ? (int)PRODUCTS_OPTIONS_TYPE_RADIO : 2;
+		$types = self::purchaseOptionTypes();
+		$in = implode( ',', array_fill( 0, count( $types ), '?' ) );
 		$choices = $gBitDb->getAssoc(
-			"SELECT `products_options_id`, `products_options_name` || ' (' || `products_options_id` || ')' FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_type` IN (0, ?) ORDER BY `products_options_name`",
-			array( $typeRadio )
+			"SELECT cpo.`products_options_id`, cpo.`products_options_name` || ' (' || cpo.`products_options_id` || ', ' || cpot.`products_options_types_name` || ')' FROM " . TABLE_PRODUCTS_OPTIONS . " cpo INNER JOIN " . TABLE_PRODUCTS_OPTIONS_TYPES . " cpot ON (cpot.`products_options_types_id`=cpo.`products_options_type`) WHERE cpo.`products_options_type` IN ($in) ORDER BY cpo.`products_options_name`",
+			$types
 		);
 		$gBitSmarty->assign( 'customerContentId', $contentId );
 		$gBitSmarty->assign( 'purchaseOptions', CommerceCustomer::purchaseOptionRows( $contentId ) );
@@ -843,9 +859,8 @@ class CommerceCustomer extends CommerceBase {
 		}
 		global $gBitDb;
 		require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceProductManager.php' );
-		$typeRadio = defined( 'PRODUCTS_OPTIONS_TYPE_RADIO' ) ? (int)PRODUCTS_OPTIONS_TYPE_RADIO : 2;
 		$optionType = $gBitDb->getOne( "SELECT `products_options_type` FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE `products_options_id`=?", array( (int)$pOptionsId ) );
-		if( (int)$optionType !== 0 && (int)$optionType !== $typeRadio ) {
+		if( !self::isPurchaseOptionType( $optionType ) ) {
 			return;
 		}
 		$productManager = new CommerceProductManager();

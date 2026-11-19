@@ -27,18 +27,24 @@ A customer's preferred catalogue choices live on that user's
 Each leaf name is a `products_options_id`. The leaf is a JSON list of
 acceptable `products_options_values_id` numbers; rows written before
 2026-10-15 hold one number, and `CommerceCustomer::purchaseOptionLeafValues()`
-reads both shapes. Dropdown (type 0) and radio options only.
-`storePurchaseOption()` adds a value to the list; `expungePurchaseOption()`
-removes one value, or the whole option when no value is given.
+reads both shapes. Dropdown, radio, and checkbox options
+(`CommerceCustomer::purchaseOptionTypes()`). Text, file, and read-only
+groups are omitted. `storePurchaseOption()` adds a value to the list;
+`expungePurchaseOption()` removes one value, or the whole option when no
+value is given. A checkbox leaf is every extra that customer wants; a
+dropdown or radio leaf is the acceptable values for that group.
 
 Staff edit the list on the customer admin page,
 `admin/customers.php?user_id=`. The order page links there from the
 customer icon bar. `CommerceCustomer::storePurchaseOption()` checks
 that the value belongs to the option, then calls
 `LibertyContent::storePackageOption()`. The Products purchase page
-pre-selects the branch for the logged-in viewer, and the order flight
-check warns when a line misses one of its values (Products
-`purchase-options.md` and `flightcheck.md`).
+pre-selects the branch for the logged-in viewer (every saved checkbox
+value the product offers; the first saved dropdown or radio value), and
+the order flight check warns when a line misses those values (Products
+`purchase-options.md` and `flightcheck.md`). Dropdown and radio leaves
+are satisfied by any listed value on the line. A checkbox leaf is
+satisfied only when every listed value the product offers is on the line.
 
 The customer page (`admin_customer_edit.tpl`, styles under
 `.customer-edit` in `css/admin.css`) is a header with the customer's
