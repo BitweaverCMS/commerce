@@ -63,6 +63,17 @@ A missing or unparseable date adds one `checkout_payment` message per item
 (`mErrors['deadline']`) and redirects to the payment page, which renders
 `page_checkout_deadline_inc.tpl`. The stored value is `com_orders.deadline_date`.
 
+**Session address ids are not always address ids.** `$_SESSION['sendto']`
+can be the string `custom` (the cart shipping estimator's country / postcode
+quote) or any posted `address_id`. `CommerceShoppingCart::getDelivery()`
+falls back to the default address when that lookup fails;
+`getBilling()` does not, and the payment page copies `sendto` into `billto`.
+`checkout_payment.php` therefore drops a `billto` the customer does not own
+and copies `sendto` only when `isAddressOwner()` passes. The payment
+template shows the billing address form whenever `mCart->billing` is empty,
+not only on `change_address`, so the controller assigns `addresses` in both
+cases.
+
 ## Plugin base classes
 
 All module families derive from `CommercePluginBase` through a specialized base:

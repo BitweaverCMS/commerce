@@ -59,8 +59,13 @@ if ($gBitCustomer->mCart->count_contents() <= 0) {
 require_once(BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php');
 
 // if the no billing address, try to get one by default
+// a billto that is not one of this customer's addresses can never load, e.g. the shipping estimator's 'custom' sendto copied below
+if( !empty( $_SESSION['billto'] ) && empty( $_SESSION['billtohash'] ) && !$gBitCustomer->isAddressOwner( $_SESSION['billto'] ) ) {
+	unset( $_SESSION['billto'] );
+}
+
 if( empty( $_SESSION['billto'] ) ) {
-	if( !empty( $_SESSION['sendto'] ) ) {
+	if( !empty( $_SESSION['sendto'] ) && $gBitCustomer->isAddressOwner( $_SESSION['sendto'] ) ) {
 		$_SESSION['billto'] = $_SESSION['sendto'];
 	} elseif( $defaultAddressId = $gBitCustomer->getDefaultAddressId() ) {
 		$_SESSION['billto'] =	$defaultAddressId;
@@ -75,11 +80,14 @@ if( !empty( $_REQUEST['ot_error_encode'] ) ) {
 
 $quoteOrder = CommerceOrder::orderFromCart( $gBitCustomer->mCart, $_SESSION );
 $gBitSmarty->assign( 'quoteOrder', $quoteOrder );
-if( isset( $_REQUEST['change_address'] ) ) {
+if( isset( $_REQUEST['change_address'] ) || empty( $gBitCustomer->mCart->billing ) ) {
+	// the template shows the billing address form in both cases, so the address list is needed in both
 	if( $addresses = $gBitCustomer->getAddresses() ) {
 		$gBitSmarty->assign( 'addresses', $addresses );
 	}
-	$gBitSmarty->assign( 'changeAddress', TRUE );
+	if( isset( $_REQUEST['change_address'] ) ) {
+		$gBitSmarty->assign( 'changeAddress', TRUE );
+	}
 } else {
 	// load all enabled payment modules
 	require( BITCOMMERCE_PKG_CLASS_PATH.'CommercePaymentManager.php' );
