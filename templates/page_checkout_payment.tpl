@@ -16,7 +16,7 @@
 			</div>
 			{/if}
 
-			{if count( $addresses )}
+			{if !empty( $addresses )}
 			<div class="col-md-6">
 				{fieldset legend="Choose Billing Address"}
 					{include file="bitpackage:bitcommerce/address_list_inc.tpl" sendToAddressId=$smarty.session.billto}
