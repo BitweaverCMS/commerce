@@ -154,8 +154,6 @@ if (zen_not_null($action)) {
 <?php
 if ( ($action == 'new') || ($action == 'edit') ) {
 ?>
-<link rel="stylesheet" type="text/css" href="includes/javascript/spiffyCal/spiffyCal_v2_1.css">
-<script language="JavaScript" src="includes/javascript/spiffyCal/spiffyCal_v2_1.js"></script>
 <script language="JavaScript">
 function session_win() {
 window.open("<?php echo zen_href_link_admin(FILENAME_SALEMAKER_INFO); ?>","salemaker_info","height=460,width=600,scrollbars=yes,resizable=yes").focus();
@@ -232,7 +230,6 @@ while(change) {
 </script>
 </head>
 <body onload="SetCategories();">
-<div id="spiffycalendar" class="text"></div>
 <?php
 } else {
 ?>
@@ -271,10 +268,6 @@ if ( ($action == 'new') || ($action == 'edit') ) {
 		$sInfo = new objectInfo(array());
 	}
 ?>
-<script type="text/javascript">
-var StartDate = new ctlSpiffyCalendarBox("StartDate", "sale_form", "start", "btnDate1","<?php echo (($sInfo->sale_date_start == '0001-01-01') ? '' : zen_date_short($sInfo->sale_date_start)); ?>",scBTNMODE_CUSTOMBLUE);
-var EndDate = new ctlSpiffyCalendarBox("EndDate", "sale_form", "end", "btnDate2","<?php echo (($sInfo->sale_date_end == '0001-01-01') ? '' : zen_date_short($sInfo->sale_date_end)); ?>",scBTNMODE_CUSTOMBLUE);
-</script>
 		<tr><form name="sale_form" <?php echo 'action="' . zen_href_link_admin(FILENAME_SALEMAKER, zen_get_all_get_params(array('action', 'info', 'sID')) . 'action=' . $form_action, 'NONSSL') . '"'; ?> method="post"><?php if ($form_action == 'update') echo zen_draw_hidden_field('sID', $_GET['sID']); ?>
 			<td><table>
 				<tr>
@@ -303,11 +296,11 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "sale_form", "end", "btnDate2"
 				</tr>
 				<tr>
 					<td class="main"><?php echo TEXT_SALEMAKER_DATE_START; ?>&nbsp;</td>
-					<td class="main"><script type="text/javascript">StartDate.writeControl(); StartDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+					<td class="main"><input type="date" name="start" value="<?php echo zen_date_input_value( $sInfo->sale_date_start ?? NULL ); ?>"></td>
 				</tr>
 				<tr>
 					<td class="main"><?php echo TEXT_SALEMAKER_DATE_END; ?>&nbsp;</td>
-					<td class="main"><script type="text/javascript">EndDate.writeControl(); EndDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+					<td class="main"><input type="date" name="end" value="<?php echo zen_date_input_value( $sInfo->sale_date_end ?? NULL ); ?>"></td>
 				</tr>
 			</table>
 		</tr>

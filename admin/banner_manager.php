@@ -134,11 +134,16 @@ if (zen_not_null($action)) {
 
 // NOTE: status will be reset by the /functions/banner.php
 				if (zen_not_null($expires_date)) {
-					list($day, $month, $year) = explode('/', $expires_date);
+					// <input type="date"> posts YYYY-MM-DD; older forms posted DD/MM/YYYY
+					if( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $expires_date ) ) {
+						$expires_date = str_replace( '-', '', $expires_date );
+					} else {
+						list($day, $month, $year) = explode('/', $expires_date);
 
-					$expires_date = $year .
-													((strlen($month) == 1) ? '0' . $month : $month) .
-													((strlen($day) == 1) ? '0' . $day : $day);
+						$expires_date = $year .
+														((strlen($month) == 1) ? '0' . $month : $month) .
+														((strlen($day) == 1) ? '0' . $day : $day);
+					}
 
 					$gBitDb->Execute("update " . TABLE_BANNERS . "
 												set `expires_date` = '" . zen_db_input($expires_date) . "',
@@ -154,11 +159,16 @@ if (zen_not_null($action)) {
 
 
 				if (zen_not_null($date_scheduled)) {
-					list($day, $month, $year) = explode('/', $date_scheduled);
+					// <input type="date"> posts YYYY-MM-DD; older forms posted DD/MM/YYYY
+					if( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_scheduled ) ) {
+						$date_scheduled = str_replace( '-', '', $date_scheduled );
+					} else {
+						list($day, $month, $year) = explode('/', $date_scheduled);
 
-					$date_scheduled = $year .
-														((strlen($month) == 1) ? '0' . $month : $month) .
-														((strlen($day) == 1) ? '0' . $day : $day);
+						$date_scheduled = $year .
+															((strlen($month) == 1) ? '0' . $month : $month) .
+															((strlen($day) == 1) ? '0' . $day : $day);
+					}
 
 					$gBitDb->Execute("update " . TABLE_BANNERS . "
 												set `date_scheduled` = '" . zen_db_input($date_scheduled) . "'
@@ -257,7 +267,6 @@ window.open(url,'popupImageWindow','toolbar=no,location=no,directories=no,status
 //--></script>
 </head>
 <body>
-<div id="spiffycalendar" class="text"></div>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
@@ -300,8 +309,7 @@ if ($action == 'new') {
 
 		$banner = $gBitDb->Execute("select `banners_title`, `banners_url`, `banners_image`, `banners_group`,
 																	 `banners_html_text`, `status`,
-																	 date_format(`date_scheduled`, '%d/%m/%Y') as `date_scheduled`,
-																	 date_format(`expires_date`, '%d/%m/%Y') as `expires_date`,
+																	 `date_scheduled`, `expires_date`,
 																	 `expires_impressions`, `date_status_change`, `banners_open_new_windows`, `banners_on_ssl`, `banners_sort_order`
 																	 from " . TABLE_BANNERS . "
 																	 where `banners_id` = '" . (int)$bID . "'");
@@ -339,12 +347,6 @@ if ($action == 'new') {
 		$groups->MoveNext();
 	}
 ?>
-<link rel="stylesheet" type="text/css" href="includes/javascript/spiffyCal/spiffyCal_v2_1.css">
-<script language="JavaScript" src="includes/javascript/spiffyCal/spiffyCal_v2_1.js"></script>
-<script type="text/javascript">
-var dateExpires = new ctlSpiffyCalendarBox("dateExpires", "new_banner", "expires_date","btnDate1","<?php echo $bInfo->expires_date; ?>",scBTNMODE_CUSTOMBLUE);
-var dateScheduled = new ctlSpiffyCalendarBox("dateScheduled", "new_banner", "date_scheduled","btnDate2","<?php echo $bInfo->date_scheduled; ?>",scBTNMODE_CUSTOMBLUE);
-</script>
 		<tr>
 			<td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
 		</tr>
@@ -419,14 +421,14 @@ var dateScheduled = new ctlSpiffyCalendarBox("dateScheduled", "new_banner", "dat
 				</tr>
 				<tr>
 					<td class="main"><?php echo TEXT_BANNERS_SCHEDULED_AT; ?><br><small>(dd/mm/yyyy)</small></td>
-					<td valign="top" class="main"><script type="text/javascript">dateScheduled.writeControl(); dateScheduled.dateFormat="dd/MM/yyyy";</script></td>
+					<td valign="top" class="main"><input type="date" name="date_scheduled" value="<?php echo zen_date_input_value( $bInfo->date_scheduled ?? NULL ); ?>"></td>
 				</tr>
 				<tr>
 					<td colspan="2"><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
 				</tr>
 				<tr>
 					<td valign="top" class="main"><?php echo TEXT_BANNERS_EXPIRES_ON; ?><br><small>(dd/mm/yyyy)</small></td>
-					<td class="main"><script type="text/javascript">dateExpires.writeControl(); dateExpires.dateFormat="dd/MM/yyyy";</script><?php echo TEXT_BANNERS_OR_AT . '<br>' . zen_draw_input_field('expires_impressions', $bInfo->expires_impressions, 'maxlength="7" size="7"') . ' ' . TEXT_BANNERS_IMPRESSIONS; ?></td>
+					<td class="main"><input type="date" name="expires_date" value="<?php echo zen_date_input_value( $bInfo->expires_date ?? NULL ); ?>"><?php echo TEXT_BANNERS_OR_AT . '<br>' . zen_draw_input_field('expires_impressions', $bInfo->expires_impressions, 'maxlength="7" size="7"') . ' ' . TEXT_BANNERS_IMPRESSIONS; ?></td>
 				</tr>
 			</table></td>
 		</tr>

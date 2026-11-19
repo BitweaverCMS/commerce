@@ -45,11 +45,6 @@
 		$languages = zen_get_languages();
 
 ?>
-<link rel="stylesheet" type="text/css" href="includes/javascript/spiffyCal/spiffyCal_v2_1.css">
-<script language="JavaScript" src="includes/javascript/spiffyCal/spiffyCal_v2_1.js"></script>
-<script type="text/javascript"><!--
-	var dateAvailable = new ctlSpiffyCalendarBox("dateAvailable", "new_product", "products_date_available","btnDate1","<?php echo $gBitProduct->getField( 'products_date_available' ); ?>",scBTNMODE_CUSTOMBLUE);
-//--></script>
 <script type="text/javascript"><!--
 var tax_rates = new Array();
 <?php
@@ -235,7 +230,7 @@ echo zen_draw_hidden_field('lowest_purchase_price', $gBitProduct->getField( 'low
 	</div>
 	<div class="form-group">
 		<label><?php echo TEXT_PRODUCTS_DATE_AVAILABLE; ?><br /><small>(YYYY-MM-DD)</small></label>
-		<script type="text/javascript">dateAvailable.writeControl(); dateAvailable.dateFormat="yyyy-MM-dd";</script>
+		<input type="date" name="products_date_available" value="<?php echo zen_date_input_value( $gBitProduct->getField( 'products_date_available' ) ); ?>">
 	</div>
 	<div class="form-group">
 		<label><?=tra("Related Group ID")?></label>

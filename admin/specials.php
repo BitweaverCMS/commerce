@@ -143,14 +143,11 @@ if (zen_not_null($action)) {
 <?php
 if ( ($action == 'new') || ($action == 'edit') ) {
 ?>
-<link rel="stylesheet" type="text/css" href="includes/javascript/spiffyCal/spiffyCal_v2_1.css">
-<script language="JavaScript" src="includes/javascript/spiffyCal/spiffyCal_v2_1.js"></script>
 <?php
 }
 ?>
 </head>
 <body>
-<div id="spiffycalendar" class="text"></div>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
@@ -242,10 +239,6 @@ if ( ($action == 'new') || ($action == 'edit') ) {
 		}
 	}
 ?>
-<script type="text/javascript">
-var StartDate = new ctlSpiffyCalendarBox("StartDate", "new_special", "start", "btnDate1","<?php echo (($sInfo->specials_date_available == '0001-01-01') ? '' : zen_date_short($sInfo->specials_date_available)); ?>",scBTNMODE_CUSTOMBLUE);
-var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate2","<?php echo (($sInfo->expires_date == '0001-01-01') ? '' : zen_date_short($sInfo->expires_date)); ?>",scBTNMODE_CUSTOMBLUE);
-</script>
 
 		<tr><form name="new_special" <?php echo 'action="' . zen_href_link_admin(FILENAME_SPECIALS, zen_get_all_get_params(array('action', 'info', 'sID')) . 'action=' . $form_action . '&go_back=' . $_GET['go_back'], 'NONSSL') . '"'; ?> method="post"><?php if ($form_action == 'update') echo zen_draw_hidden_field('specials_id', $_GET['sID']); ?>
 			<td><br><table border="0" cellspacing="0" cellpadding="2">
@@ -260,11 +253,11 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_special", "end", "btnDate
 
 				<tr>
 					<td class="main"><?php echo TEXT_SPECIALS_AVAILABLE_DATE; ?>&nbsp;</td>
-					<td class="main"><script type="text/javascript">StartDate.writeControl(); StartDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+					<td class="main"><input type="date" name="start" value="<?php echo zen_date_input_value( $sInfo->specials_date_available ?? NULL ); ?>"></td>
 				</tr>
 				<tr>
 					<td class="main"><?php echo TEXT_SPECIALS_EXPIRES_DATE; ?>&nbsp;</td>
-					<td class="main"><script type="text/javascript">EndDate.writeControl(); EndDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+					<td class="main"><input type="date" name="end" value="<?php echo zen_date_input_value( $sInfo->expires_date ?? NULL ); ?>"></td>
 				</tr>
 
 			</table></td>

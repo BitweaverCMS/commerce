@@ -366,11 +366,24 @@
 // $date should be in format mm/dd/yyyy
 // raw date is in format YYYYMMDD, or DDMMYYYY
 function zen_date_raw($date, $reverse = false) {
+  // <input type="date"> posts YYYY-MM-DD, which is already raw
+  if( is_string( $date ) && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
+    return $reverse ? substr($date, 8, 2) . '.' . substr($date, 5, 2) . '.' . substr($date, 0, 4) : $date;
+  }
   if ($reverse) {
     return substr($date, 3, 2) . '.' . substr($date, 0, 2) . '.' . substr($date, 6, 4);
   } else {
     return substr($date, 6, 4) . '-' . substr($date, 0, 2) . '-' . substr($date, 3, 2);
   }
+}
+
+// Value attribute for <input type="date">: YYYY-MM-DD from a database date or
+// timestamp; empty for NULL and the 0001-01-01 "no date" placeholder
+function zen_date_input_value( $pRawDate ) {
+  if( !empty( $pRawDate ) && is_string( $pRawDate ) && preg_match( '/^(\d{4}-\d{2}-\d{2})/', $pRawDate, $match ) && $match[1] > '0001-01-01' ) {
+    return $match[1];
+  }
+  return '';
 }
 
 // }}}

@@ -7,10 +7,10 @@
 
 | Artifact | Count |
 |---|---:|
-| PHP files | 895 |
-| Smarty templates | 137 |
-| JavaScript files | 71 |
-| CSS files | 12 |
+| PHP files | 900 |
+| Smarty templates | 147 |
+| JavaScript files | 3 |
+| CSS files | 8 |
 
 ## Bootstrap and schema artifacts
 
@@ -619,7 +619,6 @@ No table declaration was mechanically identified. Inspect schema files and runti
 
 - `admin/includes/languages/en/modules/`
 - `admin/includes/modules/`
-- `htmlarea/plugins/`
 - `includes/languages/en/modules/`
 - `includes/modules/`
 - `modules/`

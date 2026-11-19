@@ -96,14 +96,11 @@
 <?php
   if ( ($action == 'new') || ($action == 'edit') ) {
 ?>
-<link rel="stylesheet" type="text/css" href="includes/javascript/spiffyCal/spiffyCal_v2_1.css">
-<script language="JavaScript" src="includes/javascript/spiffyCal/spiffyCal_v2_1.js"></script>
 <?php
   }
 ?>
 </head>
 <body>
-<div id="spiffycalendar" class="text"></div>
 <!-- header //-->
 <?php require(DIR_FS_ADMIN_INCLUDES . 'header.php'); ?>
 <!-- header_eof //-->
@@ -184,10 +181,6 @@
       }
     }
 ?>
-<script type="text/javascript">
-var StartDate = new ctlSpiffyCalendarBox("StartDate", "new_featured", "start", "btnDate1","<?php echo (($fInfo->featured_date_available == '0001-01-01') ? '' : zen_date_short($fInfo->featured_date_available)); ?>",scBTNMODE_CUSTOMBLUE);
-var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDate2","<?php echo (($fInfo->expires_date == '0001-01-01') ? '' : zen_date_short($fInfo->expires_date)); ?>",scBTNMODE_CUSTOMBLUE);
-</script>
 
       <tr><form name="new_featured" <?php echo 'action="' . zen_href_link_admin(FILENAME_FEATURED, zen_get_all_get_params(array('action', 'info', 'fID')) . 'action=' . $form_action . '&go_back=' . ( isset( $_GET['go_back'] ) ? $_GET['go_back'] : '' ), 'NONSSL') . '"'; ?> method="post"><?php if ($form_action == 'update') echo zen_draw_hidden_field('featured_id', $_GET['fID']); ?>
         <td><br><table border="0" cellspacing="0" cellpadding="2">
@@ -197,11 +190,11 @@ var EndDate = new ctlSpiffyCalendarBox("EndDate", "new_featured", "end", "btnDat
           </tr>
           <tr>
             <td class="main"><?php echo TEXT_FEATURED_AVAILABLE_DATE; ?>&nbsp;</td>
-            <td class="main"><script type="text/javascript">StartDate.writeControl(); StartDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+            <td class="main"><input type="date" name="start" value="<?php echo zen_date_input_value( $fInfo->featured_date_available ?? NULL ); ?>"></td>
           </tr>
           <tr>
             <td class="main"><?php echo TEXT_FEATURED_EXPIRES_DATE; ?>&nbsp;</td>
-            <td class="main"><script type="text/javascript">EndDate.writeControl(); EndDate.dateFormat="<?php echo DATE_FORMAT_SPIFFYCAL; ?>";</script></td>
+            <td class="main"><input type="date" name="end" value="<?php echo zen_date_input_value( $fInfo->expires_date ?? NULL ); ?>"></td>
           </tr>
         </table></td>
       </tr>
