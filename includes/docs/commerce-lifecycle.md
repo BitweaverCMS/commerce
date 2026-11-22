@@ -69,7 +69,10 @@ quote) or any posted `address_id`. `CommerceShoppingCart::getDelivery()`
 falls back to the default address when that lookup fails;
 `getBilling()` does not, and the payment page copies `sendto` into `billto`.
 `checkout_payment.php` therefore drops a `billto` the customer does not own
-and copies `sendto` only when `isAddressOwner()` passes. The payment
+and copies `sendto` only when `isAddressOwner()` passes. After
+`storeAddress()` the new id is `address_book_id` on the request hash
+(shipping already uses that key for `sendto`); payment must not read
+`address`, which is only the choose-from-list radio. The payment
 template shows the billing address form whenever `mCart->billing` is empty,
 not only on `change_address`, so the controller assigns `addresses` in both
 cases.

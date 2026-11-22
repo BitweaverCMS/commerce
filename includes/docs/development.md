@@ -56,6 +56,11 @@
 - `{math}` `eval`s the equation. PHP 8 throws `DivisionByZeroError` on a
   zero denominator. Guard every `{math}` division with `{if $denom}`
   (revenue timeframe conversion rates, per-unit averages, option share).
+- `zen_address_format()` takes the address array first. Callers that still
+  pass osCommerce `(format_id, address, html, boln, eoln)` are shifted;
+  a non-array first argument with no address array returns `''`.
+- Advanced search converts `pfrom` / `pto` only when those request keys
+  are present. A keyword search does not send them.
 
 ## Schema changes
 

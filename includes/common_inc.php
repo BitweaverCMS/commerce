@@ -455,6 +455,22 @@ function zen_get_languages() {
 function zen_address_format( $address, $html, $boln, $eoln, $pAddressPrefix='') {
 	global $gBitDb;
 
+	// osCommerce / Zen Cart called this as (format_id, address, html, boln, eoln).
+	if( !is_array( $address ) && is_array( $html ) ) {
+		$legacyFormatId = $address;
+		$address = $html;
+		$html = $boln;
+		$boln = $eoln;
+		$eoln = $pAddressPrefix;
+		$pAddressPrefix = '';
+		if( empty( $address['format_id'] ) && is_numeric( $legacyFormatId ) ) {
+			$address['format_id'] = $legacyFormatId;
+		}
+	}
+	if( !is_array( $address ) ) {
+		return '';
+	}
+
 	$company = zen_output_string_protected($address[$pAddressPrefix.'company']);
 	if ( !empty( $address[$pAddressPrefix.'firstname'] ) ) {
 		$firstname = zen_output_string_protected($address[$pAddressPrefix.'firstname']);

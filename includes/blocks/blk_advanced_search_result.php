@@ -152,9 +152,15 @@
 		$bindVars[] = zen_date_raw($dto);
 	}
 
+	$pfrom = NULL;
+	$pto = NULL;
 	if( !empty( $_SESSION['currency'] ) && $rate = $currencies->get_value($_SESSION['currency']) ) {
-		$pfrom = $_REQUEST['pfrom'] / $rate;
-		$pto = $_REQUEST['pto'] / $rate;
+		if( isset( $_REQUEST['pfrom'] ) && zen_not_null( $_REQUEST['pfrom'] ) ) {
+			$pfrom = $_REQUEST['pfrom'] / $rate;
+		}
+		if( isset( $_REQUEST['pto'] ) && zen_not_null( $_REQUEST['pto'] ) ) {
+			$pto = $_REQUEST['pto'] / $rate;
+		}
 	}
 
 	if (DISPLAY_PRICE_WITH_TAX == 'true') {
