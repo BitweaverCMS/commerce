@@ -133,7 +133,8 @@ eb( "BULK CSV not implemented", $_REQUEST, $_FILES );
 				} else {
 					$_SESSION['shipping_quote'] = '';
 					$_SESSION['shipping'] = array();
-					$gBitSmarty->assign( 'errors', array( 'Shipping method could not be calculated.', $quote[0]['methods'][0]['title'] ) );
+					$failedTitle = $quote[0]['methods'][0]['title'] ?? $quote[0]['error'] ?? $quote['error'] ?? '';
+					$gBitSmarty->assign( 'errors', array( 'Shipping method could not be calculated.', $failedTitle ) );
 				}
 			} elseif( empty( $free_shipping ) ) {
 				$gBitSmarty->assign( 'errors', 'Please select a shipping method' );

@@ -42,6 +42,8 @@ The established checkout pipeline spans page controllers and shared includes:
    `CommerceOrder::loadFromCart()` must not re-quote it. Confirmation
    templates must test `is_array($smarty.session.shipping)` before
    reading `delivery_date` / `ship_date` (PHP 8 TypeError on `''['key']`).
+   When `quoteToSession()` fails, the shipping page must not read
+   `$quote[0]['methods'][0]['title']` unless that path exists.
 5. Run order-total modules in configured order.
 6. Select and validate payment.
 7. Persist the order, products, totals, and status history transactionally.

@@ -534,7 +534,7 @@ class CommerceShoppingCart extends CommerceOrderBase {
 			reset($this->contents);
 			foreach( array_keys( $this->contents ) as $cartItemKey ) {
 				if( $product = $this->getProductObject( $cartItemKey ) ) {
-					if( preg_match( '/^GIFT/', addslashes( $product->getField( 'products_model' ) ) ) ) {
+					if( preg_match( '/^GIFT/', (string)$product->getField( 'products_model', '' ) ) ) {
 						$gift_voucher += $product->getPurchasePrice( $this->contents[$cartItemKey]['products_quantity'], $this->contents[$cartItemKey]['attributes'] );
 					}
 					if (isset($this->contents[$cartItemKey]['attributes'])) {

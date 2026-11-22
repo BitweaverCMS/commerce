@@ -61,6 +61,12 @@
   a non-array first argument with no address array returns `''`.
 - Advanced search converts `pfrom` / `pto` only when those request keys
   are present. A keyword search does not send them.
+- `get_content_type()` matches `^GIFT` on `getField( 'products_model', '' )`.
+  A null or empty model is not a gift voucher.
+- Checkout shipping's failed-quote message uses `??` for
+  `$quote[0]['methods'][0]['title']`. An empty quote list has no `[0]`.
+- Shipping estimator weight/price uses `$_REQUEST['id'] ?? array()`.
+  A quantity-only add has no option ids.
 
 ## Schema changes
 
