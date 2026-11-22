@@ -92,6 +92,71 @@ if( BitBase::verifyId( $_REQUEST['orders_status_id'] ?? null ) ) {
 }
 
 $orders = order::getList( $listHash );
+
+// CSS-only list filters (shown by the filter icon): deadline, shipping method, price band.
+$priceLabel = function( $pAmount ) use ( $currencies ) {
+	return $currencies->getLeftSymbol( DEFAULT_CURRENCY ).number_format( $pAmount ).$currencies->getRightSymbol( DEFAULT_CURRENCY );
+};
+$priceBands = array(
+	'under100' => array( 'label' => tra( 'Under' ).' '.$priceLabel( 100 ), 'min' => NULL, 'max' => 100 ),
+	'100to250' => array( 'label' => $priceLabel( 100 ).' – '.$priceLabel( 250 ), 'min' => 100, 'max' => 250 ),
+	'250to500' => array( 'label' => $priceLabel( 250 ).' – '.$priceLabel( 500 ), 'min' => 250, 'max' => 500 ),
+	'500plus' => array( 'label' => $priceLabel( 500 ).'+', 'min' => 500, 'max' => NULL ),
+);
+$orderFilters = array(
+	'deadline' => 0,
+	'groups' => array(
+		'ship' => array( 'title' => tra( 'Shipping' ), 'options' => array() ),
+		'price' => array( 'title' => tra( 'Price' ), 'options' => array() ),
+	),
+);
+foreach( $priceBands as $bandKey => $band ) {
+	$orderFilters['groups']['price']['options'][$bandKey] = array( 'label' => $band['label'], 'count' => 0 );
+}
+// Paid Expedited Processing (ot_expedite total line) counts with deadlines, as does the Expediting status.
+$expeditedOrders = array();
+if( !empty( $orders ) ) {
+	$expeditedOrders = array_flip( $gBitDb->getCol( "SELECT DISTINCT `orders_id` FROM ".TABLE_ORDERS_TOTAL." WHERE `class`='ot_expedite' AND `orders_id` IN (".implode( ',', array_fill( 0, count( $orders ), '?' ) ).")", array_keys( $orders ) ) );
+}
+foreach( array_keys( $orders ) as $orderId ) {
+	$filterClasses = array();
+	$isExpediting = strtolower( preg_replace( '/[^\p{L}\p{N}]+/u', '', (string)($orders[$orderId]['orders_status_name'] ?? '') ) ) == 'expediting';
+	if( !empty( $orders[$orderId]['deadline_date'] ) || isset( $expeditedOrders[$orderId] ) || $isExpediting ) {
+		$filterClasses[] = 'has-deadline';
+		$orderFilters['deadline']++;
+	}
+
+	$shippingCode = trim( (string)($orders[$orderId]['shipping_method_code'] ?? '') );
+	$shippingSlug = trim( preg_replace( '/[^a-z0-9]+/', '-', strtolower( $shippingCode ) ), '-' );
+	if( $shippingSlug === '' ) {
+		$shippingSlug = 'none';
+		$shippingCode = tra( 'None' );
+	}
+	if( empty( $orderFilters['groups']['ship']['options'][$shippingSlug] ) ) {
+		$orderFilters['groups']['ship']['options'][$shippingSlug] = array( 'label' => $shippingCode, 'count' => 0 );
+	}
+	$orderFilters['groups']['ship']['options'][$shippingSlug]['count']++;
+	$filterClasses[] = 'ship-'.$shippingSlug;
+
+	$orderTotal = (float)($orders[$orderId]['order_total'] ?? 0);
+	foreach( $priceBands as $bandKey => $band ) {
+		if( (is_null( $band['min'] ) || $orderTotal >= $band['min']) && (is_null( $band['max'] ) || $orderTotal < $band['max']) ) {
+			$filterClasses[] = 'price-'.$bandKey;
+			$orderFilters['groups']['price']['options'][$bandKey]['count']++;
+			break;
+		}
+	}
+	$orders[$orderId]['filter_classes'] = implode( ' ', $filterClasses );
+}
+ksort( $orderFilters['groups']['ship']['options'] );
+foreach( array_keys( $orderFilters['groups'] ) as $groupKey ) {
+	$orderFilters['groups'][$groupKey]['options'] = array_filter( $orderFilters['groups'][$groupKey]['options'], function( $pOption ) { return $pOption['count'] > 0; } );
+	if( empty( $orderFilters['groups'][$groupKey]['options'] ) ) {
+		unset( $orderFilters['groups'][$groupKey] );
+	}
+}
+$gBitSmarty->assign( 'orderFilters', $orderFilters );
+
 $gBitSmarty->assignByRef( 'listOrders', $orders );
 
 ?>

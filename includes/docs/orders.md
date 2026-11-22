@@ -114,6 +114,38 @@ whole result, not once per order. Each line's thumbnail is
 existing thumb is used without loading the product. Display URLs still come
 from `getDisplayUrlFromHash()` on the line hash.
 
+## Order list filters
+
+`admin/index.php` always builds the filters, but the row starts hidden. The
+filter icon beside Go is a `<label>` for the `sr-only` checkbox `#olf-show`
+at the top of the template, and an inline `:not(:checked)` rule hides
+`.order-filters` until the icon is clicked. Showing the row does not reload
+the page or add a URL parameter. The row has Shipping and Price dropdowns,
+followed by a Deadline toggle button. Deadline includes expedited orders:
+those with a paid `ot_expedite` total line (one `IN (...)` query over the
+listed ids) or the Expediting status (matched by normalized name, as the
+sidebar `tr.expediting` CSS is). Picking a dropdown option adds a
+`label ×` chip, and the chip's × clears that group. Price bands are under
+100, 100–250, 250–500, and 500+ on `co.order_total` in the default currency,
+lower bound inclusive. Options with no orders in the current list are
+dropped, and so is a dropdown left empty, or Deadline when no order has one. The labels are plain text built from
+`getLeftSymbol()` / `getRightSymbol()`. Do not use `$currencies->format()`
+here: it returns HTML, which the template escapes into visible markup.
+
+Filtering runs without JavaScript, using only existing Bootstrap classes.
+The dropdowns are Bootstrap `dropdown-menu`. Chips are `btn btn-primary
+btn-sm` labels, and clicking anywhere on a chip clears it. The hidden inputs
+are `sr-only`: one checkbox, plus one radio group per dropdown with an `-any`
+default. Menu labels point `for=` at an option, and chip labels point at the
+group's `-any` radio. A chip must be a `<label>`, because `for=` does
+nothing on a `<button>`. The controller gives each order `filter_classes`
+(`has-deadline`, `ship-<slug>`, `price-<band>`). The template adds
+`order-entry` and those classes to every `<tr>` of the order. The only CSS
+is the show/hide rules, generated inline from `$orderFilters.groups`; add a
+group there, not in a stylesheet. The other pages that include
+`admin_list_orders_inc.tpl` never show the toggle. The footer total still
+sums the whole result.
+
 ## Invoice
 
 `admin/invoice.php` renders `templates/order_invoice.tpl`. The Payment panel
