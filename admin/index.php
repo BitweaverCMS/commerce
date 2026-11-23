@@ -80,7 +80,12 @@ if( !empty( $_REQUEST['list_filter'] ) ) {
 	$_SESSION['search'] = NULL;
 }
 
-$gBitSmarty->assign( 'searchScopes', array( "all" => 'Search Orders', "history" => 'Search History' ) );
+$gBitSmarty->assign( 'statusComparisons', array(
+	'eq' => array( 'value' => '', 'label' => tra( 'Exactly' ) ),
+	'ge' => array( 'value' => '>=', 'label' => tra( 'At Least' ) ),
+	'le' => array( 'value' => '<=', 'label' => tra( 'At Most' ) ),
+) );
+$gBitSmarty->assign( 'searchScopes', array( "all" => tra( 'Orders' ), "history" => tra( 'History' ) ) );
 
 if( BitBase::verifyId( $_REQUEST['orders_status_id'] ?? null ) ) {
 	$listHash['orders_status_id'] = $_REQUEST['orders_status_id'];

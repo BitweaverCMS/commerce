@@ -114,37 +114,58 @@ whole result, not once per order. Each line's thumbnail is
 existing thumb is used without loading the product. Display URLs still come
 from `getDisplayUrlFromHash()` on the line hash.
 
+## Order list search bar
+
+The status row is one Bootstrap input group: a comparison dropdown
+(Exactly / At Least / At Most), the status select, the products checkbox
+addon, and Show (the `list_filter` submit). A plain search icon (`btn-link`
+label) at the row's end toggles the search row, `[Orders ▾][text][Search]`.
+The search row is hidden unless the `sr-only` checkbox `#oss-show` is checked,
+and it starts checked when the session has a search term.
+
+The scope and comparison dropdowns are Bootstrap `input-group-btn` menus,
+not `<select>`s. A `select.form-control` inside `input-group-btn` collapses
+to its arrow, and a `select.btn` does not match the group. Picking a value
+must not submit the form. Each value is an `sr-only` radio
+(`search_scope` as `#oss-<key>`, `orders_status_comparison` as `#osc-<key>`
+from `$statusComparisons`). Menu items are `<label for=...>`. The button
+holds one span per value, and inline `form:has(#id:checked)` rules show the
+selected one. Do not make the menu items submit buttons.
+
 ## Order list filters
 
-`admin/index.php` always builds the filters, but the row starts hidden. The
-filter icon beside Go is a `<label>` for the `sr-only` checkbox `#olf-show`
-at the top of the template, and an inline `:not(:checked)` rule hides
-`.order-filters` until the icon is clicked. Showing the row does not reload
-the page or add a URL parameter. The row has Shipping and Price dropdowns,
-followed by a Deadline toggle button. Deadline includes expedited orders:
-those with a paid `ot_expedite` total line (one `IN (...)` query over the
-listed ids) or the Expediting status (matched by normalized name, as the
-sidebar `tr.expediting` CSS is). Picking a dropdown option adds a
-`label ×` chip, and the chip's × clears that group. Price bands are under
-100, 100–250, 250–500, and 500+ on `co.order_total` in the default currency,
-lower bound inclusive. Options with no orders in the current list are
-dropped, and so is a dropdown left empty, or Deadline when no order has one. The labels are plain text built from
-`getLeftSymbol()` / `getRightSymbol()`. Do not use `$currencies->format()`
-here: it returns HTML, which the template escapes into visible markup.
+`admin/index.php` builds the filters. They are a grid column (`col-sm-5
+col-sm-pull-1`) inside the search form, on the same row as the status group,
+with the search icon pushed to the end (`col-sm-1 col-sm-push-5`). On a
+phone they wrap below the status row. The column has Shipping and Price
+dropdowns, followed by an icon-only Deadline toggle (clock; the name and
+count are in the tooltip). Deadline includes expedited orders: those with a
+paid `ot_expedite` total line (one `IN (...)` query over the listed ids) or
+the Expediting status (matched by normalized name, as the sidebar
+`tr.expediting` CSS is). Picking a dropdown option adds a `label ×` chip,
+and the chip's × clears that group. Price bands are under 100, 100–250,
+250–500, and 500+ on `co.order_total` in the default currency, lower bound
+inclusive. Options with no orders in the current list are dropped, and so is
+a dropdown left empty, or Deadline when no order has one. The labels are
+plain text built from `getLeftSymbol()` / `getRightSymbol()`. Do not use
+`$currencies->format()` here: it returns HTML, which the template escapes
+into visible markup.
 
 Filtering runs without JavaScript, using only existing Bootstrap classes.
-The dropdowns are Bootstrap `dropdown-menu`. Chips are `btn btn-primary
-btn-sm` labels, and clicking anywhere on a chip clears it. The hidden inputs
-are `sr-only`: one checkbox, plus one radio group per dropdown with an `-any`
+The dropdowns are Bootstrap `dropdown-menu`. Chips are `btn btn-primary`
+labels, and clicking anywhere on a chip clears it. The hidden inputs are
+`sr-only`: one checkbox, plus one radio group per dropdown with an `-any`
 default. Menu labels point `for=` at an option, and chip labels point at the
 group's `-any` radio. A chip must be a `<label>`, because `for=` does
 nothing on a `<button>`. The controller gives each order `filter_classes`
 (`has-deadline`, `ship-<slug>`, `price-<band>`). The template adds
 `order-entry` and those classes to every `<tr>` of the order. The only CSS
 is the show/hide rules, generated inline from `$orderFilters.groups`; add a
-group there, not in a stylesheet. The other pages that include
-`admin_list_orders_inc.tpl` never show the toggle. The footer total still
-sums the whole result.
+group there, not in a stylesheet. The inputs live inside the form, so the
+row rules are `form:has(#id:checked) ~ .order-list` (the table is the form's
+sibling) and a submit also posts the unused `olf_*` radios. The other pages
+that include `admin_list_orders_inc.tpl` never show the filters. The footer
+total still sums the whole result.
 
 ## Invoice
 

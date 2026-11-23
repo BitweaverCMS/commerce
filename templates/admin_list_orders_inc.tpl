@@ -1,54 +1,81 @@
-{if $orderFilters && $listOrders}<input type="checkbox" id="olf-show" class="sr-only">{/if}
 {if $searchScopes}
-{form class="form-inline"}
-{html_options class="form-control" name="search_scope" options=$searchScopes selected=$smarty.session.search_scope|default:'all'}
-: <input type="text" class="form-control" name="search" value="{$smarty.session.search|default:$smarty.request.search}"/>
-<select class="form-control" name="orders_status_comparison" class="input-small" >
-	<option value="">{tr}Exactly{/tr}</option>
-	<option value=">=" {if $smarty.session.orders_status_comparison == '>='}selected="selected"{/if}>{tr}At Least{/tr}</option>
-	<option value="<=" {if $smarty.session.orders_status_comparison == '<='}selected="selected"{/if}>{tr}At Most{/tr}</option>
-</select>
-
-{html_options class="form-control" name="orders_status_id" options=$commerceStatuses selected=$smarty.session.orders_status_id|default:'all'}
-
-<label class="checkbox"><input type="checkbox" name="orders_products" value="1" {if $smarty.session.orders_products}checked{/if}> <i class="fa fal fa-list"></i></label>
-
-<input class="btn btn-default btn-sm" type="submit" value="Go" name="list_filter"/>
-{if $orderFilters && $listOrders}<label for="olf-show" class="btn btn-link btn-sm" title="{tr}Filters{/tr}"><i class="fa fal fa-filter"></i></label>{/if}
-{/form}
-{/if}
-
-{if $orderFilters && $listOrders}
-<div class="order-filters">
-	<input type="checkbox" id="olf-deadline" class="sr-only">
-	{foreach from=$orderFilters.groups key=groupKey item=group}
-	<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-any" class="sr-only" checked>
-	{foreach from=$group.options key=optionKey item=option}<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-{$optionKey}" class="sr-only">{/foreach}
-	{/foreach}
-	{foreach from=$orderFilters.groups key=groupKey item=group}
-	<div class="btn-group">
-		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">{$group.title} <span class="caret"></span></button>
-		<ul class="dropdown-menu">{foreach from=$group.options key=optionKey item=option}<li><label for="olf-{$groupKey}-{$optionKey}" class="btn btn-link btn-sm btn-block"><span class="badge pull-right">{$option.count}</span> {$option.label|escape}</label></li>{/foreach}</ul>
-	</div>
-	{/foreach}
-	{if $orderFilters.deadline}
-	<label for="olf-deadline" class="btn btn-default btn-sm olf-deadline" title="{$orderFilters.deadline}"><i class="fa fal fa-clock"></i> {tr}Deadline{/tr}</label>
-	<label for="olf-deadline" class="btn btn-primary btn-sm olf-chip olf-chip-deadline"><i class="fa fal fa-clock"></i> {tr}Deadline{/tr} <i class="fa fal fa-times"></i></label>
-	{/if}
-	{foreach from=$orderFilters.groups key=groupKey item=group}{foreach from=$group.options key=optionKey item=option}<label for="olf-{$groupKey}-any" class="btn btn-primary btn-sm olf-chip olf-chip-{$groupKey}-{$optionKey}">{$option.label|escape} <i class="fa fal fa-times"></i></label> {/foreach}{/foreach}
-</div>
+{form}
+{assign var=currentScope value=$smarty.session.search_scope|default:'all'}
+{assign var=currentComparison value=$smarty.session.orders_status_comparison|default:''}
+<input type="checkbox" class="sr-only" id="oss-show"{if $smarty.session.search} checked{/if}>
+{foreach from=$searchScopes key=scopeKey item=scopeLabel}<input type="radio" class="sr-only" name="search_scope" id="oss-{$scopeKey}" value="{$scopeKey}"{if $scopeKey == $currentScope} checked{/if}>{/foreach}
+{foreach from=$statusComparisons key=compKey item=comp}<input type="radio" class="sr-only" name="orders_status_comparison" id="osc-{$compKey}" value="{$comp.value|escape}"{if $comp.value == $currentComparison} checked{/if}>{/foreach}
 <style>
-#olf-show:not(:checked) ~ .order-filters { display:none; }
+.oss-label { display:none; }
+form:has(#oss-show:not(:checked)) .order-search { display:none; }
+{foreach from=$searchScopes key=scopeKey item=scopeLabel}form:has(#oss-{$scopeKey}:checked) .oss-label-{$scopeKey} { display:inline; }
+{/foreach}{foreach from=$statusComparisons key=compKey item=comp}form:has(#osc-{$compKey}:checked) .osc-label-{$compKey} { display:inline; }
+{/foreach}
+</style>
+{if $orderFilters && $listOrders}{assign var=hasOrderFilters value=TRUE}{else}{assign var=hasOrderFilters value=FALSE}{/if}
+<div class="row">
+	<div class="col-xs-10 {if $hasOrderFilters}col-sm-6{else}col-sm-11{/if} form-group">
+		<div class="input-group">
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{foreach from=$statusComparisons key=compKey item=comp}<span class="oss-label osc-label-{$compKey}">{$comp.label|escape}</span>{/foreach} <span class="caret"></span></button>
+				<ul class="dropdown-menu">{foreach from=$statusComparisons key=compKey item=comp}<li><label for="osc-{$compKey}" class="btn btn-link">{$comp.label|escape}</label></li>{/foreach}</ul>
+			</div>
+			{html_options class="form-control" name="orders_status_id" options=$commerceStatuses selected=$smarty.session.orders_status_id|default:'all'}
+			<label class="input-group-addon"><input type="checkbox" name="orders_products" value="1" {if $smarty.session.orders_products}checked{/if}> <i class="fa fal fa-list"></i></label>
+			<span class="input-group-btn"><input class="btn btn-default" type="submit" value="{tr}Show{/tr}" name="list_filter"/></span>
+		</div>
+	</div>
+	<div class="col-xs-2 col-sm-1{if $hasOrderFilters} col-sm-push-5{/if} form-group text-right">
+		<label for="oss-show" class="btn btn-link" title="{tr}Search{/tr}"><i class="fa fal fa-search"></i></label>
+	</div>
+	{if $hasOrderFilters}
+	<div class="col-xs-12 col-sm-5 col-sm-pull-1 form-group order-filters">
+		<input type="checkbox" id="olf-deadline" class="sr-only">
+		{foreach from=$orderFilters.groups key=groupKey item=group}
+		<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-any" class="sr-only" checked>
+		{foreach from=$group.options key=optionKey item=option}<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-{$optionKey}" class="sr-only">{/foreach}
+		{/foreach}
+		{foreach from=$orderFilters.groups key=groupKey item=group}
+		<div class="btn-group">
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{$group.title} <span class="caret"></span></button>
+			<ul class="dropdown-menu">{foreach from=$group.options key=optionKey item=option}<li><label for="olf-{$groupKey}-{$optionKey}" class="btn btn-link btn-sm btn-block"><span class="badge pull-right">{$option.count}</span> {$option.label|escape}</label></li>{/foreach}</ul>
+		</div>
+		{/foreach}
+		{if $orderFilters.deadline}
+		<label for="olf-deadline" class="btn btn-default olf-deadline" title="{tr}Deadline{/tr}: {$orderFilters.deadline}"><i class="fa fal fa-clock"></i></label>
+		<label for="olf-deadline" class="btn btn-primary olf-chip olf-chip-deadline" title="{tr}Deadline{/tr}"><i class="fa fal fa-clock"></i> <i class="fa fal fa-times"></i></label>
+		{/if}
+		{foreach from=$orderFilters.groups key=groupKey item=group}{foreach from=$group.options key=optionKey item=option}<label for="olf-{$groupKey}-any" class="btn btn-primary olf-chip olf-chip-{$groupKey}-{$optionKey}">{$option.label|escape} <i class="fa fal fa-times"></i></label> {/foreach}{/foreach}
+	</div>
+	{/if}
+</div>
+<div class="row order-search">
+	<div class="col-xs-12 form-group">
+		<div class="input-group">
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{foreach from=$searchScopes key=scopeKey item=scopeLabel}<span class="oss-label oss-label-{$scopeKey}">{$scopeLabel|escape}</span>{/foreach} <span class="caret"></span></button>
+				<ul class="dropdown-menu">{foreach from=$searchScopes key=scopeKey item=scopeLabel}<li><label for="oss-{$scopeKey}" class="btn btn-link">{$scopeLabel|escape}</label></li>{/foreach}</ul>
+			</div>
+			<input type="text" class="form-control" name="search" value="{$smarty.session.search|default:$smarty.request.search}"/>
+			<span class="input-group-btn"><input class="btn btn-default" type="submit" value="{tr}Search{/tr}" name="list_filter"/></span>
+		</div>
+	</div>
+</div>
+{/form}
+{if $hasOrderFilters}
+<style>
 .order-filters .dropdown-menu .btn { text-align:left; }
 .order-filters .olf-chip, .order-filters:has(#olf-deadline:checked) .olf-deadline { display:none; }
 .order-filters:has(#olf-deadline:checked) .olf-chip-deadline { display:inline-block; }
-.order-filters:has(#olf-deadline:checked) ~ .order-list tr.order-entry:not(.has-deadline) { display:none; }
+form:has(#olf-deadline:checked) ~ .order-list tr.order-entry:not(.has-deadline) { display:none; }
 {foreach from=$orderFilters.groups key=groupKey item=group}{foreach from=$group.options key=optionKey item=option}
 .order-filters:has(#olf-{$groupKey}-{$optionKey}:checked) .olf-chip-{$groupKey}-{$optionKey} { display:inline-block; }
-.order-filters:has(#olf-{$groupKey}-{$optionKey}:checked) ~ .order-list tr.order-entry:not(.{$groupKey}-{$optionKey}) { display:none; }
+form:has(#olf-{$groupKey}-{$optionKey}:checked) ~ .order-list tr.order-entry:not(.{$groupKey}-{$optionKey}) { display:none; }
 {/foreach}{/foreach}
 </style>
 {/if}
+{/if}
+
 
 <table class="table data order-list" style="table-layout:fixed">
 {assign var=grossTotal value=0}
