@@ -263,7 +263,10 @@ class CommerceOrder extends CommerceOrderBase {
 		$ret = array();
 		$selectSql = ''; $joinSql = ''; $whereSql = '';
 
-		$comparison = (!empty( $pListHash['orders_status_comparison'] ) && strlen( $pListHash['orders_status_comparison'] ) <= 2) ? $pListHash['orders_status_comparison'] : '=';
+		$comparison = $pListHash['orders_status_comparison'] ?? '=';
+		if( !in_array( $comparison, array( '=', '<', '>', '<=', '>=', '<>', '!=' ), TRUE ) ) {
+			$comparison = '=';
+		}
 
 		if( !empty( $pListHash['user_id'] ) ) {
 			$whereSql .= ' AND `customers_id`=? ';
@@ -342,7 +345,7 @@ class CommerceOrder extends CommerceOrderBase {
 		}
 
 		if( !empty( $pListHash['period'] ) && !empty( $pListHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$gBitDb->SQLDate( $pListHash['period'], '`date_purchased`' ).' = ?';
+			$whereSql .= ' AND '.$gBitDb->SQLDate( zen_report_period( $pListHash['period'] ), '`date_purchased`' ).' = ?';
 			$bindVars[] = $pListHash['timeframe'];
 		}
 

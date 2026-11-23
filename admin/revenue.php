@@ -21,7 +21,8 @@ if( count( $_POST ) > 2 ) {
 }
 
 $_REQUEST['max_records']  = -1;
-if( !empty( $_REQUEST['period'] ) ) {
+if( isset( $_REQUEST['period'] ) ) {
+	$_REQUEST['period'] = zen_report_period( $_REQUEST['period'] );
 	$listHash['period'] = $_REQUEST['period'];
 }
 

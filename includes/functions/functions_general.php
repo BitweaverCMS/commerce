@@ -527,6 +527,11 @@ function zen_redirect($url) {
     return $get_string;
   }
 
+// Report periods used for SQL date formatting by the revenue and order lists.
+function zen_report_period( $period ) {
+	return in_array( $period, array( 'Y-m-d', 'Y-\WeekW', 'Y-m', 'Y-\QQ', 'Y-' ), TRUE ) ? $period : 'Y-m';
+}
+
 ////
 // Checks to see if the currency code exists as a currency
 // TABLES: currencies
