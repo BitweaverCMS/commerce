@@ -13,8 +13,9 @@ form:has(#oss-show:not(:checked)) .order-search { display:none; }
 {/foreach}
 </style>
 {if $orderFilters && $listOrders}{assign var=hasOrderFilters value=TRUE}{else}{assign var=hasOrderFilters value=FALSE}{/if}
+{if $hasOrderFilters && $orderFilters.products}{assign var=hasProductFilters value=TRUE}{else}{assign var=hasProductFilters value=FALSE}{/if}
 <div class="row">
-	<div class="col-xs-10 {if $hasOrderFilters}col-sm-6{else}col-sm-11{/if} form-group">
+	<div class="{if $hasProductFilters}col-xs-9{else}col-xs-10{/if} {if !$hasOrderFilters}col-sm-11{elseif $hasProductFilters}col-sm-5{else}col-sm-6{/if} form-group">
 		<div class="input-group">
 			<div class="input-group-btn">
 				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{foreach from=$statusComparisons key=compKey item=comp}<span class="oss-label osc-label-{$compKey}">{$comp.label|escape}</span>{/foreach} <span class="caret"></span></button>
@@ -25,30 +26,42 @@ form:has(#oss-show:not(:checked)) .order-search { display:none; }
 			<span class="input-group-btn"><input class="btn btn-default" type="submit" value="{tr}Show{/tr}" name="list_filter"/></span>
 		</div>
 	</div>
-	<div class="col-xs-2 col-sm-1{if $hasOrderFilters} col-sm-push-5{/if} form-group text-right">
-		<label for="oss-show" class="btn btn-link" title="{tr}Search{/tr}"><i class="fa fal fa-search"></i></label>
+	<div class="{if $hasProductFilters}col-xs-3 col-sm-2 col-sm-push-5{else}col-xs-2 col-sm-1{if $hasOrderFilters} col-sm-push-5{/if}{/if} form-group text-right">
+		<label for="oss-show" class="btn btn-link" title="{tr}Search{/tr}"><i class="fa fal fa-search"></i></label>{if $hasProductFilters}<label for="olf-show" class="btn btn-link" title="{tr}Product Options{/tr}"><i class="fa fal fa-filter"></i></label>{/if}
 	</div>
 	{if $hasOrderFilters}
-	<div class="col-xs-12 col-sm-5 col-sm-pull-1 form-group order-filters">
-		<input type="checkbox" id="olf-deadline" class="sr-only">
+	<div class="col-xs-12 col-sm-5 {if $hasProductFilters}col-sm-pull-2{else}col-sm-pull-1{/if} form-group order-filters">
+		<input type="checkbox" id="olf-deadline" class="sr-only">{if $hasProductFilters}<input type="checkbox" id="olf-show" class="sr-only">{/if}
 		{foreach from=$orderFilters.groups key=groupKey item=group}
 		<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-any" class="sr-only" checked>
 		{foreach from=$group.options key=optionKey item=option}<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-{$optionKey}" class="sr-only">{/foreach}
 		{/foreach}
-		{foreach from=$orderFilters.groups key=groupKey item=group}
+		{foreach from=$orderFilters.groups key=groupKey item=group}{if !$group.product}
 		<div class="btn-group">
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{$group.title} <span class="caret"></span></button>
 			<ul class="dropdown-menu">{foreach from=$group.options key=optionKey item=option}<li><label for="olf-{$groupKey}-{$optionKey}" class="btn btn-link btn-sm btn-block"><span class="badge pull-right">{$option.count}</span> {$option.label|escape}</label></li>{/foreach}</ul>
 		</div>
-		{/foreach}
+		{/if}{/foreach}
 		{if $orderFilters.deadline}
 		<label for="olf-deadline" class="btn btn-default olf-deadline" title="{tr}Deadline{/tr}: {$orderFilters.deadline}"><i class="fa fal fa-clock"></i></label>
 		<label for="olf-deadline" class="btn btn-primary olf-chip olf-chip-deadline" title="{tr}Deadline{/tr}"><i class="fa fal fa-clock"></i> <i class="fa fal fa-times"></i></label>
 		{/if}
-		{foreach from=$orderFilters.groups key=groupKey item=group}{foreach from=$group.options key=optionKey item=option}<label for="olf-{$groupKey}-any" class="btn btn-primary olf-chip olf-chip-{$groupKey}-{$optionKey}">{$option.label|escape} <i class="fa fal fa-times"></i></label> {/foreach}{/foreach}
+		{foreach from=$orderFilters.groups key=groupKey item=group}{foreach from=$group.options key=optionKey item=option}<label for="olf-{$groupKey}-any" class="btn btn-primary olf-chip olf-chip-{$groupKey}-{$optionKey}">{if $group.product}{$group.title|escape}: {/if}{$option.label|escape} <i class="fa fal fa-times"></i></label> {/foreach}{/foreach}
 	</div>
 	{/if}
 </div>
+{if $hasProductFilters}
+<div class="row order-options">
+	<div class="col-xs-12 form-group">
+		{foreach from=$orderFilters.groups key=groupKey item=group}{if $group.product}
+		<div class="btn-group">
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{$group.title|escape} <span class="caret"></span></button>
+			<ul class="dropdown-menu">{foreach from=$group.options key=optionKey item=option}<li><label for="olf-{$groupKey}-{$optionKey}" class="btn btn-link btn-sm btn-block"><span class="badge pull-right">{$option.count}</span> {$option.label|escape}</label></li>{/foreach}</ul>
+		</div>
+		{/if}{/foreach}
+	</div>
+</div>
+{/if}
 <div class="row order-search">
 	<div class="col-xs-12 form-group">
 		<div class="input-group">
@@ -64,7 +77,8 @@ form:has(#oss-show:not(:checked)) .order-search { display:none; }
 {/form}
 {if $hasOrderFilters}
 <style>
-.order-filters .dropdown-menu .btn { text-align:left; }
+.order-filters .dropdown-menu .btn, .order-options .dropdown-menu .btn { text-align:left; }
+form:has(#olf-show:not(:checked)) .order-options { display:none; }
 .order-filters .olf-chip, .order-filters:has(#olf-deadline:checked) .olf-deadline { display:none; }
 .order-filters:has(#olf-deadline:checked) .olf-chip-deadline { display:inline-block; }
 form:has(#olf-deadline:checked) ~ .order-list tr.order-entry:not(.has-deadline) { display:none; }
@@ -100,7 +114,7 @@ form:has(#olf-{$groupKey}-{$optionKey}:checked) ~ .order-list tr.order-entry:not
 	{foreach from=$order.products item=product key=ordersProductsId name="orderproducts"}
 	{assign var=orderProduct value=CommerceProduct::getCommerceObject($product.products_id)}
 		{if $orderProduct}
-	<tr class="order-entry {$order.filter_classes}">
+	<tr class="order-entry {$order.row_filter_classes} {$product.filter_classes}">
 		<td colspan="6">
 			<div class="row">
 				<div class="col-xs-3 text-center">

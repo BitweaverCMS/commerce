@@ -152,8 +152,53 @@ foreach( array_keys( $orders ) as $orderId ) {
 		}
 	}
 	$orders[$orderId]['filter_classes'] = implode( ' ', $filterClasses );
+	$orders[$orderId]['row_filter_classes'] = $orders[$orderId]['filter_classes'];
 }
 ksort( $orderFilters['groups']['ship']['options'] );
+
+// Product option filters, one menu per option, when line items are listed. Text and File values are free text, so they are skipped.
+if( !empty( $listHash['orders_products'] ) && !empty( $orders ) ) {
+	$skipTypes = array( defined( 'PRODUCTS_OPTIONS_TYPE_TEXT' ) ? (int)PRODUCTS_OPTIONS_TYPE_TEXT : 1, defined( 'PRODUCTS_OPTIONS_TYPE_FILE' ) ? (int)PRODUCTS_OPTIONS_TYPE_FILE : 4 );
+	$optionTypes = order::optionTypeMap();
+	$optionGroups = array();
+	$attRows = $gBitDb->getAll( "SELECT * FROM ".TABLE_ORDERS_PRODUCTS_ATTRIBUTES." WHERE `orders_id` IN (".implode( ',', array_fill( 0, count( $orders ), '?' ) ).")", array_keys( $orders ) );
+	foreach( (array)$attRows as $att ) {
+		$optionId = (int)$att['products_options_id'];
+		$valueId = (int)$att['products_options_values_id'];
+		$orderId = $att['orders_id'];
+		$lineId = $att['orders_products_id'];
+		if( !isset( $orders[$orderId] ) || in_array( (int)($optionTypes[$optionId] ?? -1), $skipTypes ) ) {
+			continue;
+		}
+		$groupKey = 'opt'.$optionId;
+		$className = $groupKey.'-'.$valueId;
+		if( empty( $optionGroups[$groupKey] ) ) {
+			$optionGroups[$groupKey] = array( 'title' => $att['products_options_name'], 'product' => TRUE, 'options' => array(), 'orders' => array() );
+		}
+		if( empty( $optionGroups[$groupKey]['options'][$valueId] ) ) {
+			$optionGroups[$groupKey]['options'][$valueId] = array( 'label' => $att['products_options_values_name'] ?? $att['products_options_values'] ?? $valueId, 'count' => 0, 'orders' => array() );
+		}
+		// Count orders, not lines, to match the other menus.
+		if( empty( $optionGroups[$groupKey]['options'][$valueId]['orders'][$orderId] ) ) {
+			$optionGroups[$groupKey]['options'][$valueId]['orders'][$orderId] = TRUE;
+			$optionGroups[$groupKey]['options'][$valueId]['count']++;
+			$orders[$orderId]['filter_classes'] .= ' '.$className;
+		}
+		if( isset( $orders[$orderId]['products'][$lineId] ) ) {
+			$orders[$orderId]['products'][$lineId]['filter_classes'] = trim( ($orders[$orderId]['products'][$lineId]['filter_classes'] ?? '').' '.$className );
+		}
+	}
+	uasort( $optionGroups, function( $a, $b ) { return strcasecmp( $a['title'], $b['title'] ); } );
+	foreach( $optionGroups as $groupKey => $group ) {
+		uasort( $group['options'], function( $a, $b ) { return strnatcasecmp( $a['label'], $b['label'] ); } );
+		foreach( array_keys( $group['options'] ) as $valueId ) {
+			unset( $group['options'][$valueId]['orders'] );
+		}
+		unset( $group['orders'] );
+		$orderFilters['groups'][$groupKey] = $group;
+		$orderFilters['products'] = TRUE;
+	}
+}
 foreach( array_keys( $orderFilters['groups'] ) as $groupKey ) {
 	$orderFilters['groups'][$groupKey]['options'] = array_filter( $orderFilters['groups'][$groupKey]['options'], function( $pOption ) { return $pOption['count'] > 0; } );
 	if( empty( $orderFilters['groups'][$groupKey]['options'] ) ) {

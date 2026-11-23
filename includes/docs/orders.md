@@ -167,6 +167,21 @@ sibling) and a submit also posts the unused `olf_*` radios. The other pages
 that include `admin_list_orders_inc.tpl` never show the filters. The footer
 total still sums the whole result.
 
+When line items are listed (`orders_products`), a filter icon follows the
+search icon (the icon column widens to `col-sm-2`, the status column narrows
+to `col-sm-5`). The icon toggles the `order-options` row via the `#olf-show`
+checkbox. That row has one dropdown per product option
+(`products_options_id`), listing its values (POVID) with order counts. Text
+and File options are skipped: their values are free text. Values come from
+one `orders_products_attributes` query over the listed orders. Each one is
+a group in `$orderFilters.groups` with `product` set (key `opt<id>`, class
+`opt<id>-<povid>`), so it shares the radio, chip, and CSS loops. Its chips
+read `Option: Value`. The order and comment rows get every option class in
+the order (`filter_classes`). A product row gets only the order-level
+classes (`row_filter_classes`) plus its own line's classes, so a value
+filter shows the order header and only the matching lines. Site-specific
+option views belong in a site package, not here.
+
 ## Invoice
 
 `admin/invoice.php` renders `templates/order_invoice.tpl`. The Payment panel
