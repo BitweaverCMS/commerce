@@ -101,6 +101,10 @@ class CommerceStatistics extends BitSingleton {
 // }}}
 
 // {{{ =================== Revenue ====================
+	private function reportDate( $period, $column ) {
+		return $this->mDb->SQLDate( zen_report_period( $period ), $column );
+	}
+
 	function getAggregateRevenue( $pParamHash ) {
 
 		$bindVars = array();
@@ -125,7 +129,7 @@ class CommerceStatistics extends BitSingleton {
 		
 		$ret = array();
 
-		$sql = "SELECT ".$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' )." AS `hash_key`, ROUND( SUM( `order_total` ), 2 )  AS `gross_revenue`, COUNT( `orders_id` ) AS `order_count`, ROUND( SUM( `order_total` ) / COUNT( `orders_id` ), 2) AS `avg_order_size` 
+		$sql = "SELECT ".$this->reportDate( $pParamHash['period'], '`date_purchased`' )." AS `hash_key`, ROUND( SUM( `order_total` ), 2 )  AS `gross_revenue`, COUNT( `orders_id` ) AS `order_count`, ROUND( SUM( `order_total` ) / COUNT( `orders_id` ), 2) AS `avg_order_size`
 				FROM " . TABLE_ORDERS . " co WHERE co.`orders_status_id` > 0 $whereSql
 				GROUP BY `hash_key` 
 				ORDER BY `hash_key` DESC";
@@ -173,7 +177,7 @@ class CommerceStatistics extends BitSingleton {
 		$whereSql = '';
 
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 		}
 
@@ -207,11 +211,11 @@ class CommerceStatistics extends BitSingleton {
 		$bindVars = array();
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
 			$selectSql = ' ci.`interests_name` AS `hash_key`, ';
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 		} elseif( !empty( $pParamHash['period'] ) ) {
-			$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' ).' AS `hash_key`, ';
-			$groupSql .= ', '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
+			$selectSql .= $this->reportDate( $pParamHash['period'], 'co.`date_purchased`' ).' AS `hash_key`, ';
+			$groupSql .= ', '.$this->reportDate( $pParamHash['period'], 'co.`date_purchased`' );
 			$sqlFunc = 'getAssoc';
 		}
 
@@ -243,11 +247,11 @@ class CommerceStatistics extends BitSingleton {
 		$joinSql = '';
 		$bindVars = array();
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 		} elseif( !empty( $pParamHash['period'] ) ) {
-			$keySql .= $this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' ).' AS `hash_key`, ';
-			$groupSql .= ', '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
+			$keySql .= $this->reportDate( $pParamHash['period'], 'co.`date_purchased`' ).' AS `hash_key`, ';
+			$groupSql .= ', '.$this->reportDate( $pParamHash['period'], 'co.`date_purchased`' );
 			$sqlFunc = 'getAssoc';
 		}
 
@@ -288,13 +292,13 @@ class CommerceStatistics extends BitSingleton {
 		$whereSql = '';
 		$bindVars = array();
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-			$whereSql .= ' WHERE '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
+			$whereSql .= ' WHERE '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 		} elseif( !empty( $pParamHash['period'] ) ) {
 			$sqlFunc = 'getAssoc';
 			// foo selection is to force hash with keys to be selected, else a simple array is returned with just registeration count
-			$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' AS `hash_key`, 1 AS `foo`, ';
-			$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) );
+			$selectSql .= $this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' AS `hash_key`, 1 AS `foo`, ';
+			$whereSql .= ' GROUP BY '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) );
 		}
 		$sql = "SELECT $selectSql COUNT( DISTINCT `user_id` ) as `new_registrations`
 				FROM `".BIT_DB_PREFIX."users_users` uu
@@ -308,12 +312,12 @@ class CommerceStatistics extends BitSingleton {
 		$whereSql = '';
 		$bindVars = array( 'bitproduct' );
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 		} elseif( !empty( $pParamHash['period'] ) ) {
 			$sqlFunc = 'getAssoc';
-			$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' AS `hash_key`, ';
-			$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
+			$selectSql .= $this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' AS `hash_key`, ';
+			$whereSql .= ' GROUP BY '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
 		}
 		$sql = "SELECT $selectSql COUNT( DISTINCT( lc.`user_id` ) ) AS `all_customers_that_created_products`, COUNT( lc.`content_id` ) AS `new_products_created_by_all_customers`
 				FROM `".BIT_DB_PREFIX."liberty_content` lc
@@ -327,15 +331,15 @@ class CommerceStatistics extends BitSingleton {
 		$whereSql = '';
 		$bindVars = array( 'bitproduct' );
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 		} elseif( !empty( $pParamHash['period'] ) ) {
 			$sqlFunc = 'getAssoc';
-			$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' AS `hash_key`, ';
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
-			$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
+			$selectSql .= $this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' AS `hash_key`, ';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
+			$whereSql .= ' GROUP BY '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
 		}
 		$sql = "SELECT $selectSql COUNT( DISTINCT( lc.`user_id` ) ) AS `new_customers_that_created_products`, COUNT( lc.`content_id` ) AS `new_products_created_by_new_customers`
 				FROM `".BIT_DB_PREFIX."liberty_content` lc
@@ -349,12 +353,12 @@ class CommerceStatistics extends BitSingleton {
 		$whereSql = '';
 		$bindVars = array( 'bitproduct' );
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 		} elseif( !empty( $pParamHash['period'] ) ) {
 			$sqlFunc = 'getAssoc';
-			$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).', ';
-			$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
+			$selectSql .= $this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).', ';
+			$whereSql .= ' GROUP BY '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
 		}
 
 		if( !empty( $pParamHash['products_type'] ) ) {
@@ -377,14 +381,14 @@ class CommerceStatistics extends BitSingleton {
 		$whereSql = '';
 		$bindVars = array( 'bitproduct' );
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 		} elseif( !empty( $pParamHash['period'] ) ) {
-			$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' AS `hash_key`, ';
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
-			$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
+			$selectSql .= $this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) ).' AS `hash_key`, ';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'uu.`registration_date`' ) ).' = '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
+			$whereSql .= ' GROUP BY '.$this->reportDate( $pParamHash['period'], $this->mDb->SqlIntToTimestamp( 'lc.`created`' ) );
 			$sqlFunc = 'getAssoc';
 		}
 		$sql = "SELECT $selectSql COUNT( DISTINCT cop.`products_id` ) AS `new_products_purchased_by_new_customers`, COUNT( DISTINCT( lc.`user_id` ) ) AS `new_customers_that_purchased_new_products`
@@ -402,11 +406,11 @@ class CommerceStatistics extends BitSingleton {
 		$whereSql = '';
 		$bindVars = array();
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 		} elseif( !empty( $pParamHash['period'] ) ) {
-			$selectSql .= $this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' ).' AS `hash_key`, ';
-			$whereSql .= ' GROUP BY '.$this->mDb->SQLDate( $pParamHash['period'], 'co.`date_purchased`' );
+			$selectSql .= $this->reportDate( $pParamHash['period'], 'co.`date_purchased`' ).' AS `hash_key`, ';
+			$whereSql .= ' GROUP BY '.$this->reportDate( $pParamHash['period'], 'co.`date_purchased`' );
 			$sqlFunc = 'getAssoc';
 		}
 		$sql = "SELECT $selectSql COUNT( DISTINCT( `products_id` ) ) AS `unique_products_ordered`, COUNT( co.`orders_id` ) AS `total_orders`
@@ -440,7 +444,7 @@ class CommerceStatistics extends BitSingleton {
 		$whereSql = '';
 
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 		}
 
@@ -505,10 +509,10 @@ class CommerceStatistics extends BitSingleton {
 		BitBase::prepGetList( $pParamHash );
 
 		if( !empty( $pParamHash['period'] ) && !empty( $pParamHash['timeframe'] ) ) {
-			$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
+			$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], '`date_purchased`' ).' = ?';
 			$bindVars[] = $pParamHash['timeframe'];
 			if( !empty( $pParamHash['new_reg'] ) ) {
-				$whereSql .= ' AND '.$this->mDb->SQLDate( $pParamHash['period'], $this->mDb->SQLIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
+				$whereSql .= ' AND '.$this->reportDate( $pParamHash['period'], $this->mDb->SQLIntToTimestamp( 'uu.`registration_date`' ) ).' = ?';
 				$bindVars[] = $pParamHash['timeframe'];
 			}
 		}
@@ -610,7 +614,7 @@ class CommerceStatistics extends BitSingleton {
 			$pParamHash['period'] = 'Y-m';
 		}
 
-		$period = ', '.$this->mDb->SQLDate( $pParamHash['period'], '`date_purchased`' ).' as `period` ';
+		$period = ', '.$this->reportDate( $pParamHash['period'], '`date_purchased`' ).' as `period` ';
 
 		// coupon value is stored as positive, gift_certificate is stored as negative
 		$sql = "SELECT co.`orders_id`, co.`date_purchased`, co.`order_total`, cotgc.`orders_value` AS `gift_certificate`, (cotcp.`orders_value` * -1) AS `coupon_discount` $period
