@@ -59,25 +59,17 @@ require_once( BITCOMMERCE_PKG_CLASS_PATH.'CommerceOrder.php' );
 
 $listHash = array( 'max_records' => '1000', 'recent_comment' => TRUE );
 
+// The list form is GET, so a copied URL rebuilds the same list. A submit (list_filter) states every value, so a missing one is cleared rather than filled from the session.
 foreach( array( 'orders_status_comparison', 'search_scope', 'search', 'orders_products' ) as $requestKey ) {
 	if( !empty( $_REQUEST[$requestKey] ) ) {
 		$listHash[$requestKey] = $_REQUEST[$requestKey];
 		$_SESSION[$requestKey] = $_REQUEST[$requestKey];
-	} elseif( !empty( $_POST ) && empty( $_REQUEST[$requestKey] ) ) {
+	} elseif( !empty( $_POST ) || !empty( $_REQUEST['list_filter'] ) ) {
 		unset( $listHash[$requestKey] );
 		unset( $_SESSION[$requestKey] );
 	} elseif( !empty( $_SESSION[$requestKey] ) ) {
 		$listHash[$requestKey] = $_SESSION[$requestKey];
 	}
-}
-
-if( !empty( $_SESSION['orders_status_comparison'] ) && !empty( $_REQUEST['list_filter'] ) ) {
-	unset( $_SESSION['orders_status_comparison'] );
-} 
-
-if( !empty( $_REQUEST['list_filter'] ) ) {
-	// searching with empty search field
-	$_SESSION['search'] = NULL;
 }
 
 $gBitSmarty->assign( 'statusComparisons', array(

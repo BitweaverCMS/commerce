@@ -132,6 +132,23 @@ from `$statusComparisons`). Menu items are `<label for=...>`. The button
 holds one span per value, and inline `form:has(#id:checked)` rules show the
 selected one. Do not make the menu items submit buttons.
 
+The form is GET (`{form id="order-list-form" method="get"}`), so after Show
+or Search the address bar holds the whole list state and can be shared. A
+request with `list_filter` states every value: a missing one is cleared,
+not filled from the session. A bare `index.php` still restores the session.
+The session keeps the search term and comparison after a submit (they used
+to be wiped, which collapsed the search row and reset At Least). On submit,
+the inline script disables empty fields so they stay out of the query string.
+
+Client filter state lives in the URL hash, for example
+`#ship=ups-ground&price=100to250&deadline&opt12=345` (group key = option
+key). A small inline script, the only JavaScript here, syncs the hash and
+the hidden inputs. On load and on `hashchange` it ticks the inputs from the
+hash, and it opens the option row when the hash has an `opt*` key. On change
+it calls `history.replaceState`, which sends no request. On submit it copies
+the hash onto the form action, so filters survive Show and Search. The CSS
+rules still do the filtering.
+
 ## Order list filters
 
 `admin/index.php` builds the filters. They are a grid column (`col-sm-5
@@ -151,7 +168,7 @@ plain text built from `getLeftSymbol()` / `getRightSymbol()`. Do not use
 `$currencies->format()` here: it returns HTML, which the template escapes
 into visible markup.
 
-Filtering runs without JavaScript, using only existing Bootstrap classes.
+Filtering runs in CSS, using only existing Bootstrap classes; the script above only mirrors state into the URL.
 The dropdowns are Bootstrap `dropdown-menu`. Chips are `btn btn-primary`
 labels, and clicking anywhere on a chip clears it. The hidden inputs are
 `sr-only`: one checkbox, plus one radio group per dropdown with an `-any`
@@ -163,7 +180,7 @@ nothing on a `<button>`. The controller gives each order `filter_classes`
 is the show/hide rules, generated inline from `$orderFilters.groups`; add a
 group there, not in a stylesheet. The inputs live inside the form, so the
 row rules are `form:has(#id:checked) ~ .order-list` (the table is the form's
-sibling) and a submit also posts the unused `olf_*` radios. The other pages
+sibling). The `olf_*` radios carry `form="olf-none"` (no such form), so they still group by name but are never submitted. The other pages
 that include `admin_list_orders_inc.tpl` never show the filters. The footer
 total still sums the whole result.
 

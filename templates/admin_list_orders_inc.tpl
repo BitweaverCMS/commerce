@@ -1,5 +1,5 @@
 {if $searchScopes}
-{form}
+{form id="order-list-form" method="get"}
 {assign var=currentScope value=$smarty.session.search_scope|default:'all'}
 {assign var=currentComparison value=$smarty.session.orders_status_comparison|default:''}
 <input type="checkbox" class="sr-only" id="oss-show"{if $smarty.session.search} checked{/if}>
@@ -33,8 +33,8 @@ form:has(#oss-show:not(:checked)) .order-search { display:none; }
 	<div class="col-xs-12 col-sm-5 {if $hasProductFilters}col-sm-pull-2{else}col-sm-pull-1{/if} form-group order-filters">
 		<input type="checkbox" id="olf-deadline" class="sr-only">{if $hasProductFilters}<input type="checkbox" id="olf-show" class="sr-only">{/if}
 		{foreach from=$orderFilters.groups key=groupKey item=group}
-		<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-any" class="sr-only" checked>
-		{foreach from=$group.options key=optionKey item=option}<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-{$optionKey}" class="sr-only">{/foreach}
+		<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-any" value="any" form="olf-none" class="sr-only" checked>
+		{foreach from=$group.options key=optionKey item=option}<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-{$optionKey}" value="{$optionKey}" form="olf-none" class="sr-only">{/foreach}
 		{/foreach}
 		{foreach from=$orderFilters.groups key=groupKey item=group}{if !$group.product}
 		<div class="btn-group">
@@ -88,6 +88,46 @@ form:has(#olf-{$groupKey}-{$optionKey}:checked) ~ .order-list tr.order-entry:not
 {/foreach}{/foreach}
 </style>
 {/if}
+{literal}<script>
+/* Filter state lives in the URL hash (#ship=…&price=…&deadline&opt12=345) so the URL can be shared. CSS still does the filtering. */
+(function() {
+	var form = document.getElementById( 'order-list-form' );
+	if( !form ) return;
+	var radios = function() { return form.querySelectorAll( 'input[name^="olf_"]' ); };
+	function readHash() {
+		var hash = {};
+		location.hash.replace( /^#/, '' ).split( '&' ).forEach( function( part ) {
+			if( part ) { var kv = part.split( '=' ); hash[decodeURIComponent( kv[0] )] = kv.length > 1 ? decodeURIComponent( kv[1] ) : ''; }
+		} );
+		radios().forEach( function( radio ) { radio.checked = radio.value == ( hash[radio.name.substr( 4 )] || 'any' ); } );
+		var deadline = document.getElementById( 'olf-deadline' );
+		if( deadline ) deadline.checked = ( 'deadline' in hash );
+		var show = document.getElementById( 'olf-show' );
+		if( show && Object.keys( hash ).some( function( key ) { return key.indexOf( 'opt' ) === 0; } ) ) show.checked = true;
+	}
+	function writeHash() {
+		var parts = [];
+		var deadline = document.getElementById( 'olf-deadline' );
+		if( deadline && deadline.checked ) parts.push( 'deadline' );
+		radios().forEach( function( radio ) { if( radio.checked && radio.value != 'any' ) parts.push( radio.name.substr( 4 ) + '=' + encodeURIComponent( radio.value ) ); } );
+		history.replaceState( null, '', location.pathname + location.search + ( parts.length ? '#' + parts.join( '&' ) : '' ) );
+	}
+	readHash();
+	window.addEventListener( 'hashchange', readHash );
+	form.addEventListener( 'change', function( event ) {
+		if( event.target.id == 'olf-deadline' || event.target.name && event.target.name.indexOf( 'olf_' ) === 0 ) writeHash();
+	} );
+	// Keep the filters across Show / Search, and leave empty fields out of the query string.
+	form.addEventListener( 'submit', function() {
+		form.action = location.pathname + location.hash;
+		form.querySelectorAll( '[name]' ).forEach( function( field ) { if( field.value === '' ) field.disabled = true; } );
+	} );
+	window.addEventListener( 'pageshow', function() {
+		form.querySelectorAll( '[name]' ).forEach( function( field ) { field.disabled = false; } );
+		readHash();
+	} );
+})();
+</script>{/literal}
 {/if}
 
 
