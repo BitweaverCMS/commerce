@@ -633,7 +633,7 @@ class fedexrest extends CommercePluginShippingBase {
 			],
 			"city": "'.mb_strimwidth( $pOrder->billing['city'], 0, 35 ).'",
 			"stateOrProvinceCode": "'.mb_strimwidth( $pOrder->billing['zone_code'], 0, 2 ).'",
-			"postalCode": "'.mb_strimwidth( $pOrder->billing['postcode'], 0, 10 ).'",
+			"postalCode": '.json_encode( mb_strimwidth( $pOrder->billing['postcode'], 0, 10 ), JSON_INVALID_UTF8_SUBSTITUTE ).',
 			"countryCode": "'.mb_strimwidth( $pOrder->billing['countries_iso_code_2'], 0, 2 ).'"
 		},
 		"contact": {
@@ -667,7 +667,7 @@ class fedexrest extends CommercePluginShippingBase {
 			],
 			"city": "'.mb_strimwidth( $pOrder->delivery['city'], 0, 35 ).'",
 			"stateOrProvinceCode": "'.mb_strimwidth( $pOrder->delivery['zone_code'], 0, 2 ).'",
-			"postalCode": "'.mb_strimwidth( $pOrder->delivery['postcode'], 0, 10 ).'",
+			"postalCode": '.json_encode( mb_strimwidth( $pOrder->delivery['postcode'], 0, 10 ), JSON_INVALID_UTF8_SUBSTITUTE ).',
 			"countryCode": "'.mb_strimwidth( $pOrder->delivery['countries_iso_code_2'], 0, 2 ).'"
 		},
 		"contact": {

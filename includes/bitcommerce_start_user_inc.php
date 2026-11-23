@@ -87,8 +87,8 @@ include(DIR_FS_MODULES . 'extra_definitions.php');
 // currency
 if( empty( $_SESSION['currency'] ) || isset($_REQUEST['currency']) || ( (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') && (LANGUAGE_CURRENCY != $_SESSION['currency']) ) ) {
 	if (isset($_REQUEST['currency'])) {
-		if ( zen_currency_exists($_REQUEST['currency'])) {
-			$_SESSION['currency'] = $_REQUEST['currency'];
+		if( $currencyCode = zen_currency_exists( $_REQUEST['currency'] ) ) {
+			$_SESSION['currency'] = $currencyCode;
 		} else {
 			$_SESSION['currency'] = (USE_DEFAULT_LANGUAGE_CURRENCY == 'true') ? LANGUAGE_CURRENCY : DEFAULT_CURRENCY;
 		}

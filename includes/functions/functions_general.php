@@ -533,7 +533,7 @@ function zen_redirect($url) {
 	function zen_currency_exists($code) {
 
 		$ret = FALSE;
-		if( strlen( $code ) <= 3 ) {
+		if( is_string( $code ) && strlen( $code ) === 3 ) {
 			global $gBitDb;
 			$currency_code = "SELECT `currencies_id` FROM " . TABLE_CURRENCIES . " WHERE `code` = ?";
 

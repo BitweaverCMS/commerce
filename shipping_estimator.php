@@ -54,11 +54,12 @@ if( (isset( $_REQUEST['address_id'] ) && $_REQUEST['address_id'] == 'custom' || 
 		$stateMenu = zen_get_country_zone_list( 'zone_id', $shoppingCart->delivery['countries_id'], !empty( $_SESSION['cart_zone_id'] ) ? $_SESSION['cart_zone_id'] : NULL );
 		$gBitSmarty->assignByRef( 'stateMenu', $stateMenu );
 	}
-	// Check for form zip code
-	if( !empty( $_REQUEST['zip_code'] ) ) {
-		$_SESSION['cart_zip_code'] = $_REQUEST['zip_code'];
+	if( !empty( $_REQUEST['zip_code'] ) && is_string( $_REQUEST['zip_code'] ) ) {
+		$_SESSION['cart_zip_code'] = mb_substr( trim( $_REQUEST['zip_code'] ), 0, 10 );
 	}
-
+	if( isset( $_SESSION['cart_zip_code'] ) && !is_string( $_SESSION['cart_zip_code'] ) ) {
+		unset( $_SESSION['cart_zip_code'] );
+	}
 	$shoppingCart->delivery['postcode'] = !empty( $_SESSION['cart_zip_code'] ) ? $_SESSION['cart_zip_code'] : NULL;
 
 	// Check for form state 
