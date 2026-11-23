@@ -21,6 +21,11 @@
 //
 //
 
+// Report periods used for SQL date formatting by the revenue and order lists.
+function zen_report_period( $period ) {
+	return in_array( $period, array( 'Y-m-d', 'Y-\WeekW', 'Y-m', 'Y-\QQ', 'Y-' ), TRUE ) ? $period : 'Y-m';
+}
+
 function zen_get_order_status_name($order_status_id, $language_id = '') {
 	global $gBitDb;
 
