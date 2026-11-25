@@ -53,6 +53,17 @@ The established checkout pipeline spans page controllers and shared includes:
 Never trust client totals, currency conversion, tax, shipping, or product
 options. Recompute them from authoritative catalogue/configuration state.
 
+**Required option choice.** `com_products_options.products_options_required`
+(admin option form, "Choice Required") makes `CommerceProduct::getOptionHtmlAttributes()`
+add `required data-option-required="1"` to that option's radio or select
+inputs. `templates/product_options_required_js_inc.tpl` must be included
+after any add-to-cart form that renders options: on submit-button click it
+sets `required` only on inputs whose parent is visible, so an option the page
+hides does not block the browser's validation. Enforcement is client-side
+only; `add_product` does not reject a missing choice. This is separate from
+`com_products_attributes.attributes_required`, which is per value and only
+checked for text attributes.
+
 **Order deadline required by a product.** `CommerceProduct::isDeadlineRequired( $pCartItemHash )`
 returns FALSE; a derived product class returns TRUE when that cart item
 needs the date the customer wants the order by. The cart item hash carries

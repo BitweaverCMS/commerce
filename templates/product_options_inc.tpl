@@ -25,4 +25,5 @@
 			{/if}
 		{/foreach}
 	</div>
+	{include file="bitpackage:bitcommerce/product_options_required_js_inc.tpl"}
 {/if}

@@ -191,6 +191,17 @@ class CommerceProduct extends LibertyMime {
 		return $ret;
 	}
 
+	// HTML attributes for an option's radio or select inputs. A required option carries
+	// data-option-required so product_options_required_js_inc.tpl can drop `required` from
+	// inputs the page has hidden before the browser validates the form.
+	function getOptionHtmlAttributes( $pOptionsId ) {
+		$ret = trim( $this->mOptions[$pOptionsId]['products_options_html_attrib'] ?? '' );
+		if( !empty( $this->mOptions[$pOptionsId]['products_options_required'] ) ) {
+			$ret = trim( $ret.' required="required" data-option-required="1"' );
+		}
+		return $ret;
+	}
+
 	////
 	// computes products_price + option groups lowest attributes price of each group when on
 	function getBasePrice() {
@@ -2137,7 +2148,7 @@ If a special exist * 10+9
 								}
 							}
 							// ignore products_options_images_style as this should be fully controllable via CSS
-							$optionsValuesHtml .= zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute, $this->mOptions[$optionsId]['products_options_html_attrib'], 
+							$optionsValuesHtml .= zen_draw_radio_field('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_value_id, $selected_attribute, $this->getOptionHtmlAttributes( $optionsId ), 
 								"<span class='title'>$vals[products_options_values_name]</span>"
 								. (!empty( $products_options_details_noname ) ? " <span class='details'>$products_options_details_noname</span>" : '') 
 								. (!empty( $vals['attributes_image'] ) ? zen_image(CommerceProductManager::getOptionsValueImagesUrl() . $vals['attributes_image'], '', '', '', '') : '')
@@ -2425,7 +2436,7 @@ If a special exist * 10+9
 						} else {
 							$productOptions[$optionsId]['name'] = $this->mOptions[$optionsId]['products_options_name'];
 						}
-						$productOptions[$optionsId]['menu'] = zen_draw_pull_down_menu('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_array, $selected_attribute, $this->mOptions[$optionsId]['products_options_html_attrib']);
+						$productOptions[$optionsId]['menu'] = zen_draw_pull_down_menu('id[' . $this->mOptions[$optionsId]['products_options_id'] . ']', $products_options_array, $selected_attribute, $this->getOptionHtmlAttributes( $optionsId ));
 						$productOptions[$optionsId]['comment'] = $this->mOptions[$optionsId]['products_options_comment'];
 						$productOptions[$optionsId]['comment_position'] = $commentPosition;
 						break;

@@ -35,6 +35,13 @@
 </div>
 
 <div class="form-group">
+	{forminput label="checkbox"}
+		<input type="checkbox" name="products_options_required" value="1" {if $editOption.products_options_required}checked="checked"{/if} /> {tr}Choice Required{/tr}
+		{formhelp note="Add to Cart is blocked until the customer picks a radio button in this option. Hidden options are skipped. Give a value a default to preselect it instead."}
+	{/forminput}
+</div>
+
+<div class="form-group">
 	{formlabel label="Comment"}
 	{forminput}
 		<input type="text" class="form-control" name="products_options_comment" value="{$editOption.products_options_comment|escape:html}" />
