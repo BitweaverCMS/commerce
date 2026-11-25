@@ -28,9 +28,20 @@ function shippingQuoteUpdate( pForm ) {
 {legend legend="Shipping Estimate"}
 
 <input type="hidden" name="products_id" value="{$gBitProduct->mProductsId}"/>
+{* Request values are echoed back: escape keys and values. Checkbox attributes arrive as id[option][value]. *}
+{if is_array($smarty.request.id)}
 {foreach from=$smarty.request.id key=attrId item=attrVal}
-	<input type="hidden" name="id[{$attrId}]" value="{$attrVal}"/>
+	{if is_array($attrVal)}
+		{foreach from=$attrVal key=attrSubId item=attrSubVal}
+			{if !is_array($attrSubVal)}
+	<input type="hidden" name="id[{$attrId|escape}][{$attrSubId|escape}]" value="{$attrSubVal|escape}"/>
+			{/if}
+		{/foreach}
+	{else}
+	<input type="hidden" name="id[{$attrId|escape}]" value="{$attrVal|escape}"/>
+	{/if}
 {/foreach}
+{/if}
 
 <p>{tr}Shipping prices are an estimate only. The actual amount may vary once a final total is calculated during checkout.{/tr}</p>
 
@@ -55,7 +66,7 @@ function shippingQuoteUpdate( pForm ) {
 				{$countryMenu}
 			</div>
 			<div class="col-xs-4">
-				<input type="text" placeholder="Enter zip code." class="form-control" name="zip_code" value="{$smarty.session.cart_zip_code|default:$smarty.request.zip_code}"/>		
+				<input type="text" placeholder="Enter zip code." class="form-control" name="zip_code" value="{if $smarty.session.cart_zip_code && !is_array($smarty.session.cart_zip_code)}{$smarty.session.cart_zip_code|escape}{elseif !is_array($smarty.request.zip_code)}{$smarty.request.zip_code|escape}{/if}"/>		
 			</div>
 		</div>
 	{/if}
@@ -70,12 +81,12 @@ function shippingQuoteUpdate( pForm ) {
 		</div>
 	{/if}
 
-	{if $smarty.request.cart_quantity}
+	{if $smarty.request.cart_quantity && !is_array($smarty.request.cart_quantity)}
 		<div class="row form-group">
 			<div class="col-xs-6">
 				<div class="input-group">
 					<div class="input-group-addon">{tr}Quantity{/tr}</div>
-					<input type="number" class="form-control" name="cart_quantity" value="{$smarty.request.cart_quantity}"/>
+					<input type="number" class="form-control" name="cart_quantity" value="{$smarty.request.cart_quantity|escape}"/>
 				</div>
 			</div>
 		</div>
