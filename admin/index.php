@@ -148,6 +148,39 @@ foreach( array_keys( $orders ) as $orderId ) {
 }
 ksort( $orderFilters['groups']['ship']['options'] );
 
+// Product type menu: an order matches every type among its lines. A listed line row matches only its own type.
+if( !empty( $orders ) ) {
+	$typeGroup = array( 'title' => tra( 'Product Type' ), 'options' => array() );
+	$typeRows = $gBitDb->getAll( "SELECT cop.`orders_id`, cop.`orders_products_id`, pt.`type_id`, pt.`type_name`
+		FROM ".TABLE_ORDERS_PRODUCTS." cop
+			INNER JOIN ".TABLE_PRODUCTS." cp ON (cp.`products_id`=cop.`products_id`)
+			INNER JOIN ".TABLE_PRODUCT_TYPES." pt ON (pt.`type_id`=cp.`products_type`)
+		WHERE cop.`orders_id` IN (".implode( ',', array_fill( 0, count( $orders ), '?' ) ).")", array_keys( $orders ) );
+	$typeOrders = array();
+	foreach( (array)$typeRows as $typeRow ) {
+		$orderId = $typeRow['orders_id'];
+		$typeId = (int)$typeRow['type_id'];
+		$lineId = $typeRow['orders_products_id'];
+		$className = 'ptype-'.$typeId;
+		if( !isset( $orders[$orderId] ) ) {
+			continue;
+		}
+		if( empty( $typeGroup['options'][$typeId] ) ) {
+			$typeGroup['options'][$typeId] = array( 'label' => trim( (string)$typeRow['type_name'] ) !== '' ? $typeRow['type_name'] : (string)$typeId, 'count' => 0 );
+		}
+		if( empty( $typeOrders[$typeId][$orderId] ) ) {
+			$typeOrders[$typeId][$orderId] = TRUE;
+			$typeGroup['options'][$typeId]['count']++;
+			$orders[$orderId]['filter_classes'] .= ' '.$className;
+		}
+		if( isset( $orders[$orderId]['products'][$lineId] ) ) {
+			$orders[$orderId]['products'][$lineId]['filter_classes'] = trim( ($orders[$orderId]['products'][$lineId]['filter_classes'] ?? '').' '.$className );
+		}
+	}
+	uasort( $typeGroup['options'], function( $a, $b ) { return strnatcasecmp( $a['label'], $b['label'] ); } );
+	$orderFilters['groups']['ptype'] = $typeGroup;
+}
+
 // Product option filters, one menu per option, when line items are listed. Text and File values are free text, so they are skipped.
 if( !empty( $listHash['orders_products'] ) && !empty( $orders ) ) {
 	$skipTypes = array( defined( 'PRODUCTS_OPTIONS_TYPE_TEXT' ) ? (int)PRODUCTS_OPTIONS_TYPE_TEXT : 1, defined( 'PRODUCTS_OPTIONS_TYPE_FILE' ) ? (int)PRODUCTS_OPTIONS_TYPE_FILE : 4 );

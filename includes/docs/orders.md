@@ -151,11 +151,14 @@ rules still do the filtering.
 
 ## Order list filters
 
-`admin/index.php` builds the filters. They are a grid column (`col-sm-5
-col-sm-pull-1`) inside the search form, on the same row as the status group,
-with the search icon pushed to the end (`col-sm-1 col-sm-push-5`). On a
-phone they wrap below the status row. The column has Shipping and Price
-dropdowns, followed by an icon-only Deadline toggle (clock; the name and
+`admin/index.php` builds the filters. The status group and the filters are
+two even `col-sm-6` columns inside the search form; the search icon (and
+the filter icon, below) sit `pull-right` at the end of the filter column.
+With no filters (empty list) the status group is `col-sm-11` beside a
+`col-sm-1` search icon. On a phone the filters wrap below the status row.
+Every control in the form is small (`input-group-sm`, `btn-sm`) so the row
+fits on one line. The column has Shipping, Price, and
+Product Type dropdowns, followed by an icon-only Deadline toggle (clock; the name and
 count are in the tooltip). Deadline includes expedited orders: those with a
 paid `ot_expedite` total line (one `IN (...)` query over the listed ids) or
 the Expediting status (matched by normalized name, as the sidebar
@@ -167,6 +170,12 @@ a dropdown left empty, or Deadline when no order has one. The labels are
 plain text built from `getLeftSymbol()` / `getRightSymbol()`. Do not use
 `$currencies->format()` here: it returns HTML, which the template escapes
 into visible markup.
+
+Product Type (group `ptype`, class `ptype-<type_id>`, label
+`com_product_types.type_name`) comes from one `orders_products` join over
+the listed orders, so it works without line items. An order gets the class
+of every type among its lines; a listed line row gets only its own type, as
+the option filters do.
 
 Filtering runs in CSS, using only existing Bootstrap classes; the script above only mirrors state into the URL.
 The dropdowns are Bootstrap `dropdown-menu`. Chips are `btn btn-primary`
@@ -184,9 +193,8 @@ sibling). The `olf_*` radios carry `form="olf-none"` (no such form), so they sti
 that include `admin_list_orders_inc.tpl` never show the filters. The footer
 total still sums the whole result.
 
-When line items are listed (`orders_products`), a filter icon follows the
-search icon (the icon column widens to `col-sm-2`, the status column narrows
-to `col-sm-5`). The icon toggles the `order-options` row via the `#olf-show`
+When line items are listed (`orders_products`), a filter icon precedes the
+search icon at the end of the filter column. The icon toggles the `order-options` row via the `#olf-show`
 checkbox. That row has one dropdown per product option
 (`products_options_id`), listing its values (POVID) with order counts. Text
 and File options are skipped: their values are free text. Values come from
