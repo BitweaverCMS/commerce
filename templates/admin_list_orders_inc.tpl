@@ -14,8 +14,8 @@ form:has(#oss-show:not(:checked)) .order-search { display:none; }
 </style>
 {if $orderFilters && $listOrders}{assign var=hasOrderFilters value=TRUE}{else}{assign var=hasOrderFilters value=FALSE}{/if}
 {if $hasOrderFilters && $orderFilters.products}{assign var=hasProductFilters value=TRUE}{else}{assign var=hasProductFilters value=FALSE}{/if}
-<div class="row">
-	<div class="{if $hasOrderFilters}col-xs-12 col-sm-6{else}col-xs-10 col-sm-11{/if} form-group">
+<div class="row order-toolbar">
+	<div class="{if $hasOrderFilters}col-xs-12 col-sm-6{else}col-xs-10 col-sm-11{/if} form-group order-status">
 		<div class="input-group input-group-sm">
 			<div class="input-group-btn">
 				<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">{foreach from=$statusComparisons key=compKey item=comp}<span class="oss-label osc-label-{$compKey}">{$comp.label|escape}</span>{/foreach} <span class="caret"></span></button>
@@ -28,8 +28,16 @@ form:has(#oss-show:not(:checked)) .order-search { display:none; }
 	</div>
 	{if $hasOrderFilters}
 	<div class="col-xs-12 col-sm-6 form-group order-filters">
-		<span class="pull-right">{if $hasProductFilters}<label for="olf-show" class="btn btn-link btn-sm" title="{tr}Product Options{/tr}"><i class="fa fal fa-filter"></i></label>{/if}<label for="oss-show" class="btn btn-link btn-sm" title="{tr}Search{/tr}"><i class="fa fal fa-search"></i></label></span>
+		<span class="pull-right"><span class="btn-group">
+			<button type="button" class="btn btn-link btn-sm dropdown-toggle ols-toggle" data-toggle="dropdown" title="{tr}Sort Order{/tr}"><i class="fa fal fa-arrow-down-wide-short"></i><span class="ols-label ols-label-deadline"> {tr}Deadline{/tr}</span><span class="ols-label ols-label-price"> {tr}Price{/tr}</span></button>
+			<ul class="dropdown-menu dropdown-menu-right">
+				<li><label for="olf-sort-any" class="btn btn-link btn-sm btn-block">{tr}Purchase Date{/tr} <span class="text-muted">{tr}Newest First{/tr}</span></label></li>
+				{if $orderFilters.deadline}<li><label for="olf-sort-deadline" class="btn btn-link btn-sm btn-block">{tr}Deadline{/tr} <span class="text-muted">{tr}Soonest First{/tr}</span></label></li>{/if}
+				<li><label for="olf-sort-price" class="btn btn-link btn-sm btn-block">{tr}Price{/tr} <span class="text-muted">{tr}Highest First{/tr}</span></label></li>
+			</ul>
+		</span>{if $hasProductFilters}<label for="olf-show" class="btn btn-link btn-sm" title="{tr}Product Options{/tr}"><i class="fa fal fa-filter"></i></label>{/if}<label for="oss-show" class="btn btn-link btn-sm" title="{tr}Search{/tr}"><i class="fa fal fa-search"></i></label></span>
 		<input type="checkbox" id="olf-deadline" class="sr-only">{if $hasProductFilters}<input type="checkbox" id="olf-show" class="sr-only">{/if}
+		<input type="radio" name="olf_sort" id="olf-sort-any" value="any" form="olf-none" class="sr-only" checked>{if $orderFilters.deadline}<input type="radio" name="olf_sort" id="olf-sort-deadline" value="deadline" form="olf-none" class="sr-only">{/if}<input type="radio" name="olf_sort" id="olf-sort-price" value="price" form="olf-none" class="sr-only">
 		{foreach from=$orderFilters.groups key=groupKey item=group}
 		<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-any" value="any" form="olf-none" class="sr-only" checked>
 		{foreach from=$group.options key=optionKey item=option}<input type="radio" name="olf_{$groupKey}" id="olf-{$groupKey}-{$optionKey}" value="{$optionKey}" form="olf-none" class="sr-only">{/foreach}
@@ -81,6 +89,9 @@ form:has(#oss-show:not(:checked)) .order-search { display:none; }
 <style>
 .order-filters .dropdown-menu .btn, .order-options .dropdown-menu .btn { text-align:left; }
 form:has(#olf-show:not(:checked)) .order-options { display:none; }
+.order-filters .ols-label { display:none; }
+.order-filters:has(#olf-sort-deadline:checked) .ols-label-deadline, .order-filters:has(#olf-sort-price:checked) .ols-label-price { display:inline; }
+.order-filters:has(#olf-sort-any:checked) label[for="olf-sort-any"], .order-filters:has(#olf-sort-deadline:checked) label[for="olf-sort-deadline"], .order-filters:has(#olf-sort-price:checked) label[for="olf-sort-price"] { font-weight:bold; }
 .order-filters .olf-chip, .order-filters:has(#olf-deadline:checked) .olf-deadline { display:none; }
 .order-filters:has(#olf-deadline:checked) .olf-chip-deadline { display:inline-block; }
 form:has(#olf-deadline:checked) ~ .order-list tr.order-entry:not(.has-deadline) { display:none; }
@@ -91,11 +102,51 @@ form:has(#olf-{$groupKey}-{$optionKey}:checked) ~ .order-list tr.order-entry:not
 </style>
 {/if}
 {literal}<script>
-/* Filter state lives in the URL hash (#ship=…&price=…&deadline&opt12=345) so the URL can be shared. CSS still does the filtering. */
+/* Filter and sort state lives in the URL hash (#ship=…&price=…&deadline&opt12=345&sort=price) so the URL can be shared. CSS still does the filtering; the sort moves the rows already on the page and sends no request. */
 (function() {
 	var form = document.getElementById( 'order-list-form' );
 	if( !form ) return;
 	var radios = function() { return form.querySelectorAll( 'input[name^="olf_"]' ); };
+	var sortGroups = null, sortTail = [], sortedBy = 'any';
+	var sortCompare = {
+		any: function( a, b ) { return a.index - b.index; },
+		price: function( a, b ) { return b.price - a.price || a.index - b.index; },
+		deadline: function( a, b ) { return a.deadline < b.deadline ? -1 : ( a.deadline > b.deadline ? 1 : a.index - b.index ); }
+	};
+	function applySort() {
+		var picked = form.querySelector( 'input[name="olf_sort"]:checked' );
+		var mode = picked && sortCompare[picked.value] ? picked.value : 'any';
+		var toggle = form.querySelector( '.ols-toggle' );
+		if( toggle ) {
+			toggle.classList.toggle( 'btn-info', mode != 'any' );
+			toggle.classList.toggle( 'btn-link', mode == 'any' );
+		}
+		// The table follows this script, so the first pass waits for DOMContentLoaded.
+		var table = document.querySelector( 'table.order-list' );
+		if( document.readyState == 'loading' || !table || !table.tBodies.length || mode == sortedBy ) return;
+		var body = table.tBodies[0];
+		if( !sortGroups ) {
+			// An order is its header row (data-order) plus the comment and line rows after it. The server order is the purchase date sort.
+			sortGroups = [];
+			Array.prototype.forEach.call( body.rows, function( row ) {
+				if( row.hasAttribute( 'data-order' ) ) {
+					// A dated deadline sorts first, then expedited orders with no date ('9'), then the rest ('z').
+					sortGroups.push( { rows: [row], index: sortGroups.length, price: parseFloat( row.getAttribute( 'data-price' ) ) || 0, deadline: row.getAttribute( 'data-deadline' ) || ( row.classList.contains( 'has-deadline' ) ? '9' : 'z' ) } );
+				} else if( sortGroups.length && row.classList.contains( 'order-entry' ) ) {
+					sortGroups[sortGroups.length - 1].rows.push( row );
+				} else {
+					sortTail.push( row );
+				}
+			} );
+		}
+		var fragment = document.createDocumentFragment();
+		sortGroups.slice().sort( sortCompare[mode] ).forEach( function( group ) {
+			group.rows.forEach( function( row ) { fragment.appendChild( row ); } );
+		} );
+		sortTail.forEach( function( row ) { fragment.appendChild( row ); } );
+		body.appendChild( fragment );
+		sortedBy = mode;
+	}
 	function readHash() {
 		var hash = {};
 		location.hash.replace( /^#/, '' ).split( '&' ).forEach( function( part ) {
@@ -106,6 +157,7 @@ form:has(#olf-{$groupKey}-{$optionKey}:checked) ~ .order-list tr.order-entry:not
 		if( deadline ) deadline.checked = ( 'deadline' in hash );
 		var show = document.getElementById( 'olf-show' );
 		if( show && Object.keys( hash ).some( function( key ) { return key.indexOf( 'opt' ) === 0; } ) ) show.checked = true;
+		applySort();
 	}
 	function writeHash() {
 		var parts = [];
@@ -115,9 +167,11 @@ form:has(#olf-{$groupKey}-{$optionKey}:checked) ~ .order-list tr.order-entry:not
 		history.replaceState( null, '', location.pathname + location.search + ( parts.length ? '#' + parts.join( '&' ) : '' ) );
 	}
 	readHash();
+	document.addEventListener( 'DOMContentLoaded', applySort );
 	window.addEventListener( 'hashchange', readHash );
 	form.addEventListener( 'change', function( event ) {
 		if( event.target.id == 'olf-deadline' || event.target.name && event.target.name.indexOf( 'olf_' ) === 0 ) writeHash();
+		if( event.target.name == 'olf_sort' ) applySort();
 	} );
 	// Keep the filters across Show / Search, and leave empty fields out of the query string.
 	form.addEventListener( 'submit', function() {
@@ -142,8 +196,8 @@ form:has(#olf-{$groupKey}-{$optionKey}:checked) ~ .order-list tr.order-entry:not
 {foreach from=$listOrders key=orderId item=order}
 	{assign var=grossTotal value=$grossTotal+$order.order_total}
 	{assign var=displayName value=$order|getDisplayNameFromHash}
-	<tr class="order-entry {$order.filter_classes}">		
-		<td colspan="6"><div class="pull-left">{if $order.orders_status_id == $smarty.const.DEFAULT_ORDERS_STATUS_ID}<a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URL}orders.php?oID={$orderId}&action=process">{tr}Process{/tr}</a> {/if}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink"><strong>{$orderId}</strong> - {$displayName}</A><BR><SPAN CLASS="SMALL">{$ORDER.ORDERS_STATUS_NAME}</SPAN></DIV><DIV CLASS="date pull-right text-right">{if $displayName != $order.delivery_name && $order.delivery_name != $order.billing_name}<em>{$order.delivery_name}</em>, {/if}{$order.delivery_city}, {$order.delivery_state}{if $order.delivery_country != $storeCountryName} {$order.delivery_country}{/if}{if $order.shipping_method_code}<br><span class="small">{$order.shipping_method_code}</span>{/if}</div></td>
+	<tr class="order-entry {$order.filter_classes}" data-order="{$orderId}" data-price="{$order.order_total|escape}" data-deadline="{$order.deadline_date|escape}">
+		<td colspan="6"><div class="pull-left">{if $order.orders_status_id == $smarty.const.DEFAULT_ORDERS_STATUS_ID}<a class="btn btn-default btn-xs" href="{$smarty.const.BITCOMMERCE_PKG_ADMIN_URL}orders.php?oID={$orderId}&action=process">{tr}Process{/tr}</a> {/if}<a href="{$smarty.const.BITCOMMERCE_PKG_URL}admin/orders.php?oID={$orderId}" class="contentlink"><strong>{$orderId}</strong> - {$displayName}</a><br><span class="small">{$order.orders_status_name}</span></div><div class="date pull-right text-right">{if $displayName != $order.delivery_name && $order.delivery_name != $order.billing_name}<em>{$order.delivery_name}</em>, {/if}{$order.delivery_city}, {$order.delivery_state}{if $order.delivery_country != $storeCountryName} {$order.delivery_country}{/if}{if $order.shipping_method_code}<br><span class="small">{$order.shipping_method_code}</span>{/if}</div></td>
 		<td class="text-right"><div class="date"><span style="white-space:nowrap">{$order.purchase_time}</span>{if $order.deadline_date} <br><span class="badge alert-danger">{$order.deadline_date|cal_date_format:'%a %b %e, %Y'}</span>{/if}</div></td>
 		<td class="text-right">{$gCommerceCurrencies->format($order.order_total, TRUE, $order.currency|default:DEFAULT_CURRENCY, $order.currency_value|default:1)}</td>
 	</tr>

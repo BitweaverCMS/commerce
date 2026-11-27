@@ -141,13 +141,39 @@ to be wiped, which collapsed the search row and reset At Least). On submit,
 the inline script disables empty fields so they stay out of the query string.
 
 Client filter state lives in the URL hash, for example
-`#ship=ups-ground&price=100to250&deadline&opt12=345` (group key = option
-key). A small inline script, the only JavaScript here, syncs the hash and
+`#ship=ups-ground&price=100to250&deadline&opt12=345&sort=price` (group key =
+option key). A small inline script, the only JavaScript here, syncs the hash and
 the hidden inputs. On load and on `hashchange` it ticks the inputs from the
 hash, and it opens the option row when the hash has an `opt*` key. On change
 it calls `history.replaceState`, which sends no request. On submit it copies
 the hash onto the form action, so filters survive Show and Search. The CSS
-rules still do the filtering.
+rules still do the filtering. The same script sorts the list (below).
+
+The toolbar row is `div.row.order-toolbar`. Its two columns are
+`.order-status` (comparison, status, products checkbox, Show) and
+`.order-filters`. Target those classes, not the Bootstrap column classes.
+
+## Order list sort
+
+The sort icon at the end of the filter column opens a menu: Purchase Date
+(newest first, the default), Deadline (soonest first), and Price (highest
+first). The sort runs in the browser on the rows already loaded and sends no
+request, because the list is slow to build for a large result.
+
+The choice is the `olf_sort` radio group (`#olf-sort-any`, `-deadline`,
+`-price`), so the hash sync above carries it as `#sort=price` and it
+survives Show and Search. Purchase Date is the order the server sent
+(`orders_id` descending). The order's header row has `data-order`,
+`data-price` (`order_total`, default currency), and `data-deadline`
+(`deadline_date`). The script treats each header row and the comment and
+line rows after it as one unit and moves the unit. Deadline puts dated
+orders first, then expedited orders with no date (`has-deadline`), then the
+rest. Ties keep the server order. The Deadline item is left out when no
+listed order has a deadline. The icon button turns `btn-info` and shows
+the sort name while a sort other than Purchase Date is active (`btn-info`,
+not the filter chips' `btn-primary`, so a sort reads apart from a filter). To add a
+sort, add a radio, a menu label, a `data-` attribute on the header row, and
+a comparison in `sortCompare`.
 
 ## Order list filters
 
@@ -177,7 +203,7 @@ the listed orders, so it works without line items. An order gets the class
 of every type among its lines; a listed line row gets only its own type, as
 the option filters do.
 
-Filtering runs in CSS, using only existing Bootstrap classes; the script above only mirrors state into the URL.
+Filtering runs in CSS, using only existing Bootstrap classes; the script above mirrors state into the URL and sorts, but does not filter.
 The dropdowns are Bootstrap `dropdown-menu`. Chips are `btn btn-primary`
 labels, and clicking anywhere on a chip clears it. The hidden inputs are
 `sr-only`: one checkbox, plus one radio group per dropdown with an `-any`
