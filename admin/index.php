@@ -106,6 +106,10 @@ $orderFilters = array(
 		// 'icon' is the button face; the title is its tooltip.
 		'ship' => array( 'title' => tra( 'Shipping' ), 'icon' => 'fa-truck', 'options' => array() ),
 		'price' => array( 'title' => tra( 'Price' ), 'icon' => 'fa-coins', 'options' => array() ),
+		'comment' => array( 'title' => tra( 'Comments' ), 'icon' => 'fa-comment', 'options' => array(
+			'yes' => array( 'label' => tra( 'With Comments' ), 'count' => 0 ),
+			'no' => array( 'label' => tra( 'No Comments' ), 'count' => 0 ),
+		) ),
 	),
 );
 foreach( $priceBands as $bandKey => $band ) {
@@ -144,6 +148,12 @@ foreach( array_keys( $orders ) as $orderId ) {
 			break;
 		}
 	}
+
+	// The same test the list template uses to print the comment row.
+	$commentKey = (!empty( $orders[$orderId]['comments'] ) && $orders[$orderId]['comments'] != 'Credit Card processed') ? 'yes' : 'no';
+	$filterClasses[] = 'comment-'.$commentKey;
+	$orderFilters['groups']['comment']['options'][$commentKey]['count']++;
+
 	$orders[$orderId]['filter_classes'] = implode( ' ', $filterClasses );
 	$orders[$orderId]['row_filter_classes'] = $orders[$orderId]['filter_classes'];
 }

@@ -190,10 +190,11 @@ With no filters (empty list) the status group is `col-sm-11` beside a
 `col-sm-1` search icon. On a phone the filters wrap below the status row.
 Every control in the form is small (`input-group-sm`, `btn-sm`) so the row
 fits on one line. A group with an `icon` key in `$orderFilters.groups`
-(Shipping `fa-truck`, Price `fa-coins`, Product Type `fa-shapes`) shows the
+(Shipping `fa-truck`, Price `fa-coins`, Comments `fa-comment`, Product Type
+`fa-shapes`) shows the
 icon alone at every width. The title is the button's tooltip and an
 `sr-only` span beside the icon; to show the text again, change that span's
-class (for example to `hidden-sm hidden-xs`). The column has Shipping, Price, and
+class (for example to `hidden-sm hidden-xs`). The column has Shipping, Price, Comments, and
 Product Type dropdowns, followed by an icon-only Deadline toggle (clock; the name and
 count are in the tooltip). Deadline includes expedited orders: those with a
 paid `ot_expedite` total line (one `IN (...)` query over the listed ids) or
@@ -206,6 +207,12 @@ a dropdown left empty, or Deadline when no order has one. The labels are
 plain text built from `getLeftSymbol()` / `getRightSymbol()`. Do not use
 `$currencies->format()` here: it returns HTML, which the template escapes
 into visible markup.
+
+Comments (group `comment`, icon `fa-comment`, hash `#comment=yes`) has With
+Comments (`comment-yes`) and No Comments (`comment-no`); clearing the chip
+is "any". An order has comments when the list prints its comment row: the
+latest status-history comment is not empty and is not `Credit Card
+processed`. The controller repeats that template test; change both together.
 
 Product Type (group `ptype`, class `ptype-<type_id>`, label
 `com_product_types.type_name`) comes from one `orders_products` join over
@@ -220,7 +227,7 @@ labels, and clicking anywhere on a chip clears it. The hidden inputs are
 default. Menu labels point `for=` at an option, and chip labels point at the
 group's `-any` radio. A chip must be a `<label>`, because `for=` does
 nothing on a `<button>`. The controller gives each order `filter_classes`
-(`has-deadline`, `ship-<slug>`, `price-<band>`). The template adds
+(`has-deadline`, `ship-<slug>`, `price-<band>`, `comment-yes` / `comment-no`). The template adds
 `order-entry` and those classes to every `<tr>` of the order. The only CSS
 is the show/hide rules, generated inline from `$orderFilters.groups`; add a
 group there, not in a stylesheet. The inputs live inside the form, so the
