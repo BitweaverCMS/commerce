@@ -118,8 +118,8 @@ from `getDisplayUrlFromHash()` on the line hash.
 
 The status row is one Bootstrap input group: a comparison dropdown
 (Exactly / At Least / At Most), the status select, the products checkbox
-addon, and Show (the `list_filter` submit). A plain search icon (`btn-link`
-label) at the row's end toggles the search row, `[Orders ▾][text][Search]`.
+addon, and Show (the `list_filter` submit). A search icon (a `label.icon`
+in the row's `floaticon`) toggles the search row, `[Orders ▾][text][Search]`.
 The search row is hidden unless the `sr-only` checkbox `#oss-show` is checked,
 and it starts checked when the session has a search term.
 
@@ -169,21 +169,31 @@ survives Show and Search. Purchase Date is the order the server sent
 line rows after it as one unit and moves the unit. Deadline puts dated
 orders first, then expedited orders with no date (`has-deadline`), then the
 rest. Ties keep the server order. The Deadline item is left out when no
-listed order has a deadline. The icon button turns `btn-info` and shows
-the sort name while a sort other than Purchase Date is active (`btn-info`,
-not the filter chips' `btn-primary`, so a sort reads apart from a filter). To add a
+listed order has a deadline. The sort icon is a plain `floaticon` link.
+While a sort other than Purchase Date is active the script makes it
+`btn btn-info btn-xs` (not the filter chips' `btn-primary`, so a sort reads
+apart from a filter) and it shows the sort name from `md` up. To add a
 sort, add a radio, a menu label, a `data-` attribute on the header row, and
 a comparison in `sortCompare`.
 
 ## Order list filters
 
 `admin/index.php` builds the filters. The status group and the filters are
-two even `col-sm-6` columns inside the search form; the search icon (and
-the filter icon, below) sit `pull-right` at the end of the filter column.
+two even `col-sm-6` columns inside the search form; the sort, filter
+(below), and search icons sit in a `div.floaticon` at the end of the filter
+column. They follow the Themes icon-toolbar pattern: `{booticon}` inside an
+`a`, or inside a `label.icon` where the icon toggles a checkbox. Do not make
+them `btn` labels; three padded buttons pushed the filters onto a second
+line. The few `.order-toolbar .floaticon` rules in the template's first
+style block only line the icons up with the `btn-sm` controls.
 With no filters (empty list) the status group is `col-sm-11` beside a
 `col-sm-1` search icon. On a phone the filters wrap below the status row.
 Every control in the form is small (`input-group-sm`, `btn-sm`) so the row
-fits on one line. The column has Shipping, Price, and
+fits on one line. A group with an `icon` key in `$orderFilters.groups`
+(Shipping `fa-truck`, Price `fa-coins`, Product Type `fa-shapes`) shows the
+icon alone at every width. The title is the button's tooltip and an
+`sr-only` span beside the icon; to show the text again, change that span's
+class (for example to `hidden-sm hidden-xs`). The column has Shipping, Price, and
 Product Type dropdowns, followed by an icon-only Deadline toggle (clock; the name and
 count are in the tooltip). Deadline includes expedited orders: those with a
 paid `ot_expedite` total line (one `IN (...)` query over the listed ids) or

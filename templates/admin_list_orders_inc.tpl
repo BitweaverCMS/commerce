@@ -7,6 +7,10 @@
 {foreach from=$statusComparisons key=compKey item=comp}<input type="radio" class="sr-only" name="orders_status_comparison" id="osc-{$compKey}" value="{$comp.value|escape}"{if $comp.value == $currentComparison} checked{/if}>{/foreach}
 <style>
 .oss-label { display:none; }
+.order-toolbar .floaticon { line-height:30px; }
+.order-toolbar .floaticon label { margin:0; font-weight:normal; }
+.order-toolbar .floaticon .dropdown { display:inline-block; }
+.order-toolbar .floaticon > .dropdown > .btn { padding:1px 5px; margin-left:5px; }
 form:has(#oss-show:not(:checked)) .order-search { display:none; }
 {foreach from=$searchScopes key=scopeKey item=scopeLabel}form:has(#oss-{$scopeKey}:checked) .oss-label-{$scopeKey} { display:inline; }
 {/foreach}{foreach from=$statusComparisons key=compKey item=comp}form:has(#osc-{$compKey}:checked) .osc-label-{$compKey} { display:inline; }
@@ -28,14 +32,14 @@ form:has(#oss-show:not(:checked)) .order-search { display:none; }
 	</div>
 	{if $hasOrderFilters}
 	<div class="col-xs-12 col-sm-6 form-group order-filters">
-		<span class="pull-right"><span class="btn-group">
-			<button type="button" class="btn btn-link btn-sm dropdown-toggle ols-toggle" data-toggle="dropdown" title="{tr}Sort Order{/tr}"><i class="fa fal fa-arrow-down-wide-short"></i><span class="ols-label ols-label-deadline"> {tr}Deadline{/tr}</span><span class="ols-label ols-label-price"> {tr}Price{/tr}</span></button>
+		<div class="floaticon"><span class="dropdown">
+			<a href="#" class="dropdown-toggle ols-toggle" data-toggle="dropdown" title="{tr}Sort Order{/tr}">{booticon iname="fa-sort-amount-down"}<span class="ols-label ols-label-deadline"><span class="hidden-sm hidden-xs"> {tr}Deadline{/tr}</span></span><span class="ols-label ols-label-price"><span class="hidden-sm hidden-xs"> {tr}Price{/tr}</span></span></a>
 			<ul class="dropdown-menu dropdown-menu-right">
 				<li><label for="olf-sort-any" class="btn btn-link btn-sm btn-block">{tr}Purchase Date{/tr} <span class="text-muted">{tr}Newest First{/tr}</span></label></li>
 				{if $orderFilters.deadline}<li><label for="olf-sort-deadline" class="btn btn-link btn-sm btn-block">{tr}Deadline{/tr} <span class="text-muted">{tr}Soonest First{/tr}</span></label></li>{/if}
 				<li><label for="olf-sort-price" class="btn btn-link btn-sm btn-block">{tr}Price{/tr} <span class="text-muted">{tr}Highest First{/tr}</span></label></li>
 			</ul>
-		</span>{if $hasProductFilters}<label for="olf-show" class="btn btn-link btn-sm" title="{tr}Product Options{/tr}"><i class="fa fal fa-filter"></i></label>{/if}<label for="oss-show" class="btn btn-link btn-sm" title="{tr}Search{/tr}"><i class="fa fal fa-search"></i></label></span>
+		</span>{if $hasProductFilters}<label for="olf-show" class="icon" title="{tr}Product Options{/tr}">{booticon iname="fa-filter"}</label>{/if}<label for="oss-show" class="icon" title="{tr}Search{/tr}">{booticon iname="fa-search"}</label></div>
 		<input type="checkbox" id="olf-deadline" class="sr-only">{if $hasProductFilters}<input type="checkbox" id="olf-show" class="sr-only">{/if}
 		<input type="radio" name="olf_sort" id="olf-sort-any" value="any" form="olf-none" class="sr-only" checked>{if $orderFilters.deadline}<input type="radio" name="olf_sort" id="olf-sort-deadline" value="deadline" form="olf-none" class="sr-only">{/if}<input type="radio" name="olf_sort" id="olf-sort-price" value="price" form="olf-none" class="sr-only">
 		{foreach from=$orderFilters.groups key=groupKey item=group}
@@ -44,7 +48,7 @@ form:has(#oss-show:not(:checked)) .order-search { display:none; }
 		{/foreach}
 		{foreach from=$orderFilters.groups key=groupKey item=group}{if !$group.product}
 		<div class="btn-group">
-			<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">{$group.title} <span class="caret"></span></button>
+			<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="{$group.title|escape}">{if $group.icon}{booticon iname=$group.icon}<span class="sr-only">{$group.title|escape}</span>{else}{$group.title|escape}{/if} <span class="caret"></span></button>
 			<ul class="dropdown-menu">{foreach from=$group.options key=optionKey item=option}<li><label for="olf-{$groupKey}-{$optionKey}" class="btn btn-link btn-sm btn-block"><span class="badge pull-right">{$option.count}</span> {$option.label|escape}</label></li>{/foreach}</ul>
 		</div>
 		{/if}{/foreach}
@@ -55,8 +59,8 @@ form:has(#oss-show:not(:checked)) .order-search { display:none; }
 		{foreach from=$orderFilters.groups key=groupKey item=group}{foreach from=$group.options key=optionKey item=option}<label for="olf-{$groupKey}-any" class="btn btn-primary btn-sm olf-chip olf-chip-{$groupKey}-{$optionKey}">{if $group.product}{$group.title|escape}: {/if}{$option.label|escape} <i class="fa fal fa-times"></i></label> {/foreach}{/foreach}
 	</div>
 	{else}
-	<div class="col-xs-2 col-sm-1 form-group text-right">
-		<label for="oss-show" class="btn btn-link btn-sm" title="{tr}Search{/tr}"><i class="fa fal fa-search"></i></label>
+	<div class="col-xs-2 col-sm-1 form-group">
+		<div class="floaticon"><label for="oss-show" class="icon" title="{tr}Search{/tr}">{booticon iname="fa-search"}</label></div>
 	</div>
 	{/if}
 </div>
@@ -118,8 +122,8 @@ form:has(#olf-{$groupKey}-{$optionKey}:checked) ~ .order-list tr.order-entry:not
 		var mode = picked && sortCompare[picked.value] ? picked.value : 'any';
 		var toggle = form.querySelector( '.ols-toggle' );
 		if( toggle ) {
-			toggle.classList.toggle( 'btn-info', mode != 'any' );
-			toggle.classList.toggle( 'btn-link', mode == 'any' );
+			// A plain floaticon link by default; a small info button while a sort is active.
+			[ 'btn', 'btn-info', 'btn-xs' ].forEach( function( name ) { toggle.classList.toggle( name, mode != 'any' ); } );
 		}
 		// The table follows this script, so the first pass waits for DOMContentLoaded.
 		var table = document.querySelector( 'table.order-list' );

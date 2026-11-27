@@ -103,8 +103,9 @@ $priceBands = array(
 $orderFilters = array(
 	'deadline' => 0,
 	'groups' => array(
-		'ship' => array( 'title' => tra( 'Shipping' ), 'options' => array() ),
-		'price' => array( 'title' => tra( 'Price' ), 'options' => array() ),
+		// 'icon' is the button face; the title is its tooltip.
+		'ship' => array( 'title' => tra( 'Shipping' ), 'icon' => 'fa-truck', 'options' => array() ),
+		'price' => array( 'title' => tra( 'Price' ), 'icon' => 'fa-coins', 'options' => array() ),
 	),
 );
 foreach( $priceBands as $bandKey => $band ) {
@@ -150,7 +151,7 @@ ksort( $orderFilters['groups']['ship']['options'] );
 
 // Product type menu: an order matches every type among its lines. A listed line row matches only its own type.
 if( !empty( $orders ) ) {
-	$typeGroup = array( 'title' => tra( 'Product Type' ), 'options' => array() );
+	$typeGroup = array( 'title' => tra( 'Product Type' ), 'icon' => 'fa-shapes', 'options' => array() );
 	$typeRows = $gBitDb->getAll( "SELECT cop.`orders_id`, cop.`orders_products_id`, pt.`type_id`, pt.`type_name`
 		FROM ".TABLE_ORDERS_PRODUCTS." cop
 			INNER JOIN ".TABLE_PRODUCTS." cp ON (cp.`products_id`=cop.`products_id`)
